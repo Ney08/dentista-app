@@ -13,6 +13,10 @@ class UserLogin(BaseModel):
     password: str
 
 
+class ResetPassword(BaseModel):
+    username: str
+    password: str
+
 # ✅ DIRECCIÓN
 class DireccionBase(BaseModel):
     provincia_nombre: str = ""

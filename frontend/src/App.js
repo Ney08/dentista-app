@@ -28,15 +28,9 @@ function App() {
 
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  // ✅ LOGIN
-  if (!token) {
-    return <Login setToken={setToken} />;
-  }
-
   return (
-    <QueryClientProvider client={queryClient}>
-
-      {/* ✅ TOAST GLOBAL */}
+    <>
+      {/* ✅ TOAST SIEMPRE ACTIVO */}
       <Toaster
         position="top-center"
         toastOptions={{
@@ -51,38 +45,29 @@ function App() {
         }}
       />
 
-      {/* ✅ ROUTER */}
-      <Router>
-        <Layout setToken={setToken}>
-          <Routes>
+      {!token ? (
+        <Login setToken={setToken} />
+      ) : (
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <Layout setToken={setToken}>
+              <Routes>
 
-            {/* ✅ DASHBOARD */}
-            <Route path="/" element={<DashboardHome />} />
+                <Route path="/" element={<DashboardHome />} />
+                <Route path="/clientes" element={<ClientesPage />} />
+                <Route path="/facturaciones" element={<IngresosPage />} />
+                <Route path="/citas" element={<CitasPage />} />
+                <Route path="/reportes" element={<ReportesPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
 
-            {/* ✅ CLIENTES */}
-            <Route path="/clientes" element={<ClientesPage />} />
+                <Route path="*" element={<Navigate to="/" />} />
 
-            {/* ✅ FACTURACIÓN */}
-            <Route path="/facturaciones" element={<IngresosPage />} />
-
-            {/* ✅ CITAS 🔥 */}
-            <Route path="/citas" element={<CitasPage />} />
-
-            {/* ✅ REPORTES */}
-            <Route path="/reportes" element={<ReportesPage />} />
-
-            {/* ✅ CONFIG */}
-            <Route path="/settings" element={<SettingsPage />} />
-
-            {/* ✅ REDIRECT */}
-            <Route path="*" element={<Navigate to="/" />} />
-
-          </Routes>
-        </Layout>
-      </Router>
-
-    </QueryClientProvider>
+              </Routes>
+            </Layout>
+          </Router>
+        </QueryClientProvider>
+      )}
+    </>
   );
 }
-
 export default App;

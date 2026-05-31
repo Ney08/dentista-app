@@ -4,16 +4,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import os
 from sqlalchemy.exc import IntegrityError
-from backend.database import SessionLocal, engine
-import backend.models as models
-import backend.schemas as schemas
+from database import SessionLocal, engine
+
+import models
+from schemas import UserCreate, UserLogin, ClienteCreate, IngresoCreate, HistorialCreate, CitaCreate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
 router = APIRouter()
 
 # ✅ Seguridad
-from backend.security import hash_password, verify_password
+from security import hash_password, verify_password
 
 # ✅ Crear tablas
 models.Base.metadata.create_all(bind=engine)
@@ -52,15 +53,16 @@ def get_db():
 # =========================
 
 @app.post("/register")
-def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    existe = db.query(models.User).filter_by(username=user.username).first()
+def register(data: UserCreate, db: Session = Depends(get_db)):
+
+    existe = db.query(models.User).filter_by(username=data.username).first()
 
     if existe:
         raise HTTPException(400, "Usuario ya existe ❌")
 
     nuevo = models.User(
-        username=user.username,
-        password=hash_password(user.password)
+        username=data.username,
+        password=hash_password(data.password)
     )
 
     db.add(nuevo)
@@ -70,10 +72,10 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 
 @app.post("/login")
-def login(data: schemas.UserLogin, db: Session = Depends(get_db)):
+def login(data: UserLogin, db: Session = Depends(get_db)):
 
     user = db.query(models.User).filter_by(username=data.username).first()
-
+    print("RECIBIDO:", data)
     if not user:
         raise HTTPException(400, "Usuario no existe ❌")
 
@@ -106,7 +108,7 @@ def login(data: schemas.UserLogin, db: Session = Depends(get_db)):
 
 
 @app.put("/users/reset")
-def reset_password(data: schemas.UserCreate, db: Session = Depends(get_db)):
+def reset_password(data: UserCreate, db: Session = Depends(get_db)):
 
     user = db.query(models.User).filter(models.User.username == data.username).first()
 
@@ -130,7 +132,7 @@ def reset_password(data: schemas.UserCreate, db: Session = Depends(get_db)):
 import re
 
 @app.post("/clientes/")
-def crear_cliente(data: schemas.ClienteCreate, db: Session = Depends(get_db)):
+def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
 
     # ✅ limpiar cédula
     cedula = data.cedula.strip()
@@ -224,7 +226,7 @@ def eliminar_cliente(cliente_id: int, db: Session = Depends(get_db)):
 # =========================
 
 @app.post("/ingresos/")
-def crear_ingreso(data: schemas.IngresoCreate, db: Session = Depends(get_db)):
+def crear_ingreso(data: IngresoCreate, db: Session = Depends(get_db)):
 
     try:
         print("DATA RECIBIDA:", data.dict())
@@ -335,7 +337,7 @@ async def guardar_factura(
 
 
 @app.post("/historiales/")
-def crear_historial(data: schemas.HistorialCreate, db: Session = Depends(get_db)):
+def crear_historial(data: HistorialCreate, db: Session = Depends(get_db)):
     historial = models.Historial(
         cliente_id=data.cliente_id,
         descripcion=data.descripcion
@@ -362,7 +364,7 @@ def ver_historial(cliente_id: int, db: Session = Depends(get_db)):
 from fastapi import HTTPException
 
 @app.post("/citas/")
-def crear_cita(data: schemas.CitaCreate, db: Session = Depends(get_db)):
+def crear_cita(data: CitaCreate, db: Session = Depends(get_db)):
 
     # ✅ VALIDAR DUPLICADO (MISMA FECHA EXACTA)
     existe = db.query(models.Cita).filter(

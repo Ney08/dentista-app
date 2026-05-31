@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 
 function Login({ setToken }) {
@@ -19,18 +19,26 @@ function Login({ setToken }) {
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [claveValida, setClaveValida] = useState(false);
 
-  // 🔐 CLAVE MAESTRA
+  // 🔐 CLAVE MAESTRA (⚠️ SOLO DEMO)
   const CLAVE_SEGURIDAD = "1234";
 
-  // ✅ VALIDACIÓN AUTOMÁTICA DE CLAVE
+  // ✅ VALIDACIÓN DE CLAVE
   useEffect(() => {
     if (!claveSeguridad) {
       setClaveValida(false);
       return;
     }
-
     setClaveValida(claveSeguridad === CLAVE_SEGURIDAD);
   }, [claveSeguridad]);
+
+  // ✅ CERRAR MODAL CON ESC
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") cerrarModal();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
 
   // ✅ LOGIN
   const login = async (e) => {
@@ -46,20 +54,40 @@ function Login({ setToken }) {
     try {
       const res = await fetch("http://127.0.0.1:8000/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           username: username.trim(),
           password: password.trim()
         })
       });
 
-      const data = await res.json();
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        // si no hay JSON
+      }
 
+
+      // ✅ MANEJO REAL DEL ERROR
       if (!res.ok) {
-        toast.error(data.detail || "Credenciales incorrectas ❌");
+        console.warn("Error login:", res.status, data);
+
+        toast.error(data?.detail || "Error al iniciar sesión ❌");
+
+        setPassword(""); // limpia contraseña
         return;
       }
 
+
+      if (!data.token) {
+        toast.error("Respuesta inválida ❌");
+        return;
+      }
+
+      // ✅ GUARDAR TOKEN
       if (recordar) {
         localStorage.setItem("token", data.token);
       } else {
@@ -68,9 +96,11 @@ function Login({ setToken }) {
 
       setToken(data.token);
       localStorage.setItem("lastUser", username);
+
       toast.success(`Bienvenido ${username} ✅`);
 
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error("Error de conexión ❌");
     } finally {
       setLoading(false);
@@ -78,52 +108,63 @@ function Login({ setToken }) {
   };
 
   // ✅ CAMBIAR CONTRASEÑA
- const recuperarPassword = async () => {
+  const recuperarPassword = async () => {
 
-  if (!username.trim()) {
-    toast.error("Escribe el usuario ⚠️");
-    return;
-  }
-
-  if (!claveValida) {
-    toast.error("Clave inválida ❌");
-    return;
-  }
-
-  if (nuevaPassword.length < 4) {
-    toast.error("Mínimo 4 caracteres ⚠️");
-    return;
-  }
-
-  try {
-    const res = await fetch("http://127.0.0.1:8000/users/reset", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        username,
-        password: nuevaPassword
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      toast.error(data.detail || "Error al cambiar ❌");
+    if (!username.trim()) {
+      toast.error("Escribe el usuario ⚠️");
       return;
     }
 
-    // ✅ 🎯 AQUÍ ESTÁ LO QUE QUIERES
-    toast.success("Contraseña cambiada ✅");
+    if (!claveValida) {
+      toast.error("Clave inválida ❌");
+      return;
+    }
 
-    cerrarModal();  // cerrar popup automáticamente
+    if (nuevaPassword.length < 4) {
+      toast.error("Mínimo 4 caracteres ⚠️");
+      return;
+    }
 
-  } catch (error) {
-    console.error(error);
-    toast.error("Error del servidor ❌");
-  }
-};
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/users/reset", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: username.trim(),
+          password: nuevaPassword.trim()
+        })
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
+
+      if (!res.ok) {
+        toast.error(data?.detail || "Error al cambiar ❌");
+        return;
+      }
+
+      toast.success("Contraseña cambiada ✅");
+
+      setNuevaPassword("");
+      setClaveSeguridad("");
+
+      cerrarModal();
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Error del servidor ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ✅ CERRAR MODAL
   const cerrarModal = () => {
@@ -199,7 +240,7 @@ function Login({ setToken }) {
 
           </div>
 
-          {/* BOTÓN */}
+          {/* BOTÓN LOGIN */}
           <button
             type="submit"
             disabled={loading}
@@ -209,10 +250,9 @@ function Login({ setToken }) {
           </button>
 
         </form>
-
       </div>
 
-      {/* ✅ MODAL RECUPERACIÓN */}
+      {/* ✅ MODAL */}
       {mostrarRecovery && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
 
@@ -255,15 +295,13 @@ function Login({ setToken }) {
 
               <button
                 onClick={recuperarPassword}
-                disabled={!claveValida || nuevaPassword.length < 4}
-                className={`
-                  flex-1 py-2 rounded text-white
-                  ${claveValida && nuevaPassword.length >= 4
-                    ? "bg-green-500"
-                    : "bg-gray-400 cursor-not-allowed"}
-                `}
+                disabled={!claveValida || nuevaPassword.length < 4 || loading}
+                className={`flex-1 py-2 rounded text-white ${claveValida && nuevaPassword.length >= 4
+                  ? "bg-green-500"
+                  : "bg-gray-400 cursor-not-allowed"
+                  }`}
               >
-                Guardar
+                {loading ? "Guardando..." : "Guardar"}
               </button>
 
               <button
