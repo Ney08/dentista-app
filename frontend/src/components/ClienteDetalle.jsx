@@ -1,26 +1,18 @@
-import { useEffect, useState } from "react";
 import HistorialForm from "./HistorialForm";
+import { useHistorial } from "../hooks/useHistorial";
 
 function ClienteDetalle({ cliente }) {
 
-  const [historial, setHistorial] = useState([]);
+  const { historial, isLoading, crearHistorial } = useHistorial(cliente?.id);
 
-  // ✅ cargar historial
-  const cargarHistorial = async () => {
-    const res = await fetch(
-      `http://127.0.0.1:8000/clientes/${cliente.id}/historial`
-    );
+  // ✅ loading
+  if (!cliente?.id) {
+    return <p>Selecciona un cliente...</p>;
+  }
 
-    const data = await res.json();
-    setHistorial(data);
-  };
-
-  // ✅ cuando abre el cliente
-  useEffect(() => {
-    if (cliente?.id) {
-      cargarHistorial();
-    }
-  }, [cliente]);
+  if (isLoading) {
+    return <p>Cargando historial...</p>;
+  }
 
   return (
     <div className="space-y-4">
@@ -29,10 +21,10 @@ function ClienteDetalle({ cliente }) {
         Historial de {cliente.nombre}
       </h2>
 
-      {/* ✅ FORM PARA AGREGAR */}
+      {/* ✅ FORM */}
       <HistorialForm
         clienteId={cliente.id}
-        onAdd={cargarHistorial}
+        onAdd={(data) => crearHistorial.mutate(data)}
       />
 
       {/* ✅ LISTA */}

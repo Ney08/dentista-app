@@ -1,8 +1,8 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { API_URL } from "../config";
 
 function HistorialForm({ clienteId, onAdd }) {
-
   const [texto, setTexto] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,7 @@ function HistorialForm({ clienteId, onAdd }) {
     const toastId = toast.loading("Guardando historial...");
 
     try {
-      const res = await fetch("https://dentista-backend-uspt.onrender.com/historiales/", {
+      const res = await fetch(`${API_URL}/historiales/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

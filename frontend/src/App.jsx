@@ -6,7 +6,9 @@ import {
 } from "react-router-dom";
 
 import { Toaster } from "react-hot-toast";
-import { useState } from "react";
+
+// ✅ AUTH GLOBAL
+import { useAuthContext } from "./context/AuthContext";
 
 // ✅ REACT QUERY
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +16,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import DashboardHome from "./pages/DashboardHome";
 import ClientesPage from "./pages/ClientesPage";
 import IngresosPage from "./pages/IngresosPage";
-import CitasPage from "./pages/CitasPage"; // ✅ NUEVO
+import CitasPage from "./pages/CitasPage";
 import ReportesPage from "./pages/ReportesPage";
 import SettingsPage from "./pages/SettingsPage";
 
@@ -26,7 +28,7 @@ const queryClient = new QueryClient();
 
 function App() {
 
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const { token } = useAuthContext();
 
   return (
     <>
@@ -46,11 +48,11 @@ function App() {
       />
 
       {!token ? (
-        <Login setToken={setToken} />
+        <Login />  
       ) : (
         <QueryClientProvider client={queryClient}>
           <Router>
-            <Layout setToken={setToken}>
+            <Layout>
               <Routes>
 
                 <Route path="/" element={<DashboardHome />} />
@@ -70,4 +72,5 @@ function App() {
     </>
   );
 }
+
 export default App;

@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getIngresos,
   crearIngreso,
-  pagarIngreso as pagarIngresoService,
-  actualizarIngreso as actualizarIngresoService
+  pagarIngreso,
+  actualizarIngreso
 } from "../services/ingresoService";
 
 export const useIngresos = () => {
@@ -16,21 +16,29 @@ export const useIngresos = () => {
     isLoading
   } = useQuery({
     queryKey: ["ingresos"],
-    queryFn: getIngresos
+    queryFn: getIngresos,
+    staleTime: 1000 * 60 // ✅ cache 1 min
   });
 
-  // ✅ CREAR INGRESO (optimistic)
+  // ✅ CREAR INGRESO (OPTIMISTIC)
   const crearIngresoMutation = useMutation({
     mutationFn: crearIngreso,
 
     onMutate: async (nuevo) => {
-      await queryClient.cancelQueries(["ingresos"]);
+
+      await queryClient.cancelQueries({
+        queryKey: ["ingresos"]
+      });
 
       const prev = queryClient.getQueryData(["ingresos"]);
 
       queryClient.setQueryData(["ingresos"], (old = []) => [
         ...old,
-        { ...nuevo, id: Date.now(), pagado: false }
+        {
+          ...nuevo,
+          id: Date.now(),
+          pagado: false
+        }
       ]);
 
       return { prev };
@@ -43,22 +51,26 @@ export const useIngresos = () => {
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries(["ingresos"]);
+      queryClient.invalidateQueries({
+        queryKey: ["ingresos"]
+      });
     }
   });
 
-  // ✅ PAGAR INGRESO (🔥 OPTIMISTIC)
+  // ✅ PAGAR INGRESO (OPTIMISTIC)
   const pagarIngresoMutation = useMutation({
-    mutationFn: pagarIngresoService,
+    mutationFn: pagarIngreso,
 
     onMutate: async (id) => {
 
-      await queryClient.cancelQueries(["ingresos"]);
+      await queryClient.cancelQueries({
+        queryKey: ["ingresos"]
+      });
 
       const prev = queryClient.getQueryData(["ingresos"]);
 
-      queryClient.setQueryData(["ingresos"], (old) =>
-        old?.map(i =>
+      queryClient.setQueryData(["ingresos"], (old = []) =>
+        old.map(i =>
           i.id === id ? { ...i, pagado: true } : i
         )
       );
@@ -73,23 +85,27 @@ export const useIngresos = () => {
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries(["ingresos"]);
+      queryClient.invalidateQueries({
+        queryKey: ["ingresos"]
+      });
     }
   });
 
-  // ✅ EDITAR INGRESO (optimistic)
+  // ✅ EDITAR INGRESO (OPTIMISTIC)
   const actualizarIngresoMutation = useMutation({
     mutationFn: ({ id, data }) =>
-      actualizarIngresoService(id, data),
+      actualizarIngreso(id, data),
 
     onMutate: async ({ id, data }) => {
 
-      await queryClient.cancelQueries(["ingresos"]);
+      await queryClient.cancelQueries({
+        queryKey: ["ingresos"]
+      });
 
       const prev = queryClient.getQueryData(["ingresos"]);
 
-      queryClient.setQueryData(["ingresos"], (old) =>
-        old?.map(i =>
+      queryClient.setQueryData(["ingresos"], (old = []) =>
+        old.map(i =>
           i.id === id ? { ...i, ...data } : i
         )
       );
@@ -104,7 +120,9 @@ export const useIngresos = () => {
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries(["ingresos"]);
+      queryClient.invalidateQueries({
+        queryKey: ["ingresos"]
+      });
     }
   });
 

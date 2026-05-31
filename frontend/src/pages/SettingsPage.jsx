@@ -2,9 +2,10 @@ import { useState } from "react";
 import PageWrapper from "../components/PageWrapper";
 import ConfirmModal from "../components/ConfirmModal";
 import toast from "react-hot-toast";
+import { useUser } from "../hooks/useUser";
 
 function SettingsPage() {
-
+  const { updateUser } = useUser();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nuevoPassword, setNuevoPassword] = useState("");
@@ -22,40 +23,29 @@ function SettingsPage() {
 
   // ✅ GUARDAR USUARIO
   const guardarUsuario = async () => {
+  if (!username.trim()) {
+    return toast.error("Usuario vacío ❌");
+  }
 
-    if (!username.trim()) {
-      return toast.error("Usuario vacío ❌");
-    }
+  try {
+    setLoading(true);
 
-    try {
-      setLoading(true);
+    await updateUser(
+      USER_ID,
+      username,
+      password || "temp1234"
+    );
 
-      const res = await fetch(`http://127.0.0.1:8000/users/${USER_ID}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username,
-          password: password || "temp1234"
-        })
-      });
+    toast.success("Usuario actualizado ✅");
 
-      const data = await res.json();
+    setPassword("");
 
-      if (!res.ok) {
-        return toast.error(data.detail || "Error ❌");
-      }
-
-      toast.success("Usuario actualizado ✅");
-
-      // ✅ limpiar opcional
-      setPassword("");
-
-    } catch {
-      toast.error("Error del servidor ❌");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+    toast.error(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ✅ VALIDAR CAMBIO PASSWORD
   const cambiarPassword = () => {
@@ -73,37 +63,27 @@ function SettingsPage() {
 
   // ✅ CONFIRMAR
   const confirmarCambioPassword = async () => {
+  try {
+    setLoading(true);
 
-    try {
-      setLoading(true);
+    await updateUser(
+      USER_ID,
+      username,
+      nuevoPassword
+    );
 
-      const res = await fetch(`http://127.0.0.1:8000/users/${USER_ID}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username,
-          password: nuevoPassword
-        })
-      });
+    toast.success("Contraseña actualizada 🔒");
 
-      const data = await res.json();
+    setPassword("");
+    setNuevoPassword("");
+    setMostrarConfirmacion(false);
 
-      if (!res.ok) {
-        return toast.error(data.detail || "Error ❌");
-      }
-
-      toast.success("Contraseña actualizada 🔒");
-
-      setPassword("");
-      setNuevoPassword("");
-      setMostrarConfirmacion(false);
-
-    } catch {
-      toast.error("Error del servidor ❌");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+    toast.error(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <PageWrapper>

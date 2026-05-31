@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
-function Login({ setToken }) {
+
+function Login() {
+
+  const { login: loginRequest, resetPassword } = useAuth();
 
   // ✅ LOGIN
   const [username, setUsername] = useState(
@@ -19,10 +23,8 @@ function Login({ setToken }) {
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [claveValida, setClaveValida] = useState(false);
 
-  // 🔐 CLAVE MAESTRA (⚠️ SOLO DEMO)
   const CLAVE_SEGURIDAD = "1234";
 
-  // ✅ VALIDACIÓN DE CLAVE
   useEffect(() => {
     if (!claveSeguridad) {
       setClaveValida(false);
@@ -31,7 +33,6 @@ function Login({ setToken }) {
     setClaveValida(claveSeguridad === CLAVE_SEGURIDAD);
   }, [claveSeguridad]);
 
-  // ✅ CERRAR MODAL CON ESC
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") cerrarModal();
@@ -40,7 +41,7 @@ function Login({ setToken }) {
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
 
-  // ✅ LOGIN
+  // ✅ LOGIN (ACTUALIZADO)
   const login = async (e) => {
     e.preventDefault();
 
@@ -52,64 +53,30 @@ function Login({ setToken }) {
     setLoading(true);
 
     try {
-      const res = await fetch("https://dentista-backend-uspt.onrender.com/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username: username.trim(),
-          password: password.trim()
-        })
-      });
+      const token = await loginRequest(username, password);
 
-      let data = {};
-      try {
-        data = await res.json();
-      } catch {
-        // si no hay JSON
-      }
-
-
-      // ✅ MANEJO REAL DEL ERROR
-      if (!res.ok) {
-        console.warn("Error login:", res.status, data);
-
-        toast.error(data?.detail || "Error al iniciar sesión ❌");
-
-        setPassword(""); // limpia contraseña
-        return;
-      }
-
-
-      if (!data.token) {
-        toast.error("Respuesta inválida ❌");
-        return;
-      }
-
-      // ✅ GUARDAR TOKEN
+      // ✅ solo guardas si quieres persistencia extra
       if (recordar) {
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", token);
       } else {
-        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("token", token);
       }
 
-      setToken(data.token);
       localStorage.setItem("lastUser", username);
 
       toast.success(`Bienvenido ${username} ✅`);
 
     } catch (error) {
       console.error(error);
-      toast.error("Error de conexión ❌");
+      toast.error(error.message);
+      setPassword("");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ CAMBIAR CONTRASEÑA
-  const recuperarPassword = async () => {
 
+  const recuperarPassword = async () => {
     if (!username.trim()) {
       toast.error("Escribe el usuario ⚠️");
       return;
@@ -128,39 +95,17 @@ function Login({ setToken }) {
     setLoading(true);
 
     try {
-      const res = fetch("https://dentista-backend-uspt.onrender.com/users/reset", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username: username.trim(),
-          password: nuevaPassword.trim()
-        })
-      });
-
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
-      }
-
-      if (!res.ok) {
-        toast.error(data?.detail || "Error al cambiar ❌");
-        return;
-      }
+      await resetPassword(username, nuevaPassword);
 
       toast.success("Contraseña cambiada ✅");
 
       setNuevaPassword("");
       setClaveSeguridad("");
-
       cerrarModal();
 
     } catch (error) {
       console.error(error);
-      toast.error("Error del servidor ❌");
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }

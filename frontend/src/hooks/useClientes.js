@@ -3,27 +3,28 @@ import {
   getClientes,
   crearCliente,
   eliminarCliente,
-  actualizarCliente as updateClienteService
+  actualizarCliente
 } from "../services/clienteService";
 
 export const useClientes = () => {
 
   const queryClient = useQueryClient();
 
-  // ✅ OBTENER CLIENTES
+  // ✅ GET CLIENTES
   const {
     data: clientes = [],
     isLoading
   } = useQuery({
     queryKey: ["clientes"],
-    queryFn: getClientes
+    queryFn: getClientes,
+    staleTime: 1000 * 60 // ✅ 1 min cache (mejora rendimiento)
   });
 
   // ✅ CREAR CLIENTE
   const crearClienteMutation = useMutation({
     mutationFn: crearCliente,
     onSuccess: () => {
-      queryClient.invalidateQueries(["clientes"]);
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
     }
   });
 
@@ -31,16 +32,16 @@ export const useClientes = () => {
   const eliminarClienteMutation = useMutation({
     mutationFn: eliminarCliente,
     onSuccess: () => {
-      queryClient.invalidateQueries(["clientes"]);
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
     }
   });
 
   // ✅ EDITAR CLIENTE
   const editarClienteMutation = useMutation({
     mutationFn: ({ id, data }) =>
-      updateClienteService(id, data),
+      actualizarCliente(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(["clientes"]);
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
     }
   });
 

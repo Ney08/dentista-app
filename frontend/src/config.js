@@ -1,0 +1,1 @@
+export const API_URL = "https://dentista-backend-uspt.onrender.com";

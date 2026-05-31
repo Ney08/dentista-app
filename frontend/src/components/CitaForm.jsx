@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-
+import { API_URL } from "../config";
 import serviciosCatalogo from "../data/servicios.json";
 
 function CitaForm({ clientes, onCrear }) {
-
   const [clienteId, setClienteId] = useState("");
   const [fechaBase, setFechaBase] = useState(new Date());
   const [hora, setHora] = useState("");
@@ -17,7 +16,7 @@ function CitaForm({ clientes, onCrear }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("https://dentista-backend-uspt.onrender.com/citas/")
+    fetch(`${API_URL}/citas/`)
       .then(res => res.json())
       .then(setCitas);
   }, []);
@@ -95,7 +94,7 @@ function CitaForm({ clientes, onCrear }) {
     setLoading(true);
 
     try {
-      await fetch("https://dentista-backend-uspt.onrender.com/citas/", {
+      await fetch(`${API_URL}/citas/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

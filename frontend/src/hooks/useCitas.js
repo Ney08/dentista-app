@@ -1,14 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_URL } from "../config";
 
 export const useCitas = () => {
-
   const queryClient = useQueryClient();
 
   // ✅ GET CITAS
   const { data: citas = [], isLoading } = useQuery({
     queryKey: ["citas"],
     queryFn: async () => {
-      const res = await fetch("http://127.0.0.1:8000/citas/");
+      const res = await fetch(`${API_URL}/citas/`);
 
       if (!res.ok) throw new Error("Error al cargar citas");
 
@@ -24,7 +24,7 @@ export const useCitas = () => {
   const crearCita = useMutation({
     mutationFn: async (nuevaCita) => {
 
-      const res = await fetch("http://127.0.0.1:8000/citas/", {
+      const res = await fetch(`${API_URL}/citas/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -43,12 +43,12 @@ export const useCitas = () => {
 
     // ✅ OPTIMISTIC UPDATE (SIN DUPLICAR)
     onMutate: async () => {
-      await queryClient.cancelQueries(["citas"]);
+      await queryClient.cancelQueries({ queryKey: ["citas"] });
     },
 
     // ✅ SIÉMPRE REFRESCAR (CLAVE)
     onSuccess: () => {
-      queryClient.invalidateQueries(["citas"]);
+      queryClient.invalidateQueries({ queryKey: ["citas"] });
     },
 
     // ✅ SI FALLA
@@ -62,7 +62,7 @@ export const useCitas = () => {
     mutationFn: async (id) => {
 
       const res = await fetch(
-        `http://127.0.0.1:8000/citas/${id}/completar`,
+        `${API_URL}/citas/${id}/completar`,
         {
           method: "PUT",
         }

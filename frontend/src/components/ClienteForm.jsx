@@ -5,9 +5,9 @@ import { useClientes } from "../hooks/useClientes";
 
 import provincias from "../data/provincias.json";
 import municipios from "../data/municipios.json";
+import { API_URL } from "../config";
 
 function ClienteForm() {
-
   const { crearCliente } = useClientes();
 
   const {
@@ -39,7 +39,7 @@ function ClienteForm() {
     const timeout = setTimeout(async () => {
       try {
         const res = await fetch(
-          `http://127.0.0.1:8000/clientes/?cedula=${cedulaInput}`
+          `${API_URL}/clientes/?cedula=${cedulaInput}`
         );
         const data = await res.json();
 
