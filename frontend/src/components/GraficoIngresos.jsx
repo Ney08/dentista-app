@@ -17,7 +17,12 @@ function GraficoIngresos({ ingresos = [] }) {
 
     const servicios = Array.isArray(i.servicios) ? i.servicios : [];
 
+    // ✅ CALCULO REAL (PRO)
     const subtotal = servicios.reduce((acc, s) => acc + (s.monto || 0), 0);
+    const itbis = subtotal * 0.18;
+    const descuento = subtotal * ((i.descuento || 0) / 100);
+
+    const totalFactura = subtotal + itbis - descuento;
 
     const fecha = new Date(i.created_at || Date.now());
     const mes = fecha.getMonth();
@@ -26,8 +31,7 @@ function GraficoIngresos({ ingresos = [] }) {
       ingresosPorMes[mes] = 0;
     }
 
-    ingresosPorMes[mes] += subtotal;
-
+    ingresosPorMes[mes] += totalFactura; // ✅ AHORA USA TOTAL REAL
   });
 
   const nombresMeses = [
@@ -46,7 +50,7 @@ function GraficoIngresos({ ingresos = [] }) {
         data: dataValues,
         backgroundColor: "#3b82f6",
         borderRadius: 8,
-        barThickness: 40 // ✅ controla ancho de barras
+        barThickness: 40
       }
     ]
   };
@@ -56,22 +60,27 @@ function GraficoIngresos({ ingresos = [] }) {
     maintainAspectRatio: false,
 
     plugins: {
-      legend: { display: false } // ✅ quitar leyenda inútil
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (context) => `RD$ ${context.raw.toFixed(2)}`
+        }
+      }
     },
 
     scales: {
       x: {
         ticks: {
-          font: { size: 11 } // ✅ texto más pequeño
+          font: { size: 11 }
         },
-        grid: { display: false } // ✅ limpio
+        grid: { display: false }
       },
 
       y: {
         beginAtZero: true,
         ticks: {
           font: { size: 10 },
-          callback: (value) => `RD$ ${value}` // ✅ formato bonito
+          callback: (value) => `RD$ ${value}`
         },
         grid: {
           color: "#eee"

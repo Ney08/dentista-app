@@ -16,20 +16,89 @@ function DashboardHome() {
   const { ingresos } = useIngresos();
   const { citas = [] } = useCitas();
 
+  const ahora = new Date();
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
 
-  // ✅ CITAS HOY
-  const citasHoy = citas.filter((c) => {
-    if (!c.fecha) return false;
+  // ✅ HELPER
+  const esHoy = (fechaStr) => {
+    if (!fechaStr) return false;
 
-    const fecha = new Date(c.fecha);
-    fecha.setHours(0, 0, 0, 0);
+    const fecha = new Date(fechaStr);
 
     return (
-      fecha.getTime() === hoy.getTime() &&
-      c.estado !== "completada"
+      fecha.getDate() === ahora.getDate() &&
+      fecha.getMonth() === ahora.getMonth() &&
+      fecha.getFullYear() === ahora.getFullYear()
     );
+  };
+
+  // ✅ ESTADOS
+  const getEstado = (c) => {
+    if (c.estado === "cancelada") return "cancelada";
+    if (c.estado === "completada") return "completada";
+
+    const fecha = new Date(c.fecha);
+
+    if (fecha < ahora) return "atrasada";
+
+    return "pendiente";
+  };
+
+  // ✅ CITAS DE HOY
+  const citasHoy = citas
+    .filter(c => esHoy(c.fecha))
+    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+  // ✅ CONTADORES ESTADOS
+  const pendientes = citas.filter(c => getEstado(c) === "pendiente").length;
+  const atrasadas = citas.filter(c => getEstado(c) === "atrasada").length;
+  const completadas = citas.filter(c => getEstado(c) === "completada").length;
+  const canceladas = citas.filter(c => getEstado(c) === "cancelada").length;
+
+  // ✅ DATOS DEL DÍA
+  const clientesHoy = clientes.filter(c => esHoy(c.created_at)).length;
+  const cantidadCitasHoy = citasHoy.length;
+
+  let pagadoHoy = 0;
+  let pendienteHoy = 0;
+  let facturasHoy = 0;
+
+  // ✅ MES
+  let totalMes = 0;
+  const mesActual = ahora.getMonth();
+  const anioActual = ahora.getFullYear();
+
+  ingresos.forEach(i => {
+
+    const servicios = i.servicios || [];
+
+    const subtotal = servicios.reduce((acc, s) => acc + s.monto, 0);
+    const itbis = subtotal * 0.18;
+    const descuento = subtotal * ((i.descuento || 0) / 100);
+
+    const total = subtotal + itbis - descuento;
+
+    // ✅ SOLO HOY
+    if (esHoy(i.created_at)) {
+      facturasHoy++;
+
+      if (i.pagado) pagadoHoy += total;
+      else pendienteHoy += total;
+    }
+
+    // ✅ MES
+    if (i.created_at) {
+      const fecha = new Date(i.created_at);
+
+      if (
+        fecha.getMonth() === mesActual &&
+        fecha.getFullYear() === anioActual
+      ) {
+        totalMes += total;
+      }
+    }
+
   });
 
   // ✅ TOAST
@@ -41,43 +110,6 @@ function DashboardHome() {
     }
   }, [citasHoy.length]);
 
-  // ✅ CALCULOS
-  let totalFacturado = 0;
-  let totalPagado = 0;
-  let totalPendiente = 0;
-  let totalMes = 0;
-
-  const mesActual = hoy.getMonth();
-  const anioActual = hoy.getFullYear();
-
-  ingresos.forEach(i => {
-
-    const servicios = i.servicios || [];
-
-    const subtotal = servicios.reduce((acc, s) => acc + s.monto, 0);
-    const itbis = subtotal * 0.18;
-    const descuento = subtotal * ((i.descuento || 0) / 100);
-
-    const totalFactura = subtotal + itbis - descuento;
-
-    totalFacturado += totalFactura;
-
-    if (i.pagado) totalPagado += totalFactura;
-    else totalPendiente += totalFactura;
-
-    if (i.created_at) {
-      const fecha = new Date(i.created_at);
-
-      if (
-        fecha.getMonth() === mesActual &&
-        fecha.getFullYear() === anioActual
-      ) {
-        totalMes += totalFactura;
-      }
-    }
-
-  });
-
   const formato = (n) => `RD$ ${n.toFixed(2)}`;
 
   return (
@@ -85,72 +117,108 @@ function DashboardHome() {
 
       <div className="max-w-6xl mx-auto space-y-8">
 
-        {/* ✅ HEADER */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">
-            Dashboard 📊
-          </h1>
+        {/* HEADER */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold">Dashboard 📊</h1>
           <p className="text-gray-500 text-sm">
             {new Date().toLocaleDateString()}
           </p>
         </div>
 
-        {/* ✅ CITAS DE HOY (SIN HOVER SCALE) */}
-        <div className="bg-yellow-100 p-5 rounded-xl shadow-sm">
-          <h3 className="font-semibold mb-3">
-            📅 Citas de hoy
-          </h3>
+        {/* ESTADOS CITAS */}
+        <div className="flex flex-wrap justify-center gap-3">
+          <div className="bg-yellow-100 px-4 py-2 rounded-lg">
+            🟡 {pendientes} Pendientes
+          </div>
+          <div className="bg-red-100 px-4 py-2 rounded-lg">
+            🔴 {atrasadas} Atrasadas
+          </div>
+          <div className="bg-green-100 px-4 py-2 rounded-lg">
+            ✅ {completadas} Completadas
+          </div>
+          <div className="bg-gray-200 px-4 py-2 rounded-lg">
+            ⛔ {canceladas} Canceladas
+          </div>
+        </div>
+
+        {/* CITAS HOY */}
+        <div className="bg-yellow-100 p-5 rounded-xl">
+          <h3 className="font-semibold mb-3">📅 Citas de hoy</h3>
 
           {citasHoy.length === 0 ? (
             <p>No hay citas ✅</p>
           ) : (
             <div className="grid sm:grid-cols-2 gap-3 max-h-52 overflow-y-auto">
 
-              {citasHoy.map(c => (
-                <div
-                  key={c.id}
-                  className="bg-white p-4 rounded-xl shadow-sm"
-                >
-                  <p className="font-bold">
-                    🕒 {new Date(c.fecha).toLocaleTimeString()}
-                  </p>
+              {citasHoy.map(c => {
+                const estado = getEstado(c);
 
-                  <p className="text-gray-600 text-sm">
-                    {c.motivo}
-                  </p>
-                </div>
-              ))}
+                return (
+                  <div
+                    key={c.id}
+                    className={`p-4 rounded-xl border shadow-sm space-y-2
+                      ${estado === "atrasada" ? "bg-red-50 border-red-200" : "bg-white"}
+                    `}
+                  >
+                    <p className="font-bold">
+                      🕒 {new Date(c.fecha).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
+                    </p>
+
+                    <p className="text-gray-600 text-sm">{c.motivo}</p>
+
+                    <span className={`px-3 py-1 rounded-lg text-xs
+                      ${estado === "completada"
+                        ? "bg-green-100 text-green-700"
+                        : estado === "atrasada"
+                        ? "bg-red-100 text-red-700"
+                        : estado === "cancelada"
+                        ? "bg-gray-300 text-gray-700"
+                        : "bg-yellow-100 text-yellow-700"
+                      }
+                    `}>
+                      {estado === "completada" && "✅ Completada"}
+                      {estado === "atrasada" && "🔴 Atrasada"}
+                      {estado === "cancelada" && "⛔ Cancelada"}
+                      {estado === "pendiente" && "🟡 Pendiente"}
+                    </span>
+
+                  </div>
+                );
+              })}
 
             </div>
           )}
         </div>
 
-        {/* ✅ CARDS */}
+        {/* ✅ CARDS DEL DÍA */}
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 
           <div className="card bg-blue-100">
-            <p>Clientes</p>
-            <p className="text-2xl font-bold">{clientes.length}</p>
+            <p>Clientes nuevos hoy</p>
+            <p className="text-2xl font-bold">{clientesHoy}</p>
           </div>
 
           <div className="card bg-indigo-100">
-            <p>Facturado</p>
-            <p className="text-2xl font-bold">{formato(totalFacturado)}</p>
+            <p>Citas hoy</p>
+            <p className="text-2xl font-bold">{cantidadCitasHoy}</p>
           </div>
 
           <div className="card bg-green-100">
-            <p>Pagado</p>
-            <p className="text-2xl font-bold">{formato(totalPagado)}</p>
+            <p>Pagado hoy</p>
+            <p className="text-2xl font-bold">{formato(pagadoHoy)}</p>
           </div>
 
-          <div className={`card ${totalPendiente > 0 ? "bg-red-100" : "bg-green-100"}`}>
-            <p>Pendiente</p>
-            <p className="text-2xl font-bold">{formato(totalPendiente)}</p>
+          <div className={`card ${pendienteHoy > 0 ? "bg-red-100" : "bg-green-100"}`}>
+            <p>Pendiente hoy</p>
+            <p className="text-2xl font-bold">{formato(pendienteHoy)}</p>
           </div>
 
           <div className="card bg-purple-100">
-            <p>Facturas</p>
-            <p className="text-2xl font-bold">{ingresos.length}</p>
+            <p>Facturas hoy</p>
+            <p className="text-2xl font-bold">{facturasHoy}</p>
           </div>
 
           <div className="card bg-gray-100">
@@ -160,39 +228,25 @@ function DashboardHome() {
 
         </div>
 
-        {/* ✅ 3 GRÁFICOS */}
+        {/* GRÁFICOS */}
         <div className="grid gap-6 lg:grid-cols-3">
 
-          {/* INGRESOS */}
           <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="text-center font-semibold mb-4">
-              📈 Ingresos
-            </h3>
-
-
-            <div className="w-full h-[250px]">
+            <h3 className="text-center font-semibold mb-4">📈 Ingresos</h3>
+            <div className="h-[250px]">
               <GraficoIngresos ingresos={ingresos} />
             </div>
-
           </div>
 
-          {/* CLIENTES */}
           <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="text-center font-semibold mb-4">
-              👥 Clientes
-            </h3>
-
+            <h3 className="text-center font-semibold mb-4">👥 Clientes</h3>
             <div className="h-[250px]">
               <GraficoClientes clientes={clientes} />
             </div>
           </div>
 
-          {/* ✅ CITAS */}
           <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="text-center font-semibold mb-4">
-              📅 Citas
-            </h3>
-
+            <h3 className="text-center font-semibold mb-4">📅 Citas</h3>
             <div className="h-[250px]">
               <GraficoCitas citas={citas} />
             </div>
