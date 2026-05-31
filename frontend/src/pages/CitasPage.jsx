@@ -13,17 +13,44 @@ function CitasPage() {
   const {
     citas,
     completarCita,
+    cancelarCita,
     isLoading
   } = useCitas();
 
-  const [vista, setVista] = useState("lista");
-  const [limite, setLimite] = useState(10);
-  const [pagina, setPagina] = useState(1);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [citaEditar, setCitaEditar] = useState(null);
   const [filtro, setFiltro] = useState("todas");
 
   const hoy = new Date();
 
-  // ✅ FILTRO (HOY / TODAS)
+  const abrirCrear = () => {
+    setCitaEditar(null);
+    setModalAbierto(true);
+  };
+
+  const abrirEditar = (c) => {
+    setCitaEditar(c);
+    setModalAbierto(true);
+  };
+
+  const cerrarModal = () => {
+    setModalAbierto(false);
+    setCitaEditar(null);
+  };
+
+
+  const getEstado = (c) => {
+    if (c.estado === "cancelada") return "cancelada";
+    if (c.estado === "completada") return "completada";
+
+    const fecha = new Date(c.fecha);
+    const ahora = new Date();
+
+    if (fecha < ahora) return "atrasada";
+
+    return "pendiente";
+  };
+
   const citasFiltradas = citas.filter(c => {
     const f = new Date(c.fecha);
 
@@ -38,33 +65,17 @@ function CitasPage() {
     return true;
   });
 
-  // ✅ ALERTA HOY
-  const citasHoy = citasFiltradas.filter(
-    c =>
-      new Date(c.fecha).toDateString() === hoy.toDateString() &&
-      c.estado !== "completada"
-  );
+  const citasActivas = citas.filter(c => c.estado !== "cancelada");
 
-  // ✅ ORDENAR
+  const pendientes = citasActivas.filter(c => getEstado(c) === "pendiente").length;
+  const atrasadas = citasActivas.filter(c => getEstado(c) === "atrasada").length;
+  const completadas = citasActivas.filter(c => getEstado(c) === "completada").length;
+  const canceladas = citas.filter(c => c.estado === "cancelada").length;
+
   const ordenadas = [...citasFiltradas].sort(
     (a, b) => new Date(a.fecha) - new Date(b.fecha)
   );
 
-  // ✅ PAGINACIÓN
-  const inicio = (pagina - 1) * (limite === "all" ? ordenadas.length : limite);
-  const fin = limite === "all" ? undefined : inicio + limite;
-
-  const citasFinal =
-    limite === "all"
-      ? ordenadas
-      : ordenadas.slice(inicio, fin);
-
-  const totalPaginas =
-    limite === "all"
-      ? 1
-      : Math.ceil(ordenadas.length / limite);
-
-  // ✅ LOADING
   if (isLoading) {
     return (
       <PageWrapper>
@@ -78,216 +89,247 @@ function CitasPage() {
 
       <div className="max-w-4xl mx-auto space-y-6">
 
-        {/* ✅ HEADER */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">
-            Citas 📅
-          </h1>
+        {/* HEADER */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold">Citas 📅</h1>
           <p className="text-gray-500 text-sm">
             Gestiona las citas del sistema
           </p>
         </div>
 
-        {/* ✅ ALERTA */}
-        {citasHoy.length > 0 && (
-          <div className="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center">
-            Tienes {citasHoy.length} cita(s) hoy ⚡
-          </div>
-        )}
+        {/* CARD PRINCIPAL */}
+        <div className="bg-white p-6 rounded-2xl shadow-md space-y-5">
 
-        {/* ✅ TABS */}
-        <div className="flex justify-center gap-3">
-          <button
-            onClick={() => setVista("lista")}
-            className={`px-5 py-2 rounded-full ${
-              vista === "lista"
-                ? "bg-blue-500 text-white shadow"
-                : "bg-gray-200 hover:bg-gray-300"
-            }`}
-          >
-            📋 Lista
-          </button>
+          {/* TOP BAR */}
+          <div className="flex flex-wrap justify-between items-center gap-3">
 
-          <button
-            onClick={() => setVista("crear")}
-            className={`px-5 py-2 rounded-full ${
-              vista === "crear"
-                ? "bg-green-500 text-white shadow"
-                : "bg-gray-200 hover:bg-gray-300"
-            }`}
-          >
-            ➕ Crear
-          </button>
-        </div>
+            {/* IZQUIERDA */}
+            <div className="flex gap-2 flex-wrap">
 
-        {/* ✅ CREAR */}
-        {vista === "crear" && (
-          <div className="bg-white p-6 rounded-2xl shadow-md border">
-            <CitaForm
-              clientes={clientes}
-              onCrear={() => {
-                toast.success("Cita creada ✅");
-                setVista("lista");
-              }}
-            />
-          </div>
-        )}
+              <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-sm">
+                🟡 {pendientes}
+              </span>
 
-        {/* ✅ LISTA */}
-        {vista === "lista" && (
+              <span className="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm">
+                🔴 {atrasadas}
+              </span>
 
-          <div className="bg-white p-6 rounded-2xl shadow-md border space-y-5">
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm">
+                ✅ {completadas}
+              </span>
 
-            {/* ✅ CONTROLES PRO */}
-            <div className="flex flex-wrap justify-between items-center gap-4 border-b pb-3">
-
-              <p className="text-sm text-gray-500">
-                Total: {ordenadas.length} citas
-              </p>
-
-              <div className="flex items-center gap-3">
-
-                {/* FILTRO */}
-                <select
-                  value={filtro}
-                  onChange={(e) => {
-                    setFiltro(e.target.value);
-                    setPagina(1);
-                  }}
-                  className="border px-2 py-1 rounded text-sm"
-                >
-                  <option value="todas">Todas</option>
-                  <option value="hoy">Solo hoy</option>
-                </select>
-
-                {/* LIMITE */}
-                <select
-                  value={limite}
-                  onChange={(e) => {
-                    const val =
-                      e.target.value === "all"
-                        ? "all"
-                        : parseInt(e.target.value);
-
-                    setLimite(val);
-                    setPagina(1);
-                  }}
-                  className="border px-2 py-1 rounded text-sm"
-                >
-                  <option value={10}>10</option>
-                  <option value={50}>50</option>
-                  <option value="all">Todos</option>
-                </select>
-
-              </div>
+              <span className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg text-sm">
+                ⛔ {canceladas}
+              </span>
 
             </div>
 
-            {/* ✅ LISTA */}
-            {citasFinal.length === 0 ? (
-              <p className="text-center text-gray-500">
-                No hay citas...
-              </p>
-            ) : (
-              <div className="space-y-5">
+            {/* DERECHA */}
+            <div className="flex gap-2 items-center">
 
-                {citasFinal.map(c => {
+              <select
+                value={filtro}
+                onChange={(e) => setFiltro(e.target.value)}
+                className="border px-2 py-1 rounded text-sm"
+              >
+                <option value="todas">Todas</option>
+                <option value="hoy">Solo hoy</option>
+              </select>
 
-                  const fecha = new Date(c.fecha);
+              <button
+                onClick={abrirCrear}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm shadow"
+              >
+                ➕ Nueva
+              </button>
 
-                  const esHoy =
-                    fecha.toDateString() === hoy.toDateString() &&
-                    c.estado !== "completada";
-
-                  return (
-                    <div
-                      key={c.id}
-                      className={`
-                        flex items-center justify-between
-                        bg-white border border-gray-200 border-l-4 rounded-xl p-4
-                        shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition
-                        ${esHoy ? "border-yellow-400" : "border-blue-400"}
-                      `}
-                    >
-
-                      {/* INFO */}
-                      <div>
-                        <p className="font-semibold text-gray-800">
-                          {c.cliente?.nombre} {c.cliente?.apellido}
-                        </p>
-
-                        <p className="text-sm text-gray-500">
-                          {fecha.toLocaleDateString()} — {fecha.toLocaleTimeString()}
-                        </p>
-
-                        {c.motivo && (
-                          <p className="text-sm text-gray-400">
-                            Motivo: {c.motivo}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* DERECHA */}
-                      <div className="flex items-center gap-2">
-
-                        <span className={`px-3 py-1 text-sm rounded-lg ${
-                          c.estado === "completada"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-yellow-100 text-yellow-700"
-                        }`}>
-                          {c.estado === "completada" ? "Completada ✅" : "Pendiente"}
-                        </span>
-
-                        {c.estado !== "completada" && (
-                          <button
-                            onClick={async () => {
-                              try {
-                                await completarCita.mutateAsync(c.id);
-                                toast.success("Cita completada ✅");
-                              } catch {
-                                toast.error("Error ❌");
-                              }
-                            }}
-                            className="px-3 py-1 text-sm bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-sm"
-                          >
-                            ✅ Completar
-                          </button>
-                        )}
-
-                      </div>
-
-                    </div>
-                  );
-                })}
-
-              </div>
-            )}
-
-            {/* ✅ PAGINACIÓN */}
-            {limite !== "all" && totalPaginas > 1 && (
-              <div className="flex justify-center gap-2 pt-4 border-t">
-
-                {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(num => (
-                  <button
-                    key={num}
-                    onClick={() => setPagina(num)}
-                    className={`px-3 py-1 rounded-full ${
-                      pagina === num
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 hover:bg-gray-300"
-                    }`}
-                  >
-                    {num}
-                  </button>
-                ))}
-
-              </div>
-            )}
+            </div>
 
           </div>
-        )}
+
+          {/* LISTA */}
+          <div className="space-y-3">
+
+            {ordenadas.map(c => {
+
+              const estado = getEstado(c);
+              const fecha = new Date(c.fecha);
+
+              const estadoStyle = {
+                pendiente: "bg-yellow-100 text-yellow-800 border-yellow-300",
+                atrasada: "bg-red-100 text-red-800 border-red-300",
+                completada: "bg-green-100 text-green-800 border-green-300",
+                cancelada: "bg-gray-200 text-gray-700 border-gray-300"
+              };
+
+              const bordeLateral = {
+                pendiente: "border-l-yellow-400",
+                atrasada: "border-l-red-400",
+                completada: "border-l-green-400",
+                cancelada: "border-l-gray-400"
+              };
+
+              const estadoText = {
+                pendiente: "🟡 Pendiente",
+                atrasada: "🔴 Atrasada",
+                completada: "✅ Completada",
+                cancelada: "⛔ Cancelada"
+              };
+
+              return (
+
+                <div
+                  key={c.id}
+                  className={`
+    p-4 rounded-xl flex justify-between items-center border-l-4 transition-all
+    ${bordeLateral[estado]}
+    ${estado === "cancelada" ? "opacity-60" : ""}
+    ${estado === "pendiente" ? "bg-yellow-50" : ""}
+    hover:shadow-lg hover:-translate-y-0.5
+  `}
+                >
+
+
+                  {/* INFO */}
+                  <div className="space-y-1">
+                    <p className="font-semibold text-gray-800">
+                      {c.cliente?.nombre}
+                    </p>
+
+                    <p className="text-sm font-medium text-gray-700">
+                      {fecha.toLocaleDateString()} —{" "}
+                      {fecha.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
+                    </p>
+
+                    <p className="text-sm text-gray-400">
+                      {c.motivo}
+                    </p>
+                  </div>
+
+                  {/* DERECHA */}
+                  <div className="flex items-center gap-2">
+
+                    {/* ESTADO */}
+
+                    <span
+                      className={`
+    px-3 py-1 text-xs rounded-full border flex items-center gap-1
+    shadow-sm
+    ${estadoStyle[estado]}
+  `}
+                    >
+
+                      {estadoText[estado]}
+                    </span>
+
+                    {/* BOTONES */}
+                    {estado === "pendiente" && (
+                      <>
+                        <button
+                          title="Marcar como completada"
+                          onClick={() => completarCita.mutate(c.id)}
+                          className="
+                bg-green-500 hover:bg-green-600
+                text-white w-8 h-8 flex items-center justify-center
+                rounded-lg shadow-sm transition
+              "
+                        >
+                          ✅
+                        </button>
+
+                        <button
+                          title="Editar cita"
+                          onClick={() => abrirEditar(c)}
+                          className="
+                bg-blue-500 hover:bg-blue-600
+                text-white w-8 h-8 flex items-center justify-center
+                rounded-lg shadow-sm transition
+              "
+                        >
+                          ✏️
+                        </button>
+
+                        <button
+                          title="Cancelar cita"
+                          onClick={async () => {
+                            await cancelarCita.mutateAsync(c.id);
+                            toast.success("Cancelada");
+                          }}
+                          className="
+                bg-gray-500 hover:bg-gray-600
+                text-white w-8 h-8 flex items-center justify-center
+                rounded-lg shadow-sm transition
+              "
+                        >
+                          ⛔
+                        </button>
+                      </>
+                    )}
+
+                    {estado === "atrasada" && (
+                      <>
+                        <button
+                          title="Reagendar cita"
+                          onClick={() => abrirEditar(c)}
+                          className="
+                bg-blue-500 hover:bg-blue-600
+                text-white w-8 h-8 flex items-center justify-center
+                rounded-lg shadow-sm transition
+              "
+                        >
+                          ✏️
+                        </button>
+
+                        <button
+                          title="Cancelar cita"
+                          onClick={async () => {
+                            await cancelarCita.mutateAsync(c.id);
+                            toast.success("Cancelada");
+                          }}
+                          className="
+                bg-gray-500 hover:bg-gray-600
+                text-white w-8 h-8 flex items-center justify-center
+                rounded-lg shadow-sm transition
+              "
+                        >
+                          ⛔
+                        </button>
+                      </>
+                    )}
+
+                  </div>
+
+                </div>
+              );
+            })}
+
+
+          </div>
+
+        </div>
 
       </div>
+
+      {/* MODAL */}
+      {modalAbierto && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+          <div className="flex items-center justify-center min-h-screen p-6">
+
+            <CitaForm
+              clientes={clientes}
+              cita={citaEditar}
+              onCrear={() => { }}
+              onClose={cerrarModal}
+            />
+
+          </div>
+
+        </div>
+      )}
 
     </PageWrapper>
   );

@@ -3,9 +3,14 @@ import toast from "react-hot-toast";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { API_URL } from "../config";
+import { useCitas } from "../hooks/useCitas";
 import serviciosCatalogo from "../data/servicios.json";
 
-function CitaForm({ clientes, onCrear }) {
+function CitaForm({ clientes, onCrear, cita, onClose }) {
+  const [horaSeleccionadaManual, setHoraSeleccionadaManual] = useState(false);
+  const { crearCita, actualizarCita } = useCitas();
+  const isEdit = !!cita;
+
   const [clienteId, setClienteId] = useState("");
   const [fechaBase, setFechaBase] = useState(new Date());
   const [hora, setHora] = useState("");
@@ -15,33 +20,70 @@ function CitaForm({ clientes, onCrear }) {
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // ✅ LOAD CITAS
   useEffect(() => {
     fetch(`${API_URL}/citas/`)
       .then(res => res.json())
       .then(setCitas);
   }, []);
 
+  // ✅ PRECARGA SI EDITA
+  useEffect(() => {
+    if (isEdit) {
+      setClienteId(cita.cliente_id);
+      setMotivo(cita.motivo || "");
+      setDetalle(cita.detalle || "");
+
+      const fecha = new Date(cita.fecha);
+      setFechaBase(fecha);
+
+      const horaStr = fecha.toTimeString().slice(0, 5);
+      setHora(horaStr);
+    }
+  }, [cita]);
+
+  // ✅ VALIDAR OCUPADO (IGNORA LA MISMA CITA)
   const estaOcupada = (fechaNueva) => {
     const nueva = new Date(fechaNueva);
 
     return citas.some((c) => {
+      if (isEdit && c.id === cita.id) return false;
+
       const existente = new Date(c.fecha);
       const diff = Math.abs(nueva - existente) / (1000 * 60);
       return diff < duracion;
     });
   };
+  // ✅ VALIDAR DÍA LLENO
+  const estaDiaLleno = (fecha) => {
+    const horas = generarHoras();
+
+    const disponible = horas.some(h => {
+      const fechaTest = new Date(`${fecha.toISOString().split("T")[0]}T${h}`);
+      return !estaOcupada(fechaTest);
+    });
+
+    return !disponible;
+  };
+
+
 
   const generarHoras = () => {
     const horas = [];
+
     for (let h = 8; h <= 18; h++) {
-      for (let m = 0; m < 60; m += duracion) {
-        horas.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+      for (let m = 0; m < 60; m += 15) { // ✅ SIEMPRE 15 min
+        horas.push(
+          `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
+        );
       }
     }
+
     return horas;
   };
 
-  // ✅ NORMALIZAR HOY (SIN HORA)
+
+
   const getHoy = () => {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
@@ -55,8 +97,12 @@ function CitaForm({ clientes, onCrear }) {
     return test.getTime() === hoy.getTime();
   };
 
-  // ✅ AUTO SELECCIÓN HORA
+  // ✅ AUTO HORA
   useEffect(() => {
+
+    if (isEdit) return;
+    if (horaSeleccionadaManual) return;
+
     const ahora = new Date();
 
     const libre = generarHoras().find(h => {
@@ -67,7 +113,9 @@ function CitaForm({ clientes, onCrear }) {
       return !estaOcupada(fechaTest);
     });
 
-    if (libre) setHora(libre);
+    if (libre && !hora) {
+      setHora(libre);
+    }
 
   }, [fechaBase, duracion]);
 
@@ -77,9 +125,33 @@ function CitaForm({ clientes, onCrear }) {
       top: 0,
       behavior: "smooth"
     });
+    setHoraSeleccionadaManual(false);
   }, [fechaBase]);
+  const bloqueDisponible = (fechaInicio, duracionMin) => {
 
-  const crear = async () => {
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(inicio.getTime() + duracionMin * 60000);
+
+    return !citas.some(c => {
+      if (isEdit && c.id === cita.id) return false;
+
+      const existenteInicio = new Date(c.fecha);
+      const existenteFin = new Date(existenteInicio.getTime() + duracionMin * 60000);
+
+      return (
+        inicio < existenteFin &&
+        fin > existenteInicio
+      );
+    });
+  };
+
+  // ✅ CREAR / EDITAR
+  const guardar = async () => {
+
+    if (!bloqueDisponible(fechaFinal, duracion)) {
+      return toast.error("Ese horario no tiene espacio suficiente ⏰");
+    }
+
     if (!clienteId || !hora || !motivo)
       return toast.error("Completa los campos ⚠️");
 
@@ -94,25 +166,33 @@ function CitaForm({ clientes, onCrear }) {
     setLoading(true);
 
     try {
-      await fetch(`${API_URL}/citas/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+
+      if (isEdit) {
+        await actualizarCita.mutateAsync({
+          id: cita.id,
+          data: {
+            cliente_id: parseInt(clienteId),
+            fecha: fechaFinal,
+            motivo,
+            detalle
+          }
+        });
+
+        toast.success("Cita actualizada ✅");
+
+      } else {
+
+        await crearCita.mutateAsync({
           cliente_id: parseInt(clienteId),
           fecha: fechaFinal,
           motivo,
           detalle
-        })
-      });
+        });
 
-      toast.success("Cita creada ✅");
-
-      setClienteId("");
-      setHora("");
-      setMotivo("");
-      setDetalle("");
-
+        toast.success("Cita creada ✅");
+      }
       onCrear();
+      onClose();
 
     } catch {
       toast.error("Error ❌");
@@ -122,12 +202,20 @@ function CitaForm({ clientes, onCrear }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md border p-6 space-y-6">
+    <div className="
+w-full max-w-3xl
+  bg-white rounded-3xl
+  shadow-xl border border-gray-100
+  p-10 space-y-10
+  animate-fadeIn
+">
 
       <div className="text-center">
-        <h2 className="text-xl font-bold">Nueva cita 📅</h2>
+        <h2 className="text-xl font-bold">
+          {isEdit ? "✏️ Editar cita" : "Nueva cita 📅"}
+        </h2>
         <p className="text-sm text-gray-500">
-          Selecciona cliente y servicio
+          {isEdit ? "Modifica los datos de la cita" : "Selecciona cliente y servicio"}
         </p>
       </div>
 
@@ -140,6 +228,7 @@ function CitaForm({ clientes, onCrear }) {
             value={clienteId}
             onChange={(e) => setClienteId(e.target.value)}
             className="input"
+            disabled={isEdit}
           >
             <option value="">Cliente</option>
             {clientes.map(c => (
@@ -185,11 +274,22 @@ function CitaForm({ clientes, onCrear }) {
         <div className="space-y-3">
 
           <div className="border rounded-lg p-2">
+
             <Calendar
               value={fechaBase}
-              onChange={setFechaBase}
-              minDate={getHoy()} // ✅ BLOQUEA FECHAS PASADAS
+              onChange={(date) => {
+
+                if (estaDiaLleno(date)) {
+                  toast.error("Día lleno 🚫");
+                  return;
+                }
+
+                setFechaBase(date);
+              }}
+              minDate={getHoy()}
+              tileDisabled={({ date }) => estaDiaLleno(date)}
             />
+
           </div>
 
           <p className="text-xs text-gray-400">
@@ -198,29 +298,50 @@ function CitaForm({ clientes, onCrear }) {
 
           <div className="grid grid-cols-3 gap-2 max-h-44 overflow-y-auto pr-1 horas-scroll">
 
-            {generarHoras().map((h) => {
+           {generarHoras().map((h) => {
 
-              const fechaTest = new Date(`${fechaBase.toISOString().split("T")[0]}T${h}`);
-              const ahora = new Date();
+  const fechaTest = new Date(`${fechaBase.toISOString().split("T")[0]}T${h}`);
+  const ahora = new Date();
 
-              if (esHoy(fechaBase) && fechaTest < ahora) return null;
-              if (estaOcupada(fechaTest)) return null;
+  // ✅ bloquear pasado
+  const esPasado = esHoy(fechaBase) && fechaTest < ahora;
 
-              return (
-                <button
-                  key={h}
-                  onClick={() => setHora(h)}
-                  className={`
-                    text-sm px-2 py-2 rounded-lg border transition-all
-                    ${hora === h
-                      ? "bg-blue-500 text-white shadow-md scale-105 ring-2 ring-blue-300"
-                      : "hover:bg-blue-50"}
-                  `}
-                >
-                  {h}
-                </button>
-              );
-            })}
+  // ✅ ocupado
+  const ocupada = estaOcupada(fechaTest);
+
+  return (
+    <button
+      key={h}
+      disabled={ocupada || esPasado}
+      onClick={() => {
+        if (!ocupada && !esPasado) {
+          setHora(h);
+          setHoraSeleccionadaManual(true);
+        }
+      }}
+      className={`
+        text-sm px-2 py-2 rounded-lg border transition-all
+        ${
+          ocupada || esPasado
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : hora === h
+              ? "bg-blue-500 text-white shadow-md scale-105 ring-2 ring-blue-300"
+              : "hover:bg-blue-50"
+        }
+      `}
+      title={
+        esPasado
+          ? "Hora pasada"
+          : ocupada
+            ? "Horario ocupado"
+            : "Disponible"
+      }
+    >
+      {h}
+    </button>
+  );
+})}
+
 
           </div>
 
@@ -229,7 +350,16 @@ function CitaForm({ clientes, onCrear }) {
       </div>
 
       {hora && clienteId && (
-        <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm">
+
+        <div
+          className={`
+    bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm
+    transition-all duration-200
+    ${hora && clienteId ? "opacity-100" : "opacity-0 pointer-events-none"}
+    min-h-[80px]
+  `}
+        >
+
 
           <p className="font-semibold text-blue-700">
             ✅ Cita seleccionada
@@ -246,19 +376,41 @@ function CitaForm({ clientes, onCrear }) {
         </div>
       )}
 
-      <button
-        onClick={crear}
-        disabled={loading}
-        className="
-          w-full py-3 rounded-xl text-white font-semibold
-          bg-gradient-to-r from-green-500 to-green-600
-          shadow-md hover:shadow-lg
-          hover:scale-[1.02] active:scale-95
-          transition
-        "
-      >
-        {loading ? "Creando..." : "✅ Crear cita"}
-      </button>
+      <div className="flex flex-col gap-2">
+
+        <button
+          onClick={guardar}
+          disabled={loading}
+          className="
+      w-full py-3 rounded-xl text-white font-semibold
+      bg-gradient-to-r from-green-500 to-green-600
+      shadow-md hover:shadow-lg
+      hover:scale-[1.02] active:scale-95
+      transition
+    "
+        >
+          {loading
+            ? "Guardando..."
+            : isEdit
+              ? "✅ Guardar cambios"
+              : "✅ Crear cita"}
+        </button>
+
+        {/* ✅ NUEVO BOTÓN CANCELAR */}
+        <button
+          onClick={onClose}
+          className="
+      w-full py-3 rounded-xl text-white font-semibold
+      bg-gradient-to-r from-red-500 to-red-600
+      shadow-md hover:shadow-lg
+      hover:scale-[1.02] active:scale-95
+      transition
+    "
+        >
+          Cancelar
+        </button>
+
+      </div>
 
     </div>
   );
