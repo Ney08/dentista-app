@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "nombre": "Limpieza",
+    "descripcion": "Limpieza dental profesional",
+    "precio": 1500
+  },
+  {
+    "id": 2,
+    "nombre": "Extracción",
+    "descripcion": "Extracción de pieza dental",
+    "precio": 3000
+  },
+  {
+    "id": 3,
+    "nombre": "Dolor dental",
+    "descripcion": "Consulta por dolor",
+    "precio": 2000
+  },
+  {
+    "id": 4,
+    "nombre": "Ortodoncia",
+    "descripcion": "Evaluación ortodóntica",
+    "precio": 5000
+  },
+  {
+    "id": 5,
+    "nombre": "Control",
+    "descripcion": "Revisión general",
+    "precio": 1000
+  }
+]

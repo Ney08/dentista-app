@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* ✅ ESTO DEBE IR FUERA */
+.input {
+  @apply w-full border border-gray-300 px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition;
+}
+
+
+
+.input {
+  @apply placeholder:text-gray-500;
+}
+
+
+.error {
+  @apply text-xs text-red-500 mt-1;
+}
+
+.tooltip {
+  @apply absolute bottom-full left-1/2 -translate-x-1/2 mb-2
+  opacity-0 group-hover:opacity-100
+  transition duration-200
+  bg-black text-white text-xs px-2 py-1 rounded shadow
+  whitespace-nowrap;
+}
+
+.card {
+  @apply p-5 rounded-xl border shadow-sm;
+}
+
+/* ✅ SOLO PARA IMPRESIÓN */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .factura-print,
+  .factura-print * {
+    visibility: visible;
+  }
+
+  .factura-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
