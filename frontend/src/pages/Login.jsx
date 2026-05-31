@@ -52,7 +52,7 @@ function Login({ setToken }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/login", {
+      const res = await fetch("https://dentista-backend-uspt.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -128,7 +128,7 @@ function Login({ setToken }) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/users/reset", {
+      const res = fetch("https://dentista-backend-uspt.onrender.com/users/reset", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

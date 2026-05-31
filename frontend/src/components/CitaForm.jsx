@@ -17,7 +17,7 @@ function CitaForm({ clientes, onCrear }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/citas/")
+    fetch("https://dentista-backend-uspt.onrender.com/citas/")
       .then(res => res.json())
       .then(setCitas);
   }, []);
@@ -95,7 +95,7 @@ function CitaForm({ clientes, onCrear }) {
     setLoading(true);
 
     try {
-      await fetch("http://127.0.0.1:8000/citas/", {
+      await fetch("https://dentista-backend-uspt.onrender.com/citas/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
