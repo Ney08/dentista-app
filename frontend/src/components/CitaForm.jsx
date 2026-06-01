@@ -148,17 +148,16 @@ function CitaForm({ clientes, onCrear, cita, onClose }) {
   // ✅ CREAR / EDITAR
   const guardar = async () => {
 
-    if (!bloqueDisponible(fechaFinal, duracion)) {
-      return toast.error("Ese horario no tiene espacio suficiente ⏰");
-    }
-
     if (!clienteId || !hora || !motivo)
       return toast.error("Completa los campos ⚠️");
 
+    // ✅ PRIMERO definir fechaFinal
     const fechaFinal = `${fechaBase.toISOString().split("T")[0]}T${hora}`;
 
-    if (estaOcupada(fechaFinal))
-      return toast.error("Horario ocupado ⏰");
+    // ✅ LUEGO usarlo
+    if (!bloqueDisponible(fechaFinal, duracion)) {
+      return toast.error("Ese horario no tiene espacio suficiente ⏰");
+    }
 
     if (new Date(fechaFinal) < new Date())
       return toast.error("Fecha inválida ⏰");
@@ -168,6 +167,7 @@ function CitaForm({ clientes, onCrear, cita, onClose }) {
     try {
 
       if (isEdit) {
+
         await actualizarCita.mutateAsync({
           id: cita.id,
           data: {
@@ -191,6 +191,7 @@ function CitaForm({ clientes, onCrear, cita, onClose }) {
 
         toast.success("Cita creada ✅");
       }
+
       onCrear();
       onClose();
 
@@ -200,7 +201,6 @@ function CitaForm({ clientes, onCrear, cita, onClose }) {
 
     setLoading(false);
   };
-
   return (
     <div className="
 w-full max-w-3xl
@@ -298,49 +298,48 @@ w-full max-w-3xl
 
           <div className="grid grid-cols-3 gap-2 max-h-44 overflow-y-auto pr-1 horas-scroll">
 
-           {generarHoras().map((h) => {
+            {generarHoras().map((h) => {
 
-  const fechaTest = new Date(`${fechaBase.toISOString().split("T")[0]}T${h}`);
-  const ahora = new Date();
+              const fechaTest = new Date(`${fechaBase.toISOString().split("T")[0]}T${h}`);
+              const ahora = new Date();
 
-  // ✅ bloquear pasado
-  const esPasado = esHoy(fechaBase) && fechaTest < ahora;
+              // ✅ bloquear pasado
+              const esPasado = esHoy(fechaBase) && fechaTest < ahora;
 
-  // ✅ ocupado
-  const ocupada = estaOcupada(fechaTest);
+              // ✅ ocupado
+              const ocupada = estaOcupada(fechaTest);
 
-  return (
-    <button
-      key={h}
-      disabled={ocupada || esPasado}
-      onClick={() => {
-        if (!ocupada && !esPasado) {
-          setHora(h);
-          setHoraSeleccionadaManual(true);
-        }
-      }}
-      className={`
+              return (
+                <button
+                  key={h}
+                  disabled={ocupada || esPasado}
+                  onClick={() => {
+                    if (!ocupada && !esPasado) {
+                      setHora(h);
+                      setHoraSeleccionadaManual(true);
+                    }
+                  }}
+                  className={`
         text-sm px-2 py-2 rounded-lg border transition-all
-        ${
-          ocupada || esPasado
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : hora === h
-              ? "bg-blue-500 text-white shadow-md scale-105 ring-2 ring-blue-300"
-              : "hover:bg-blue-50"
-        }
+        ${ocupada || esPasado
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : hora === h
+                        ? "bg-blue-500 text-white shadow-md scale-105 ring-2 ring-blue-300"
+                        : "hover:bg-blue-50"
+                    }
       `}
-      title={
-        esPasado
-          ? "Hora pasada"
-          : ocupada
-            ? "Horario ocupado"
-            : "Disponible"
-      }
-    >
-      {h}
-    </button>
-  );
-})}
+                  title={
+                    esPasado
+                      ? "Hora pasada"
+                      : ocupada
+                        ? "Horario ocupado"
+                        : "Disponible"
+                  }
+                >
+                  {h}
+                </button>
+              );
+            })}
 
 
           </div>
