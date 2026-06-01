@@ -5,6 +5,7 @@ import "react-calendar/dist/Calendar.css";
 import { API_URL } from "../config";
 import { useCitas } from "../hooks/useCitas";
 import serviciosCatalogo from "../data/servicios.json";
+import { formatFecha, formatHora } from "../utils/fecha";
 
 function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
   const [horaSeleccionadaManual, setHoraSeleccionadaManual] = useState(false);
@@ -159,7 +160,17 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
       return toast.error("Completa los campos ⚠️");
 
     // ✅ PRIMERO definir fechaFinal
-    const fechaFinal = `${fechaBase.toISOString().split("T")[0]}T${hora}`;
+
+    const fechaLocal = new Date(fechaBase);
+
+    const [h, m] = hora.split(":");
+
+    fechaLocal.setHours(h);
+    fechaLocal.setMinutes(m);
+    fechaLocal.setSeconds(0);
+
+    const fechaFinal = fechaLocal.toISOString();
+
 
     // ✅ LUEGO usarlo
     if (!bloqueDisponible(fechaFinal, duracion)) {
@@ -388,9 +399,11 @@ w-full max-w-3xl
             ✅ Cita seleccionada
           </p>
 
+
           <p className="text-blue-600">
-            {new Date(fechaBase).toLocaleDateString()} — {hora}
+            {formatFecha(fechaBase)} — {hora}
           </p>
+
 
           <p className="text-gray-600">
             {motivo || "Sin servicio"} • {duracion} min

@@ -26,15 +26,16 @@ function GraficoClientes({ clientes = [] }) {
       return;
     }
 
-    const fecha = new Date(fechaRaw);
+    const fecha = new Date(fechaRaw.replace("Z", ""));
 
     if (isNaN(fecha)) {
       data["Actual"] = (data["Actual"] || 0) + 1;
       return;
     }
 
-    const mes = fecha.toLocaleString("default", {
-      month: "short"
+    const mes = fecha.toLocaleString("es-DO", {
+      month: "short",
+      timeZone: "America/Santo_Domingo"
     });
 
     data[mes] = (data[mes] || 0) + 1;

@@ -1,3 +1,5 @@
+import { formatFecha, formatHora } from "../utils/fecha";
+
 import {
   BarChart,
   Bar,
@@ -15,13 +17,16 @@ function GraficoCitas({ citas = [] }) {
 
     if (!c.fecha) return;
 
-    const fecha = new Date(c.fecha);
+    const fecha = new Date(c.fecha.replace("Z", ""));
 
     if (isNaN(fecha)) return;
 
-    const mes = fecha.toLocaleString("default", {
-      month: "short"
+
+    const mes = fecha.toLocaleString("es-DO", {
+      month: "short",
+      timeZone: "America/Santo_Domingo" 
     });
+
 
     data[mes] = (data[mes] || 0) + 1;
   });

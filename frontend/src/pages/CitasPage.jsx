@@ -8,7 +8,7 @@ import PageWrapper from "../components/PageWrapper";
 import CitaForm from "../components/CitaForm";
 import { useClientes } from "../hooks/useClientes";
 import { useCitas } from "../hooks/useCitas";
-
+import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
 function CitasPage() {
   const location = useLocation();
   const clienteDesdeClientes = location.state?.clienteSeleccionado;
@@ -73,7 +73,7 @@ function CitasPage() {
     if (c.estado === "cancelada") return "cancelada";
     if (c.estado === "completada") return "completada";
 
-    const fecha = new Date(c.fecha);
+    const fecha = parseFechaLocal(c.fecha);
     const ahora = new Date();
 
     if (fecha < ahora) return "atrasada";
@@ -82,7 +82,7 @@ function CitasPage() {
   };
 
   const citasFiltradas = citas.filter(c => {
-    const f = new Date(c.fecha);
+    const f = parseFechaLocal(c.fecha);
 
     if (filtro === "hoy") {
       return (
@@ -185,7 +185,7 @@ function CitasPage() {
             {ordenadas.map(c => {
 
               const estado = getEstado(c);
-              const fecha = new Date(c.fecha);
+              const fecha = parseFechaLocal(c.fecha);
 
               const estadoStyle = {
                 pendiente: "bg-yellow-100 text-yellow-800 border-yellow-300",
@@ -224,16 +224,15 @@ function CitasPage() {
 
                   {/* INFO */}
                   <div className="space-y-1">
+
                     <p className="font-semibold text-gray-800">
-                      {c.cliente?.nombre}
+                      {c.cliente?.nombre} {c.cliente?.apellido}
                     </p>
 
+
                     <p className="text-sm font-medium text-gray-700">
-                      {fecha.toLocaleDateString()} —{" "}
-                      {fecha.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })}
+                      {formatFecha(fecha)} —{" "}
+                      {formatHora(fecha)}
                     </p>
 
                     <p className="text-sm text-gray-400">

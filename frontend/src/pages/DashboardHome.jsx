@@ -3,7 +3,7 @@ import { useIngresos } from "../hooks/useIngresos";
 import { useCitas } from "../hooks/useCitas";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-
+import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
 import GraficoIngresos from "../components/GraficoIngresos";
 import GraficoClientes from "../components/GraficoClientes";
 import GraficoCitas from "../components/GraficoCitas";
@@ -24,7 +24,7 @@ function DashboardHome() {
   const esHoy = (fechaStr) => {
     if (!fechaStr) return false;
 
-    const fecha = new Date(fechaStr);
+    const fecha = parseFechaLocal(fechaStr);
 
     return (
       fecha.getDate() === ahora.getDate() &&
@@ -38,7 +38,7 @@ function DashboardHome() {
     if (c.estado === "cancelada") return "cancelada";
     if (c.estado === "completada") return "completada";
 
-    const fecha = new Date(c.fecha);
+    const fecha = parseFechaLocal(c.fecha);
 
     if (fecha < ahora) return "atrasada";
 
@@ -48,7 +48,7 @@ function DashboardHome() {
   // ✅ CITAS DE HOY
   const citasHoy = citas
     .filter(c => esHoy(c.fecha))
-    .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+    .sort((a, b) => parseFechaLocal(a.fecha) - parseFechaLocal(b.fecha));
 
   // ✅ CONTADORES ESTADOS
   const pendientes = citas.filter(c => getEstado(c) === "pendiente").length;
@@ -89,7 +89,7 @@ function DashboardHome() {
 
     // ✅ MES
     if (i.created_at) {
-      const fecha = new Date(i.created_at);
+      const fecha = parseFechaLocal(i.created_at);
 
       if (
         fecha.getMonth() === mesActual &&
@@ -102,13 +102,20 @@ function DashboardHome() {
   });
 
   // ✅ TOAST
+
   useEffect(() => {
-    if (citasHoy.length > 0) {
-      toast.success(`Tienes ${citasHoy.length} cita(s) hoy 📅`, {
-        id: "toast-citas-hoy"
-      });
+    const citasPendientesHoy = citasHoy.filter(
+      c => c.estado === "pendiente"
+    );
+
+    if (citasPendientesHoy.length > 0) {
+      toast.success(
+        `Tienes ${citasPendientesHoy.length} cita(s) pendiente(s) hoy 📅`,
+        { id: "toast-citas-hoy" }
+      );
     }
   }, [citasHoy.length]);
+
 
   const formato = (n) => `RD$ ${n.toFixed(2)}`;
 
@@ -121,7 +128,7 @@ function DashboardHome() {
         <div className="text-center">
           <h1 className="text-3xl font-bold">Dashboard 📊</h1>
           <p className="text-gray-500 text-sm">
-            {new Date().toLocaleDateString()}
+            {formatFecha(new Date())}
           </p>
         </div>
 
@@ -161,10 +168,7 @@ function DashboardHome() {
                     `}
                   >
                     <p className="font-bold">
-                      🕒 {new Date(c.fecha).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })}
+                      🕒 {formatHora(parseFechaLocal(c.fecha))} - {c.cliente?.nombre} {c.cliente?.apellido}
                     </p>
 
                     <p className="text-gray-600 text-sm">{c.motivo}</p>
@@ -173,10 +177,10 @@ function DashboardHome() {
                       ${estado === "completada"
                         ? "bg-green-100 text-green-700"
                         : estado === "atrasada"
-                        ? "bg-red-100 text-red-700"
-                        : estado === "cancelada"
-                        ? "bg-gray-300 text-gray-700"
-                        : "bg-yellow-100 text-yellow-700"
+                          ? "bg-red-100 text-red-700"
+                          : estado === "cancelada"
+                            ? "bg-gray-300 text-gray-700"
+                            : "bg-yellow-100 text-yellow-700"
                       }
                     `}>
                       {estado === "completada" && "✅ Completada"}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useIngresos } from "../hooks/useIngresos";
 import PageWrapper from "../components/PageWrapper";
 import { generarReporte } from "../utils/pdfReporte"; // 🔥 nuevo nombre genérico
-
+import { parseFechaLocal } from "../utils/fecha"; // ✅ nueva función de parseo
 function ReportesPage() {
 
   const { ingresos } = useIngresos();
@@ -21,7 +21,7 @@ function ReportesPage() {
 
     if (!ingreso.created_at || !ingreso.pagado) return false;
 
-    const fecha = new Date(ingreso.created_at);
+    const fecha = parseFechaLocal(ingreso.created_at);
 
     if (tipo === "semanal") {
       const hace7 = new Date();

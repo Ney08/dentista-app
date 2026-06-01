@@ -15,9 +15,18 @@ function IngresoForm({ clientes, initialData, onClose }) {
 
   const autoSeleccionarServicio = (clienteId) => {
 
-    const cita = citas.find(c => c.cliente_id == clienteId);
+    const cita = citas.find(
+      c => c.cliente_id == clienteId && c.estado === "pendiente"
+    );
 
-    if (!cita || !cita.motivo) return;
+    if (!cita) {
+      setCitaSeleccionada(null);
+      return;
+    }
+
+    setCitaSeleccionada(cita);
+
+    if (!cita.motivo) return;
 
     const servicioEncontrado = serviciosCatalogo.find(
       s => normalize(s.nombre).includes(normalize(cita.motivo))
@@ -38,6 +47,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
 
 
 
+
   const {
     register,
     handleSubmit,
@@ -46,7 +56,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
   } = useForm();
 
 
-
+  const [citaSeleccionada, setCitaSeleccionada] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [servicios, setServicios] = useState([
@@ -111,6 +121,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
     const payload = {
       cliente_id: parseInt(data.clienteId),
       descuento: parseFloat(descuento) || 0,
+      cita_id: citaSeleccionada?.id || null,
       servicios: servicios.map(s => ({
         descripcion: s.descripcion,
         monto: parseFloat(s.monto)
@@ -136,7 +147,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
       reset();
       setServicios([{ descripcion: "", monto: "" }]);
       setDescuento(0);
-
+      onClose();
     } catch {
       toast.error("Error ❌", { id: toastId });
     }
@@ -159,14 +170,20 @@ function IngresoForm({ clientes, initialData, onClose }) {
 
 
 
+
         <select
           {...register("clienteId")}
+          disabled={!!initialData}
           onChange={(e) => {
             const id = e.target.value;
             autoSeleccionarServicio(id);
           }}
-          className="w-full border px-3 py-2 rounded"
+          className={`
+    w-full border px-3 py-2 rounded
+    ${initialData ? "bg-gray-100 text-gray-500 cursor-not-allowed" : ""}
+  `}
         >
+
 
 
 
@@ -179,9 +196,10 @@ function IngresoForm({ clientes, initialData, onClose }) {
         </select>
 
         {/* SERVICIOS */}
-        <div className="bg-gray-50 border rounded-xl p-4 space-y-4">
+        <div className="bg-gray-50 border rounded-xl p-4">
 
-          <div className="flex justify-between items-center">
+          {/* HEADER */}
+          <div className="flex justify-between items-center mb-3">
             <p className="text-sm font-semibold">Servicios</p>
 
             <button
@@ -193,53 +211,71 @@ function IngresoForm({ clientes, initialData, onClose }) {
             </button>
           </div>
 
-          {servicios.map((s, index) => (
+          {/* ✅ SCROLL CONTENEDOR */}
+          <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
 
-            <div key={index} className="bg-white p-3 rounded shadow-sm">
+            {servicios.map((s, index) => (
 
-              {servicios.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => eliminarServicio(index)}
-                  className="text-red-500 text-xs float-right"
+              <div key={index} className="bg-white p-3 rounded shadow-sm">
+
+                {servicios.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => eliminarServicio(index)}
+                    className="text-red-500 text-xs float-right"
+                  >
+                    ❌
+                  </button>
+                )}
+
+                {/* ✅ SELECT SERVICIO */}
+                <select
+                  value={s.descripcion}
+                  onChange={(e) => {
+                    const seleccionado = serviciosCatalogo.find(
+                      serv => serv.nombre === e.target.value
+                    );
+
+                    actualizarServicio(index, "descripcion", seleccionado.nombre);
+                    actualizarServicio(index, "monto", seleccionado.precio);
+                  }}
+                  className="w-full border px-3 py-2 rounded mb-2"
                 >
-                  ❌
-                </button>
-              )}
+                  <option value="">Seleccionar servicio</option>
 
-              {/* SELECT SERVICIO */}
-              <select
-                value={s.descripcion}
-                onChange={(e) => {
-                  const seleccionado = serviciosCatalogo.find(
-                    serv => serv.nombre === e.target.value
-                  );
+                  {serviciosCatalogo.map((serv, i) => {
 
-                  actualizarServicio(index, "descripcion", seleccionado.nombre);
-                  actualizarServicio(index, "monto", seleccionado.precio);
-                }}
-                className="w-full border px-3 py-2 rounded mb-2"
-              >
-                <option value="">Seleccionar servicio</option>
+                    // ✅ BLOQUEAR DUPLICADOS
+                    const yaSeleccionado = servicios.some(
+                      (s2, i2) =>
+                        s2.descripcion === serv.nombre && i2 !== index
+                    );
 
-                {serviciosCatalogo.map((serv, i) => (
-                  <option key={i} value={serv.nombre}>
-                    {serv.nombre} (RD$ {serv.precio})
-                  </option>
-                ))}
-              </select>
+                    return (
+                      <option
+                        key={i}
+                        value={serv.nombre}
+                        disabled={yaSeleccionado}
+                      >
+                        {serv.nombre} (RD$ {serv.precio})
+                      </option>
+                    );
+                  })}
+                </select>
 
-              {/* MONTO BLOQUEADO */}
-              <input
-                type="number"
-                value={s.monto}
-                disabled
-                className="w-full border px-3 py-2 rounded bg-gray-100"
-              />
+                {/* MONTO */}
+                <input
+                  type="number"
+                  value={s.monto}
+                  disabled
+                  className="w-full border px-3 py-2 rounded bg-gray-100"
+                />
 
-            </div>
-          ))}
+              </div>
 
+            ))}
+
+          </div>
         </div>
 
         {/* DESCUENTO */}
@@ -290,7 +326,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
           Cancelar
         </button>
       </form>
-    </div>
+    </div >
   );
 }
 

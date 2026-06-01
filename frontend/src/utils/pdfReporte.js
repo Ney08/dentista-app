@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-
+import { parseFechaLocal } from "./fecha"; // ✅ nueva función de parseo
 export const generarReporte = ({
   ingresos = [],
   tipo = "mensual",
@@ -96,7 +96,7 @@ export const generarReporte = ({
     let fecha = "N/A";
 
     if (i.created_at) {
-      const f = new Date(i.created_at);
+      const f = parseFechaLocal(i.created_at);
       if (!isNaN(f)) fecha = f.toLocaleDateString();
     }
 

@@ -1,3 +1,5 @@
+import { formatFecha, formatHora } from "../utils/fecha";
+
 function FacturaPrint({ ingreso }) {
   const servicios = ingreso.servicios || [
     { descripcion: ingreso.descripcion, monto: ingreso.monto }
@@ -15,7 +17,7 @@ function FacturaPrint({ ingreso }) {
       </h1>
 
       <p>Paciente: {ingreso.cliente?.nombre}</p>
-      <p>Fecha: {new Date().toLocaleDateString()}</p>
+      <p>Fecha: {formatFecha(new Date())}</p>
 
       <table className="w-full mt-4 border">
         <thead>

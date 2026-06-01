@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-
+import { formatFecha } from "../utils/fecha";
 import { useClientes } from "../hooks/useClientes";
 import { useIngresos } from "../hooks/useIngresos";
 
@@ -12,7 +12,7 @@ function IngresosPage() {
 
   const { clientes } = useClientes();
   const { ingresos, pagarIngreso, isLoading } = useIngresos();
-
+  const toastMostrado = useRef(false);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [editando, setEditando] = useState(null);
   const [facturaPreview, setFacturaPreview] = useState(null);
@@ -53,10 +53,19 @@ function IngresosPage() {
   const totalPendiente = ingresos
     .filter(i => !i.pagado)
     .reduce((acc, i) => {
-      const servicios = i.servicios || [];
-      const subtotal = servicios.reduce((a, s) => a + s.monto, 0);
-      return acc + subtotal * 1.18;
+
+      const subtotal = (i.servicios || []).reduce((a, s) => a + s.monto, 0);
+      const itbis = subtotal * 0.18;
+
+      const descuento = i.descuento || 0;
+      const descuentoValor = subtotal * (descuento / 100);
+
+      const total = subtotal + itbis - descuentoValor;
+
+      return acc + total;
+
     }, 0);
+
 
   const pendientesCount = ingresos.filter(i => !i.pagado).length;
 
@@ -68,11 +77,14 @@ function IngresosPage() {
     }
   }, [modalAbierto]);
 
+
   useEffect(() => {
-    if (pendientesCount > 0) {
+    if (pendientesCount > 0 && !toastMostrado.current) {
       toast(`⚠️ Tienes ${pendientesCount} factura(s) pendiente(s) 💸`);
+      toastMostrado.current = true;
     }
   }, [pendientesCount]);
+
 
   // ✅ filtro
   const filtrados = ingresos.filter(i =>
@@ -160,8 +172,15 @@ function IngresosPage() {
           ) : (
             filtrados.map(i => {
 
+
               const subtotal = (i.servicios || []).reduce((a, s) => a + s.monto, 0);
-              const total = subtotal * 1.18;
+              const itbis = subtotal * 0.18;
+
+              const descuento = i.descuento || 0;
+              const descuentoValor = subtotal * (descuento / 100);
+
+              const total = subtotal + itbis - descuentoValor;
+
 
               return (
                 <div
@@ -175,9 +194,11 @@ function IngresosPage() {
                     <p className="font-semibold">
                       {i.cliente?.nombre} {i.cliente?.apellido}
                     </p>
+
                     <p className="text-sm text-gray-500">
-                      {new Date(i.created_at).toLocaleDateString()}
+                      {formatFecha(i.created_at)}
                     </p>
+
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -193,23 +214,52 @@ function IngresosPage() {
                       RD$ {total.toFixed(2)}
                     </span>
 
+
                     <button
                       onClick={() => setFacturaPreview(i)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-2 rounded transition hover:scale-105"
+                      disabled={!i.pagado}
+                      title={
+                        i.pagado
+                          ? "Ver factura"
+                          : "Disponible solo cuando esté pagada"
+                      }
+                      className={`px-2 rounded transition ${i.pagado
+                        ? "bg-blue-500 hover:bg-blue-600 text-white hover:scale-105"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
                     >
                       📄
                     </button>
 
+
+
                     <button
                       onClick={() => abrirEditar(i)}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 rounded transition hover:scale-105"
+                      disabled={i.pagado}
+                      title={i.pagado ? "No se puede editar (ya pagada)" : "Editar factura"}
+                      className={`
+    px-2 rounded transition
+    ${i.pagado
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-yellow-500 hover:bg-yellow-600 text-white hover:scale-105"
+                        }
+  `}
                     >
                       ✏️
                     </button>
 
+
                     <button
                       onClick={() => marcarPagado(i)}
-                      className="bg-purple-500 hover:bg-purple-600 text-white px-2 rounded transition hover:scale-105"
+                      disabled={i.pagado}
+                      title={i.pagado ? "Ya pagada" : "Marcar como pagada"}
+                      className={`
+    px-2 rounded transition
+    ${i.pagado
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-purple-500 hover:bg-purple-600 text-white hover:scale-105"
+                        }
+  `}
                     >
                       💳
                     </button>
@@ -278,7 +328,7 @@ function IngresosPage() {
         )}
       </div>
 
-    </PageWrapper>
+    </PageWrapper >
   );
 }
 

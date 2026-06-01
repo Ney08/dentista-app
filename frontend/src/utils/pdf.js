@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import axios from "axios";
-
+import { parseFechaLocal } from "./fecha";
 export const generarFactura = async (ingreso) => {
 
   const doc = new jsPDF();
@@ -31,9 +31,7 @@ export const generarFactura = async (ingreso) => {
 
   const telefono = ingreso.cliente?.telefono || "";
 
-  const fecha = new Date(
-    ingreso.created_at || Date.now()
-  ).toLocaleDateString();
+  const fecha = parseFechaLocal(ingreso.created_at);
 
   doc.text(`Factura #: ${ingreso.id}`, 20, 45);
   doc.text(`Paciente: ${clienteNombre}`, 20, 55);

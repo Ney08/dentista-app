@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from sqlalchemy.exc import IntegrityError
 from database import SessionLocal, engine
-
+from sqlalchemy import text
 import models
 from schemas import UserCreate, UserLogin, ClienteCreate, IngresoCreate, HistorialCreate, CitaCreate, ServicioSchema, IngresoUpdateSchema
 from fastapi import APIRouter
@@ -265,7 +265,8 @@ def crear_ingreso(data: IngresoCreate, db: Session = Depends(get_db)):
         ingreso = models.Ingreso(
             cliente_id=data.cliente_id,
             descuento=getattr(data, "descuento", 0) or 0,
-            pagado=False
+            pagado=False,
+            cita_id=getattr(data, "cita_id", None)
         )
 
         db.add(ingreso)
@@ -296,32 +297,48 @@ def crear_ingreso(data: IngresoCreate, db: Session = Depends(get_db)):
 @app.get("/ingresos/")
 def listar_ingresos(db: Session = Depends(get_db)):
 
-    ingresos = db.query(models.Ingreso).all()
+    try:
+        ingresos = db.query(models.Ingreso).options(
+            joinedload(models.Ingreso.cliente),
+            joinedload(models.Ingreso.servicios),
+            joinedload(models.Ingreso.cita)
+        ).all()
 
-    data = []
+        data = []
 
-    for i in ingresos:
-        data.append({
-            "id": i.id,
-            "cliente": {
-                "nombre": i.cliente.nombre,
-                "apellido": i.cliente.apellido
-            } if i.cliente else None,
-            "servicios": [
-                {
-                    "descripcion": s.descripcion,
-                    "monto": s.monto
-                }
-                for s in i.servicios
-            ],
-            "descuento": i.descuento or 0,
-            "pagado": i.pagado or False,
-            "created_at": i.created_at
-        })
+        for i in ingresos:
+            data.append({
+                "id": i.id,
+                "cliente_id": i.cliente_id,
 
-    print("ENVIANDO:", data)  # ✅ DEBUG
+                "cliente": {
+                    "nombre": i.cliente.nombre,
+                    "apellido": i.cliente.apellido
+                } if i.cliente else None,
 
-    return data
+                "servicios": [
+                    {
+                        "descripcion": s.descripcion,
+                        "monto": s.monto
+                    }
+                    for s in i.servicios
+                ],
+
+                "descuento": i.descuento or 0,
+                "pagado": i.pagado or False,
+
+                "created_at": i.created_at.isoformat() if i.created_at else None,
+                "fecha_pago": i.fecha_pago.isoformat() if i.fecha_pago else None,
+
+                "cita_id": i.cita_id
+            })
+
+        return data
+
+    except Exception as e:
+        print("💥 ERROR REAL:", e)
+        return {"error": str(e)}
+
 
 @app.put("/ingresos/{id}")
 def actualizar_ingreso(id: int, data: IngresoUpdateSchema, db: Session = Depends(get_db)):
@@ -366,23 +383,65 @@ def actualizar_ingreso(id: int, data: IngresoUpdateSchema, db: Session = Depends
         ],
         "descuento": ingreso.descuento or 0,
         "pagado": ingreso.pagado or False,
-        "created_at": ingreso.created_at
+        "created_at": ingreso.created_at.isoformat() if ingreso.created_at else None
     }
+
+
+
+
 
 
 
 @app.put("/ingresos/{id}/pagar")
 def marcar_pagado(id: int, db: Session = Depends(get_db)):
+
     ingreso = db.query(models.Ingreso).filter(models.Ingreso.id == id).first()
 
     if not ingreso:
-        raise HTTPException(404, "No encontrado")
+        raise HTTPException(status_code=404, detail="No encontrado")
 
+    # ✅ marcar pagado
     ingreso.pagado = True
+
+    # ✅ guardar fecha_pago
+    ingreso.fecha_pago = datetime.utcnow()
+
+    # ✅ 🔥 NUEVO: completar cita automáticamente
+    if ingreso.cita_id:
+        cita = db.query(models.Cita).filter(models.Cita.id == ingreso.cita_id).first()
+        if cita:
+            cita.estado = "completada"
+
     db.commit()
+    db.refresh(ingreso)
 
-    return ingreso
+    # ✅ devolver formato consistente
+    return {
+        "id": ingreso.id,
+        "cliente_id": ingreso.cliente_id,
 
+        "cliente": {
+            "nombre": ingreso.cliente.nombre,
+            "apellido": ingreso.cliente.apellido
+        } if ingreso.cliente else None,
+
+        "servicios": [
+            {
+                "descripcion": s.descripcion,
+                "monto": s.monto
+            }
+            for s in ingreso.servicios
+        ],
+
+        "descuento": ingreso.descuento or 0,
+        "pagado": ingreso.pagado,
+        "fecha_pago": ingreso.fecha_pago.isoformat() if ingreso.fecha_pago else None,
+
+        # ✅ opcional pero recomendado
+        "cita_id": ingreso.cita_id,
+
+        "created_at": ingreso.created_at.isoformat() if ingreso.created_at else None 
+    }
 
 
 
@@ -475,10 +534,34 @@ def crear_cita(data: CitaCreate, db: Session = Depends(get_db)):
     return cita
 
 
+
 @app.get("/citas/")
 def listar_citas(db: Session = Depends(get_db)):
-    return db.query(models.Cita).all()
 
+    citas = db.query(models.Cita).options(
+        joinedload(models.Cita.cliente)
+    ).all()
+
+    data = []
+
+    for c in citas:
+        data.append({
+            "id": c.id,
+            "cliente_id": c.cliente_id,
+
+            # ✅ ESTO ES LO QUE TE FALTABA
+            "cliente": {
+                "nombre": c.cliente.nombre,
+                "apellido": c.cliente.apellido
+            } if c.cliente else None,
+
+            "fecha": c.fecha.isoformat() if c.fecha else None,
+            "estado": c.estado,
+            "motivo": c.motivo,
+            "detalle": c.detalle
+        })
+
+    return data
 
 
 
@@ -536,3 +619,16 @@ def actualizar_cita(id: int, data: CitaCreate, db: Session = Depends(get_db)):
     db.refresh(cita)
 
     return cita
+
+
+
+
+
+@app.get("/fix-db")
+def fix_db(db: Session = Depends(get_db)):
+    try:
+        db.execute(text("ALTER TABLE ingresos ADD COLUMN fecha_pago TIMESTAMP;"))
+        db.commit()
+        return {"ok": True}
+    except Exception as e:
+        return {"error": str(e)}

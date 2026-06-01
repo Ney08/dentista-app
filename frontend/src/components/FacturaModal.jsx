@@ -1,4 +1,5 @@
 import { generarFactura } from "../utils/pdf";
+import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
 
 function FacturaModal({ ingreso, onClose }) {
 
@@ -8,7 +9,12 @@ function FacturaModal({ ingreso, onClose }) {
 
   const subtotal = servicios.reduce((acc, s) => acc + s.monto, 0);
   const itbis = subtotal * 0.18;
-  const total = subtotal + itbis;
+
+  // ✅ descuento
+  const descuento = ingreso.descuento || 0;
+  const descuentoValor = subtotal * (descuento / 100);
+
+  const total = subtotal + itbis - descuentoValor;
 
   const format = (n) => `RD$ ${n.toFixed(2)}`;
 
@@ -19,7 +25,7 @@ function FacturaModal({ ingreso, onClose }) {
         bg-black/40 backdrop-blur-md
         transition-all duration-200 ease-out
       "
-      onClick={onClose} // ✅ cerrar clic afuera
+      onClick={onClose}
     >
 
       {/* CAJA */}
@@ -30,12 +36,12 @@ function FacturaModal({ ingreso, onClose }) {
           transform transition-all duration-200 ease-out
           scale-100 opacity-100
         "
-        onClick={(e) => e.stopPropagation()} // ✅ evitar cerrar al hacer clic dentro
+        onClick={(e) => e.stopPropagation()}
       >
 
         {/* HEADER */}
         <div className="flex justify-between text-sm text-gray-500">
-          <span>{new Date().toLocaleDateString()}</span>
+          <span>{formatFecha(new Date())}</span>
           <span>Factura</span>
         </div>
 
@@ -55,6 +61,17 @@ function FacturaModal({ ingreso, onClose }) {
             {ingreso.cliente?.nombre} {ingreso.cliente?.apellido}
           </p>
         </div>
+
+        {/* ✅ NUEVO: INFO DE PAGO */}
+        {ingreso.pagado && ingreso.fecha_pago && (
+          <div className="text-sm text-gray-500 bg-green-50 border border-green-200 p-3 rounded-lg">
+            <p className="font-semibold text-green-600 mb-1">
+              ✅ Pago registrado
+            </p>
+            <p>📅 {formatFecha(ingreso.fecha_pago)}</p>
+            <p>⏰ {formatHora(ingreso.fecha_pago)}</p>
+          </div>
+        )}
 
         <hr />
 
@@ -90,6 +107,14 @@ function FacturaModal({ ingreso, onClose }) {
             <span>{format(itbis)}</span>
           </div>
 
+          {/* ✅ DESCUENTO */}
+          {descuento > 0 && (
+            <div className="flex justify-between text-red-500">
+              <span>Descuento ({descuento}%)</span>
+              <span>-{format(descuentoValor)}</span>
+            </div>
+          )}
+
           <div className="flex justify-between text-lg font-bold text-green-600 pt-2 border-t">
             <span>Total</span>
             <span>{format(total)}</span>
@@ -102,10 +127,9 @@ function FacturaModal({ ingreso, onClose }) {
           Gracias por su visita
         </p>
 
-        {/* BOTONES */}
+        {/* BOTONES (INTACTOS ✅) */}
         <div className="flex flex-col gap-2">
 
-          {/* IMPRIMIR */}
           <button
             onClick={() => {
               window.modoFactura = "preview";
@@ -120,7 +144,6 @@ function FacturaModal({ ingreso, onClose }) {
             🖨 Ver / Imprimir
           </button>
 
-          {/* DESCARGAR */}
           <button
             onClick={() => {
               window.modoFactura = "download";
@@ -135,7 +158,6 @@ function FacturaModal({ ingreso, onClose }) {
             ⬇ Descargar PDF
           </button>
 
-          {/* CERRAR */}
           <button
             onClick={onClose}
             className="

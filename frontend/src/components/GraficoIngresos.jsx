@@ -1,3 +1,4 @@
+import {parseFechaLocal, } from "../utils/fecha";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -24,8 +25,13 @@ function GraficoIngresos({ ingresos = [] }) {
 
     const totalFactura = subtotal + itbis - descuento;
 
-    const fecha = new Date(i.created_at || Date.now());
-    const mes = fecha.getMonth();
+    const fecha = parseFechaLocal(i.created_at);
+
+    const mes = fecha.toLocaleString("es-DO", {
+      month: "short",
+      timeZone: "America/Santo_Domingo" 
+    });
+
 
     if (!ingresosPorMes[mes]) {
       ingresosPorMes[mes] = 0;
@@ -35,8 +41,8 @@ function GraficoIngresos({ ingresos = [] }) {
   });
 
   const nombresMeses = [
-    "Ene","Feb","Mar","Abr","May","Jun",
-    "Jul","Ago","Sep","Oct","Nov","Dic"
+    "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+    "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
   ];
 
   const labels = Object.keys(ingresosPorMes).map(m => nombresMeses[m]);

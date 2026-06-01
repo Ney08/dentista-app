@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_URL } from "../config";
-
+import { parseFechaLocal } from "../utils/fecha";
 export const useCitas = () => {
   const queryClient = useQueryClient();
 
@@ -14,9 +14,14 @@ export const useCitas = () => {
 
       const data = await res.json();
 
-      return [...data].sort(
-        (a, b) => new Date(a.fecha) - new Date(b.fecha)
-      );
+
+      return [...data].sort((a, b) => {
+        const fechaA = parseFechaLocal(a.fecha);
+        const fechaB = parseFechaLocal(b.fecha);
+
+        return fechaA - fechaB;
+      });
+
     }
   });
 

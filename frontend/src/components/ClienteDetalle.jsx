@@ -1,5 +1,6 @@
 import HistorialForm from "./HistorialForm";
 import { useHistorial } from "../hooks/useHistorial";
+import { formatFecha, formatHora } from "../utils/fecha";
 
 function ClienteDetalle({ cliente }) {
 
@@ -35,7 +36,7 @@ function ClienteDetalle({ cliente }) {
           <div key={h.id} className="border p-2 rounded">
             <p>{h.descripcion}</p>
             <small>
-              {new Date(h.fecha).toLocaleDateString()}
+              {formatFecha(h.fecha)}
             </small>
           </div>
         ))

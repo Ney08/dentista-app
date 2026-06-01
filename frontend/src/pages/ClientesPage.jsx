@@ -5,7 +5,7 @@ import ClienteForm from "../components/ClienteForm";
 import ClienteList from "../components/ClienteList";
 import ClienteDetalle from "../components/ClienteDetalle";
 import PageWrapper from "../components/PageWrapper";
-
+import {parseFechaLocal} from "../utils/fecha";
 import { useClientes } from "../hooks/useClientes";
 
 function ClientesPage() {
@@ -44,7 +44,7 @@ function ClientesPage() {
   // ✅ ORDEN
   const ordenados = [...filtrados].sort((a, b) => {
     if (orden === "az") return a.nombre.localeCompare(b.nombre);
-    if (orden === "nuevo") return new Date(b.created_at) - new Date(a.created_at);
+    if (orden === "nuevo") return parseFechaLocal(b.created_at) - parseFechaLocal(a.created_at);
     return 0;
   });
 
