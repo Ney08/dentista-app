@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from database import SessionLocal, engine
 
 import models
-from schemas import UserCreate, UserLogin, ClienteCreate, IngresoCreate, HistorialCreate, CitaCreate
+from schemas import UserCreate, UserLogin, ClienteCreate, IngresoCreate, HistorialCreate, CitaCreate, ServicioSchema, IngresoUpdateSchema
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
@@ -323,6 +323,51 @@ def listar_ingresos(db: Session = Depends(get_db)):
 
     return data
 
+@app.put("/ingresos/{id}")
+def actualizar_ingreso(id: int, data: IngresoUpdateSchema, db: Session = Depends(get_db)):
+
+    ingreso = db.query(models.Ingreso).filter(models.Ingreso.id == id).first()
+
+    if not ingreso:
+        raise HTTPException(status_code=404, detail="Ingreso no encontrado")
+
+    ingreso.cliente_id = data.cliente_id
+    ingreso.descuento = data.descuento
+
+    # ✅ borrar servicios
+    db.query(models.Servicios).filter(models.Servicios.ingreso_id == id).delete()
+
+    # ✅ agregar servicios nuevos
+    for s in data.servicios:
+        nuevo = models.Servicios(
+            ingreso_id=id,
+            descripcion=s.descripcion,
+            monto=s.monto
+        )
+        db.add(nuevo)
+
+    db.commit()
+    db.refresh(ingreso)
+
+    # ✅ 🔥 IMPORTANTE: reconstruir respuesta igual que GET
+    return {
+        "id": ingreso.id,
+        "cliente_id": ingreso.cliente_id,
+        "cliente": {
+            "nombre": ingreso.cliente.nombre,
+            "apellido": ingreso.cliente.apellido
+        } if ingreso.cliente else None,
+        "servicios": [
+            {
+                "descripcion": s.descripcion,
+                "monto": s.monto
+            }
+            for s in ingreso.servicios
+        ],
+        "descuento": ingreso.descuento or 0,
+        "pagado": ingreso.pagado or False,
+        "created_at": ingreso.created_at
+    }
 
 
 

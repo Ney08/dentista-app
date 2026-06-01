@@ -405,11 +405,10 @@ w-full max-w-3xl
           onClick={guardar}
           disabled={loading}
           className="
-      w-full py-3 rounded-xl text-white font-semibold
-      bg-gradient-to-r from-green-500 to-green-600
-      shadow-md hover:shadow-lg
-      hover:scale-[1.02] active:scale-95
-      transition
+  w-full bg-gradient-to-r from-blue-500 to-blue-600
+  hover:from-blue-600 hover:to-blue-700
+  text-white py-3 rounded-xl font-medium
+  shadow-md transition
     "
         >
           {loading

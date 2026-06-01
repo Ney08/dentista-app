@@ -2,6 +2,8 @@ import { generarFactura } from "../utils/pdf";
 
 function FacturaModal({ ingreso, onClose }) {
 
+  if (!ingreso) return null;
+
   const servicios = ingreso.servicios || [];
 
   const subtotal = servicios.reduce((acc, s) => acc + s.monto, 0);
@@ -11,9 +13,25 @@ function FacturaModal({ ingreso, onClose }) {
   const format = (n) => `RD$ ${n.toFixed(2)}`;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div
+      className="
+        fixed inset-0 z-50 flex items-center justify-center
+        bg-black/40 backdrop-blur-md
+        transition-all duration-200 ease-out
+      "
+      onClick={onClose} // ✅ cerrar clic afuera
+    >
 
-      <div className="factura-print bg-white p-6 w-full max-w-md rounded-xl shadow-xl space-y-5">
+      {/* CAJA */}
+      <div
+        className="
+          factura-print bg-white w-full max-w-md p-6
+          rounded-2xl shadow-xl space-y-6
+          transform transition-all duration-200 ease-out
+          scale-100 opacity-100
+        "
+        onClick={(e) => e.stopPropagation()} // ✅ evitar cerrar al hacer clic dentro
+      >
 
         {/* HEADER */}
         <div className="flex justify-between text-sm text-gray-500">
@@ -22,7 +40,7 @@ function FacturaModal({ ingreso, onClose }) {
         </div>
 
         {/* TÍTULO */}
-        <h2 className="text-2xl font-bold text-center">
+        <h2 className="text-2xl font-semibold text-center tracking-tight">
           Factura #{ingreso.id}
         </h2>
 
@@ -30,8 +48,10 @@ function FacturaModal({ ingreso, onClose }) {
 
         {/* CLIENTE */}
         <div>
-          <p className="text-sm text-gray-500">Cliente</p>
-          <p className="font-semibold">
+          <p className="text-xs text-gray-500 uppercase tracking-wide">
+            Cliente
+          </p>
+          <p className="font-medium text-gray-800">
             {ingreso.cliente?.nombre} {ingreso.cliente?.apellido}
           </p>
         </div>
@@ -39,42 +59,38 @@ function FacturaModal({ ingreso, onClose }) {
         <hr />
 
         {/* SERVICIOS */}
-        <div>
-
-          <div className="flex justify-between font-semibold text-gray-700 text-sm">
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs font-semibold text-gray-500 uppercase">
             <span>Servicio</span>
-            <span>Precio</span>
+            <span>Monto</span>
           </div>
 
-          <div className="border-t my-2"></div>
+          <div className="border-t"></div>
 
-          <div className="space-y-1">
-            {servicios.map((s, i) => (
-              <div key={i} className="flex justify-between text-sm">
-                <span className="text-gray-700">{s.descripcion}</span>
-                <span className="font-medium">{format(s.monto)}</span>
-              </div>
-            ))}
-          </div>
-
+          {servicios.map((s, i) => (
+            <div key={i} className="flex justify-between text-sm">
+              <span className="text-gray-700">{s.descripcion}</span>
+              <span className="font-medium">{format(s.monto)}</span>
+            </div>
+          ))}
         </div>
 
         <hr />
 
         {/* TOTALES */}
-        <div className="space-y-2 text-sm">
+        <div className="space-y-1 text-sm">
 
           <div className="flex justify-between">
-            <span className="text-gray-600">Subtotal</span>
+            <span className="text-gray-500">Subtotal</span>
             <span>{format(subtotal)}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-gray-600">ITBIS (18%)</span>
+            <span className="text-gray-500">ITBIS (18%)</span>
             <span>{format(itbis)}</span>
           </div>
 
-          <div className="flex justify-between border-t pt-2 text-lg font-bold text-green-600">
+          <div className="flex justify-between text-lg font-bold text-green-600 pt-2 border-t">
             <span>Total</span>
             <span>{format(total)}</span>
           </div>
@@ -82,12 +98,12 @@ function FacturaModal({ ingreso, onClose }) {
         </div>
 
         {/* FOOTER */}
-        <p className="text-center text-gray-500 text-sm pt-2">
+        <p className="text-center text-gray-400 text-sm">
           Gracias por su visita
         </p>
 
         {/* BOTONES */}
-        <div className="no-print flex gap-3 pt-4 justify-center">
+        <div className="flex flex-col gap-2">
 
           {/* IMPRIMIR */}
           <button
@@ -96,46 +112,44 @@ function FacturaModal({ ingreso, onClose }) {
               generarFactura(ingreso);
             }}
             className="
-              flex items-center gap-2
-              bg-blue-500 hover:bg-blue-600
-              text-white px-4 py-2 rounded-lg
-              shadow
+              w-full bg-blue-500 hover:bg-blue-600
+              text-white py-2.5 rounded-xl
+              shadow-sm transition
             "
           >
             🖨 Ver / Imprimir
           </button>
 
-          {/* PDF */}
+          {/* DESCARGAR */}
           <button
             onClick={() => {
               window.modoFactura = "download";
               generarFactura(ingreso);
             }}
             className="
-              flex items-center gap-2
-              bg-green-500 hover:bg-green-600
-              text-white px-4 py-2 rounded-lg
-              shadow
+              w-full bg-green-500 hover:bg-green-600
+              text-white py-2.5 rounded-xl
+              shadow-sm transition
             "
           >
-            ⬇ Descargar
+            ⬇ Descargar PDF
           </button>
 
           {/* CERRAR */}
           <button
             onClick={onClose}
             className="
-              bg-gray-400 hover:bg-gray-500
-              text-white px-4 py-2 rounded-lg
+              w-full bg-red-500 hover:bg-red-600
+              text-white py-2.5 rounded-xl
+              transition
             "
           >
-            ✖
+            ✖ Cerrar
           </button>
 
         </div>
 
       </div>
-
     </div>
   );
 }

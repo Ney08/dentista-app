@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
 import { useClientes } from "../hooks/useClientes";
@@ -13,73 +13,78 @@ function IngresosPage() {
   const { clientes } = useClientes();
   const { ingresos, pagarIngreso, isLoading } = useIngresos();
 
-  const [vista, setVista] = useState("lista");
+  const [modalAbierto, setModalAbierto] = useState(false);
   const [editando, setEditando] = useState(null);
-  const [busqueda, setBusqueda] = useState("");
   const [facturaPreview, setFacturaPreview] = useState(null);
+  const [busqueda, setBusqueda] = useState("");
+  const [animar, setAnimar] = useState(false);
+  // ✅ abrir/cerrar form
+  const abrirNuevo = () => {
+    setEditando(null);
+    setModalAbierto(true);
+  };
 
-  const [limite, setLimite] = useState(10);
-  const [pagina, setPagina] = useState(1);
+  const abrirEditar = (ingreso) => {
+    setEditando(ingreso);
+    setModalAbierto(true);
+  };
 
-  // ✅ BLOQUEAR DOBLE PAGO
+  const cerrarModal = () => {
+    setModalAbierto(false);
+    setEditando(null);
+  };
+
+  // ✅ pago
   const marcarPagado = async (ingreso) => {
-
     if (ingreso.pagado) {
-      toast("Esta factura ya está pagada ⚠️");
+      toast("Ya está pagada ⚠️");
       return;
     }
 
     try {
       await pagarIngreso.mutateAsync(ingreso.id);
-      toast.success("Factura marcada como pagada ✅");
+      toast.success("Pagado ✅");
     } catch {
       toast.error("Error ❌");
     }
   };
 
-  // ✅ 💰 TOTAL PENDIENTE (LO QUE DEBEN)
+  // ✅ total pendiente
   const totalPendiente = ingresos
     .filter(i => !i.pagado)
     .reduce((acc, i) => {
-
       const servicios = i.servicios || [];
-
       const subtotal = servicios.reduce((a, s) => a + s.monto, 0);
-      const itbis = subtotal * 0.18;
-      const descuento = subtotal * ((i.descuento || 0) / 100);
-
-      return acc + (subtotal + itbis - descuento);
-
+      return acc + subtotal * 1.18;
     }, 0);
 
-  // ✅ CONTADOR PENDIENTES
   const pendientesCount = ingresos.filter(i => !i.pagado).length;
 
-  // ✅ FILTRO
+  useEffect(() => {
+    if (modalAbierto) {
+      setTimeout(() => setAnimar(true), 10);
+    } else {
+      setAnimar(false);
+    }
+  }, [modalAbierto]);
+
+  useEffect(() => {
+    if (pendientesCount > 0) {
+      toast(`⚠️ Tienes ${pendientesCount} factura(s) pendiente(s) 💸`);
+    }
+  }, [pendientesCount]);
+
+  // ✅ filtro
   const filtrados = ingresos.filter(i =>
     `${i.cliente?.nombre || ""} ${i.cliente?.apellido || ""}`
       .toLowerCase()
       .includes(busqueda.toLowerCase())
   );
 
-  // ✅ PAGINACIÓN
-  const inicio = (pagina - 1) * (limite === "all" ? filtrados.length : limite);
-  const fin = limite === "all" ? undefined : inicio + limite;
-
-  const ingresosFinal =
-    limite === "all"
-      ? filtrados
-      : filtrados.slice(inicio, fin);
-
-  const totalPaginas =
-    limite === "all"
-      ? 1
-      : Math.ceil(filtrados.length / limite);
-
   if (isLoading) {
     return (
       <PageWrapper>
-        <p className="text-center text-gray-500">Cargando facturas...</p>
+        <p className="text-center text-gray-500">Cargando...</p>
       </PageWrapper>
     );
   }
@@ -90,223 +95,188 @@ function IngresosPage() {
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* HEADER */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Facturación 🧾</h1>
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight flex justify-center gap-2">
+            Facturación <span>🧾</span>
+          </h1>
           <p className="text-gray-500 text-sm">
             Gestiona ingresos y facturas
           </p>
         </div>
 
-        {/* ✅ MÉTRICA PENDIENTE DINÁMICA */}
-        <div
-          className={`
-    p-4 rounded-xl text-center border
-    ${totalPendiente > 0
-              ? "bg-red-50 border-red-200"
-              : "bg-green-50 border-green-200"}
-  `}
-        >
-          <p
-            className={`
-      text-sm
-      ${totalPendiente > 0
-                ? "text-red-700"
-                : "text-green-700"}
-    `}
-          >
-            {totalPendiente > 0
-              ? "💸 Pendiente por cobrar"
-              : "✅ Todo saldado"}
+        {/* MÉTRICA */}
+        <div className={`p-5 rounded-2xl text-center border ${totalPendiente > 0
+          ? "bg-red-50 border-red-200"
+          : "bg-green-50 border-green-200"
+          }`}>
+          <p className="text-sm font-medium">
+            {totalPendiente > 0 ? "💸 Pendiente" : "✅ Todo saldado"}
           </p>
-
-          <p
-            className={`
-      text-2xl font-bold
-      ${totalPendiente > 0
-                ? "text-red-800"
-                : "text-green-800"}
-    `}
-          >
+          <p className="text-3xl font-bold">
             RD$ {totalPendiente.toFixed(2)}
           </p>
         </div>
 
-        {/* TABS */}
-        <div className="flex justify-center gap-3">
+        {/* CARD */}
+        <div className="space-y-6 bg-white p-6 rounded-2xl shadow-md border border-gray-200">
 
-          <button
-            onClick={() => setVista("lista")}
-            className={`px-5 py-2 rounded-full ${vista === "lista"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
-              }`}
-          >
-            📋 Facturas
-          </button>
+          {/* TOP */}
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-gray-500">
+              Total: {filtrados.length}
+            </p>
 
-          <button
-            onClick={() => {
-              setEditando(null);
-              setVista("crear");
-            }}
-            className={`px-5 py-2 rounded-full ${vista === "crear"
-                ? "bg-green-500 text-white"
-                : "bg-gray-200"
-              }`}
-          >
-            ➕ Crear
-          </button>
-
-        </div>
-
-        {/* CREAR */}
-        {vista === "crear" && (
-          <div className="bg-white p-6 rounded-xl shadow border">
-            <IngresoForm clientes={clientes} initialData={editando} />
+            <button
+              onClick={abrirNuevo}
+              className="
+                flex items-center gap-2
+                bg-green-500 hover:bg-green-600
+                text-white px-4 py-2 rounded-lg
+                text-sm shadow-sm transition hover:scale-105
+              "
+            >
+              ➕ Nuevo
+            </button>
           </div>
-        )}
 
-        {/* LISTA */}
-        {vista === "lista" && (
-          <div className="bg-white p-6 rounded-xl shadow border space-y-5">
+          {/* BUSCAR */}
+          <input
+            placeholder="🔍 Buscar cliente..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="
+              w-full border border-gray-300 px-4 py-2 rounded-xl
+              focus:ring-2 focus:ring-blue-500 transition
+            "
+          />
 
-            {/* BUSCAR */}
-            <input
-              placeholder="🔍 Buscar cliente..."
-              value={busqueda}
-              onChange={(e) => {
-                setBusqueda(e.target.value);
-                setPagina(1);
-              }}
-              className="w-full border px-4 py-2 rounded-xl"
-            />
+          <p className="text-sm text-gray-500">
+            📊 {filtrados.length} facturas • 🔴 {pendientesCount} pendientes
+          </p>
 
-            {/* INFO */}
-            <div className="flex justify-between text-sm">
-              <p className="text-gray-500">
-                📊 {filtrados.length} facturas • 🔴 {pendientesCount} pendientes
-              </p>
+          {/* LISTA */}
+          {filtrados.length === 0 ? (
+            <p className="text-center text-gray-400">No hay facturas</p>
+          ) : (
+            filtrados.map(i => {
 
-              <select
-                value={limite}
-                onChange={(e) => {
-                  const val =
-                    e.target.value === "all"
-                      ? "all"
-                      : parseInt(e.target.value);
+              const subtotal = (i.servicios || []).reduce((a, s) => a + s.monto, 0);
+              const total = subtotal * 1.18;
 
-                  setLimite(val);
-                  setPagina(1);
-                }}
-                className="border px-2 py-1 rounded"
-              >
-                <option value={10}>10</option>
-                <option value={50}>50</option>
-                <option value="all">Todos</option>
-              </select>
-            </div>
+              return (
+                <div
+                  key={i.id}
+                  className="
+                    flex justify-between items-center p-4 border rounded-xl
+                    transition hover:shadow-md hover:-translate-y-0.5
+                  "
+                >
+                  <div>
+                    <p className="font-semibold">
+                      {i.cliente?.nombre} {i.cliente?.apellido}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(i.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
 
-            {/* LISTA */}
-            {ingresosFinal.length === 0 ? (
-              <p className="text-center text-gray-400">
-                No hay facturas
-              </p>
-            ) : (
-              ingresosFinal.map(i => {
+                  <div className="flex items-center gap-2">
 
-                const servicios = i.servicios || [];
-                const subtotal = servicios.reduce((a, s) => a + s.monto, 0);
-                const itbis = subtotal * 0.18;
-                const descuento = subtotal * ((i.descuento || 0) / 100);
-                const total = subtotal + itbis - descuento;
+                    <span className={`px-3 py-1 text-xs rounded-full ${i.pagado
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                      }`}>
+                      {i.pagado ? "Pagado" : "Pendiente"}
+                    </span>
 
-                return (
-                  <div
-                    key={i.id}
-                    className="flex justify-between p-4 border rounded-xl"
-                  >
+                    <span className="font-bold text-green-600">
+                      RD$ {total.toFixed(2)}
+                    </span>
 
-                    <div>
-                      <p className="font-bold">
-                        {i.cliente?.nombre} {i.cliente?.apellido}
-                      </p>
+                    <button
+                      onClick={() => setFacturaPreview(i)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-2 rounded transition hover:scale-105"
+                    >
+                      📄
+                    </button>
 
-                      <p className="text-sm text-gray-500">
-                        {i.created_at && new Date(i.created_at).toLocaleDateString()}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        💼 {servicios.length} servicio(s)
-                      </p>
+                    <button
+                      onClick={() => abrirEditar(i)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 rounded transition hover:scale-105"
+                    >
+                      ✏️
+                    </button>
 
-                    </div>
-
-                    <div className="flex items-center gap-2">
-
-                      <span className={`px-3 py-1 text-xs rounded-full ${i.pagado
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                        }`}>
-                        {i.pagado ? "Pagado" : "Pendiente"}
-                      </span>
-
-                      <span className="font-bold text-green-600">
-                        RD$ {total.toFixed(2)}
-                      </span>
-
-                      {/* VER */}
-                      <button
-                        onClick={() => setFacturaPreview(i)}
-                        className="bg-blue-500 text-white px-2 rounded"
-                      >
-                        📄
-                      </button>
-
-                      {/* EDITAR */}
-                      <button
-                        disabled={i.pagado}
-                        onClick={() => {
-                          if (i.pagado) return;
-                          setEditando(i);
-                          setVista("crear");
-                        }}
-                        className={`px-2 text-white rounded ${i.pagado
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : "bg-yellow-500"
-                          }`}
-                      >
-                        ✏️
-                      </button>
-
-                      {/* PAGAR */}
-                      <button
-                        disabled={i.pagado}
-                        onClick={() => marcarPagado(i)}
-                        className={`px-2 text-white rounded ${i.pagado
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : "bg-purple-500"
-                          }`}
-                      >
-                        💳
-                      </button>
-
-                    </div>
+                    <button
+                      onClick={() => marcarPagado(i)}
+                      className="bg-purple-500 hover:bg-purple-600 text-white px-2 rounded transition hover:scale-105"
+                    >
+                      💳
+                    </button>
 
                   </div>
-                );
-              })
-            )}
+                </div>
+              );
+            })
+          )}
+
+        </div>
+      </div>
+
+      {/* ✅ MODAL FORM */}
+
+      <div
+        className={`
+    fixed inset-0 z-50
+    flex items-center justify-center
+    overflow-y-auto 
+    transition-all duration-200 ease-out
+    ${modalAbierto
+            ? "opacity-100 visible bg-black/40 backdrop-blur-md"
+            : "opacity-0 invisible"}
+  `}
+      >
+        {modalAbierto && (
+
+          <div className="w-full max-w-2xl px-4 my-10"> {/* ✅ margen vertical */}
+
+            <div
+
+              className={`
+        w-full max-w-2xl transform transition-all duration-200 ease-out
+        ${animar
+                  ? "scale-100 opacity-100 translate-y-0"
+                  : "scale-95 opacity-0 translate-y-6"}
+      `}
+
+            >
+              <IngresoForm
+                key={editando?.id || "nuevo"}
+                clientes={clientes}
+                initialData={editando}
+                onClose={cerrarModal}
+              />
+            </div>
 
           </div>
+
         )}
 
       </div>
 
-      {facturaPreview && (
-        <FacturaModal
-          ingreso={facturaPreview}
-          onClose={() => setFacturaPreview(null)}
-        />
-      )}
+      {/* ✅ MODAL FACTURA */}
+      <div className={`
+        fixed inset-0 z-50 flex items-center justify-center
+        ${facturaPreview ? "bg-black/40 backdrop-blur-md" : "pointer-events-none"}
+        transition
+      `}>
+        {facturaPreview && (
+          <FacturaModal
+            ingreso={facturaPreview}
+            onClose={() => setFacturaPreview(null)}
+          />
+        )}
+      </div>
 
     </PageWrapper>
   );

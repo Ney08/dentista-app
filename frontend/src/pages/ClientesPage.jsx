@@ -122,7 +122,7 @@ function ClientesPage() {
                 transition hover:scale-105
               "
             >
-              <span className="text-lg">＋</span>
+              <span className="text-lg">➕ </span>
               Nuevo
             </button>
 

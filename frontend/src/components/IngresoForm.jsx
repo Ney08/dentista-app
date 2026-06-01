@@ -6,7 +6,7 @@ import { useIngresos } from "../hooks/useIngresos";
 import { useCitas } from "../hooks/useCitas";
 import serviciosCatalogo from "../data/servicios.json";
 
-function IngresoForm({ clientes, initialData }) {
+function IngresoForm({ clientes, initialData, onClose }) {
 
   const { crearIngreso, actualizarIngreso } = useIngresos();
   const { citas } = useCitas(); // ✅ obtener citas
@@ -36,12 +36,16 @@ function IngresoForm({ clientes, initialData }) {
     toast.success("Servicio sugerido automáticamente ✨");
   };
 
+
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    reset
+    reset,
+    formState: { errors }
   } = useForm();
+
+
 
   const [loading, setLoading] = useState(false);
 
@@ -52,6 +56,7 @@ function IngresoForm({ clientes, initialData }) {
   const [descuento, setDescuento] = useState(0);
 
   // ✅ EDITAR
+
   useEffect(() => {
     if (initialData) {
       setServicios(initialData.servicios || []);
@@ -59,9 +64,17 @@ function IngresoForm({ clientes, initialData }) {
 
       reset({
         clienteId: initialData.cliente_id
+          ? String(initialData.cliente_id)
+          : ""
+      });
+
+    } else {
+      reset({
+        clienteId: ""
       });
     }
   }, [initialData, reset]);
+
 
 
   // ✅ AGREGAR SERVICIO
@@ -132,126 +145,152 @@ function IngresoForm({ clientes, initialData }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-      <h3 className="text-xl font-bold">
-        {initialData ? "Editar Factura ✏️" : "Registrar Factura 🧾"}
-      </h3>
+    <div className="w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-100 space-y-8">
 
-      {/* CLIENTE */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-      <select
-        {...register("clienteId")}
-        onChange={(e) => {
-          const id = e.target.value;
-          autoSeleccionarServicio(id);
-        }}
-        className="w-full border px-3 py-2 rounded"
-      >
 
-        <option value="">Seleccionar cliente</option>
-        {clientes.map(c => (
-          <option key={c.id} value={c.id}>
-            {c.nombre} {c.apellido}
-          </option>
-        ))}
-      </select>
+        <h3 className="text-xl font-bold">
+          {initialData ? "Editar Factura ✏️" : "Registrar Factura 🧾"}
+        </h3>
 
-      {/* SERVICIOS */}
-      <div className="bg-gray-50 border rounded-xl p-4 space-y-4">
+        {/* CLIENTE */}
 
-        <div className="flex justify-between items-center">
-          <p className="text-sm font-semibold">Servicios</p>
 
-          <button
-            type="button"
-            onClick={agregarServicio}
-            className="bg-blue-500 text-white px-3 py-1 rounded"
-          >
-            + Agregar
-          </button>
+
+        <select
+          {...register("clienteId")}
+          onChange={(e) => {
+            const id = e.target.value;
+            autoSeleccionarServicio(id);
+          }}
+          className="w-full border px-3 py-2 rounded"
+        >
+
+
+
+          <option value="">Seleccionar cliente</option>
+          {clientes.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.nombre} {c.apellido}
+            </option>
+          ))}
+        </select>
+
+        {/* SERVICIOS */}
+        <div className="bg-gray-50 border rounded-xl p-4 space-y-4">
+
+          <div className="flex justify-between items-center">
+            <p className="text-sm font-semibold">Servicios</p>
+
+            <button
+              type="button"
+              onClick={agregarServicio}
+              className="bg-blue-500 text-white px-3 py-1 rounded"
+            >
+              + Agregar
+            </button>
+          </div>
+
+          {servicios.map((s, index) => (
+
+            <div key={index} className="bg-white p-3 rounded shadow-sm">
+
+              {servicios.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => eliminarServicio(index)}
+                  className="text-red-500 text-xs float-right"
+                >
+                  ❌
+                </button>
+              )}
+
+              {/* SELECT SERVICIO */}
+              <select
+                value={s.descripcion}
+                onChange={(e) => {
+                  const seleccionado = serviciosCatalogo.find(
+                    serv => serv.nombre === e.target.value
+                  );
+
+                  actualizarServicio(index, "descripcion", seleccionado.nombre);
+                  actualizarServicio(index, "monto", seleccionado.precio);
+                }}
+                className="w-full border px-3 py-2 rounded mb-2"
+              >
+                <option value="">Seleccionar servicio</option>
+
+                {serviciosCatalogo.map((serv, i) => (
+                  <option key={i} value={serv.nombre}>
+                    {serv.nombre} (RD$ {serv.precio})
+                  </option>
+                ))}
+              </select>
+
+              {/* MONTO BLOQUEADO */}
+              <input
+                type="number"
+                value={s.monto}
+                disabled
+                className="w-full border px-3 py-2 rounded bg-gray-100"
+              />
+
+            </div>
+          ))}
+
         </div>
 
-        {servicios.map((s, index) => (
+        {/* DESCUENTO */}
+        <label className="text-sm font-semibold text-gray-600">
+          Descuento (%)
+        </label>
+        <input
 
-          <div key={index} className="bg-white p-3 rounded shadow-sm">
+          type="number"
+          placeholder="Descuento (%)"
+          value={descuento}
+          onChange={(e) => setDescuento(e.target.value)}
+          className="w-full border px-3 py-2 rounded"
+        />
 
-            {servicios.length > 1 && (
-              <button
-                type="button"
-                onClick={() => eliminarServicio(index)}
-                className="text-red-500 text-xs float-right"
-              >
-                ❌
-              </button>
-            )}
+        {/* TOTAL */}
+        <div className="bg-green-50 border border-green-200 p-4 rounded-xl text-center">
+          <p className="text-sm text-green-700">Total factura</p>
+          <p className="text-2xl font-bold text-green-800">
+            RD$ {total.toFixed(2)}
+          </p>
+        </div>
 
-            {/* SELECT SERVICIO */}
-            <select
-              value={s.descripcion}
-              onChange={(e) => {
-                const seleccionado = serviciosCatalogo.find(
-                  serv => serv.nombre === e.target.value
-                );
+        {/* BOTÓN */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="
+  w-full bg-gradient-to-r from-blue-500 to-blue-600
+  hover:from-blue-600 hover:to-blue-700
+  text-white py-3 rounded-xl font-medium
+  shadow-md transition"
+        >
+          {loading ? "Guardando..." : "✅ Guardar factura"}
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
 
-                actualizarServicio(index, "descripcion", seleccionado.nombre);
-                actualizarServicio(index, "monto", seleccionado.precio);
-              }}
-              className="w-full border px-3 py-2 rounded mb-2"
-            >
-              <option value="">Seleccionar servicio</option>
+          className="
+  w-full bg-gradient-to-r from-red-500 to-red-600
+  hover:from-red-600 hover:to-red-700
+  text-white py-3 rounded-xl font-medium
+  shadow-md transition
+"
 
-              {serviciosCatalogo.map((serv, i) => (
-                <option key={i} value={serv.nombre}>
-                  {serv.nombre} (RD$ {serv.precio})
-                </option>
-              ))}
-            </select>
-
-            {/* MONTO BLOQUEADO */}
-            <input
-              type="number"
-              value={s.monto}
-              disabled
-              className="w-full border px-3 py-2 rounded bg-gray-100"
-            />
-
-          </div>
-        ))}
-
-      </div>
-
-      {/* DESCUENTO */}
-      <label className="text-sm font-semibold text-gray-600">
-        Descuento (%)
-      </label>
-      <input
-
-        type="number"
-        placeholder="Descuento (%)"
-        value={descuento}
-        onChange={(e) => setDescuento(e.target.value)}
-        className="w-full border px-3 py-2 rounded"
-      />
-
-      {/* TOTAL */}
-      <div className="bg-green-50 border border-green-200 p-4 rounded-xl text-center">
-        <p className="text-sm text-green-700">Total factura</p>
-        <p className="text-2xl font-bold text-green-800">
-          RD$ {total.toFixed(2)}
-        </p>
-      </div>
-
-      {/* BOTÓN */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-3 bg-green-500 text-white rounded-xl font-semibold"
-      >
-        {loading ? "Guardando..." : "✅ Guardar factura"}
-      </button>
-
-    </form>
+        >
+          Cancelar
+        </button>
+      </form>
+    </div>
   );
 }
 
