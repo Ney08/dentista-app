@@ -37,13 +37,17 @@ export const useClientes = () => {
   });
 
   // ✅ EDITAR CLIENTE
-  const editarClienteMutation = useMutation({
-    mutationFn: ({ id, data }) =>
-      actualizarCliente(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clientes"] });
-    }
-  });
+ 
+const editarClienteMutation = useMutation({
+  mutationFn: async (variables) => {
+    const { id, data } = variables;
+    return await actualizarCliente(id, data);
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["clientes"] });
+  }
+});
+
 
   return {
     clientes,

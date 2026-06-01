@@ -1,14 +1,40 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+
 import PageWrapper from "../components/PageWrapper";
 import CitaForm from "../components/CitaForm";
 import { useClientes } from "../hooks/useClientes";
 import { useCitas } from "../hooks/useCitas";
 
 function CitasPage() {
-
+  const location = useLocation();
+  const clienteDesdeClientes = location.state?.clienteSeleccionado;
+  const [modalAbierto, setModalAbierto] = useState(false);
   const { clientes } = useClientes();
+  const [clientePresetLocal, setClientePresetLocal] = useState(null);
+  const [animar, setAnimar] = useState(false);
+
+
+  useEffect(() => {
+    if (modalAbierto) {
+      setTimeout(() => setAnimar(true), 10);
+    } else {
+      setAnimar(false);
+    }
+  }, [modalAbierto]);
+
+  useEffect(() => {
+    if (clienteDesdeClientes) {
+      setClientePresetLocal(clienteDesdeClientes);
+      setModalAbierto(true);
+
+      window.history.replaceState({}, document.title);
+    }
+  }, [clienteDesdeClientes]);
+
 
   const {
     citas,
@@ -17,7 +43,9 @@ function CitasPage() {
     isLoading
   } = useCitas();
 
-  const [modalAbierto, setModalAbierto] = useState(false);
+
+
+
   const [citaEditar, setCitaEditar] = useState(null);
   const [filtro, setFiltro] = useState("todas");
 
@@ -33,9 +61,11 @@ function CitasPage() {
     setModalAbierto(true);
   };
 
+
   const cerrarModal = () => {
     setModalAbierto(false);
     setCitaEditar(null);
+    setClientePresetLocal(null);
   };
 
 
@@ -83,6 +113,8 @@ function CitasPage() {
       </PageWrapper>
     );
   }
+
+
 
   return (
     <PageWrapper>
@@ -315,20 +347,44 @@ function CitasPage() {
 
       {/* MODAL */}
       {modalAbierto && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-          <div className="flex items-center justify-center min-h-screen p-6">
+        <div
+          className={`
+    fixed inset-0 z-50 flex items-center justify-center
+    transition-all duration-200 ease-out
+    ${modalAbierto ? "visible" : "invisible"}
+    ${animar
+              ? "opacity-100 bg-black/40 backdrop-blur-md"
+              : "opacity-0"}
+  `}
+        >
+
+
+
+
+          <div
+            className={`
+    w-full max-w-3xl p-6
+    transform transition-all duration-200 ease-out
+    ${animar
+                ? "scale-100 opacity-100 translate-y-0"
+                : "scale-95 opacity-0 translate-y-6"}
+  `}
+          >
+
 
             <CitaForm
+              key={citaEditar?.id || clientePresetLocal?.id || "nuevo"}
               clientes={clientes}
               cita={citaEditar}
-              onCrear={() => { }}
+              clientePreset={clientePresetLocal}
+              onCrear={cerrarModal}
               onClose={cerrarModal}
             />
 
           </div>
-
         </div>
+
       )}
 
     </PageWrapper>

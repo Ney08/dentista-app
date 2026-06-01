@@ -7,8 +7,11 @@ import provincias from "../data/provincias.json";
 import municipios from "../data/municipios.json";
 import { API_URL } from "../config";
 
-function ClienteForm() {
-  const { crearCliente } = useClientes();
+function ClienteForm({ cliente, onClose }) {
+
+
+  const { crearCliente, editarCliente } = useClientes();
+  const isEdit = !!cliente;
 
   const {
     register,
@@ -29,6 +32,54 @@ function ClienteForm() {
     (m) => Number(m.provinciaId) === Number(provincia)
   );
 
+  // ✅ CARGAR DATOS SI ES EDIT
+  useEffect(() => {
+    if (cliente) {
+
+      reset({
+        nombre: cliente.nombre,
+        apellido: cliente.apellido,
+        cedula: cliente.cedula,
+        telefono: cliente.telefono,
+        calle: cliente.direccion?.calle || ""
+      });
+
+      const normalizar = (txt) =>
+        txt?.toLowerCase().trim();
+
+      const provinciaEncontrada = provincias.find(
+        p => normalizar(p.nombre) === normalizar(cliente.direccion?.provincia_nombre)
+      );
+
+      const municipioEncontrado = municipios.find(
+        m =>
+          normalizar(m.nombre) === normalizar(cliente.direccion?.municipio_nombre) &&
+          Number(m.provinciaId) === Number(provinciaEncontrada?.id)
+      );
+
+      setProvincia(provinciaEncontrada?.id || null);
+      setMunicipio(municipioEncontrado?.nombre || "");
+
+    } else {
+
+      // ✅🔥 ESTE ERA EL QUE TE FALTABA
+
+      reset({
+        nombre: "",
+        apellido: "",
+        cedula: "",
+        telefono: "",
+        calle: ""
+      });
+
+      setProvincia(null);
+      setMunicipio("");
+    }
+
+  }, [cliente, reset]);
+
+
+
   // ✅ VALIDACIÓN CÉDULA
   useEffect(() => {
     if (!cedulaInput || cedulaInput.length < 6) {
@@ -43,16 +94,21 @@ function ClienteForm() {
         );
         const data = await res.json();
 
-        if (Array.isArray(data) && data.length > 0) {
+        // ✅ SI ES EDIT, permitir misma cédula del mismo cliente
+        if (
+          Array.isArray(data) &&
+          data.length > 0 &&
+          (!isEdit || data[0].id !== cliente?.id)
+        ) {
           setCedulaError("Cédula ya registrada");
         } else {
           setCedulaError("");
         }
-      } catch {}
+      } catch { }
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [cedulaInput]);
+  }, [cedulaInput, isEdit, cliente]);
 
   const onSubmit = async (data) => {
 
@@ -62,21 +118,44 @@ function ClienteForm() {
     try {
       setLoading(true);
 
-      await crearCliente.mutateAsync({
+      console.log("🔵 DATA FORM:", data);
+      console.log("🟢 PROVINCIA (state):", provincia);
+      console.log("🟡 MUNICIPIO (state):", municipio);
+
+      const payload = {
         ...data,
         direccion: {
           provincia_nombre:
-            provincias.find(p => p.id == provincia)?.nombre || "",
-          municipio_nombre:
-            municipios.find(m => m.id == municipio)?.nombre || "",
+            provincias.find(p => Number(p.id) === Number(provincia))?.nombre ?? null,
+
+          municipio_nombre: municipio,
           calle: data.calle || ""
         }
-      });
+      };
+      console.log("🚀 PAYLOAD FINAL:", payload);
+      if (isEdit) {
 
-      toast.success("Cliente creado ✅");
+        await editarCliente.mutateAsync({
+          id: cliente.id,
+          data: payload
+        });
+
+        toast.success("Cliente actualizado ✅");
+
+      } else {
+
+        await crearCliente.mutateAsync(payload);
+        toast.success("Cliente creado ✅");
+      }
+
+      console.log("Provincia seleccionada:", provincia);
+      console.log("Municipio seleccionado:", municipio);
+
       reset();
       setProvincia(null);
       setMunicipio("");
+
+      onClose(); // ✅ cerrar modal
 
     } catch {
       toast.error("Error ❌");
@@ -86,12 +165,12 @@ function ClienteForm() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-md border space-y-8">
+    <div className="w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-100 space-y-8">
 
       {/* HEADER */}
-      <div className="text-center">
-        <h2 className="text-xl font-bold">
-          Nuevo cliente 👤
+      <div className="text-center space-y-1">
+        <h2 className="text-2xl font-semibold tracking-tight">
+          {isEdit ? "Editar cliente ✏️" : "Nuevo cliente 👤"}
         </h2>
         <p className="text-gray-500 text-sm">
           Completa la información básica
@@ -171,17 +250,21 @@ function ClienteForm() {
               ))}
             </select>
 
+
             <select
               value={municipio}
               onChange={(e) => setMunicipio(e.target.value)}
-              disabled={!provincia}
               className="input"
             >
               <option value="">Municipio</option>
+
               {municipiosFiltrados.map(m => (
-                <option key={m.id} value={m.id}>{m.nombre}</option>
+                <option key={m.nombre} value={m.nombre} >
+                  {m.nombre}
+                </option>
               ))}
             </select>
+
 
           </div>
 
@@ -192,17 +275,47 @@ function ClienteForm() {
           />
         </div>
 
-        {/* BOTÓN */}
-        <button
-          type="submit"
-          disabled={loading || cedulaError}
-          className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition"
-        >
-          {loading ? "Guardando..." : "Guardar cliente"}
-        </button>
+        {/* BOTONES */}
+        <div className="space-y-2">
 
-      </form>
-    </div>
+          <button
+            type="submit"
+            disabled={loading || cedulaError}
+
+            className="
+  w-full bg-gradient-to-r from-blue-500 to-blue-600
+  hover:from-blue-600 hover:to-blue-700
+  text-white py-3 rounded-xl font-medium
+  shadow-md transition
+"
+
+          >
+            {loading
+              ? "Guardando..."
+              : isEdit
+                ? "Actualizar cliente"
+                : "Crear cliente"}
+          </button>
+
+          <button
+            type="button"
+            onClick={onClose}
+
+            className="
+  w-full bg-gradient-to-r from-red-500 to-red-600
+  hover:from-red-600 hover:to-red-700
+  text-white py-3 rounded-xl font-medium
+  shadow-md transition
+"
+
+          >
+            Cancelar
+          </button>
+
+        </div>
+
+      </form >
+    </div >
   );
 }
 

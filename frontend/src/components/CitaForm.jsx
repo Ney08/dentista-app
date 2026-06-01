@@ -6,12 +6,11 @@ import { API_URL } from "../config";
 import { useCitas } from "../hooks/useCitas";
 import serviciosCatalogo from "../data/servicios.json";
 
-function CitaForm({ clientes, onCrear, cita, onClose }) {
+function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
   const [horaSeleccionadaManual, setHoraSeleccionadaManual] = useState(false);
   const { crearCita, actualizarCita } = useCitas();
   const isEdit = !!cita;
 
-  const [clienteId, setClienteId] = useState("");
   const [fechaBase, setFechaBase] = useState(new Date());
   const [hora, setHora] = useState("");
   const [duracion, setDuracion] = useState(30);
@@ -19,6 +18,14 @@ function CitaForm({ clientes, onCrear, cita, onClose }) {
   const [detalle, setDetalle] = useState("");
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [clienteId, setClienteId] = useState("");
+  const [clientePresetLocal, setClientePresetLocal] = useState(null);
+
+  useEffect(() => {
+    if (clientePreset) {
+      setClienteId(clientePreset.id);
+    }
+  }, [clientePreset]);
 
   // ✅ LOAD CITAS
   useEffect(() => {
@@ -224,19 +231,36 @@ w-full max-w-3xl
         {/* LEFT */}
         <div className="space-y-4">
 
+          {/* ✅ CLIENTE PRESELECCIONADO */}
+          {clientePreset && (
+
+            <div className="bg-blue-50 border border-blue-200 p-2 rounded-lg text-sm flex items-center gap-2">
+              👤 Cliente:
+              <strong>
+                {clientePreset.nombre} {clientePreset.apellido}
+              </strong>
+            </div>
+
+          )}
+
+          {/* SELECT CLIENTE */}
+
           <select
             value={clienteId}
             onChange={(e) => setClienteId(e.target.value)}
+            disabled={!!clientePreset}
             className="input"
-            disabled={isEdit}
           >
             <option value="">Cliente</option>
+
             {clientes.map(c => (
               <option key={c.id} value={c.id}>
                 {c.nombre} {c.apellido}
               </option>
             ))}
           </select>
+
+
 
           <select
             value={motivo}
