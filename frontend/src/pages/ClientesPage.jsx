@@ -240,6 +240,7 @@ function ClientesPage() {
       {/* ✅ MODAL CON ANIMACIÓN */}
 
       <div
+        onClick={cerrarModal}
         className={`
     fixed inset-0 z-50 flex items-center justify-center
     transition-all duration-200 ease-out
@@ -251,6 +252,7 @@ function ClientesPage() {
 
 
         <div
+          onClick={(e) => e.stopPropagation()}
           className={`
       w-full max-w-3xl p-6
       transform transition-all duration-200 ease-out

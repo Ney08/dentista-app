@@ -199,9 +199,28 @@ function Login() {
 
       {/* ✅ MODAL */}
       {mostrarRecovery && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+        <div
+          onClick={cerrarModal} // ✅ click fuera
+          className={`
+      fixed inset-0 z-50 flex items-center justify-center
+      bg-black/40 backdrop-blur-sm
+      transition-opacity duration-200
+      ${mostrarRecovery ? "opacity-100" : "opacity-0 pointer-events-none"}
+    `}
+        >
 
-          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm space-y-4">
+          <div
+            onClick={(e) => e.stopPropagation()} // ✅ evita cerrar dentro
+            className={`
+        bg-white p-6 rounded-xl shadow-lg
+        w-full max-w-sm space-y-4
+
+        transform transition-all duration-200 ease-out
+        ${mostrarRecovery
+                ? "scale-100 opacity-100 translate-y-0"
+                : "scale-95 opacity-0 translate-y-6"}
+      `}
+          >
 
             <h3 className="text-lg font-bold text-center">
               🔐 Recuperar contraseña
@@ -242,8 +261,8 @@ function Login() {
                 onClick={recuperarPassword}
                 disabled={!claveValida || nuevaPassword.length < 4 || loading}
                 className={`flex-1 py-2 rounded text-white ${claveValida && nuevaPassword.length >= 4
-                  ? "bg-green-500"
-                  : "bg-gray-400 cursor-not-allowed"
+                    ? "bg-green-500 hover:bg-green-600"
+                    : "bg-gray-400 cursor-not-allowed"
                   }`}
               >
                 {loading ? "Guardando..." : "Guardar"}
@@ -251,7 +270,7 @@ function Login() {
 
               <button
                 onClick={cerrarModal}
-                className="flex-1 bg-gray-400 text-white py-2 rounded"
+                className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500"
               >
                 Cancelar
               </button>
@@ -259,9 +278,9 @@ function Login() {
             </div>
 
           </div>
-
         </div>
       )}
+
     </>
   );
 }

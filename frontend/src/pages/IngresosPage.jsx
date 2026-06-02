@@ -273,6 +273,7 @@ function IngresosPage() {
       {/* ✅ MODAL FORM */}
 
       <div
+      onClick={cerrarModal}
         className={`
     fixed inset-0 z-50
     flex items-center justify-center
@@ -288,7 +289,7 @@ function IngresosPage() {
           <div className="w-full max-w-2xl px-4 my-10"> {/* ✅ margen vertical */}
 
             <div
-
+              onClick={(e) => e.stopPropagation()}
               className={`
         w-full max-w-2xl transform transition-all duration-200 ease-out
         ${animar

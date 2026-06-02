@@ -4,45 +4,113 @@ import { useState, useEffect } from "react";
 import { useServicios } from "../hooks/useServicios";
 import { useIngresos } from "../hooks/useIngresos";
 import { useCitas } from "../hooks/useCitas";
+import { formatFecha, formatHora } from "../utils/fecha";
 
 function IngresoForm({ clientes, initialData, onClose }) {
   const { servicios: catalogoServicios } = useServicios();
   const { crearIngreso, actualizarIngreso } = useIngresos();
   const { citas } = useCitas(); // ✅ obtener citas
+
   const normalize = (text) =>
-    text.toLowerCase().trim();
+    (text || "").toLowerCase().trim();
+
 
   const autoSeleccionarServicio = (clienteId) => {
 
-    const cita = citas.find(
-      c => c.cliente_id == clienteId && c.estado === "pendiente"
-    );
+    console.log("👉 TODAS LAS CITAS:", citas);
+    console.log("👉 CLIENTE SELECCIONADO:", clienteId);
 
-    if (!cita) {
+    const ahora = new Date();
+
+    const citasCliente = citas
+      .filter(c =>
+        Number(c.cliente_id) === Number(clienteId) &&
+        c.estado === "pendiente"
+      )
+      .map(c => ({
+        ...c,
+        fechaObj: new Date(c.fecha.replace("T", " "))
+
+      }));
+
+    if (citasCliente.length === 0) {
       setCitaSeleccionada(null);
+      setServicios([{
+        descripcion: "",
+        monto: ""
+      }]);
+      toast("No hay citas relacionadas ⚠️");
       return;
     }
 
-    setCitaSeleccionada(cita);
+    // ✅ 1. CITA DE HOY
+    const hoy = new Date();
 
-    if (!cita.motivo) return;
-
-    const servicioEncontrado = servicios.find(
-      s => normalize(s.nombre).includes(normalize(cita.motivo))
+    const citaHoy = citasCliente.find(c =>
+      c.fechaObj.toDateString() === hoy.toDateString()
     );
+
+    let citaElegida = citaHoy;
+
+    // ✅ 2. SI NO HAY HOY → MÁS CERCANA (FUTURA O PASADA)
+    if (!citaElegida) {
+      citaElegida = citasCliente
+        .sort((a, b) =>
+          Math.abs(a.fechaObj - ahora) - Math.abs(b.fechaObj - ahora)
+        )[0];
+    }
+
+    if (!citaElegida) {
+      setCitaSeleccionada(null);
+
+      setServicios([{
+        descripcion: "",
+        monto: ""
+      }]);
+      toast("No hay citas relacionadas ⚠️");
+      return;
+    }
+
+    setCitaSeleccionada(citaElegida);
+
+    // ✅ AUTO SERVICIO
+    if (!citaElegida.motivo) return;
+
+    const servicioEncontrado = catalogoServicios.find(s => {
+      const nombre = normalize(s?.nombre || s?.descripcion);
+      const motivo = normalize(citaElegida?.motivo);
+
+      const palabras = motivo.split(" ");
+
+      return palabras.some(p => nombre.includes(p));
+    });
 
     if (!servicioEncontrado) {
       toast("No hay servicio relacionado ⚠️");
+
+      setServicios([{
+        descripcion: "",
+        monto: ""
+      }]);
+
       return;
     }
 
-    setServicios([{
-      descripcion: servicioEncontrado.nombre,
-      monto: servicioEncontrado.precio
-    }]);
+    setServicios(prev => {
+      const copia = [...prev];
 
-    toast.success("Servicio sugerido automáticamente ✨");
+      copia[0] = {
+        descripcion: servicioEncontrado.nombre || servicioEncontrado.descripcion || "",
+        monto: servicioEncontrado.precio || ""
+      };
+
+      return copia;
+    });
+    console.log("✅ CITAS DEL CLIENTE:", citasCliente);
+    console.log("✅ CITA ELEGIDA:", citaElegida);
+    toast.success("Servicio sugerido automáticamente ✨ cita fecha: " + formatFecha(citaElegida.fechaObj));
   };
+
 
 
 
@@ -163,13 +231,13 @@ function IngresoForm({ clientes, initialData, onClose }) {
 
         <h3 className="text-xl font-bold text-gray-800 text-center">
           {initialData ? "Editar Factura ✏️" : "Registrar Factura 🧾"}
-           <p className="text-sm text-gray-500 text-center">
-          {initialData
-            ? "Modifica los detalles de la factura"
-            : "Completa los detalles para registrar una nueva factura"}
-        </p>
+          <p className="text-sm text-gray-500 text-center">
+            {initialData
+              ? "Modifica los detalles de la factura"
+              : "Completa los detalles para registrar una nueva factura"}
+          </p>
         </h3>
-       
+
         {/* CLIENTE */}
 
 
@@ -250,7 +318,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
                   {catalogoServicios.map((serv, i) => {
 
                     // ✅ BLOQUEAR DUPLICADOS
-                    const yaSeleccionado = catalogoServicios.some(
+                    const yaSeleccionado = servicios.some(
                       (s2, i2) =>
                         s2.descripcion === serv.nombre && i2 !== index
                     );

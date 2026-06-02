@@ -227,6 +227,7 @@ function CitasPage() {
       {modalAbierto && (
 
         <div
+         onClick={cerrarModal}
           className={`
     fixed inset-0 z-50 flex items-center justify-center
     transition-all duration-200 ease-out
@@ -241,6 +242,7 @@ function CitasPage() {
 
 
           <div
+          onClick={(e) => e.stopPropagation()}
             className={`
     w-full max-w-3xl p-6
     transform transition-all duration-200 ease-out

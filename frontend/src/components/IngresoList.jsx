@@ -1,5 +1,6 @@
 import { formatFecha } from "../utils/fecha";
-
+import { useState } from "react";
+import ConfirmModal from "./ConfirmModal";
 function IngresoList({
   facturas,
   porPagina,
@@ -7,6 +8,7 @@ function IngresoList({
   onEditar,
   onPagar
 }) {
+  const [ingresoAPagar, setIngresoAPagar] = useState(null);
   return (
 
     <div
@@ -52,11 +54,10 @@ function IngresoList({
             {/* DERECHA */}
             <div className="flex items-center gap-2">
 
-              <span className={`px-3 py-1 text-xs rounded-full ${
-                i.pagado
-                  ? "bg-green-100 text-green-700"
-                  : "bg-yellow-100 text-yellow-700"
-              }`}>
+              <span className={`px-3 py-1 text-xs rounded-full ${i.pagado
+                ? "bg-green-100 text-green-700"
+                : "bg-yellow-100 text-yellow-700"
+                }`}>
                 {i.pagado ? "Pagado" : "Pendiente"}
               </span>
 
@@ -67,11 +68,10 @@ function IngresoList({
               <button
                 onClick={() => onVerFactura(i)}
                 disabled={!i.pagado}
-                className={`px-2 rounded ${
-                  i.pagado
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-300 text-gray-500"
-                }`}
+                className={`px-2 rounded ${i.pagado
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-500"
+                  }`}
               >
                 📄
               </button>
@@ -79,26 +79,26 @@ function IngresoList({
               <button
                 onClick={() => onEditar(i)}
                 disabled={i.pagado}
-                className={`px-2 rounded ${
-                  i.pagado
-                    ? "bg-gray-300 text-gray-500"
-                    : "bg-yellow-500 text-white"
-                }`}
+                className={`px-2 rounded ${i.pagado
+                  ? "bg-gray-300 text-gray-500"
+                  : "bg-yellow-500 text-white"
+                  }`}
               >
                 ✏️
               </button>
 
+
               <button
-                onClick={() => onPagar(i)}
+                onClick={() => setIngresoAPagar(i)}
                 disabled={i.pagado}
-                className={`px-2 rounded ${
-                  i.pagado
-                    ? "bg-gray-300 text-gray-500"
-                    : "bg-purple-500 text-white"
-                }`}
+                className={`px-2 rounded ${i.pagado
+                  ? "bg-gray-300 text-gray-500"
+                  : "bg-purple-500 text-white"
+                  }`}
               >
                 💳
               </button>
+
 
             </div>
 
@@ -106,6 +106,17 @@ function IngresoList({
         );
 
       })}
+
+      {ingresoAPagar && (
+        <ConfirmModal
+          mensaje="¿Confirmar pago de esta factura?"
+          onConfirm={() => {
+            onPagar(ingresoAPagar);
+            setIngresoAPagar(null);
+          }}
+          onCancel={() => setIngresoAPagar(null)}
+        />
+      )}
 
     </div>
   );

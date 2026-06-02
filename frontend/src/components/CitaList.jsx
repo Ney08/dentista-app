@@ -1,5 +1,6 @@
 import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
-
+import { useState } from "react";
+import ConfirmModal from "./ConfirmModal";
 function CitaList({
   citas,
   getEstado,
@@ -7,7 +8,7 @@ function CitaList({
   onCompletar,
   onCancelar
 }) {
-
+  const [citaCancelar, setCitaCancelar] = useState(null);
   return (
     <div className="space-y-3">
 
@@ -66,7 +67,7 @@ function CitaList({
                 Duración: {c.duracion} minutos
               </p>
             </div>
-            
+
             {/* DERECHA */}
             <div className="flex items-center gap-2">
 
@@ -108,12 +109,20 @@ function CitaList({
                     ✏️
                   </button>
 
+
                   <button
-                    onClick={() => onCancelar(c.id)}
-                    className="bg-gray-500 text-white w-8 h-8 rounded-lg"
+                    onClick={() => setCitaCancelar(c.id)}
+                    className="
+    bg-red-500 hover:bg-red-600
+    text-white w-8 h-8 rounded-lg
+    flex items-center justify-center
+    transition
+  "
+                    title="Cancelar cita"
                   >
                     ⛔
                   </button>
+
                 </>
               )}
 
@@ -122,9 +131,22 @@ function CitaList({
           </div>
         );
       })}
+      
+{citaCancelar && (
+  <ConfirmModal
+    mensaje="¿Quieres cancelar esta cita? Esta acción no se puede deshacer."
+    onConfirm={() => {
+      onCancelar(citaCancelar); // ✅ cambia estado
+      setCitaCancelar(null);
+    }}
+    onCancel={() => setCitaCancelar(null)}
+  />
+)}
 
     </div>
+  
   );
+  
 }
 
 export default CitaList;
