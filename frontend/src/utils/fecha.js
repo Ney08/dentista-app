@@ -54,3 +54,18 @@ export const parseFechaLocal = (fecha) => {
   const f = asegurarUTC(fecha);
   return new Date(f); 
 };
+
+
+
+export const crearFechaLocal = (fechaBase, horaStr) => {
+  const [h, m] = horaStr.split(":");
+
+  const fecha = new Date(fechaBase);
+  fecha.setHours(parseInt(h));
+  fecha.setMinutes(parseInt(m));
+  fecha.setSeconds(0);
+  fecha.setMilliseconds(0);
+
+  return fecha;
+};
+

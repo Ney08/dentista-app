@@ -4,10 +4,11 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { API_URL } from "../config";
 import { useCitas } from "../hooks/useCitas";
-import serviciosCatalogo from "../data/servicios.json";
+import { useServicios } from "../hooks/useServicios";
 import { formatFecha, formatHora } from "../utils/fecha";
 
 function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
+  const { servicios: catalogoServicios } = useServicios();
   const [horaSeleccionadaManual, setHoraSeleccionadaManual] = useState(false);
   const { crearCita, actualizarCita } = useCitas();
   const isEdit = !!cita;
@@ -279,7 +280,7 @@ w-full max-w-3xl
             className="input"
           >
             <option value="">Servicio / Motivo</option>
-            {serviciosCatalogo.map(serv => (
+            {catalogoServicios.map(serv => (
               <option key={serv.id} value={serv.nombre}>
                 {serv.nombre}
               </option>
@@ -336,6 +337,7 @@ w-full max-w-3xl
             {generarHoras().map((h) => {
 
               const fechaTest = new Date(`${fechaBase.toISOString().split("T")[0]}T${h}`);
+              // hora utc-4 -> local
               const ahora = new Date();
 
               // ✅ bloquear pasado

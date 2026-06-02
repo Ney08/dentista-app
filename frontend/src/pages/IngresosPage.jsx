@@ -20,7 +20,7 @@ function IngresosPage() {
   const [animar, setAnimar] = useState(false);
 
   const [porPagina, setPorPagina] = useState(5);
-  const [orden, setOrden] = useState("az");
+  const [orden, setOrden] = useState("fecha");
   const [pagina, setPagina] = useState(1);
   // ✅ abrir/cerrar form
   const abrirNuevo = () => {

@@ -1,13 +1,12 @@
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-
+import { useServicios } from "../hooks/useServicios";
 import { useIngresos } from "../hooks/useIngresos";
 import { useCitas } from "../hooks/useCitas";
-import serviciosCatalogo from "../data/servicios.json";
 
 function IngresoForm({ clientes, initialData, onClose }) {
-
+  const { servicios: catalogoServicios } = useServicios();
   const { crearIngreso, actualizarIngreso } = useIngresos();
   const { citas } = useCitas(); // ✅ obtener citas
   const normalize = (text) =>
@@ -28,7 +27,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
 
     if (!cita.motivo) return;
 
-    const servicioEncontrado = serviciosCatalogo.find(
+    const servicioEncontrado = servicios.find(
       s => normalize(s.nombre).includes(normalize(cita.motivo))
     );
 
@@ -232,7 +231,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
                 <select
                   value={s.descripcion}
                   onChange={(e) => {
-                    const seleccionado = serviciosCatalogo.find(
+                    const seleccionado = catalogoServicios.find(
                       serv => serv.nombre === e.target.value
                     );
 
@@ -243,10 +242,10 @@ function IngresoForm({ clientes, initialData, onClose }) {
                 >
                   <option value="">Seleccionar servicio</option>
 
-                  {serviciosCatalogo.map((serv, i) => {
+                  {catalogoServicios.map((serv, i) => {
 
                     // ✅ BLOQUEAR DUPLICADOS
-                    const yaSeleccionado = servicios.some(
+                    const yaSeleccionado = catalogoServicios.some(
                       (s2, i2) =>
                         s2.descripcion === serv.nombre && i2 !== index
                     );

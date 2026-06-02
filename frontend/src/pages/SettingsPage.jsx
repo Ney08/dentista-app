@@ -3,9 +3,13 @@ import PageWrapper from "../components/PageWrapper";
 import ConfirmModal from "../components/ConfirmModal";
 import toast from "react-hot-toast";
 import { useUser } from "../hooks/useUser";
+import { useServicios } from "../hooks/useServicios";
+
+
 
 function SettingsPage() {
   const { updateUser } = useUser();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nuevoPassword, setNuevoPassword] = useState("");
@@ -13,43 +17,62 @@ function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
+  // ✅ TABS
+  const [tab, setTab] = useState("usuario");
+
+  // ✅ SERVICIOS
+
+
+  const {
+    servicios,
+    agregarServicio,
+    eliminarServicio
+
+  } = useServicios();
+
+
+
+  const [nuevo, setNuevo] = useState({
+    nombre: "",
+    descripcion: "",
+    precio: ""
+  });
+
+
   const USER_ID = 1;
 
-  // ✅ FORMATEO BOTÓN
   const btn = `
     w-full py-2 rounded-lg text-white font-medium
     transition hover:scale-[1.02]
   `;
 
-  // ✅ GUARDAR USUARIO
+  // ✅ USUARIO
   const guardarUsuario = async () => {
-  if (!username.trim()) {
-    return toast.error("Usuario vacío ❌");
-  }
+    if (!username.trim()) {
+      return toast.error("Usuario vacío ❌");
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    await updateUser(
-      USER_ID,
-      username,
-      password || "temp1234"
-    );
+      await updateUser(
+        USER_ID,
+        username,
+        password || "temp1234"
+      );
 
-    toast.success("Usuario actualizado ✅");
+      toast.success("Usuario actualizado ✅");
+      setPassword("");
 
-    setPassword("");
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  } catch (error) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // ✅ VALIDAR CAMBIO PASSWORD
+  // ✅ PASSWORD VALIDACIÓN
   const cambiarPassword = () => {
-
     if (!password || !nuevoPassword) {
       return toast.error("Completa los campos ❌");
     }
@@ -60,129 +83,245 @@ function SettingsPage() {
 
     setMostrarConfirmacion(true);
   };
-
-  // ✅ CONFIRMAR
+  const [servicioAEliminar, setServicioAEliminar] = useState(null);
+  // ✅ CONFIRMAR PASSWORD
   const confirmarCambioPassword = async () => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    await updateUser(
-      USER_ID,
-      username,
-      nuevoPassword
-    );
+      await updateUser(
+        USER_ID,
+        username,
+        nuevoPassword
+      );
 
-    toast.success("Contraseña actualizada 🔒");
+      toast.success("Contraseña actualizada 🔒");
 
-    setPassword("");
-    setNuevoPassword("");
-    setMostrarConfirmacion(false);
+      setPassword("");
+      setNuevoPassword("");
+      setMostrarConfirmacion(false);
 
-  } catch (error) {
-    toast.error(error.message);
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <PageWrapper>
 
-      <div className="max-w-3xl mx-auto space-y-8">
+      <div className="max-w-3xl mx-auto space-y-6">
 
         {/* HEADER */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">
-            Configuración ⚙️
-          </h1>
-
+          <h1 className="text-3xl font-bold">Configuración ⚙️</h1>
           <p className="text-gray-500 text-sm">
             Administra tu cuenta y seguridad
           </p>
         </div>
 
+        {/* ✅ TABS */}
+        <div className="flex gap-2 border-b pb-2 justify-center">
+          {["usuario", "seguridad", "servicios"].map(t => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`
+                px-4 py-1.5 rounded-lg text-sm
+                ${tab === t
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"}
+              `}
+            >
+              {t === "usuario" && "👤 Usuario"}
+              {t === "seguridad" && "🔒 Seguridad"}
+              {t === "servicios" && "🧾 Servicios"}
+            </button>
+          ))}
+        </div>
 
         {/* ✅ USUARIO */}
-        <div className="bg-white p-6 rounded-xl shadow border space-y-4">
+        {tab === "usuario" && (
+          <div className="bg-white p-6 rounded-xl shadow border space-y-4">
 
-          <h2 className="font-semibold text-lg flex items-center gap-2">
-            👤 Usuario
-          </h2>
+            <input
+              type="text"
+              placeholder="Nombre de usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
 
-          <input
-            type="text"
-            placeholder="Nombre de usuario"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="
-              w-full border px-4 py-2 rounded-lg
-              focus:ring-2 focus:ring-blue-500 outline-none
-            "
-          />
+            <button
+              onClick={guardarUsuario}
+              disabled={loading}
+              className={`${btn} ${loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"}`}
+            >
+              {loading ? "Guardando..." : "💾 Guardar usuario"}
+            </button>
 
-          <button
-            onClick={guardarUsuario}
-            disabled={loading}
-            className={`${btn} ${loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-              }`}
-          >
-            {loading ? "Guardando..." : "💾 Guardar usuario"}
-          </button>
-
-        </div>
+          </div>
+        )}
 
         {/* ✅ SEGURIDAD */}
-        <div className="bg-white p-6 rounded-xl shadow border space-y-4">
+        {tab === "seguridad" && (
+          <div className="bg-white p-6 rounded-xl shadow border space-y-4">
 
-          <h2 className="font-semibold text-lg flex items-center gap-2">
-            🔒 Seguridad
-          </h2>
+            <input
+              type="password"
+              placeholder="Contraseña actual"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500"
+            />
 
-          <input
-            type="password"
-            placeholder="Contraseña actual"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="
-              w-full border px-4 py-2 rounded-lg
-              focus:ring-2 focus:ring-green-500 outline-none
-            "
-          />
+            <input
+              type="password"
+              placeholder="Nueva contraseña"
+              value={nuevoPassword}
+              onChange={(e) => setNuevoPassword(e.target.value)}
+              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500"
+            />
 
-          <input
-            type="password"
-            placeholder="Nueva contraseña"
-            value={nuevoPassword}
-            onChange={(e) => setNuevoPassword(e.target.value)}
-            className="
-              w-full border px-4 py-2 rounded-lg
-              focus:ring-2 focus:ring-green-500 outline-none
-            "
-          />
+            <button
+              onClick={cambiarPassword}
+              disabled={loading}
+              className={`${btn} ${loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"}`}
+            >
+              {loading ? "Aplicando..." : "🔐 Cambiar contraseña"}
+            </button>
 
-          <button
-            onClick={cambiarPassword}
-            disabled={loading}
-            className={`${btn} ${loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
-              }`}
-          >
-            {loading ? "Aplicando..." : "🔐 Cambiar contraseña"}
-          </button>
+          </div>
+        )}
 
-        </div>
+        {/* ✅ SERVICIOS */}
+        {tab === "servicios" && (
+          <div className="bg-white p-6 rounded-xl shadow border space-y-4">
+
+            {/* AGREGAR */}
+            <div className="flex gap-2">
+              <input
+                placeholder="Nombre"
+                value={nuevo.nombre}
+                onChange={(e) =>
+                  setNuevo({ ...nuevo, nombre: e.target.value })
+                }
+                className="border px-3 py-1 rounded w-full"
+              />
+
+              <input
+                placeholder="Descripción"
+                value={nuevo.descripcion}
+                onChange={(e) =>
+                  setNuevo({ ...nuevo, descripcion: e.target.value })
+                }
+                className="border px-3 py-1 rounded w-full"
+              />
+
+              <input
+                type="number"
+                placeholder="Precio"
+                value={nuevo.precio}
+                onChange={(e) =>
+                  setNuevo({ ...nuevo, precio: e.target.value })
+                }
+                className="border px-3 py-1 rounded w-32"
+              />
+
+              <button
+
+                onClick={() => {
+
+                  if (!nuevo.nombre.trim()) {
+                    return toast.error("Nombre requerido ❌");
+                  }
+
+                  if (!nuevo.precio) {
+                    return toast.error("Precio requerido ⚠️");
+                  }
+
+
+                  agregarServicio({
+                    nombre: nuevo.nombre,
+                    descripcion: nuevo.descripcion,
+                    precio: parseFloat(nuevo.precio || 0)
+                  });
+
+                  setNuevo({ nombre: "", descripcion: "", precio: "" });
+                  toast.success("Servicio agregado ✅");
+                }}
+
+                className="bg-green-500 text-white px-3 rounded"
+              >
+                +
+              </button>
+
+            </div>
+
+            {/* LISTA */}
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
+
+              {servicios.map(s => (
+                <div
+                  key={s.id}
+                  className="flex justify-between items-center border p-3 rounded-lg"
+                >
+
+                  <div>
+                    <p className="font-medium">{s.nombre}</p>
+
+                    <p className="text-xs text-gray-400">
+                      {s.descripcion}
+                    </p>
+
+                    <p className="text-sm text-gray-500">
+                      RD$ {s.precio}
+                    </p>
+                  </div>
+
+
+
+                  <button
+                    onClick={() => setServicioAEliminar(s)}
+                  >
+                    ❌
+                  </button>
+
+                </div>
+              ))}
+
+            </div>
+
+          </div>
+        )}
 
       </div>
 
-      {/* ✅ MODAL */}
-      {mostrarConfirmacion && (
+      {/* MODAL */}
+      {
+        mostrarConfirmacion && (
+          <ConfirmModal
+            mensaje="¿Seguro que quieres cambiar la contraseña? ⚠️"
+            onConfirm={confirmarCambioPassword}
+            onCancel={() => setMostrarConfirmacion(false)}
+          />
+        )
+      }
+
+      {servicioAEliminar && (
         <ConfirmModal
-          mensaje="¿Seguro que quieres cambiar la contraseña? ⚠️"
-          onConfirm={confirmarCambioPassword}
-          onCancel={() => setMostrarConfirmacion(false)}
+          mensaje="¿Eliminar servicio? ⚠️"
+          onConfirm={() => {
+            eliminarServicio(servicioAEliminar.id);
+            toast.success("Eliminado 🗑️");
+            setServicioAEliminar(null);
+          }}
+          onCancel={() => setServicioAEliminar(null)}
         />
       )}
 
-    </PageWrapper>
+    </PageWrapper >
   );
 }
 

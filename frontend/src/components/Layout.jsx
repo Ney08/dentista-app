@@ -134,7 +134,7 @@ function Layout({ children }) {
 
       {/* ✅ MODAL */}
       {mostrarLogout && (
-        <ConfirmModal
+        <ConfirmModal 
           mensaje="¿Seguro que quieres cerrar sesión? ⚠️"
           onConfirm={confirmarLogout}
           onCancel={() => setMostrarLogout(false)}

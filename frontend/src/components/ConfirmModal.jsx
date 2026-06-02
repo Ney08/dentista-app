@@ -10,6 +10,8 @@ function ConfirmModal({ mensaje, onConfirm, onCancel }) {
         sm:max-w-md
         p-5 md:p-6
         text-center
+        bg-black/40 backdrop-blur-md
+        transition-all duration-200 ease-out
       ">
 
         {/* ✅ MENSAJE */}
