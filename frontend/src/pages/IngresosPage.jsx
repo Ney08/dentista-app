@@ -3,11 +3,11 @@ import toast from "react-hot-toast";
 import { formatFecha } from "../utils/fecha";
 import { useClientes } from "../hooks/useClientes";
 import { useIngresos } from "../hooks/useIngresos";
-
+import IngresoList from "../components/IngresoList";
 import FacturaModal from "../components/FacturaModal";
 import IngresoForm from "../components/IngresoForm";
 import PageWrapper from "../components/PageWrapper";
-
+import Paginacion from "../components/Paginacion";
 function IngresosPage() {
 
   const { clientes } = useClientes();
@@ -18,6 +18,10 @@ function IngresosPage() {
   const [facturaPreview, setFacturaPreview] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [animar, setAnimar] = useState(false);
+
+  const [porPagina, setPorPagina] = useState(5);
+  const [orden, setOrden] = useState("az");
+  const [pagina, setPagina] = useState(1);
   // ✅ abrir/cerrar form
   const abrirNuevo = () => {
     setEditando(null);
@@ -87,11 +91,40 @@ function IngresosPage() {
 
 
   // ✅ filtro
-  const filtrados = ingresos.filter(i =>
-    `${i.cliente?.nombre || ""} ${i.cliente?.apellido || ""}`
-      .toLowerCase()
-      .includes(busqueda.toLowerCase())
-  );
+  const filtrados = ingresos
+    .filter(i =>
+      `${i.cliente?.nombre || ""} ${i.cliente?.apellido || ""}`
+        .toLowerCase()
+        .includes(busqueda.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (orden === "az") {
+        return (a.cliente?.nombre || "").localeCompare(b.cliente?.nombre || "");
+      }
+
+      if (orden === "za") {
+        return (b.cliente?.nombre || "").localeCompare(a.cliente?.nombre || "");
+      }
+
+      if (orden === "fecha") {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
+
+      return 0;
+    });
+  const totalPaginas = Math.ceil(filtrados.length / porPagina);
+
+  const inicio = (pagina - 1) * porPagina;
+  const fin = inicio + porPagina;
+
+  const facturasPaginadas = filtrados.slice(inicio, fin);
+
+
+  useEffect(() => {
+    if (pagina > totalPaginas) {
+      setPagina(1);
+    }
+  }, [filtrados.length]);
 
   if (isLoading) {
     return (
@@ -104,7 +137,7 @@ function IngresosPage() {
   return (
     <PageWrapper>
 
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="space-y-4 pb-4">
 
         {/* HEADER */}
         <div className="text-center space-y-2">
@@ -130,146 +163,110 @@ function IngresosPage() {
         </div>
 
         {/* CARD */}
-        <div className="space-y-6 bg-white p-6 rounded-2xl shadow-md border border-gray-200">
+        <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col h-[70vh]">
+          <div className="space-y-4 pb-4">
+            {/* TOP */}
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <p className="text-sm text-gray-500">
+                📊 {filtrados.length} facturas • 🔴 {pendientesCount} pendientes
+              </p>
 
-          {/* TOP */}
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-500">
-              Total: {filtrados.length}
-            </p>
 
-            <button
-              onClick={abrirNuevo}
+              <button
+                onClick={abrirNuevo}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm shadow"
+              >
+                + Nuevo
+              </button>
+            </div>
+
+            {/* BUSCADOR */}
+            <input
+              placeholder="🔍 Buscar cliente..."
+              value={busqueda}
+              onChange={(e) => {
+                setBusqueda(e.target.value);
+                setPagina(1);
+              }}
               className="
-                flex items-center gap-2
-                bg-green-500 hover:bg-green-600
-                text-white px-4 py-2 rounded-lg
-                text-sm shadow-sm transition hover:scale-105
-              "
-            >
-              ➕ Nuevo
-            </button>
+    w-full border border-gray-300 px-4 py-2 rounded-xl
+    focus:ring-2 focus:ring-blue-500 transition
+  "
+            />
+
+            {/* CONTROLES */}
+            <div className="flex flex-wrap justify-between items-center gap-4">
+
+              {/* IZQUIERDA */}
+              <div className="flex items-center gap-2 text-sm">
+                <span>Orden:</span>
+
+                <select
+                  value={orden}
+                  onChange={(e) => setOrden(e.target.value)}
+                  className="border px-2 py-1 rounded"
+                >
+                  <option value="az">A-Z</option>
+                  <option value="za">Z-A</option>
+                  <option value="fecha">Más recientes</option>
+                </select>
+              </div>
+
+              {/* DERECHA */}
+              <div className="flex items-center gap-2 text-sm">
+                <span>Mostrar:</span>
+
+                <select
+                  value={porPagina}
+                  onChange={(e) => {
+                    const val =
+                      e.target.value === "todos"
+                        ? filtrados.length || 1
+                        : parseInt(e.target.value);
+
+                    setPorPagina(val);
+                    setPagina(1);
+                  }}
+                  className="border px-2 py-1 rounded"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value="todos">Todos</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          {/* BUSCAR */}
-          <input
-            placeholder="🔍 Buscar cliente..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            className="
-              w-full border border-gray-300 px-4 py-2 rounded-xl
-              focus:ring-2 focus:ring-blue-500 transition
-            "
-          />
 
-          <p className="text-sm text-gray-500">
-            📊 {filtrados.length} facturas • 🔴 {pendientesCount} pendientes
-          </p>
+
+
+
 
           {/* LISTA */}
-          {filtrados.length === 0 ? (
-            <p className="text-center text-gray-400">No hay facturas</p>
-          ) : (
-            filtrados.map(i => {
+          <div className="flex-1 min-h-0 overflow-y-auto pr-2 pb-4">
+            {filtrados.length === 0 ? (
+              <p className="text-center text-gray-400">No hay facturas</p>
+            ) : (
 
+              
+                <IngresoList
+                  facturas={facturasPaginadas}
+                  porPagina={porPagina}
+                  onVerFactura={(i) => setFacturaPreview(i)}
+                  onEditar={abrirEditar}
+                  onPagar={marcarPagado}
+                />
 
-              const subtotal = (i.servicios || []).reduce((a, s) => a + s.monto, 0);
-              const itbis = subtotal * 0.18;
-
-              const descuento = i.descuento || 0;
-              const descuentoValor = subtotal * (descuento / 100);
-
-              const total = subtotal + itbis - descuentoValor;
-
-
-              return (
-                <div
-                  key={i.id}
-                  className="
-                    flex justify-between items-center p-4 border rounded-xl
-                    transition hover:shadow-md hover:-translate-y-0.5
-                  "
-                >
-                  <div>
-                    <p className="font-semibold">
-                      {i.cliente?.nombre} {i.cliente?.apellido}
-                    </p>
-
-                    <p className="text-sm text-gray-500">
-                      {formatFecha(i.created_at)}
-                    </p>
-
-                  </div>
-
-                  <div className="flex items-center gap-2">
-
-                    <span className={`px-3 py-1 text-xs rounded-full ${i.pagado
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
-                      }`}>
-                      {i.pagado ? "Pagado" : "Pendiente"}
-                    </span>
-
-                    <span className="font-bold text-green-600">
-                      RD$ {total.toFixed(2)}
-                    </span>
-
-
-                    <button
-                      onClick={() => setFacturaPreview(i)}
-                      disabled={!i.pagado}
-                      title={
-                        i.pagado
-                          ? "Ver factura"
-                          : "Disponible solo cuando esté pagada"
-                      }
-                      className={`px-2 rounded transition ${i.pagado
-                        ? "bg-blue-500 hover:bg-blue-600 text-white hover:scale-105"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        }`}
-                    >
-                      📄
-                    </button>
-
-
-
-                    <button
-                      onClick={() => abrirEditar(i)}
-                      disabled={i.pagado}
-                      title={i.pagado ? "No se puede editar (ya pagada)" : "Editar factura"}
-                      className={`
-    px-2 rounded transition
-    ${i.pagado
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-yellow-500 hover:bg-yellow-600 text-white hover:scale-105"
-                        }
-  `}
-                    >
-                      ✏️
-                    </button>
-
-
-                    <button
-                      onClick={() => marcarPagado(i)}
-                      disabled={i.pagado}
-                      title={i.pagado ? "Ya pagada" : "Marcar como pagada"}
-                      className={`
-    px-2 rounded transition
-    ${i.pagado
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-purple-500 hover:bg-purple-600 text-white hover:scale-105"
-                        }
-  `}
-                    >
-                      💳
-                    </button>
-
-                  </div>
-                </div>
-              );
-            })
-          )}
-
+            )}
+          </div>
+          <div className="mt-auto pt-4 border-t">
+            <Paginacion
+              pagina={pagina}
+              totalPaginas={totalPaginas}
+              onChange={setPagina}
+            />
+          </div>
         </div>
       </div>
 

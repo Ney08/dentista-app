@@ -106,10 +106,9 @@ function ClienteList({
                   bg-blue-500 hover:bg-blue-600
                   text-white text-sm font-medium
                   rounded-lg
-                  transition hover:scale-105
                 "
               >
-                ➕ Cita
+                + Cita
               </button>
 
               {/* ✏️ EDITAR */}
@@ -120,7 +119,6 @@ function ClienteList({
                   bg-yellow-500 hover:bg-yellow-600
                   text-white text-sm font-medium
                   rounded-lg
-                  transition hover:scale-105
                 "
               >
                 ✏️ Editar
@@ -134,7 +132,7 @@ function ClienteList({
                   bg-red-500 hover:bg-red-600
                   text-white text-sm font-medium
                   rounded-lg
-                  transition hover:scale-105
+                  
                 "
               >
                 🗑 Eliminar
