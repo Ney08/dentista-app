@@ -1,62 +1,70 @@
-const asegurarUTC = (fecha) => {
-  if (!fecha) return null;
+// ✅ parsear fecha local (SIN UTC)
+export const parseFechaLocal = (fechaStr) => {
+  if (!fechaStr) return null;
 
-  // ✅ si ya tiene Z no lo toca
-  if (typeof fecha === "string" && !fecha.endsWith("Z")) {
-    return fecha + "Z"; 
+  // ✅ si ya es Date, devolverla limpia
+  if (fechaStr instanceof Date) return fechaStr;
+
+  // ✅ si no es string, intentar convertir
+  if (typeof fechaStr !== "string") {
+    return new Date(fechaStr);
   }
 
-  return fecha;
+  const [date, time] = fechaStr.split("T");
+
+  if (!date || !time) return new Date(fechaStr);
+
+  const [year, month, day] = date.split("-");
+  const [hour, minute] = time.split(":");
+
+  return new Date(
+    parseInt(year),
+    parseInt(month) - 1,
+    parseInt(day),
+    parseInt(hour),
+    parseInt(minute),
+    0
+  );
 };
 
+// ✅ FORMATEOS usando fecha parseada
+
 export const formatFecha = (fecha) => {
-  const f = asegurarUTC(fecha);
+  const f = parseFechaLocal(fecha);
   if (!f) return "";
 
-  return new Date(f).toLocaleDateString("es-DO", {
-    timeZone: "America/Santo_Domingo"
-  });
+  return f.toLocaleDateString("es-DO");
 };
 
 export const formatHora = (fecha) => {
-  const f = asegurarUTC(fecha);
+  const f = parseFechaLocal(fecha);
   if (!f) return "";
 
-  return new Date(f).toLocaleTimeString("es-DO", {
-    timeZone: "America/Santo_Domingo",
+  return f.toLocaleTimeString("es-DO", {
     hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
+    minute: "2-digit"
   });
 };
 
 export const formatFechaCompleta = (fecha) => {
-  const f = asegurarUTC(fecha);
+  const f = parseFechaLocal(fecha);
   if (!f) return "";
 
-  return new Date(f).toLocaleString("es-DO", {
-    timeZone: "America/Santo_Domingo"
-  });
+  return f.toLocaleString("es-DO");
 };
 
 export const formatFriendly = (fecha) => {
-  const f = asegurarUTC(fecha);
+  const f = parseFechaLocal(fecha);
+  if (!f) return "";
 
-  return new Date(f).toLocaleString("es-DO", {
-    timeZone: "America/Santo_Domingo",
+  return f.toLocaleString("es-DO", {
     weekday: "short",
     hour: "2-digit",
     minute: "2-digit"
   });
 };
 
-export const parseFechaLocal = (fecha) => {
-  const f = asegurarUTC(fecha);
-  return new Date(f); 
-};
-
-
-
+// ✅ crear fecha local desde base + hora
 export const crearFechaLocal = (fechaBase, horaStr) => {
   const [h, m] = horaStr.split(":");
 
@@ -68,4 +76,3 @@ export const crearFechaLocal = (fechaBase, horaStr) => {
 
   return fecha;
 };
-

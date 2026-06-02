@@ -5,7 +5,7 @@ import "react-calendar/dist/Calendar.css";
 import { API_URL } from "../config";
 import { useCitas } from "../hooks/useCitas";
 import { useServicios } from "../hooks/useServicios";
-import { formatFecha, formatHora } from "../utils/fecha";
+import { formatFecha, formatHora, parseFechaLocal, crearFechaLocal } from "../utils/fecha";
 
 function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
   const { servicios: catalogoServicios } = useServicios();
@@ -48,19 +48,30 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
 
       const horaStr = fecha.toTimeString().slice(0, 5);
       setHora(horaStr);
+
+      setDuracion(cita.duracion || 30);
     }
   }, [cita]);
 
   // ✅ VALIDAR OCUPADO (IGNORA LA MISMA CITA)
   const estaOcupada = (fechaNueva) => {
-    const nueva = new Date(fechaNueva);
+    const nuevaInicio = new Date(fechaNueva);
+    const nuevaFin = new Date(
+      nuevaInicio.getTime() + duracion * 60000
+    );
 
     return citas.some((c) => {
       if (isEdit && c.id === cita.id) return false;
 
-      const existente = new Date(c.fecha);
-      const diff = Math.abs(nueva - existente) / (1000 * 60);
-      return diff < duracion;
+      const existenteInicio = new Date(c.fecha.replace("T", " "));
+      const existenteFin = new Date(
+        existenteInicio.getTime() + (c.duracion || 30) * 60000
+      );
+
+      return (
+        nuevaInicio < existenteFin &&
+        nuevaFin > existenteInicio
+      );
     });
   };
   // ✅ VALIDAR DÍA LLENO
@@ -68,7 +79,7 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
     const horas = generarHoras();
 
     const disponible = horas.some(h => {
-      const fechaTest = new Date(`${fecha.toISOString().split("T")[0]}T${h}`);
+      const fechaTest = crearFechaLocal(fecha, h);
       return !estaOcupada(fechaTest);
     });
 
@@ -144,8 +155,10 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
     return !citas.some(c => {
       if (isEdit && c.id === cita.id) return false;
 
-      const existenteInicio = new Date(c.fecha);
-      const existenteFin = new Date(existenteInicio.getTime() + duracionMin * 60000);
+      const existenteInicio = new Date(c.fecha.replace("T", " "));
+      const existenteFin = new Date(
+        existenteInicio.getTime() + (c.duracion || 30) * 60000
+      );
 
       return (
         inicio < existenteFin &&
@@ -170,7 +183,12 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
     fechaLocal.setMinutes(m);
     fechaLocal.setSeconds(0);
 
-    const fechaFinal = fechaLocal.toISOString();
+    const fechaFinal =
+      fechaLocal.getFullYear() + "-" +
+      String(fechaLocal.getMonth() + 1).padStart(2, "0") + "-" +
+      String(fechaLocal.getDate()).padStart(2, "0") + "T" +
+      String(fechaLocal.getHours()).padStart(2, "0") + ":" +
+      String(fechaLocal.getMinutes()).padStart(2, "0") + ":00";
 
 
     // ✅ LUEGO usarlo
@@ -193,7 +211,8 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
             cliente_id: parseInt(clienteId),
             fecha: fechaFinal,
             motivo,
-            detalle
+            detalle,
+            duracion
           }
         });
 
@@ -205,7 +224,8 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
           cliente_id: parseInt(clienteId),
           fecha: fechaFinal,
           motivo,
-          detalle
+          detalle,
+          duracion
         });
 
         toast.success("Cita creada ✅");

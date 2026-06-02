@@ -161,10 +161,15 @@ function IngresoForm({ clientes, initialData, onClose }) {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
 
-        <h3 className="text-xl font-bold">
+        <h3 className="text-xl font-bold text-gray-800 text-center">
           {initialData ? "Editar Factura ✏️" : "Registrar Factura 🧾"}
+           <p className="text-sm text-gray-500 text-center">
+          {initialData
+            ? "Modifica los detalles de la factura"
+            : "Completa los detalles para registrar una nueva factura"}
+        </p>
         </h3>
-
+       
         {/* CLIENTE */}
 
 
@@ -178,7 +183,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
             autoSeleccionarServicio(id);
           }}
           className={`
-    w-full border px-3 py-2 rounded
+    w-full border px-3 py-2 rounded input
     ${initialData ? "bg-gray-100 text-gray-500 cursor-not-allowed" : ""}
   `}
         >
@@ -195,7 +200,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
         </select>
 
         {/* SERVICIOS */}
-        <div className="bg-gray-50 border rounded-xl p-4">
+        <div className="bg-gray-50 border rounded-xl p-4 ">
 
           {/* HEADER */}
           <div className="flex justify-between items-center mb-3">
@@ -238,7 +243,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
                     actualizarServicio(index, "descripcion", seleccionado.nombre);
                     actualizarServicio(index, "monto", seleccionado.precio);
                   }}
-                  className="w-full border px-3 py-2 rounded mb-2"
+                  className="w-full border px-3 py-2 rounded mb-2 input"
                 >
                   <option value="">Seleccionar servicio</option>
 
@@ -267,7 +272,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
                   type="number"
                   value={s.monto}
                   disabled
-                  className="w-full border px-3 py-2 rounded bg-gray-100"
+                  className="w-full border px-3 py-2 rounded bg-gray-100 input"
                 />
 
               </div>
@@ -287,7 +292,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
           placeholder="Descuento (%)"
           value={descuento}
           onChange={(e) => setDescuento(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full border px-3 py-2 rounded input"
         />
 
         {/* TOTAL */}

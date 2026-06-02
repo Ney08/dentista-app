@@ -41,7 +41,16 @@ function FacturaModal({ ingreso, onClose }) {
 
         {/* HEADER */}
         <div className="flex justify-between text-sm text-gray-500">
-          <span>{formatFecha(new Date())}</span>
+          {ingreso.pagado && ingreso.fecha_pago && (
+            <div >
+              <p className="font-semibold text-green-600 mb-1">
+                ✅ Pago registrado
+              </p>
+              <p>📅 {formatFecha(ingreso.fecha_pago)}</p>
+              <p>⏰ {formatHora(ingreso.fecha_pago)}</p>
+            </div>
+          )}
+
           <span>Factura</span>
         </div>
 
@@ -62,17 +71,7 @@ function FacturaModal({ ingreso, onClose }) {
           </p>
         </div>
 
-        {/* ✅ NUEVO: INFO DE PAGO */}
-        {ingreso.pagado && ingreso.fecha_pago && (
-          <div className="text-sm text-gray-500 bg-green-50 border border-green-200 p-3 rounded-lg">
-            <p className="font-semibold text-green-600 mb-1">
-              ✅ Pago registrado
-            </p>
-            <p>📅 {formatFecha(ingreso.fecha_pago)}</p>
-            <p>⏰ {formatHora(ingreso.fecha_pago)}</p>
-          </div>
-        )}
-
+        
         <hr />
 
         {/* SERVICIOS */}

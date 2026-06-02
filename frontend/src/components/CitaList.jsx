@@ -62,8 +62,11 @@ function CitaList({
               <p className="text-sm text-gray-400">
                 {c.motivo}
               </p>
+              <p className="text-sm text-gray-400">
+                Duración: {c.duracion} minutos
+              </p>
             </div>
-
+            
             {/* DERECHA */}
             <div className="flex items-center gap-2">
 
