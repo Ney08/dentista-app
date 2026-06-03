@@ -4,9 +4,9 @@ import { useCitas } from "../hooks/useCitas";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
-import GraficoIngresos from "../components/GraficoIngresos";
-import GraficoClientes from "../components/GraficoClientes";
-import GraficoCitas from "../components/GraficoCitas";
+import GraficoIngresos from "../components/graficos/GraficoIngresos";
+import GraficoClientes from "../components/graficos/GraficoClientes";
+import GraficoCitas from "../components/graficos/GraficoCitas";
 
 import PageWrapper from "../components/PageWrapper";
 

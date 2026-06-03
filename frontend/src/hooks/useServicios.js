@@ -31,9 +31,22 @@ export function useServicios() {
     guardar(servicios.filter(s => s.id !== id));
   };
 
+  
+const actualizarServicio = (data) => {
+
+  const actualizados = servicios.map(s =>
+    s.id === data.id
+      ? { ...s, ...data }
+      : s
+  );
+
+  guardar(actualizados);
+};
+
   return {
     servicios,
     agregarServicio,
-    eliminarServicio
+    eliminarServicio,
+    actualizarServicio
   };
 }

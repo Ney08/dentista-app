@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { useClientes } from "../hooks/useClientes";
+import { useClientes } from "../../hooks/useClientes";
 
-import provincias from "../data/provincias.json";
-import municipios from "../data/municipios.json";
-import { API_URL } from "../config";
+import provincias from "../../data/provincias.json";
+import municipios from "../../data/municipios.json";
+import { API_URL } from "../../config";
 
 function ClienteForm({ cliente, onClose }) {
 

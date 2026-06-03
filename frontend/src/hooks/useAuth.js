@@ -3,11 +3,14 @@ import { useAuthContext } from "../context/AuthContext";
 
 export const useAuth = () => {
 
-  // ✅ contexto global
   const { login: loginGlobal, logout } = useAuthContext();
 
   // ✅ LOGIN
   const login = async (username, password) => {
+
+    if (!username.trim() || !password.trim()) {
+      throw new Error("Completa los datos ❌");
+    }
 
     const res = await fetch(`${API_URL}/login`, {
       method: "POST",
@@ -23,20 +26,17 @@ export const useAuth = () => {
     let data = {};
     try {
       data = await res.json();
-    } catch {}
+    } catch { }
 
-    // ✅ error backend
     if (!res.ok) {
       console.warn("Error login:", res.status, data);
       throw new Error(data?.detail || "Error al iniciar sesión ❌");
     }
 
-    // ✅ validación token
     if (!data.token) {
       throw new Error("Respuesta inválida ❌");
     }
 
-    // ✅ LOGIN GLOBAL AUTOMÁTICO
     loginGlobal(data.token);
 
     return data.token;
@@ -44,6 +44,14 @@ export const useAuth = () => {
 
   // ✅ RESET PASSWORD
   const resetPassword = async (username, nuevaPassword) => {
+
+    if (!username.trim()) {
+      throw new Error("Usuario requerido ❌");
+    }
+
+    if (!nuevaPassword || nuevaPassword.trim().length < 6) {
+      throw new Error("Mínimo 6 caracteres ⚠️");
+    }
 
     const res = await fetch(`${API_URL}/users/reset`, {
       method: "PUT",
@@ -59,16 +67,24 @@ export const useAuth = () => {
     let data = {};
     try {
       data = await res.json();
-    } catch {}
+    } catch { }
+
 
     if (!res.ok) {
-      throw new Error(data?.detail || "Error al cambiar ❌");
+      console.error("Error reset:", res.status, data);
+
+      throw new Error(
+        typeof data?.detail === "string"
+          ? data.detail
+          : JSON.stringify(data?.detail) || "Error al cambiar ❌"
+      );
     }
+
 
     return true;
   };
 
-  // ✅ LOGOUT (por si quieres llamarlo desde aquí)
+  // ✅ LOGOUT
   const cerrarSesion = () => {
     logout();
   };

@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { API_URL } from "../config";
-import { useCitas } from "../hooks/useCitas";
-import { useServicios } from "../hooks/useServicios";
-import { formatFecha, formatHora, parseFechaLocal, crearFechaLocal } from "../utils/fecha";
+import { API_URL } from "../../config";
+import { useCitas } from "../../hooks/useCitas";
+import { useServicios } from "../../hooks/useServicios";
+import { formatFecha, formatHora, parseFechaLocal, crearFechaLocal } from "../../utils/fecha";
 
 function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
   const { servicios: catalogoServicios } = useServicios();

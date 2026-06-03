@@ -1,4 +1,4 @@
-import { formatFecha, formatHora } from "../utils/fecha";
+import { formatFecha, formatHora } from "../../utils/fecha";
 
 import {
   BarChart,

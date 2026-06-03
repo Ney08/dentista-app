@@ -1,6 +1,6 @@
-import { formatFecha } from "../utils/fecha";
+import { formatFecha } from "../../utils/fecha";
 import { useState } from "react";
-import ConfirmModal from "./ConfirmModal";
+import ConfirmModal from "../ConfirmModal";
 function IngresoList({
   facturas,
   porPagina,

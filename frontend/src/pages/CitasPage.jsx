@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, } from "react";
 import toast from "react-hot-toast";
-import CitaList from "../components/CitaList";
+import CitaList from "../components/citas/CitaList";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
-import CitaForm from "../components/CitaForm";
+import CitaForm from "../components/citas/CitaForm";
 import { useClientes } from "../hooks/useClientes";
 import { useCitas } from "../hooks/useCitas";
 import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
@@ -16,7 +16,7 @@ function CitasPage() {
   const { clientes } = useClientes();
   const [clientePresetLocal, setClientePresetLocal] = useState(null);
   const [animar, setAnimar] = useState(false);
-
+  const [porPagina, setPorPagina] = useState(5);
   const [pagina, setPagina] = useState(1);
   const [limite, setLimite] = useState(5);
 
@@ -135,7 +135,7 @@ function CitasPage() {
   return (
     <PageWrapper>
 
-      <div className="space-y-4 pb-4">
+      <div className="space-y-4 pb-4 ">
 
         {/* HEADER */}
         <div className="text-center">
@@ -146,7 +146,7 @@ function CitasPage() {
         </div>
 
         {/* CARD PRINCIPAL */}
-        <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col h-[70vh]">
+        <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col h-[70vh] ">
           <div className="space-y-4 pb-4">
             {/* TOP BAR */}
             <div className="flex flex-wrap justify-between items-center gap-3">
@@ -180,7 +180,7 @@ function CitasPage() {
                   onChange={(e) => setFiltro(e.target.value)}
                   className="border px-2 py-1 rounded text-sm"
                 >
-                  <option value="todas">Todas</option>
+                  <option value="all">Todas</option>
                   <option value="hoy">Solo hoy</option>
                 </select>
 
@@ -196,7 +196,7 @@ function CitasPage() {
             </div>
           </div>
           {/* LISTA */}
-          <div className="flex-1 min-h-0 overflow-y-auto pr-2 pb-4">
+          <div className=" pb-2">
 
 
             <CitaList
@@ -204,20 +204,22 @@ function CitasPage() {
               getEstado={getEstado}
               onEditar={abrirEditar}
               onCompletar={(id) => completarCita.mutate(id)}
+              porPagina={porPagina}
               onCancelar={async (id) => {
                 await cancelarCita.mutateAsync(id);
                 toast.success("Cancelada");
               }}
             />
           </div>
-          {totalPaginas > 1 && (
+          {/* PAGINACIÓN */}
+          {limite !== "all" && totalPaginas > 1 && (
             <div className="mt-auto pt-4 border-t">
-            <Paginacion
-              pagina={pagina}
-              totalPaginas={totalPaginas}
-              onChange={setPagina}
-            />
-          </div>
+              <Paginacion
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                onChange={setPagina}
+              />
+            </div>
           )}
         </div>
 

@@ -4,7 +4,7 @@ import {
   crearIngreso,
   pagarIngreso,
   actualizarIngreso
-} from "../services/ingresoService";
+} from "../components/services/ingresoService";
 import { useClientes } from "./useClientes";
 
 export const useIngresos = () => {

@@ -1,16 +1,23 @@
-import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
+import { formatFecha, formatHora, parseFechaLocal } from "../../utils/fecha";
 import { useState } from "react";
-import ConfirmModal from "./ConfirmModal";
+import ConfirmModal from "../../components/ConfirmModal";
 function CitaList({
   citas,
   getEstado,
+  porPagina,
   onEditar,
   onCompletar,
   onCancelar
 }) {
   const [citaCancelar, setCitaCancelar] = useState(null);
   return (
-    <div className="space-y-3">
+    <div className={`
+        space-y-4 pr-2
+        ${porPagina > 5 && citas.length > 5
+          ? "max-h-90 overflow-y-auto"
+          : ""
+        }
+      `}>
 
       {citas.map(c => {
 

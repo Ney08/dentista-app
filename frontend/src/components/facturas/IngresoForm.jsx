@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-import { useServicios } from "../hooks/useServicios";
-import { useIngresos } from "../hooks/useIngresos";
-import { useCitas } from "../hooks/useCitas";
-import { formatFecha, formatHora } from "../utils/fecha";
+import { useServicios } from "../../hooks/useServicios";
+import { useIngresos } from "../../hooks/useIngresos";
+import { useCitas } from "../../hooks/useCitas";
+import { formatFecha, formatHora } from "../../utils/fecha";
 
 function IngresoForm({ clientes, initialData, onClose }) {
   const { servicios: catalogoServicios } = useServicios();

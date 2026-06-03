@@ -1,43 +1,32 @@
 import { useState } from "react";
 import PageWrapper from "../components/PageWrapper";
 import ConfirmModal from "../components/ConfirmModal";
+import ServicioModal from "../components/ServicioModal";
 import toast from "react-hot-toast";
 import { useUser } from "../hooks/useUser";
 import { useServicios } from "../hooks/useServicios";
 
-
-
 function SettingsPage() {
   const { updateUser } = useUser();
-
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nuevoPassword, setNuevoPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
-  // ✅ TABS
   const [tab, setTab] = useState("usuario");
-
-  // ✅ SERVICIOS
-
 
   const {
     servicios,
     agregarServicio,
-    eliminarServicio
-
+    eliminarServicio,
+    actualizarServicio
   } = useServicios();
 
-
-
-  const [nuevo, setNuevo] = useState({
-    nombre: "",
-    descripcion: "",
-    precio: ""
-  });
-
+  const [servicioAEliminar, setServicioAEliminar] = useState(null);
+  const [modalServicio, setModalServicio] = useState(false);
+  const [servicioEditar, setServicioEditar] = useState(null);
 
   const USER_ID = 1;
 
@@ -46,7 +35,7 @@ function SettingsPage() {
     transition hover:scale-[1.02]
   `;
 
-  // ✅ USUARIO
+  // ✅ GUARDAR USUARIO
   const guardarUsuario = async () => {
     if (!username.trim()) {
       return toast.error("Usuario vacío ❌");
@@ -71,7 +60,7 @@ function SettingsPage() {
     }
   };
 
-  // ✅ PASSWORD VALIDACIÓN
+  // ✅ CAMBIAR PASSWORD
   const cambiarPassword = () => {
     if (!password || !nuevoPassword) {
       return toast.error("Completa los campos ❌");
@@ -83,8 +72,7 @@ function SettingsPage() {
 
     setMostrarConfirmacion(true);
   };
-  const [servicioAEliminar, setServicioAEliminar] = useState(null);
-  // ✅ CONFIRMAR PASSWORD
+
   const confirmarCambioPassword = async () => {
     try {
       setLoading(true);
@@ -108,6 +96,51 @@ function SettingsPage() {
     }
   };
 
+
+
+const guardarServicio = async (data) => {
+
+  if (!data.nombre.trim()) {
+    return toast.error("Nombre requerido ❌");
+  }
+
+  if (!data.precio) {
+    return toast.error("Precio requerido ⚠️");
+  }
+
+  try {
+
+    if (data.id) {
+      // ✅ EDITAR
+      await actualizarServicio({
+        id: data.id,
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        precio: parseFloat(data.precio)
+      });
+
+      toast.success("Servicio actualizado ✏️");
+
+    } else {
+      // ✅ CREAR
+      await agregarServicio({
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        precio: parseFloat(data.precio)
+      });
+
+      toast.success("Servicio agregado ✅");
+    }
+
+    setModalServicio(false);
+    setServicioEditar(null);
+
+  } catch {
+    toast.error("Error ❌");
+    console.log(data.id);
+  }
+};
+
   return (
     <PageWrapper>
 
@@ -121,7 +154,7 @@ function SettingsPage() {
           </p>
         </div>
 
-        {/* ✅ TABS */}
+        {/* TABS */}
         <div className="flex gap-2 border-b pb-2 justify-center">
           {["usuario", "seguridad", "servicios"].map(t => (
             <button
@@ -141,7 +174,7 @@ function SettingsPage() {
           ))}
         </div>
 
-        {/* ✅ USUARIO */}
+        {/* USUARIO */}
         {tab === "usuario" && (
           <div className="bg-white p-6 rounded-xl shadow border space-y-4">
 
@@ -150,7 +183,7 @@ function SettingsPage() {
               placeholder="Nombre de usuario"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="input"
             />
 
             <button
@@ -164,7 +197,7 @@ function SettingsPage() {
           </div>
         )}
 
-        {/* ✅ SEGURIDAD */}
+        {/* SEGURIDAD */}
         {tab === "seguridad" && (
           <div className="bg-white p-6 rounded-xl shadow border space-y-4">
 
@@ -173,7 +206,7 @@ function SettingsPage() {
               placeholder="Contraseña actual"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="input"
             />
 
             <input
@@ -181,7 +214,7 @@ function SettingsPage() {
               placeholder="Nueva contraseña"
               value={nuevoPassword}
               onChange={(e) => setNuevoPassword(e.target.value)}
-              className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500"
+              className="input"
             />
 
             <button
@@ -199,67 +232,18 @@ function SettingsPage() {
         {tab === "servicios" && (
           <div className="bg-white p-6 rounded-xl shadow border space-y-4">
 
-            {/* AGREGAR */}
-            <div className="flex gap-2">
-              <input
-                placeholder="Nombre"
-                value={nuevo.nombre}
-                onChange={(e) =>
-                  setNuevo({ ...nuevo, nombre: e.target.value })
-                }
-                className="border px-3 py-1 rounded w-full"
-              />
-
-              <input
-                placeholder="Descripción"
-                value={nuevo.descripcion}
-                onChange={(e) =>
-                  setNuevo({ ...nuevo, descripcion: e.target.value })
-                }
-                className="border px-3 py-1 rounded w-full"
-              />
-
-              <input
-                type="number"
-                placeholder="Precio"
-                value={nuevo.precio}
-                onChange={(e) =>
-                  setNuevo({ ...nuevo, precio: e.target.value })
-                }
-                className="border px-3 py-1 rounded w-32"
-              />
-
+            <div className="flex justify-end">
               <button
-
                 onClick={() => {
-
-                  if (!nuevo.nombre.trim()) {
-                    return toast.error("Nombre requerido ❌");
-                  }
-
-                  if (!nuevo.precio) {
-                    return toast.error("Precio requerido ⚠️");
-                  }
-
-
-                  agregarServicio({
-                    nombre: nuevo.nombre,
-                    descripcion: nuevo.descripcion,
-                    precio: parseFloat(nuevo.precio || 0)
-                  });
-
-                  setNuevo({ nombre: "", descripcion: "", precio: "" });
-                  toast.success("Servicio agregado ✅");
+                  setServicioEditar(null);
+                  setModalServicio(true);
                 }}
-
-                className="bg-green-500 text-white px-3 rounded"
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
               >
-                +
+                + Nuevo
               </button>
-
             </div>
 
-            {/* LISTA */}
             <div className="space-y-2 max-h-[300px] overflow-y-auto">
 
               {servicios.map(s => (
@@ -280,13 +264,24 @@ function SettingsPage() {
                     </p>
                   </div>
 
+                  <div className="flex gap-2">
 
+                    <button
+                      onClick={() => {
+                        setServicioEditar(s);
+                        setModalServicio(true);
+                      }}
+                    >
+                      ✏️
+                    </button>
 
-                  <button
-                    onClick={() => setServicioAEliminar(s)}
-                  >
-                    ❌
-                  </button>
+                    <button
+                      onClick={() => setServicioAEliminar(s)}
+                    >
+                      ❌
+                    </button>
+
+                  </div>
 
                 </div>
               ))}
@@ -298,17 +293,16 @@ function SettingsPage() {
 
       </div>
 
-      {/* MODAL */}
-      {
-        mostrarConfirmacion && (
-          <ConfirmModal
-            mensaje="¿Seguro que quieres cambiar la contraseña? ⚠️"
-            onConfirm={confirmarCambioPassword}
-            onCancel={() => setMostrarConfirmacion(false)}
-          />
-        )
-      }
+      {/* MODAL PASSWORD */}
+      {mostrarConfirmacion && (
+        <ConfirmModal
+          mensaje="¿Seguro que quieres cambiar la contraseña? ⚠️"
+          onConfirm={confirmarCambioPassword}
+          onCancel={() => setMostrarConfirmacion(false)}
+        />
+      )}
 
+      {/* MODAL ELIMINAR */}
       {servicioAEliminar && (
         <ConfirmModal
           mensaje="¿Eliminar servicio? ⚠️"
@@ -321,7 +315,16 @@ function SettingsPage() {
         />
       )}
 
-    </PageWrapper >
+      {/* ✅ MODAL SERVICIO */}
+      {modalServicio && (
+        <ServicioModal
+          servicio={servicioEditar}
+          onGuardar={guardarServicio}
+          onClose={() => setModalServicio(false)}
+        />
+      )}
+
+    </PageWrapper>
   );
 }
 

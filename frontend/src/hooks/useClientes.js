@@ -4,7 +4,7 @@ import {
   crearCliente,
   eliminarCliente,
   actualizarCliente
-} from "../services/clienteService";
+} from "../components/services/clienteService";
 
 export const useClientes = () => {
 

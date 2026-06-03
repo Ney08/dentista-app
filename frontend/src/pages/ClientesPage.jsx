@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
-import ClienteForm from "../components/ClienteForm";
-import ClienteList from "../components/ClienteList";
-import ClienteDetalle from "../components/ClienteDetalle";
+import ClienteForm from "../components/clientes/ClienteForm";
+import ClienteList from "../components/clientes/ClienteList";
+import ClienteDetalle from "../components/clientes/ClienteDetalle";
 import PageWrapper from "../components/PageWrapper";
 import { parseFechaLocal } from "../utils/fecha";
 import { useClientes } from "../hooks/useClientes";
@@ -42,11 +42,21 @@ function ClientesPage() {
   );
 
   // ✅ ORDEN
+
   const ordenados = [...filtrados].sort((a, b) => {
-    if (orden === "az") return a.nombre.localeCompare(b.nombre);
-    if (orden === "nuevo") return parseFechaLocal(b.created_at) - parseFechaLocal(a.created_at);
+
+    if (orden === "az") {
+      return a.nombre.localeCompare(b.nombre);
+    }
+
+    if (orden === "nuevo") {
+      return b.id - a.id; // ✅ MÁS NUEVO PRIMERO
+    }
+
     return 0;
   });
+
+
 
   // ✅ PAGINACIÓN
   const inicio = (pagina - 1) * (limite === "all" ? ordenados.length : limite);
@@ -188,7 +198,7 @@ function ClientesPage() {
               </p>
             ) : (
 
-              <div className="space-y-4">
+              <div className="space-y-2">
 
                 <ClienteList
                   clientes={clientesFinal}
@@ -205,12 +215,12 @@ function ClientesPage() {
           {/* PAGINACIÓN */}
           {limite !== "all" && totalPaginas > 1 && (
             <div className="mt-auto pt-4 border-t">
-            <Paginacion
-              pagina={pagina}
-              totalPaginas={totalPaginas}
-              onChange={setPagina}
-            />
-          </div>
+              <Paginacion
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                onChange={setPagina}
+              />
+            </div>
           )}
 
         </div>

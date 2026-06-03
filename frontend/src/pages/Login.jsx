@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/useAuth";
 function Login() {
 
   const { login: loginRequest, resetPassword } = useAuth();
-
+  const [errorShake, setErrorShake] = useState(false);
   // ✅ LOGIN
   const [username, setUsername] = useState(
     localStorage.getItem("lastUser") || ""
@@ -46,6 +46,8 @@ function Login() {
     e.preventDefault();
 
     if (!username.trim() || !password.trim()) {
+      setErrorShake(true);
+      setTimeout(() => setErrorShake(false), 500);
       toast.error("Completa los campos ❌");
       return;
     }
@@ -68,6 +70,8 @@ function Login() {
 
     } catch (error) {
       console.error(error);
+      setErrorShake(true);
+      setTimeout(() => setErrorShake(false), 500);
       toast.error(error.message);
       setPassword("");
     } finally {
@@ -122,7 +126,7 @@ function Login() {
   return (
     <>
       {/* ✅ LOGIN */}
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-200 px-4">
+      <div className={`min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-200 px-4 ${errorShake ? "shake" : ""}`}>
 
         <form
           onSubmit={login}
@@ -189,7 +193,7 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-blue-500 text-white rounded-lg"
+            className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
@@ -270,7 +274,7 @@ function Login() {
 
               <button
                 onClick={cerrarModal}
-                className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500"
+                className="flex-1 bg-red-400 text-white py-2 rounded hover:bg-red-500"
               >
                 Cancelar
               </button>

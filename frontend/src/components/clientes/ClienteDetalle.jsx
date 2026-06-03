@@ -1,6 +1,6 @@
 import HistorialForm from "./HistorialForm";
-import { useHistorial } from "../hooks/useHistorial";
-import { formatFecha, formatHora } from "../utils/fecha";
+import { useHistorial } from "../../hooks/useHistorial";
+import { formatFecha, formatHora } from "../../utils/fecha";
 
 function ClienteDetalle({ cliente }) {
 

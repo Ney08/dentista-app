@@ -3,9 +3,9 @@ import toast from "react-hot-toast";
 import { formatFecha } from "../utils/fecha";
 import { useClientes } from "../hooks/useClientes";
 import { useIngresos } from "../hooks/useIngresos";
-import IngresoList from "../components/IngresoList";
-import FacturaModal from "../components/FacturaModal";
-import IngresoForm from "../components/IngresoForm";
+import IngresoList from "../components/facturas/IngresoList";
+import FacturaModal from "../components/facturas/FacturaModal";
+import IngresoForm from "../components/facturas/IngresoForm";
 import PageWrapper from "../components/PageWrapper";
 import Paginacion from "../components/Paginacion";
 function IngresosPage() {
@@ -18,8 +18,8 @@ function IngresosPage() {
   const [facturaPreview, setFacturaPreview] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [animar, setAnimar] = useState(false);
-
-  const [porPagina, setPorPagina] = useState(5);
+  const [limite, setLimite] = useState(8);
+  const [porPagina, setPorPagina] = useState(7);
   const [orden, setOrden] = useState("fecha");
   const [pagina, setPagina] = useState(1);
   // ✅ abrir/cerrar form
@@ -229,8 +229,7 @@ function IngresosPage() {
                   }}
                   className="border px-2 py-1 rounded"
                 >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
+                  <option value={7}>10</option>
                   <option value={20}>20</option>
                   <option value="todos">Todos</option>
                 </select>
@@ -244,7 +243,7 @@ function IngresosPage() {
 
 
           {/* LISTA */}
-          <div className="flex-1 min-h-0 overflow-y-auto pr-2 pb-4">
+          <div className="flex-1 max-h-[calc(100vh-100px)] overflow-y-auto pr-2 pb-4">
             {filtrados.length === 0 ? (
               <p className="text-center text-gray-400">No hay facturas</p>
             ) : (
@@ -260,13 +259,16 @@ function IngresosPage() {
 
             )}
           </div>
-          <div className="mt-auto pt-4 border-t">
-            <Paginacion
-              pagina={pagina}
-              totalPaginas={totalPaginas}
-              onChange={setPagina}
-            />
-          </div>
+          {/* PAGINACIÓN */}
+          {limite !== "all" && totalPaginas > 1 && (
+            <div className="mt-auto pt-4 border-t">
+              <Paginacion
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                onChange={setPagina}
+              />
+            </div>
+          )}
         </div>
       </div>
 

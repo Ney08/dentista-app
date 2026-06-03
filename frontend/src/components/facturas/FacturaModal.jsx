@@ -1,5 +1,5 @@
-import { generarFactura } from "../utils/pdf";
-import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
+import { generarFactura } from "../../utils/pdf";
+import { formatFecha, formatHora, parseFechaLocal } from "../../utils/fecha";
 
 function FacturaModal({ ingreso, onClose }) {
 

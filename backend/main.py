@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from database import SessionLocal, engine
 from sqlalchemy import text
 import models
-from schemas import UserCreate, UserLogin, ClienteCreate, IngresoCreate, HistorialCreate, CitaCreate, ServicioSchema, IngresoUpdateSchema
+from schemas import UserCreate, UserLogin, ClienteCreate, IngresoCreate, HistorialCreate, CitaCreate, ServicioSchema, IngresoUpdateSchema, UserUpdate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
@@ -87,24 +87,6 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
         "user": user.username
     }
 
-# @app.put("/users/{user_id}")
-# def actualizar_usuario(user_id: int, data: schemas.UserCreate, db: Session = Depends(get_db)):
-
-#     user = db.query(models.User).filter(models.User.id == user_id).first()
-
-#     if not user:
-#         raise HTTPException(404, "Usuario no encontrado ❌")
-
-#     # ✅ actualizar username
-#     user.username = data.username
-
-#     # ✅ actualizar password (IMPORTANTE → hash)
-#     user.password = hash_password(data.password)
-
-#     db.commit()
-
-#     return {"msg": "Usuario actualizado ✅"}
-
 
 
 @app.put("/users/reset")
@@ -120,6 +102,25 @@ def reset_password(data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
 
     return {"msg": "Contraseña actualizada ✅"}
+
+
+@app.put("/users/{user_id}")
+def actualizar_usuario(user_id: int, data: UserUpdate, db: Session = Depends(get_db)):
+
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(404, "Usuario no encontrado ❌")
+
+    if data.username:
+        user.username = data.username
+
+    if data.password:
+        user.password = hash_password(data.password)
+
+    db.commit()
+
+    return {"msg": "Usuario actualizado ✅"}
 
 
 # =========================

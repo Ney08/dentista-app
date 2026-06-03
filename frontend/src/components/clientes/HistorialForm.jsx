@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { API_URL } from "../config";
+import { API_URL } from "../../config";
 
 function HistorialForm({ clienteId, onAdd }) {
   const [texto, setTexto] = useState("");
