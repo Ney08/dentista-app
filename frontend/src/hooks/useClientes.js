@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getClientes,
@@ -6,21 +7,19 @@ import {
   actualizarCliente
 } from "../components/services/clienteService";
 
-export const useClientes = () => {
+export const useClientes = (activos = true) => {
 
   const queryClient = useQueryClient();
 
-  // ✅ GET CLIENTES
   const {
     data: clientes = [],
     isLoading
   } = useQuery({
-    queryKey: ["clientes"],
-    queryFn: getClientes,
-    staleTime: 1000 * 60 // ✅ 1 min cache (mejora rendimiento)
+    queryKey: ["clientes", activos], 
+    queryFn: () => getClientes(activos),
+    staleTime: 1000 * 60
   });
 
-  // ✅ CREAR CLIENTE
   const crearClienteMutation = useMutation({
     mutationFn: crearCliente,
     onSuccess: () => {
@@ -28,32 +27,44 @@ export const useClientes = () => {
     }
   });
 
-  // ✅ ELIMINAR CLIENTE
-  const eliminarClienteMutation = useMutation({
-    mutationFn: eliminarCliente,
+  const toggleClienteMutation = useMutation({
+    mutationFn: async (cliente) => {
+
+      const endpoint = cliente.activo
+        ? "desactivar"
+        : "activar";
+
+      const res = await fetch(
+        `${API_URL}/clientes/${cliente.id}/${endpoint}`,
+        { method: "PUT" }
+      );
+
+      if (!res.ok) {
+        throw new Error("Error al cambiar estado");
+      }
+
+      return res.json();
+    },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientes"] });
     }
   });
 
-  // ✅ EDITAR CLIENTE
- 
-const editarClienteMutation = useMutation({
-  mutationFn: async (variables) => {
-    const { id, data } = variables;
-    return await actualizarCliente(id, data);
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["clientes"] });
-  }
-});
-
+  const editarClienteMutation = useMutation({
+    mutationFn: async ({ id, data }) => {
+      return await actualizarCliente(id, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientes"] });
+    }
+  });
 
   return {
     clientes,
     isLoading,
     crearCliente: crearClienteMutation,
-    eliminarCliente: eliminarClienteMutation,
-    editarCliente: editarClienteMutation
+    editarCliente: editarClienteMutation,
+    toggleCliente: toggleClienteMutation
   };
 };

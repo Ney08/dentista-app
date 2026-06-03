@@ -10,6 +10,10 @@ import models
 from schemas import UserCreate, UserLogin, ClienteCreate, IngresoCreate, HistorialCreate, CitaCreate, ServicioSchema, IngresoUpdateSchema, UserUpdate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+from fastapi import Query
+from typing import Optional
+import re
+import uuid
 
 router = APIRouter()
 
@@ -127,11 +131,6 @@ def actualizar_usuario(user_id: int, data: UserUpdate, db: Session = Depends(get
 # CLIENTES
 # =========================
 
-
-
-
-import re
-
 @app.post("/clientes/")
 def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
 
@@ -143,15 +142,18 @@ def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
         models.Cliente.cedula == cedula
     ).first()
 
+    
     if existe:
-        return {"error": "La cédula ya está registrada ❌"}
+        raise HTTPException(400, "La cédula ya está registrada ❌")
+
 
     # ✅ crear cliente
     nuevo_cliente = models.Cliente(
         nombre=data.nombre,
         apellido=data.apellido,
         cedula=cedula,
-        telefono=data.telefono
+        telefono=data.telefono,
+        activo=True
     )
 
     db.add(nuevo_cliente)
@@ -177,17 +179,31 @@ def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
 
 
 
-@app.get("/clientes/")
-def listar_clientes(db: Session = Depends(get_db), cedula: str = None):
 
+
+
+
+
+
+
+@app.get("/clientes/")
+def listar_clientes(
+    activos: Optional[bool] = Query(None),
+    db: Session = Depends(get_db)
+):
+    
     query = db.query(models.Cliente).options(
         joinedload(models.Cliente.direccion)
     )
 
-    if cedula:
-        return query.filter(models.Cliente.cedula == cedula.strip()).all()
+    # ✅ FILTRO NUEVO
+    if activos is not None:
+        query = query.filter(models.Cliente.activo == activos)
 
     return query.all()
+
+
+
 
 
 @app.put("/clientes/{cliente_id}")
@@ -202,7 +218,7 @@ def actualizar_cliente(cliente_id: int, data: ClienteCreate, db: Session = Depen
     cliente.nombre = data.nombre
     cliente.apellido = data.apellido
     cliente.telefono = data.telefono
-
+    cliente.activo = True
     # ✅ actualizar dirección
     direccion = db.query(models.Direccion).filter(
         models.Direccion.cliente_id == cliente_id
@@ -241,16 +257,43 @@ def actualizar_cliente(cliente_id: int, data: ClienteCreate, db: Session = Depen
     return cliente
 
 
-@app.delete("/clientes/{cliente_id}")
-def eliminar_cliente(cliente_id: int, db: Session = Depends(get_db)):
-    cliente = db.query(models.Cliente).filter(models.Cliente.id == cliente_id).first()
+@app.put("/clientes/{cliente_id}/desactivar")
+def desactivar_cliente(cliente_id: int, db: Session = Depends(get_db)):
 
-    if cliente:
-        db.delete(cliente)
-        db.commit()
-        return {"mensaje": "Cliente eliminado"}
+    cliente = db.query(models.Cliente).filter(
+        models.Cliente.id == cliente_id
+    ).first()
 
-    raise HTTPException(404, "Cliente no encontrado")
+    if not cliente:
+        raise HTTPException(404, "Cliente no encontrado")
+
+    cliente.activo = False
+
+    db.commit()
+    db.refresh(cliente)
+
+    return {"message": "Cliente desactivado ✅"}
+
+
+
+@app.put("/clientes/{cliente_id}/activar")
+def activar_cliente(cliente_id: int, db: Session = Depends(get_db)):
+
+    cliente = db.query(models.Cliente).filter(
+        models.Cliente.id == cliente_id
+    ).first()
+    
+    if not cliente:
+        raise HTTPException(404, "Cliente no encontrado")
+    
+    cliente.activo = True
+
+    db.commit()
+    db.refresh(cliente)
+    
+    
+
+    return {"message": "Cliente activado ✅"}
 
 
 # =========================
@@ -456,7 +499,10 @@ async def guardar_factura(
     file: UploadFile = File(...),
     ingreso_id: int = Form(...)
 ):
-    ruta = f"facturas/{file.filename}"
+    
+    filename = f"{uuid.uuid4()}_{file.filename}"
+    ruta = f"facturas/{filename}"
+
 
     with open(ruta, "wb") as f:
         f.write(await file.read())
@@ -629,11 +675,22 @@ def actualizar_cita(id: int, data: CitaCreate, db: Session = Depends(get_db)):
 
 
 
-@app.get("/fix-db")
-def fix_db(db: Session = Depends(get_db)):
-    try:
-        db.execute(text("ALTER TABLE citas ADD COLUMN duracion INTEGER DEFAULT 30;"))
-        db.commit()
-        return {"ok": True}
-    except Exception as e:
-        return {"error": str(e)}
+# from sqlalchemy import text
+
+# @app.get("/fix-db")
+# def fix_db(db: Session = Depends(get_db)):
+#     try:
+#         db.execute(text(
+#             "ALTER TABLE clientes ADD COLUMN activo BOOLEAN DEFAULT TRUE;"
+#         ))
+
+#         db.commit()
+
+#         return {
+#             "ok": True,
+#             "message": "Columnas agregadas ✅"
+#         }
+
+#     except Exception as e:
+#         db.rollback()
+#         return {"error": str(e)}

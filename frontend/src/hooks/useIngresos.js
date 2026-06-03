@@ -8,17 +8,35 @@ import {
 import { useClientes } from "./useClientes";
 
 export const useIngresos = () => {
-  const { clientes } = useClientes();
+
+  const { clientes = [] } = useClientes(true); // ✅ solo activos
   const queryClient = useQueryClient();
 
-  // ✅ GET INGRESOS
+  // ✅ GET INGRESOS (🔥 BLINDADO)
   const {
     data: ingresos = [],
     isLoading
   } = useQuery({
     queryKey: ["ingresos"],
-    queryFn: getIngresos,
-    staleTime: 1000 * 60 // ✅ cache 1 min
+    queryFn: async () => {
+
+      try {
+        const data = await getIngresos();
+
+        // ✅ PROTECCIÓN TOTAL
+        if (!Array.isArray(data)) {
+          console.warn("⚠️ ingresos NO es array:", data);
+          return [];
+        }
+
+        return data;
+
+      } catch (error) {
+        console.error("❌ Error cargando ingresos:", error);
+        return []; // 🔥 evita crash
+      }
+    },
+    staleTime: 1000 * 60
   });
 
   // ✅ CREAR INGRESO (OPTIMISTIC)
@@ -27,14 +45,12 @@ export const useIngresos = () => {
 
     onMutate: async (nuevo) => {
 
-      await queryClient.cancelQueries({
-        queryKey: ["ingresos"]
-      });
+      await queryClient.cancelQueries({ queryKey: ["ingresos"] });
 
       const prev = queryClient.getQueryData(["ingresos"]);
 
       queryClient.setQueryData(["ingresos"], (old = []) => [
-        ...old,
+        ...(Array.isArray(old) ? old : []), // ✅ protección
         {
           ...nuevo,
           id: Date.now(),
@@ -52,9 +68,7 @@ export const useIngresos = () => {
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["ingresos"]
-      });
+      queryClient.invalidateQueries({ queryKey: ["ingresos"] });
     }
   });
 
@@ -64,14 +78,12 @@ export const useIngresos = () => {
 
     onMutate: async (id) => {
 
-      await queryClient.cancelQueries({
-        queryKey: ["ingresos"]
-      });
+      await queryClient.cancelQueries({ queryKey: ["ingresos"] });
 
       const prev = queryClient.getQueryData(["ingresos"]);
 
       queryClient.setQueryData(["ingresos"], (old = []) =>
-        old.map(i =>
+        (Array.isArray(old) ? old : []).map(i =>
           i.id === id ? { ...i, pagado: true } : i
         )
       );
@@ -86,75 +98,67 @@ export const useIngresos = () => {
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["ingresos"]
-      });
+      queryClient.invalidateQueries({ queryKey: ["ingresos"] });
     }
   });
 
   // ✅ EDITAR INGRESO (OPTIMISTIC)
-const actualizarIngresoMutation = useMutation({
-  mutationFn: ({ id, data }) =>
-    actualizarIngreso(id, data),
+  const actualizarIngresoMutation = useMutation({
+    mutationFn: ({ id, data }) =>
+      actualizarIngreso(id, data),
 
-  onMutate: async ({ id, data }) => {
+    onMutate: async ({ id, data }) => {
 
-    await queryClient.cancelQueries({
-      queryKey: ["ingresos"]
-    });
+      await queryClient.cancelQueries({ queryKey: ["ingresos"] });
 
-    const prev = queryClient.getQueryData(["ingresos"]);
+      const prev = queryClient.getQueryData(["ingresos"]);
 
-    queryClient.setQueryData(["ingresos"], (old = []) =>
-      old.map(i => {
+      queryClient.setQueryData(["ingresos"], (old = []) =>
+        (Array.isArray(old) ? old : []).map(i => {
 
-        if (i.id !== id) return i;
+          if (i.id !== id) return i;
 
-        // ✅ buscar el nuevo cliente
-        const nuevoCliente = clientes.find(
-          c => c.id === data.cliente_id
-        );
+          const nuevoCliente = clientes.find(
+            c => c.id === data.cliente_id
+          );
 
-        return {
-          ...i,
-          ...data,
+          return {
+            ...i,
+            ...data,
+            cliente: nuevoCliente || i.cliente
+          };
+        })
+      );
 
-          // ✅ ahora sí actualiza correctamente
-          cliente: nuevoCliente || i.cliente
-        };
-      })
-    );
+      return { prev };
+    },
 
-    return { prev };
-  },
+    onError: (_err, _vars, context) => {
+      if (context?.prev) {
+        queryClient.setQueryData(["ingresos"], context.prev);
+      }
+    },
 
-  onError: (err, vars, context) => {
-    if (context?.prev) {
-      queryClient.setQueryData(["ingresos"], context.prev);
+    onSuccess: (updatedIngreso) => {
+
+      if (!updatedIngreso) return;
+
+      queryClient.setQueryData(["ingresos"], (old = []) =>
+        (Array.isArray(old) ? old : []).map(i =>
+          i.id === updatedIngreso.id
+            ? updatedIngreso
+            : i
+        )
+      );
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["ingresos"] });
     }
-  },
-
-  onSuccess: (updatedIngreso) => {
-    // ✅ backend manda data correcta
-    queryClient.setQueryData(["ingresos"], (old = []) =>
-      old.map(i =>
-        i.id === updatedIngreso.id
-          ? updatedIngreso
-          : i
-      )
-    );
-  },
-
-  onSettled: () => {
-    queryClient.invalidateQueries({
-      queryKey: ["ingresos"]
-    });
-  }
-});
-
+  });
 
   return {
-    ingresos,
+    ingresos: Array.isArray(ingresos) ? ingresos : [], // ✅ doble seguridad
     isLoading,
     crearIngreso: crearIngresoMutation,
     pagarIngreso: pagarIngresoMutation,

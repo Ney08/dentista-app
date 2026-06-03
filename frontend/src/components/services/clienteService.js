@@ -15,9 +15,11 @@ const handleResponse = async (res) => {
   return data;
 };
 
-// ✅ GET
-export const getClientes = async () => {
-  const res = await fetch(`${API_URL}/clientes/`);
+// ✅ GET (🔥 ahora dinámico)
+export const getClientes = async (activos = true) => {
+  const res = await fetch(
+    `${API_URL}/clientes?activos=${activos}`
+  );
   return handleResponse(res);
 };
 
@@ -34,15 +36,6 @@ export const crearCliente = async (data) => {
   return handleResponse(res);
 };
 
-// ✅ DELETE
-export const eliminarCliente = async (id) => {
-  const res = await fetch(`${API_URL}/clientes/${id}`, {
-    method: "DELETE"
-  });
-
-  return handleResponse(res);
-};
-
 // ✅ UPDATE
 export const actualizarCliente = async (id, data) => {
   const res = await fetch(`${API_URL}/clientes/${id}`, {
@@ -54,4 +47,25 @@ export const actualizarCliente = async (id, data) => {
   });
 
   return handleResponse(res);
+};
+
+// ✅ TOGGLE ACTIVO 🔥 (NUEVO)
+export const toggleCliente = async (cliente) => {
+
+  const endpoint = cliente.activo
+    ? "desactivar"
+    : "activar";
+
+  const res = await fetch(
+    `${API_URL}/clientes/${cliente.id}/${endpoint}`,
+    {
+      method: "PUT"
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Error al cambiar estado del cliente");
+  }
+
+  return res.json();
 };

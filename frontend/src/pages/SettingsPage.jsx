@@ -5,10 +5,13 @@ import ServicioModal from "../components/ServicioModal";
 import toast from "react-hot-toast";
 import { useUser } from "../hooks/useUser";
 import { useServicios } from "../hooks/useServicios";
+import { useClientes } from "../hooks/useClientes";
+import ClientesInactivosTab from "../components/settings/ClientesInactivosTab";
+import ServiciosTab from "../components/settings/ServiciosTab";
 
 function SettingsPage() {
   const { updateUser } = useUser();
-  
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nuevoPassword, setNuevoPassword] = useState("");
@@ -23,6 +26,11 @@ function SettingsPage() {
     eliminarServicio,
     actualizarServicio
   } = useServicios();
+
+  const {
+    clientes: clientesInactivos,
+    toggleCliente
+  } = useClientes(false); // 🔥 SOLO INACTIVOS
 
   const [servicioAEliminar, setServicioAEliminar] = useState(null);
   const [modalServicio, setModalServicio] = useState(false);
@@ -98,48 +106,48 @@ function SettingsPage() {
 
 
 
-const guardarServicio = async (data) => {
+  const guardarServicio = async (data) => {
 
-  if (!data.nombre.trim()) {
-    return toast.error("Nombre requerido ❌");
-  }
-
-  if (!data.precio) {
-    return toast.error("Precio requerido ⚠️");
-  }
-
-  try {
-
-    if (data.id) {
-      // ✅ EDITAR
-      await actualizarServicio({
-        id: data.id,
-        nombre: data.nombre,
-        descripcion: data.descripcion,
-        precio: parseFloat(data.precio)
-      });
-
-      toast.success("Servicio actualizado ✏️");
-
-    } else {
-      // ✅ CREAR
-      await agregarServicio({
-        nombre: data.nombre,
-        descripcion: data.descripcion,
-        precio: parseFloat(data.precio)
-      });
-
-      toast.success("Servicio agregado ✅");
+    if (!data.nombre.trim()) {
+      return toast.error("Nombre requerido ❌");
     }
 
-    setModalServicio(false);
-    setServicioEditar(null);
+    if (!data.precio) {
+      return toast.error("Precio requerido ⚠️");
+    }
 
-  } catch {
-    toast.error("Error ❌");
-    console.log(data.id);
-  }
-};
+    try {
+
+      if (data.id) {
+        // ✅ EDITAR
+        await actualizarServicio({
+          id: data.id,
+          nombre: data.nombre,
+          descripcion: data.descripcion,
+          precio: parseFloat(data.precio)
+        });
+
+        toast.success("Servicio actualizado ✏️");
+
+      } else {
+        // ✅ CREAR
+        await agregarServicio({
+          nombre: data.nombre,
+          descripcion: data.descripcion,
+          precio: parseFloat(data.precio)
+        });
+
+        toast.success("Servicio agregado ✅");
+      }
+
+      setModalServicio(false);
+      setServicioEditar(null);
+
+    } catch {
+      toast.error("Error ❌");
+      console.log(data.id);
+    }
+  };
 
   return (
     <PageWrapper>
@@ -156,7 +164,7 @@ const guardarServicio = async (data) => {
 
         {/* TABS */}
         <div className="flex gap-2 border-b pb-2 justify-center">
-          {["usuario", "seguridad", "servicios"].map(t => (
+          {["usuario", "seguridad", "servicios", "clientes"].map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -170,6 +178,7 @@ const guardarServicio = async (data) => {
               {t === "usuario" && "👤 Usuario"}
               {t === "seguridad" && "🔒 Seguridad"}
               {t === "servicios" && "🧾 Servicios"}
+              {t === "clientes" && "🚫 Clientes inactivos"}
             </button>
           ))}
         </div>
@@ -229,66 +238,22 @@ const guardarServicio = async (data) => {
         )}
 
         {/* ✅ SERVICIOS */}
+
         {tab === "servicios" && (
-          <div className="bg-white p-6 rounded-xl shadow border space-y-4">
+          <ServiciosTab
+            servicios={servicios}
+            setModalServicio={setModalServicio}
+            setServicioEditar={setServicioEditar}
+            setServicioAEliminar={setServicioAEliminar}
+          />
+        )}
 
-            <div className="flex justify-end">
-              <button
-                onClick={() => {
-                  setServicioEditar(null);
-                  setModalServicio(true);
-                }}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-              >
-                + Nuevo
-              </button>
-            </div>
 
-            <div className="space-y-2 max-h-[300px] overflow-y-auto">
-
-              {servicios.map(s => (
-                <div
-                  key={s.id}
-                  className="flex justify-between items-center border p-3 rounded-lg"
-                >
-
-                  <div>
-                    <p className="font-medium">{s.nombre}</p>
-
-                    <p className="text-xs text-gray-400">
-                      {s.descripcion}
-                    </p>
-
-                    <p className="text-sm text-gray-500">
-                      RD$ {s.precio}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2">
-
-                    <button
-                      onClick={() => {
-                        setServicioEditar(s);
-                        setModalServicio(true);
-                      }}
-                    >
-                      ✏️
-                    </button>
-
-                    <button
-                      onClick={() => setServicioAEliminar(s)}
-                    >
-                      ❌
-                    </button>
-
-                  </div>
-
-                </div>
-              ))}
-
-            </div>
-
-          </div>
+        {tab === "clientes" && (
+          <ClientesInactivosTab
+            clientesInactivos={clientesInactivos}
+            toggleCliente={toggleCliente}
+          />
         )}
 
       </div>

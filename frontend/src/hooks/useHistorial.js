@@ -5,7 +5,6 @@ export const useHistorial = (clienteId) => {
 
   const queryClient = useQueryClient();
 
-  // ✅ OBTENER HISTORIAL
   const {
     data: historial = [],
     isLoading
@@ -13,18 +12,19 @@ export const useHistorial = (clienteId) => {
     queryKey: ["historial", clienteId],
     enabled: !!clienteId,
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/historiales/?cliente_id=${clienteId}`);
+
+      const res = await fetch(
+        `${API_URL}/clientes/${clienteId}/historial`
+      );
 
       if (!res.ok) {
         throw new Error("Error al cargar historial ❌");
       }
 
-      const data = await res.json();
-      return data;
+      return await res.json();
     }
   });
 
-  // ✅ CREAR NOTA
   const crearHistorial = useMutation({
 
     mutationFn: async (data) => {
@@ -48,7 +48,6 @@ export const useHistorial = (clienteId) => {
       return result;
     },
 
-    // ✅ OPTIMISTIC UPDATE (React Query v5)
     onMutate: async (nuevaNota) => {
 
       await queryClient.cancelQueries({
@@ -72,7 +71,6 @@ export const useHistorial = (clienteId) => {
       return { prev };
     },
 
-    // ✅ rollback si falla
     onError: (_err, _data, context) => {
       if (context?.prev) {
         queryClient.setQueryData(
@@ -82,7 +80,6 @@ export const useHistorial = (clienteId) => {
       }
     },
 
-    // ✅ refrescar siempre
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["historial", clienteId]

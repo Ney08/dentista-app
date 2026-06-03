@@ -4,7 +4,8 @@ function ClienteList({
   clientes,
   onEliminarClick,
   onEditarClick,
-  onSeleccionar
+  onSeleccionar,
+  onToggleActivo
 }) {
 
   const navigate = useNavigate();
@@ -124,19 +125,21 @@ function ClienteList({
                 ✏️ Editar
               </button>
 
-              {/* 🗑 ELIMINAR */}
+              {/* 🗑 Desactivar */}
+
               <button
-                onClick={() => onEliminarClick(cliente.id)}
-                className="
-                  flex items-center gap-1 px-3 py-1.5
-                  bg-red-500 hover:bg-red-600
-                  text-white text-sm font-medium
-                  rounded-lg
-                  
-                "
+                onClick={() => onToggleActivo(cliente)}
+                className={`
+    flex items-center gap-1 px-3 py-1.5
+    text-white text-sm rounded-lg
+    ${cliente.activo
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-green-500 hover:bg-green-600"}
+  `}
               >
-                🗑 Eliminar
+                {cliente.activo ? "🚫 Desactivar" : "✅ Activar"}
               </button>
+
 
             </div>
 

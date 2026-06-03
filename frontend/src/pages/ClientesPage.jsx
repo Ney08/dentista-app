@@ -1,20 +1,22 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-
+import ConfirmModal from "../components/ConfirmModal";
 import ClienteForm from "../components/clientes/ClienteForm";
 import ClienteList from "../components/clientes/ClienteList";
 import ClienteDetalle from "../components/clientes/ClienteDetalle";
 import PageWrapper from "../components/PageWrapper";
-import { parseFechaLocal } from "../utils/fecha";
+//import { parseFechaLocal } from "../utils/fecha";
 import { useClientes } from "../hooks/useClientes";
 import Paginacion from "../components/Paginacion";
 function ClientesPage() {
 
+  const [mostrarActivos, setMostrarActivos] = useState(true);
   const {
     clientes,
-    eliminarCliente,
+    toggleCliente,
     isLoading
-  } = useClientes();
+  } = useClientes(mostrarActivos);
+
 
   // ✅ MODAL
 
@@ -23,9 +25,10 @@ function ClientesPage() {
     setClienteEditar(null);
   };
 
+
   const [modalAbierto, setModalAbierto] = useState(false);
   const [clienteEditar, setClienteEditar] = useState(null);
-
+  const [clienteADesactivar, setClienteADesactivar] = useState(null);
   // ✅ DETALLE
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
@@ -73,12 +76,21 @@ function ClientesPage() {
       : Math.ceil(ordenados.length / limite);
 
   // ✅ ELIMINAR
-  const handleEliminar = async (id) => {
-    try {
-      await eliminarCliente.mutateAsync(id);
-      toast.success("Cliente eliminado ✅");
-    } catch {
-      toast.error("Error al eliminar ❌");
+  // const handleEliminar = async (id) => {
+  //   try {
+  //     await eliminarCliente.mutateAsync(id);
+  //     toast.success("Cliente eliminado ✅");
+  //   } catch {
+  //     toast.error("Error al eliminar ❌");
+  //   }
+  // };
+
+  const handleToggleActivo = (cliente) => {
+
+    if (cliente.activo) {
+      setClienteADesactivar(cliente);
+    } else {
+      toggleCliente.mutate(cliente);
     }
   };
 
@@ -200,15 +212,17 @@ function ClientesPage() {
 
               <div className="space-y-2">
 
+
                 <ClienteList
                   clientes={clientesFinal}
-                  onEliminarClick={handleEliminar}
+                  onToggleActivo={(cliente) => handleToggleActivo(cliente)}
                   onEditarClick={(c) => {
                     setClienteEditar(c);
                     setModalAbierto(true);
                   }}
                   onSeleccionar={(c) => setClienteSeleccionado(c)}
                 />
+
               </div>
             )}
           </div>
@@ -278,6 +292,29 @@ function ClientesPage() {
           />
         </div>
       </div>
+
+      {clienteADesactivar && (
+        <ConfirmModal
+          mensaje={`¿Desactivar a ${clienteADesactivar.nombre}?`}
+          onCancel={() => setClienteADesactivar(null)}
+          onConfirm={() => {
+            toggleCliente.mutate(clienteADesactivar);
+            setClienteADesactivar(null);
+          }}
+        />
+      )}
+
+      {/* {clienteAEliminar && (
+        <ConfirmModal
+          mensaje={`¿Eliminar a ${clienteAEliminar.nombre}? Esta acción no se puede deshacer.`}
+          onCancel={() => setClienteAEliminar(null)}
+          onConfirm={() => {
+            handleEliminar(clienteAEliminar.id);
+            setClienteAEliminar(null);
+            console.log(clienteAEliminar);
+          }}
+        />
+      )} */}
 
     </PageWrapper>
   );
