@@ -150,7 +150,7 @@ function FacturaModal({ ingreso, onClose }) {
             🖨 Ver / Imprimir
           </button>
 
-          <button
+          {/* <button
             onClick={() => {
               window.modoFactura = "download";
               generarFactura(ingreso);
@@ -162,7 +162,7 @@ function FacturaModal({ ingreso, onClose }) {
             "
           >
             ⬇ Descargar PDF
-          </button>
+          </button> */}
 
           <button
             onClick={onClose}

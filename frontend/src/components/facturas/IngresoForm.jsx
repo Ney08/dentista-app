@@ -7,109 +7,219 @@ import { useCitas } from "../../hooks/useCitas";
 import { formatFecha, formatHora } from "../../utils/fecha";
 import { formatMoney } from "../../utils/format";
 
-function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose }) {
+function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
   const { servicios: catalogoServicios } = useServicios();
-  const { crearIngreso, actualizarIngreso } = useIngresos();
-  const { citas } = useCitas(); // ✅ obtener citas
-  const [clienteId, setClienteId] = useState("");
 
-  const normalize = (text) =>
-    (text || "").toLowerCase().trim();
+  const { crearIngreso, actualizarIngreso } =
+    useIngresos();
 
+  const { citas } = useCitas();
 
-  const autoSeleccionarServicio = (clienteId) => {
+  // ✅ FORM
+  const {
+    handleSubmit,
+    reset
+  } = useForm();
 
-    console.log("👉 TODAS LAS CITAS:", citas);
-    console.log("👉 CLIENTE SELECCIONADO:", clienteId);
+  // ✅ STATES
+  const [clienteId, setClienteId] =
+    useState("");
+
+  const [citaSeleccionada, setCitaSeleccionada] =
+    useState(null);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [servicios, setServicios] =
+    useState([
+      {
+        descripcion: "",
+        monto: ""
+      }
+    ]);
+
+  const [descuento, setDescuento] =
+    useState(0);
+
+  // ✅ NORMALIZE
+  const normalize = (text) => {
+
+    return (text || "")
+      .toLowerCase()
+      .trim();
+
+  };
+
+  // ✅ SINCRONIZAR CLIENTE
+  useEffect(() => {
+
+    if (!citaPreset) {
+      return;
+    }
+
+    setClienteId(
+      String(citaPreset.cliente_id)
+    );
+
+  }, [citaPreset]);
+
+  // ✅ AUTO SERVICIO
+  const autoSeleccionarServicio = (
+    clienteId
+  ) => {
+
+    // ✅ usar cita preset directamente
+    if (citaPreset) {
+
+      setCitaSeleccionada(citaPreset);
+
+      return;
+    }
+
+    console.log(
+      "👉 TODAS LAS CITAS:",
+      citas
+    );
+
+    console.log(
+      "👉 CLIENTE SELECCIONADO:",
+      clienteId
+    );
 
     const ahora = new Date();
 
     const citasCliente = citas
-      .filter(c =>
-        Number(c.cliente_id) === Number(clienteId) &&
-        c.estado === "pendiente"
+      .filter(
+        c =>
+          Number(c.cliente_id) ===
+          Number(clienteId) &&
+          c.estado === "pendiente"
       )
       .map(c => ({
         ...c,
-        fechaObj: new Date(c.fecha.replace("T", " "))
-
+        fechaObj: new Date(
+          c.fecha.replace("T", " ")
+        )
       }));
 
     if (citasCliente.length === 0) {
+
       setCitaSeleccionada(null);
-      setServicios([{
-        descripcion: "",
-        monto: ""
-      }]);
-      toast("No hay citas relacionadas ⚠️");
+
+      setServicios([
+        {
+          descripcion: "",
+          monto: ""
+        }
+      ]);
+
+      toast(
+        "No hay citas relacionadas ⚠️"
+      );
+
       return;
     }
 
-    // ✅ 1. CITA DE HOY
+    // ✅ cita de hoy
     const hoy = new Date();
 
-    const citaHoy = citasCliente.find(c =>
-      c.fechaObj.toDateString() === hoy.toDateString()
+    const citaHoy = citasCliente.find(
+      c =>
+        c.fechaObj.toDateString() ===
+        hoy.toDateString()
     );
 
     let citaElegida = citaHoy;
 
-    // ✅ 2. SI NO HAY HOY → MÁS CERCANA (FUTURA O PASADA)
+    // ✅ más cercana
     if (!citaElegida) {
-      citaElegida = citasCliente
-        .sort((a, b) =>
-          Math.abs(a.fechaObj - ahora) - Math.abs(b.fechaObj - ahora)
-        )[0];
+
+      citaElegida = citasCliente.sort(
+        (a, b) =>
+          Math.abs(a.fechaObj - ahora) -
+          Math.abs(b.fechaObj - ahora)
+      )[0];
+
     }
 
     if (!citaElegida) {
+
       setCitaSeleccionada(null);
 
-      setServicios([{
-        descripcion: "",
-        monto: ""
-      }]);
-      toast("No hay citas relacionadas ⚠️");
+      setServicios([
+        {
+          descripcion: "",
+          monto: ""
+        }
+      ]);
+
+      toast(
+        "No hay citas relacionadas ⚠️"
+      );
+
       return;
     }
 
     setCitaSeleccionada(citaElegida);
 
-    // ✅ AUTO SERVICIO
-    if (!citaElegida.motivo) return;
+    // ✅ auto servicio
+    if (!citaElegida.motivo) {
+      return;
+    }
 
-    const servicioEncontrado = catalogoServicios.find(s => {
-      const nombre = normalize(s?.nombre || s?.descripcion);
-      const motivo = normalize(citaElegida?.motivo);
+    const servicioEncontrado =
+      catalogoServicios.find(s => {
 
-      const palabras = motivo.split(" ");
+        const nombre = normalize(
+          s?.nombre || s?.descripcion
+        );
 
-      return palabras.some(p => nombre.includes(p));
-    });
+        const motivo = normalize(
+          citaElegida?.motivo
+        );
+
+        return motivo
+          .split(" ")
+          .some(
+            p => nombre.includes(p)
+          );
+
+      });
 
     if (!servicioEncontrado) {
-      toast("No hay servicio relacionado ⚠️");
 
-      setServicios([{
-        descripcion: "",
-        monto: ""
-      }]);
+      toast(
+        "No hay servicio relacionado ⚠️"
+      );
+
+      setServicios([
+        {
+          descripcion: "",
+          monto: ""
+        }
+      ]);
 
       return;
     }
 
     setServicios(prev => {
+
       const copia = [...prev];
 
       copia[0] = {
-        descripcion: servicioEncontrado.nombre || servicioEncontrado.descripcion || "",
-        monto: servicioEncontrado.precio || ""
+        descripcion:
+          servicioEncontrado.nombre ||
+          servicioEncontrado.descripcion ||
+          "",
+
+        monto:
+          servicioEncontrado.precio || ""
       };
 
       return copia;
+
     });
-    console.log("✅ CITAS DEL CLIENTE:", citasCliente);
-    console.log("✅ CITA ELEGIDA:", citaElegida);
 
     toast.success(
       `Servicio sugerido ✨ ${formatFecha(citaElegida.fechaObj)}`
@@ -117,150 +227,242 @@ function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose
 
   };
 
-
-
+  // ✅ PRESET CITA
   useEffect(() => {
-    if (citaPreset && !initialData) {
-      setCitaSeleccionada(citaPreset);
-      setClienteId(String(citaPreset.cliente_id));
 
-      // opcional: sugerir servicio según motivo
-      if (citaPreset.motivo) {
-        const encontrado = catalogoServicios.find(
+    if (
+      !citaPreset ||
+      initialData
+    ) {
+      return;
+    }
+
+    setCitaSeleccionada(citaPreset);
+
+    // ✅ servicio automático
+    if (citaPreset.motivo) {
+
+      const encontrado =
+        catalogoServicios.find(
           s =>
-            s.nombre?.toLowerCase().trim() ===
-            citaPreset.motivo?.toLowerCase().trim()
+            s.nombre
+              ?.toLowerCase()
+              .trim() ===
+            citaPreset.motivo
+              ?.toLowerCase()
+              .trim()
         );
 
-        if (encontrado) {
-          setServicios([
-            {
-              descripcion: encontrado.nombre,
-              monto: encontrado.precio
-            }
-          ]);
-        }
+      if (encontrado) {
+
+        setServicios([
+          {
+            descripcion:
+              encontrado.nombre,
+
+            monto:
+              encontrado.precio
+          }
+        ]);
+
       }
+
     }
-  }, [citaPreset, initialData, catalogoServicios]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm();
-
-
-  const [citaSeleccionada, setCitaSeleccionada] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const [servicios, setServicios] = useState([
-    { descripcion: "", monto: "" }
+  }, [
+    citaPreset,
+    initialData,
+    catalogoServicios
   ]);
 
-  const [descuento, setDescuento] = useState(0);
-
   // ✅ EDITAR
-
   useEffect(() => {
 
     if (initialData) {
 
-      setServicios(initialData.servicios || []);
-      setDescuento(initialData.descuento || 0);
+      setServicios(
+        initialData.servicios || []
+      );
+
+      setDescuento(
+        initialData.descuento || 0
+      );
 
       const id =
         initialData.cliente_id
-          ? String(initialData.cliente_id)
+          ? String(
+            initialData.cliente_id
+          )
           : "";
 
       setClienteId(id);
 
-      reset({
-        clienteId: id
-      });
-
-    } else {
+    } else if (!citaPreset) {
 
       setClienteId("");
 
-      reset({
-        clienteId: ""
-      });
     }
 
-  }, [initialData, reset]);
-
+  }, [
+    initialData,
+    citaPreset
+  ]);
 
   // ✅ AGREGAR SERVICIO
   const agregarServicio = () => {
-    setServicios([...servicios, { descripcion: "", monto: "" }]);
+
+    setServicios([
+      ...servicios,
+      {
+        descripcion: "",
+        monto: ""
+      }
+    ]);
+
   };
 
+  // ✅ ELIMINAR SERVICIO
   const eliminarServicio = (index) => {
-    setServicios(servicios.filter((_, i) => i !== index));
+
+    setServicios(
+      servicios.filter(
+        (_, i) => i !== index
+      )
+    );
+
   };
 
-  const actualizarServicio = (index, campo, valor) => {
+  // ✅ ACTUALIZAR SERVICIO
+  const actualizarServicio = (
+    index,
+    campo,
+    valor
+  ) => {
+
     const nuevos = [...servicios];
+
     nuevos[index][campo] = valor;
+
     setServicios(nuevos);
+
   };
 
   // ✅ TOTAL
-  const subtotal = servicios.reduce((acc, s) => acc + Number(s.monto || 0), 0);
+  const subtotal = servicios.reduce(
+    (acc, s) =>
+      acc + Number(s.monto || 0),
+    0
+  );
+
   const itbis = subtotal * 0.18;
-  const descuentoValor = subtotal * ((descuento || 0) / 100);
-  const total = subtotal + itbis - descuentoValor;
+
+  const descuentoValor =
+    subtotal *
+    ((descuento || 0) / 100);
+
+  const total =
+    subtotal +
+    itbis -
+    descuentoValor;
 
   // ✅ SUBMIT
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
 
     for (let s of servicios) {
-      if (!s.descripcion || !s.monto) {
-        toast.error("Completa todos los servicios ⚠️");
+
+      if (
+        !s.descripcion ||
+        !s.monto
+      ) {
+
+        toast.error(
+          "Completa todos los servicios ⚠️"
+        );
+
         return;
       }
+
     }
 
-
     const payload = {
-      cliente_id: parseInt(clienteId),
-      descuento: parseFloat(descuento) || 0,
-      cita_id: citaSeleccionada?.id || null,
+
+      cliente_id:
+        parseInt(clienteId),
+
+      descuento:
+        parseFloat(descuento) || 0,
+
+      cita_id:
+        citaSeleccionada?.id || null,
+
       servicios: servicios.map(s => ({
-        descripcion: s.descripcion,
-        monto: parseFloat(s.monto)
+        descripcion:
+          s.descripcion,
+
+        monto:
+          parseFloat(s.monto)
       }))
+
     };
 
-
     setLoading(true);
-    const toastId = toast.loading("Guardando factura...");
+
+    const toastId =
+      toast.loading(
+        "Guardando factura..."
+      );
 
     try {
 
       if (initialData) {
+
         await actualizarIngreso.mutateAsync({
           id: initialData.id,
           data: payload
         });
-        toast.success("Factura actualizada ✅", { id: toastId });
+
+        toast.success(
+          "Factura actualizada ✅",
+          { id: toastId }
+        );
+
       } else {
-        await crearIngreso.mutateAsync(payload);
-        toast.success("Factura creada ✅", { id: toastId });
+
+        await crearIngreso.mutateAsync(
+          payload
+        );
+
+        toast.success(
+          "Factura creada ✅",
+          { id: toastId }
+        );
+
       }
 
       reset();
-      setServicios([{ descripcion: "", monto: "" }]);
+
+      setServicios([
+        {
+          descripcion: "",
+          monto: ""
+        }
+      ]);
+
       setDescuento(0);
+
       onClose();
+
     } catch {
-      toast.error("Error ❌", { id: toastId });
+
+      toast.error(
+        "Error ❌",
+        { id: toastId }
+      );
+
     }
 
     setLoading(false);
+
   };
 
   return (
@@ -288,31 +490,30 @@ function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose
 
         {/* ✅ CLIENTE */}
         <select
-          {...register("clienteId")}
+          value={clienteId}
+
           disabled={!!initialData}
 
           onChange={(e) => {
 
             const id = e.target.value;
 
-            // ✅ GUARDAR CLIENTE
             setClienteId(id);
 
-            // ✅ react-hook-form
-            register("clienteId").onChange(e);
-
-            // ✅ auto seleccionar servicio
             autoSeleccionarServicio(id);
           }}
 
           className={`
-          input
-          ${initialData ? "bg-gray-100 text-gray-500" : ""}
-        `}
+    input
+    ${initialData ? "bg-gray-100 text-gray-500" : ""}
+  `}
         >
           <option value="">Seleccionar cliente</option>
           {clientes.map(c => (
-            <option key={c.id} value={c.id}>
+            <option
+              key={c.id}
+              value={String(c.id)}
+            >
               {c.nombre} {c.apellido}
             </option>
           ))}

@@ -2,7 +2,10 @@ import jsPDF from "jspdf";
 import axios from "axios";
 import { parseFechaLocal, parseUTC, formatUTCFechaHora } from "./fecha";
 import { formatMoney } from "./format";
-
+import toast from "react-hot-toast";
+import { save } from "@tauri-apps/plugin-dialog";
+import { writeFile } from "@tauri-apps/plugin-fs";
+import { openPath } from "@tauri-apps/plugin-opener";
 export const generarFactura = async (ingreso) => {
 
   const doc = new jsPDF();
@@ -170,15 +173,105 @@ export const generarFactura = async (ingreso) => {
   const pdfBlob = doc.output("blob");
 
   // ✅ 1. ABRIR PREVIEW (PARA IMPRIMIR)
-  if (window.modoFactura === "preview") {
-    const url = URL.createObjectURL(pdfBlob);
-    window.open(url, "_blank");
+  // ✅ PREVIEW / IMPRIMIR
+if (window.modoFactura === "preview") {
+
+  try {
+
+    const filePath = await save({
+      filters: [
+        {
+          name: "PDF",
+          extensions: ["pdf"]
+        }
+      ],
+      defaultPath: `factura_${ingreso.id}.pdf`
+    });
+
+    if (!filePath) {
+      return;
+    }
+
+    const pdfBytes = doc.output("arraybuffer");
+
+    await writeFile(
+      filePath,
+      new Uint8Array(pdfBytes)
+    );
+
+    toast.success("PDF listo para imprimir ✅");
+
+    // ✅ intentar abrir
+    try {
+
+      await openPath(filePath);
+
+    } catch (openErr) {
+
+      console.error(
+        "ERROR OPEN PDF:",
+        openErr
+      );
+
+    }
+
+  } catch (err) {
+
+    console.error(
+      "ERROR PREVIEW PDF:",
+      err
+    );
+
+    toast.error(
+      "Error preparando PDF ❌"
+    );
+
   }
 
-  // ✅ 2. DESCARGAR DIRECTO
-  if (window.modoFactura === "download") {
-    doc.save(`factura_${ingreso.id}.pdf`);
+}
+
+// ✅ DESCARGAR
+if (window.modoFactura === "download") {
+
+  try {
+
+    const filePath = await save({
+      filters: [
+        {
+          name: "PDF",
+          extensions: ["pdf"]
+        }
+      ],
+      defaultPath: `factura_${ingreso.id}.pdf`
+    });
+
+    if (!filePath) {
+      return;
+    }
+
+    const pdfBytes = doc.output("arraybuffer");
+
+    await writeFile(
+      filePath,
+      new Uint8Array(pdfBytes)
+    );
+
+    toast.success("PDF guardado ✅");
+
+  } catch (err) {
+
+    console.error(
+      "ERROR PDF:",
+      err
+    );
+
+    toast.error(
+      "Error guardando PDF ❌"
+    );
+
   }
+
+}
 
 
   // =========================

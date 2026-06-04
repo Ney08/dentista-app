@@ -10,12 +10,24 @@ import GraficoClientes from "../components/graficos/GraficoClientes";
 import GraficoCitas from "../components/graficos/GraficoCitas";
 import PageWrapper from "../components/PageWrapper";
 import { formatMoney } from "../utils/format";
+import SkeletonLoader from "../components/SkeletonLoader";
 
 function DashboardHome() {
 
-  const { clientes } = useClientes();
-  const { ingresos } = useIngresos();
-  const { citas = [] } = useCitas();
+  const {
+    clientes,
+    isLoading: clientesLoading
+  } = useClientes();
+
+  const {
+    ingresos,
+    isLoading: ingresosLoading
+  } = useIngresos();
+
+  const {
+    citas = [],
+    isLoading: citasLoading
+  } = useCitas();
 
   const ahora = new Date();
 
@@ -101,7 +113,33 @@ function DashboardHome() {
   }, [citasHoy.length]);
 
   const formato = (n) => `RD$ ${formatMoney(n)}`;;
+  if (
+    clientesLoading ||
+    ingresosLoading ||
+    citasLoading
+  ) {
+    return (
+      <PageWrapper>
 
+        <div className="space-y-6">
+
+          <SkeletonLoader alto="h-10" />
+
+          <div className="grid grid-cols-3 gap-4">
+
+            <SkeletonLoader alto="h-28" />
+            <SkeletonLoader alto="h-28" />
+            <SkeletonLoader alto="h-28" />
+
+          </div>
+
+          <SkeletonLoader lineas={8} />
+
+        </div>
+
+      </PageWrapper>
+    );
+  }
   return (
     <PageWrapper>
 
@@ -228,7 +266,7 @@ function DashboardHome() {
         {/* GRÁFICOS */}
         <div className="grid gap-6 lg:grid-cols-3">
 
-          {[ 
+          {[
             { title: "📈 Ingresos", component: <GraficoIngresos ingresos={ingresos} /> },
             { title: "👥 Clientes", component: <GraficoClientes clientes={clientes} /> },
             { title: "📅 Citas", component: <GraficoCitas citas={citas} /> }

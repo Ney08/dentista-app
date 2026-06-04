@@ -24,11 +24,13 @@ function SettingsPage() {
     servicios,
     agregarServicio,
     eliminarServicio,
-    actualizarServicio
+    actualizarServicio,
+    isLoading: serviciosLoading
   } = useServicios();
 
   const {
     clientes: clientesInactivos,
+    isLoading: clientesLoading,
     toggleCliente
   } = useClientes(false); // 🔥 SOLO INACTIVOS
 
@@ -148,7 +150,60 @@ function SettingsPage() {
       console.log(data.id);
     }
   };
+  if (
+    clientesLoading ||
+    serviciosLoading
+  ) {
+    return (
+      <PageWrapper>
 
+        <div className="max-w-5xl mx-auto space-y-6">
+
+          {/* HEADER */}
+          <div className="space-y-3 text-center">
+
+            <div className="
+            h-8 w-56 mx-auto
+            bg-gray-300 rounded-xl
+            animate-pulse
+          " />
+
+            <div className="
+            h-4 w-40 mx-auto
+            bg-gray-200 rounded-xl
+            animate-pulse
+          " />
+
+          </div>
+
+          {/* CARDS */}
+          <div className="grid md:grid-cols-2 gap-5">
+
+            <div className="
+            h-56 rounded-2xl
+            bg-gray-200 animate-pulse
+          " />
+
+            <div className="
+            h-56 rounded-2xl
+            bg-gray-200 animate-pulse
+          " />
+
+          </div>
+
+          {/* TABLA */}
+          <div className="
+          h-[300px]
+          rounded-2xl
+          bg-gray-200
+          animate-pulse
+        " />
+
+        </div>
+
+      </PageWrapper>
+    );
+  }
   return (
     <PageWrapper>
 

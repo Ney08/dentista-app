@@ -1,7 +1,10 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import formatMoney  from "./format";
+import formatMoney from "./format";
 
+import { save } from "@tauri-apps/plugin-dialog";
+import { writeFile } from "@tauri-apps/plugin-fs";
+import toast from "react-hot-toast";
 export async function exportToExcel(data, nombreArchivo = "reporte") {
 
   const workbook = new ExcelJS.Workbook();
@@ -174,10 +177,29 @@ export async function exportToExcel(data, nombreArchivo = "reporte") {
   // =============================
   // ✅ EXPORTAR
   // =============================
-  const buffer = await workbook.xlsx.writeBuffer();
 
-  saveAs(
-    new Blob([buffer]),
-    `${nombreArchivo}.xlsx`
-  );
+  try {
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    const filePath = await save({
+      defaultPath: `${nombreArchivo}.xlsx`
+    });
+
+    if (filePath) {
+
+      await writeFile(filePath, buffer);
+
+      toast.success("Excel guardado ✅");
+
+    }
+
+  } catch (err) {
+
+    console.error(err);
+
+    toast.error("Error exportando Excel ❌");
+    
+  }
+
 }

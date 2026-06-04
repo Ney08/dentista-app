@@ -10,10 +10,13 @@ import PageWrapper from "../components/PageWrapper";
 import Paginacion from "../components/Paginacion";
 import { useLocation } from "react-router-dom";
 import { formatMoney } from "../utils/format";
+import SkeletonLoader from "../components/SkeletonLoader";
+import { useCitas } from "../hooks/useCitas";
 
 function IngresosPage() {
 
   const { clientes } = useClientes();
+  const { citas = [] } = useCitas();
   const { ingresos, pagarIngreso, isLoading } = useIngresos();
   const toastMostrado = useRef(false);
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -26,11 +29,39 @@ function IngresosPage() {
   const [orden, setOrden] = useState("fecha");
   const [pagina, setPagina] = useState(1);
 
+  // const citaStorage = sessionStorage.getItem(
+  //   "citaPreset"
+  // );
 
-  const location = useLocation();
 
-  const citaDesdeCitas = location.state?.citaPreset;
-  const clienteDesdeCitas = location.state?.clienteSeleccionado;
+  const [citaDesdeCitas, setCitaDesdeCitas] =
+    useState(null);
+
+  //const location = useLocation();
+
+
+
+  // const citaDesdeCitas = citas.find(
+  //   c => String(c.id) === String(citaId)
+  // );
+
+  // const clienteDesdeCitas = clientes.find(
+  //   c => String(c.id) === String(clienteId)
+  // );
+
+
+  // useEffect(() => {
+
+  //   if (citaDesdeCitas) {
+
+  //     setEditando(null);
+  //     setCitaPresetLocal(citaDesdeCitas);
+  //     setModalAbierto(true);
+
+  //   }
+
+  // }, [citaDesdeCitas]);
+
 
   const [citaPresetLocal, setCitaPresetLocal] = useState(null);
 
@@ -45,10 +76,19 @@ function IngresosPage() {
     setModalAbierto(true);
   };
 
+
   const cerrarModal = () => {
+
     setModalAbierto(false);
+
     setEditando(null);
+
+    setCitaPresetLocal(null);
+
+    setCitaDesdeCitas(null);
+
   };
+
 
   // ✅ pago
   const marcarPagado = async (ingreso) => {
@@ -95,14 +135,31 @@ function IngresosPage() {
 
 
   useEffect(() => {
-    if (citaDesdeCitas) {
-      setEditando(null);
-      setCitaPresetLocal(citaDesdeCitas);
+
+    if (!citaDesdeCitas) {
+      return;
+    }
+
+    setEditando(null);
+
+    setCitaPresetLocal(citaDesdeCitas);
+
+    requestAnimationFrame(() => {
+
       setModalAbierto(true);
 
-      window.history.replaceState({}, document.title);
-    }
+    });
+
+    // ✅ limpiar state
+    window.history.replaceState(
+      {},
+      document.title
+    );
+
   }, [citaDesdeCitas]);
+
+
+
 
   useEffect(() => {
     if (pendientesCount > 0 && !toastMostrado.current) {
@@ -141,6 +198,37 @@ function IngresosPage() {
 
   const facturasPaginadas = filtrados.slice(inicio, fin);
 
+  useEffect(() => {
+
+    const citaStorage =
+      sessionStorage.getItem("citaPreset");
+
+    if (!citaStorage) {
+      return;
+    }
+
+    try {
+
+      const cita = JSON.parse(citaStorage);
+
+      setCitaDesdeCitas(cita);
+
+      // ✅ limpiar inmediatamente
+      sessionStorage.removeItem(
+        "citaPreset"
+      );
+
+    } catch (err) {
+
+      console.error(
+        "ERROR STORAGE:",
+        err
+      );
+
+    }
+
+  }, []);
+
 
   useEffect(() => {
     if (pagina > totalPaginas) {
@@ -151,7 +239,23 @@ function IngresosPage() {
   if (isLoading) {
     return (
       <PageWrapper>
-        <p className="text-center text-gray-500">Cargando...</p>
+
+        <div className="space-y-6">
+
+          <SkeletonLoader alto="h-10" />
+
+          <div className="space-y-4">
+
+            <SkeletonLoader alto="h-20" />
+            <SkeletonLoader alto="h-20" />
+            <SkeletonLoader alto="h-20" />
+            <SkeletonLoader alto="h-20" />
+            <SkeletonLoader alto="h-20" />
+
+          </div>
+
+        </div>
+
       </PageWrapper>
     );
   }
@@ -327,21 +431,34 @@ function IngresosPage() {
             <div
               onClick={(e) => e.stopPropagation()}
               className={`
-              transform transition-all duration-200
-              ${animar
+        transform transition-all duration-200
+        ${animar
                   ? "scale-100 opacity-100"
                   : "scale-95 opacity-0"}
-            `}
+      `}
             >
 
-              <IngresoForm
-                key={editando?.id || citaPresetLocal?.id || "nuevo"}
-                clientes={clientes}
-                initialData={editando}
-                citaPreset={citaPresetLocal}
-                clientePreset={clienteDesdeCitas}
-                onClose={cerrarModal}
-              />
+              {
+                (
+                  editando ||
+                  !citaDesdeCitas ||
+                  citaPresetLocal
+                )
+                && (
+
+                  <IngresoForm
+                    key={
+                      editando?.id ||
+                      citaPresetLocal?.id ||
+                      "nuevo"
+                    }
+                    clientes={clientes}
+                    initialData={editando}
+                    citaPreset={citaPresetLocal}
+                    onClose={cerrarModal}
+                  />
+
+                )}
 
             </div>
 

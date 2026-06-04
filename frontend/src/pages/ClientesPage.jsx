@@ -9,6 +9,7 @@ import PageWrapper from "../components/PageWrapper";
 import { useClientes } from "../hooks/useClientes";
 import Paginacion from "../components/Paginacion";
 import BaseModal from "../components/BaseModal";
+import SkeletonLoader from "../components/SkeletonLoader";
 
 function ClientesPage() {
 
@@ -106,10 +107,15 @@ function ClientesPage() {
   if (isLoading) {
     return (
       <PageWrapper>
-        <div className="animate-pulse text-center space-y-4">
-          <div className="h-6 bg-gray-300 rounded w-1/3 mx-auto"></div>
-          <div className="h-4 bg-gray-300 rounded w-2/3 mx-auto"></div>
+
+        <div className="max-w-4xl mx-auto space-y-4">
+
+          <SkeletonLoader alto="h-8" />
+
+          <SkeletonLoader lineas={6} />
+
         </div>
+
       </PageWrapper>
     );
   }
@@ -311,7 +317,7 @@ function ClientesPage() {
 
           </BaseModal>
         )}
-      
+
 
       </div>
 

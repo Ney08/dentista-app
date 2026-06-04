@@ -5,9 +5,11 @@ import { generarReporte } from "../utils/pdfReporte";
 import { parseFechaLocal } from "../utils/fecha";
 import { exportToExcel } from "../utils/exportExcel";
 import { formatMoney } from "../utils/format";
+import SkeletonLoader from "../components/SkeletonLoader";
+
 function ReportesPage() {
 
-  const { ingresos } = useIngresos();
+  const { ingresos, isLoading } = useIngresos();
 
   const [tipo, setTipo] = useState("mensual");
   const [desde, setDesde] = useState("");
@@ -111,7 +113,62 @@ function ReportesPage() {
   const handleExcel = () => {
     exportToExcel(datosOrdenados, `reporte_${tipo}`);
   };
+  if (isLoading) {
+    return (
+      <PageWrapper>
 
+        <div className="max-w-6xl mx-auto space-y-6">
+
+          {/* HEADER */}
+          <div className="space-y-3 text-center">
+
+            <div className="
+            h-8 w-64 mx-auto
+            bg-gray-300 rounded-xl
+            animate-pulse
+          " />
+
+            <div className="
+            h-4 w-40 mx-auto
+            bg-gray-200 rounded-xl
+            animate-pulse
+          " />
+
+          </div>
+
+          {/* KPIs */}
+          <div className="grid md:grid-cols-3 gap-5">
+
+            <div className="
+            h-28 rounded-2xl
+            bg-gray-200 animate-pulse
+          " />
+
+            <div className="
+            h-28 rounded-2xl
+            bg-gray-200 animate-pulse
+          " />
+
+            <div className="
+            h-28 rounded-2xl
+            bg-gray-200 animate-pulse
+          " />
+
+          </div>
+
+          {/* TABLA */}
+          <div className="
+          h-[400px]
+          rounded-2xl
+          bg-gray-200
+          animate-pulse
+        " />
+
+        </div>
+
+      </PageWrapper>
+    );
+  }
   return (
     <PageWrapper>
 
@@ -268,8 +325,8 @@ function ReportesPage() {
                     </td>
                   </tr>
                 ))}
-                
-                
+
+
 
               </tbody>
               <tfoot className="sticky bottom-0 bg-gray-100 font-bold">

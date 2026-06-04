@@ -9,6 +9,9 @@ import { useClientes } from "../hooks/useClientes";
 import { useCitas } from "../hooks/useCitas";
 import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
 import Paginacion from "../components/Paginacion";
+import SkeletonLoader from "../components/SkeletonLoader";
+
+
 function CitasPage() {
   const location = useLocation();
   const clienteDesdeClientes = location.state?.clienteSeleccionado;
@@ -144,14 +147,29 @@ function CitasPage() {
     }
   }, [ordenadas.length]);
 
+  // ✅ LOADING
   if (isLoading) {
     return (
       <PageWrapper>
-        <p className="text-center text-gray-500">Cargando citas...</p>
+
+        <div className="space-y-6">
+
+          <SkeletonLoader alto="h-10" />
+
+          <div className="grid gap-4">
+
+            <SkeletonLoader alto="h-24" />
+            <SkeletonLoader alto="h-24" />
+            <SkeletonLoader alto="h-24" />
+            <SkeletonLoader alto="h-24" />
+
+          </div>
+
+        </div>
+
       </PageWrapper>
     );
   }
-
 
 
   return (
@@ -255,12 +273,18 @@ ${citas.length > 7
               onEditar={abrirEditar}
 
               onCompletar={(cita) => {
-                navigate("/facturaciones", {
-                  state: {
-                    citaPreset: cita,
-                    clienteSeleccionado: cita.cliente
-                  }
-                });
+
+
+
+                sessionStorage.setItem(
+                  "citaPreset",
+                  JSON.stringify(cita)
+                );
+
+                navigate("/facturaciones");
+
+
+
               }}
 
               porPagina={porPagina}
