@@ -11,6 +11,10 @@
 # production
 /build
 
+# Tauri
+/src-tauri/target
+/src-tauri/.cargo
+
 # misc
 .DS_Store
 .env.local
