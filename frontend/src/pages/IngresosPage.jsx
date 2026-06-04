@@ -9,6 +9,7 @@ import IngresoForm from "../components/facturas/IngresoForm";
 import PageWrapper from "../components/PageWrapper";
 import Paginacion from "../components/Paginacion";
 import { useLocation } from "react-router-dom";
+import { formatMoney } from "../utils/format";
 
 function IngresosPage() {
 
@@ -184,7 +185,7 @@ function IngresosPage() {
           </p>
 
           <p className="text-2xl font-bold">
-            RD$ {totalPendiente.toFixed(2)}
+            RD$ {formatMoney(totalPendiente)}
           </p>
 
         </div>

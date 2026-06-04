@@ -9,6 +9,7 @@ import GraficoIngresos from "../components/graficos/GraficoIngresos";
 import GraficoClientes from "../components/graficos/GraficoClientes";
 import GraficoCitas from "../components/graficos/GraficoCitas";
 import PageWrapper from "../components/PageWrapper";
+import { formatMoney } from "../utils/format";
 
 function DashboardHome() {
 
@@ -99,7 +100,7 @@ function DashboardHome() {
     }
   }, [citasHoy.length]);
 
-  const formato = (n) => `RD$ ${n.toFixed(2)}`;
+  const formato = (n) => `RD$ ${formatMoney(n)}`;;
 
   return (
     <PageWrapper>

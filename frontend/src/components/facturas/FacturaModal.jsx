@@ -1,5 +1,9 @@
 import { generarFactura } from "../../utils/pdf";
-import { formatFecha, formatHora, parseFechaLocal } from "../../utils/fecha";
+import { formatMoney } from "../../utils/format";
+
+import {
+  formatUTCFechaHora
+} from "../../utils/fecha";
 
 function FacturaModal({ ingreso, onClose }) {
 
@@ -16,7 +20,7 @@ function FacturaModal({ ingreso, onClose }) {
 
   const total = subtotal + itbis - descuentoValor;
 
-  const format = (n) => `RD$ ${n.toFixed(2)}`;
+  const format = (n) => `RD$ ${formatMoney(n)}`;
 
   return (
     <div
@@ -46,8 +50,11 @@ function FacturaModal({ ingreso, onClose }) {
               <p className="font-semibold text-green-600 mb-1">
                 ✅ Pago registrado
               </p>
-              <p>📅 {formatFecha(ingreso.fecha_pago)}</p>
-              <p>⏰ {formatHora(ingreso.fecha_pago)}</p>
+
+              <p>
+                🕒 {formatUTCFechaHora(ingreso.fecha_pago)}
+              </p>
+
             </div>
           )}
 
@@ -71,7 +78,7 @@ function FacturaModal({ ingreso, onClose }) {
           </p>
         </div>
 
-        
+
         <hr />
 
         {/* SERVICIOS */}

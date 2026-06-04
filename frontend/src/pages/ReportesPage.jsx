@@ -4,7 +4,7 @@ import PageWrapper from "../components/PageWrapper";
 import { generarReporte } from "../utils/pdfReporte";
 import { parseFechaLocal } from "../utils/fecha";
 import { exportToExcel } from "../utils/exportExcel";
-
+import { formatMoney } from "../utils/format";
 function ReportesPage() {
 
   const { ingresos } = useIngresos();
@@ -182,7 +182,7 @@ function ReportesPage() {
           <div className="card">
             <p>💰 Ingresos</p>
             <p className="text-2xl font-bold text-green-600">
-              RD$ {total.toFixed(2)}
+              RD$ {formatMoney(total)}
             </p>
           </div>
 
@@ -194,7 +194,7 @@ function ReportesPage() {
           <div className="card">
             <p>📊 Promedio</p>
             <p className="text-2xl font-bold text-purple-600">
-              RD$ {promedio.toFixed(2)}
+              RD$ {formatMoney(promedio)}
             </p>
           </div>
 
@@ -252,19 +252,19 @@ function ReportesPage() {
                     <td className="px-3 py-2">{d.Cliente}</td>
 
                     <td className="px-3 py-2 text-right">
-                      RD$ {d.Subtotal.toFixed(2)}
+                      RD$ {formatMoney(d.Subtotal)}
                     </td>
 
                     <td className="px-3 py-2 text-right">
-                      RD$ {d.ITBIS.toFixed(2)}
+                      RD$ {formatMoney(d.ITBIS)}
                     </td>
 
                     <td className="px-3 py-2 text-right">
-                      RD$ {d.Descuento.toFixed(2)}
+                      RD$ {formatMoney(d.Descuento)}
                     </td>
 
                     <td className="px-3 py-2 text-right font-semibold">
-                      RD$ {d.Total.toFixed(2)}
+                      RD$ {formatMoney(d.Total)}
                     </td>
                   </tr>
                 ))}
@@ -280,7 +280,7 @@ function ReportesPage() {
                       Total General:
                     </td>
                     <td className="px-3 py-2 text-right text-green-600">
-                      RD$ {total.toFixed(2)}
+                      RD$ {formatMoney(total)}
                     </td>
                   </tr>
                 )}

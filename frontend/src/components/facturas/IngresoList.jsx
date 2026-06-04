@@ -1,6 +1,7 @@
 import { formatFecha } from "../../utils/fecha";
 import { useState } from "react";
 import ConfirmModal from "../ConfirmModal";
+import { formatMoney } from "../../utils/format";
 
 function IngresoList({
   facturas,
@@ -91,7 +92,7 @@ ${facturas.length > 10
             <div className="flex items-center gap-3">
 
               <span className="text-sm font-semibold text-green-600">
-                RD$ {total.toFixed(2)}
+                RD$ {formatMoney(total)}
               </span>
 
               <div

@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { parseFechaLocal } from "../../utils/fecha";
 import { Bar } from "react-chartjs-2";
+
+import { formatMoney } from "../../utils/format";
 import {
   Chart as ChartJS,
   BarElement,
@@ -121,7 +123,7 @@ function GraficoIngresos({ ingresos = [] }) {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: (context) => `RD$ ${context.raw.toFixed(2)}`
+          label: (context) => `RD$ ${formatMoney(context.raw)}`
         }
       }
     },
@@ -133,7 +135,7 @@ function GraficoIngresos({ ingresos = [] }) {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (v) => `RD$ ${v}`
+          callback: (v) => `RD$ ${formatMoney(v)}`
         }
       }
     }

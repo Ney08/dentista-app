@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import formatMoney  from "./format";
 
 export async function exportToExcel(data, nombreArchivo = "reporte") {
 

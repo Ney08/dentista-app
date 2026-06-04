@@ -1,6 +1,8 @@
 import jsPDF from "jspdf";
 import axios from "axios";
-import { parseFechaLocal } from "./fecha";
+import { parseFechaLocal, parseUTC, formatUTCFechaHora } from "./fecha";
+import { formatMoney } from "./format";
+
 export const generarFactura = async (ingreso) => {
 
   const doc = new jsPDF();
@@ -31,11 +33,17 @@ export const generarFactura = async (ingreso) => {
 
   const telefono = ingreso.cliente?.telefono || "";
 
-  const fecha = parseFechaLocal(ingreso.created_at);
+  const fecha = formatUTCFechaHora(ingreso.created_at);
 
   doc.text(`Factura #: ${ingreso.id}`, 20, 45);
   doc.text(`Paciente: ${clienteNombre}`, 20, 55);
-  doc.text(`Fecha: ${fecha}`, 20, 65);
+
+  doc.text(
+    `Fecha: ${formatUTCFechaHora(ingreso.created_at)}`,
+    20,
+    65
+  );
+
 
   // =========================
   // 📊 SERVICIOS
@@ -65,7 +73,7 @@ export const generarFactura = async (ingreso) => {
     const monto = Number(s.monto) || 0;
 
     doc.text(s.descripcion || "Servicio", 20, y);
-    doc.text(`RD$ ${monto.toFixed(2)}`, 190, y, { align: "right" });
+    doc.text(`RD$ ${formatMoney(monto)}`, 190, y, { align: "right" });
 
     subtotal += monto;
     y += 10;
@@ -85,12 +93,12 @@ export const generarFactura = async (ingreso) => {
 
   // ✅ Subtotal
   doc.text("Subtotal:", 130, y);
-  doc.text(`RD$ ${subtotal.toFixed(2)}`, 190, y, { align: "right" });
+  doc.text(`RD$ ${formatMoney(subtotal)}`, 190, y, { align: "right" });
   y += 8;
 
   // ✅ ITBIS CORREGIDO
   doc.text("ITBIS (18%):", 130, y);
-  doc.text(`RD$ ${itbis.toFixed(2)}`, 190, y, { align: "right" });
+  doc.text(`RD$ ${formatMoney(itbis)}`, 190, y, { align: "right" });
   y += 8;
 
   // ✅ Descuento
@@ -103,7 +111,7 @@ export const generarFactura = async (ingreso) => {
   doc.setFontSize(13);
 
   doc.text("TOTAL:", 130, y);
-  doc.text(`RD$ ${total.toFixed(2)}`, 190, y, { align: "right" });
+  doc.text(`RD$ ${formatMoney(total)}`, 190, y, { align: "right" });
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
@@ -194,7 +202,7 @@ export const generarFactura = async (ingreso) => {
 Su factura esta lista
 
 Factura #${ingreso.id}
-Total: RD$ ${total.toFixed(2)}
+Total: RD$ ${formatMoney(total)}
 
 Ver:
 ${urlPDF}`;

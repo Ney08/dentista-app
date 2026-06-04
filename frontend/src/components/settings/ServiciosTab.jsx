@@ -1,3 +1,5 @@
+import { formatMoney } from "../../utils/format";
+
 import toast from "react-hot-toast";
 
 function ServiciosTab({
@@ -54,7 +56,7 @@ function ServiciosTab({
                 )}
 
                 <span className="text-sm text-blue-600 font-medium">
-                  RD$ {s.precio}
+                  RD$ {formatMoney(s.precio)}
                 </span>
               </div>
 

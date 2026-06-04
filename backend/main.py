@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, File, UploadFile, Form, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 from sqlalchemy.exc import IntegrityError
 from database import SessionLocal, engine
@@ -373,8 +373,12 @@ def listar_ingresos(db: Session = Depends(get_db)):
                 "descuento": i.descuento or 0,
                 "pagado": i.pagado or False,
 
-                "created_at": i.created_at.isoformat() if i.created_at else None,
-                "fecha_pago": i.fecha_pago.isoformat() if i.fecha_pago else None,
+                
+                "created_at": (i.created_at.replace(tzinfo=timezone.utc).isoformat() if i.created_at else None),
+
+                
+                "fecha_pago": (i.fecha_pago.replace(tzinfo=timezone.utc).isoformat()if i.fecha_pago else None),
+
 
                 "cita_id": i.cita_id
             })
@@ -450,7 +454,7 @@ def marcar_pagado(id: int, db: Session = Depends(get_db)):
     ingreso.pagado = True
 
     # ✅ guardar fecha_pago
-    ingreso.fecha_pago = datetime.utcnow()
+    ingreso.fecha_pago = datetime.now(timezone.utc)
 
     # ✅ 🔥 NUEVO: completar cita automáticamente
     if ingreso.cita_id:
@@ -481,12 +485,20 @@ def marcar_pagado(id: int, db: Session = Depends(get_db)):
 
         "descuento": ingreso.descuento or 0,
         "pagado": ingreso.pagado,
-        "fecha_pago": ingreso.fecha_pago.isoformat() if ingreso.fecha_pago else None,
+        
+        
+        "fecha_pago": (ingreso.fecha_pago.replace(tzinfo=timezone.utc).isoformat()if ingreso.fecha_pago else None),
+
+
 
         # ✅ opcional pero recomendado
         "cita_id": ingreso.cita_id,
 
-        "created_at": ingreso.created_at.isoformat() if ingreso.created_at else None 
+        
+        
+        "created_at": (ingreso.created_at.replace(tzinfo=timezone.utc).isoformat()if ingreso.created_at else None),
+
+
     }
 
 

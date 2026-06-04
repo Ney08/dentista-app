@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useServicios } from "../../hooks/useServicios";
 import { useIngresos } from "../../hooks/useIngresos";
 import { useCitas } from "../../hooks/useCitas";
-import { formatFecha, formatHora, formatUTCFechaHora } from "../../utils/fecha";
+import { formatFecha, formatHora } from "../../utils/fecha";
+import { formatMoney } from "../../utils/format";
 
 function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose }) {
   const { servicios: catalogoServicios } = useServicios();
@@ -109,7 +110,11 @@ function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose
     });
     console.log("✅ CITAS DEL CLIENTE:", citasCliente);
     console.log("✅ CITA ELEGIDA:", citaElegida);
-    toast.success("Servicio sugerido automáticamente ✨ cita fecha: " + formatFecha(citaElegida.fechaObj));
+
+    toast.success(
+      `Servicio sugerido ✨ ${formatFecha(citaElegida.fechaObj)}`
+    );
+
   };
 
 
@@ -384,7 +389,7 @@ function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose
                         value={serv.nombre}
                         disabled={yaSeleccionado}
                       >
-                        {serv.nombre} (RD$ {serv.precio})
+                        {serv.nombre} (RD$ {formatMoney(serv.precio)})
                       </option>
                     );
                   })}
@@ -432,7 +437,7 @@ function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose
           </p>
 
           <p className="text-2xl font-semibold text-green-700">
-            RD$ {total.toFixed(2)}
+            RD$ {formatMoney(total)}
           </p>
 
         </div>
