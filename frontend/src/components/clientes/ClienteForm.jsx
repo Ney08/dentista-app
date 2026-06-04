@@ -10,7 +10,10 @@ import { API_URL } from "../../config";
 function ClienteForm({ cliente, onClose }) {
 
 
-  const { crearCliente, editarCliente } = useClientes();
+  const normalizarCedula = (cedula) =>
+    cedula?.replace(/[^0-9]/g, "") || "";
+
+  const { clientes, crearCliente, editarCliente } = useClientes();
   const isEdit = !!cliente;
 
   const {
@@ -82,33 +85,31 @@ function ClienteForm({ cliente, onClose }) {
 
   // ✅ VALIDACIÓN CÉDULA
   useEffect(() => {
-    if (!cedulaInput || cedulaInput.length < 6) {
+
+    const cedulaNormalizada = normalizarCedula(cedulaInput);
+
+    if (!cedulaNormalizada || cedulaNormalizada.length < 6) {
       setCedulaError("");
       return;
     }
 
-    const timeout = setTimeout(async () => {
-      try {
-        const res = await fetch(
-          `${API_URL}/clientes/?cedula=${cedulaInput}`
-        );
-        const data = await res.json();
+    const timeout = setTimeout(() => {
 
-        // ✅ SI ES EDIT, permitir misma cédula del mismo cliente
-        if (
-          Array.isArray(data) &&
-          data.length > 0 &&
-          (!isEdit || data[0].id !== cliente?.id)
-        ) {
-          setCedulaError("Cédula ya registrada");
-        } else {
-          setCedulaError("");
-        }
-      } catch { }
-    }, 500);
+      const existente = clientes.find(c =>
+        normalizarCedula(c.cedula) === cedulaNormalizada
+      );
+
+      if (existente && (!isEdit || existente.id !== cliente?.id)) {
+        setCedulaError("Cédula ya registrada");
+      } else {
+        setCedulaError("");
+      }
+
+    }, 300);
 
     return () => clearTimeout(timeout);
-  }, [cedulaInput, isEdit, cliente]);
+
+  }, [cedulaInput, clientes, isEdit, cliente]);
 
   const onSubmit = async (data) => {
 
