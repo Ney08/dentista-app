@@ -16,8 +16,8 @@ function CitasPage() {
   const { clientes } = useClientes();
   const [clientePresetLocal, setClientePresetLocal] = useState(null);
   const [animar, setAnimar] = useState(false);
-  const [porPagina, setPorPagina] = useState(1);
-  const [pagina, setPagina] = useState(12);
+  const [porPagina, setPorPagina] = useState(7);
+  const [pagina, setPagina] = useState(1);
   const [limite, setLimite] = useState(7);
 
 
@@ -110,12 +110,34 @@ function CitasPage() {
     (a, b) => new Date(a.fecha) - new Date(b.fecha)
   );
 
-  const totalPaginas = Math.ceil(ordenadas.length / limite);
 
-  const inicio = (pagina - 1) * limite;
-  const fin = inicio + limite;
 
-  const citasPaginadas = ordenadas.slice(inicio, fin);
+  const inicio =
+    porPagina === "all"
+      ? 0
+      : (pagina - 1) * porPagina;
+
+
+  const totalPaginas =
+    porPagina === "all"
+      ? 1
+      : Math.ceil(ordenadas.length / porPagina);
+
+
+  const fin =
+    porPagina === "all"
+      ? undefined
+      : inicio + porPagina;
+
+
+
+  const citasPaginadas =
+    porPagina === "all"
+      ? ordenadas
+      : ordenadas.slice(inicio, fin);
+
+
+
   useEffect(() => {
     if (pagina > totalPaginas) {
       setPagina(1);
@@ -174,15 +196,34 @@ function CitasPage() {
 
               {/* DERECHA */}
               <div className="flex gap-2 items-center">
-
                 <select
-                  value={filtro}
-                  onChange={(e) => setFiltro(e.target.value)}
+                  value={porPagina}
+                  onChange={(e) => {
+                    const val =
+                      e.target.value === "all"
+                        ? "all"
+                        : parseInt(e.target.value);
+
+                    setPorPagina(val);
+
+                    // ✅ si elige Todos, mostrar todas las citas sin importar el día
+                    if (val === "all") {
+                      setFiltro("all");
+                    } else {
+                      // ✅ si vuelve a paginación normal, mantener por defecto solo hoy
+                      setFiltro("hoy");
+                    }
+
+                    setPagina(1);
+                  }}
                   className="border px-2 py-1 rounded text-sm"
                 >
-                  <option value="all">Todas</option>
-                  <option value="hoy">Solo hoy</option>
+                  <option value={7}>7</option>
+                  <option value={12}>12</option>
+                  <option value={20}>20</option>
+                  <option value="all">Todos</option>
                 </select>
+              
 
                 <button
                   onClick={abrirCrear}
@@ -200,8 +241,8 @@ function CitasPage() {
             className={`
         space-y-3 pr-2
         
-${citas.length > 6
-                ? "max-h-[820px] overflow-y-auto"
+${citas.length > 7
+                ? "max-h-[730px] overflow-y-auto"
                 : ""
               }
 
@@ -222,7 +263,7 @@ ${citas.length > 6
 
           </div>
           {/* PAGINACIÓN */}
-          {limite !== "all" && totalPaginas > 1 && (
+          {porPagina !== "all" && totalPaginas > 1 && (
             <div className="mt-auto pt-4 border-t">
               <Paginacion
                 pagina={pagina}

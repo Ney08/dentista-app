@@ -17,7 +17,7 @@ function IngresoList({
       className={`
         space-y-3 pr-2
         
-${facturas.length > 12
+${facturas.length > 10
           ? "max-h-[820px] overflow-y-auto"
           : ""
         }

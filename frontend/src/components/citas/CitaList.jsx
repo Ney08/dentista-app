@@ -13,13 +13,9 @@ function CitaList({
   return (
 
     <div
-      className={`
-    space-y-3 pr-2
-    ${citas.length > 12
-          ? "max-h-[550px] overflow-y-auto"
-          : ""
-        }
-  `}
+      className="
+        space-y-3 pr-2"
+        
     >
 
 

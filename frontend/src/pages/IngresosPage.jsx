@@ -18,8 +18,8 @@ function IngresosPage() {
   const [facturaPreview, setFacturaPreview] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const [animar, setAnimar] = useState(false);
-  const [limite, setLimite] = useState(8);
-  const [porPagina, setPorPagina] = useState(12);
+  const [limite, setLimite] = useState(1);
+  const [porPagina, setPorPagina] = useState(10);
   const [orden, setOrden] = useState("fecha");
   const [pagina, setPagina] = useState(1);
   // ✅ abrir/cerrar form
@@ -169,7 +169,7 @@ function IngresosPage() {
         </div>
 
         {/* ✅ CARD PRINCIPAL */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col min-h-[75vh]">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col min-h-[75vh] space-y-4">
 
           {/* ✅ TOOLBAR */}
           <div className="flex flex-wrap justify-between items-center gap-3">
@@ -191,7 +191,7 @@ function IngresosPage() {
             </button>
 
           </div>
-          {/* ✅ TOOLBAR PRO */}
+          {/* ✅ TOOLBAR */}
           <div className="flex flex-wrap items-center gap-3">
 
             {/* 🔍 BUSCADOR */}
@@ -242,7 +242,7 @@ function IngresosPage() {
       hover:bg-gray-50
     "
             >
-              <option value={12}>10</option>
+              <option value={10}>10</option>
               <option value={20}>20</option>
               <option value="todos">Todos</option>
             </select>
