@@ -10,7 +10,47 @@ body {
 
 /* ✅ ESTO DEBE IR FUERA */
 
+.custom-calendar {
+  width: 100% !important;
+  border: none !important;
+  background: transparent !important;
+}
 
+.custom-calendar .react-calendar__viewContainer {
+  width: 100%;
+}
+
+.custom-calendar .react-calendar__month-view {
+  width: 100%;
+}
+
+.custom-calendar .react-calendar__month-view__weekdays {
+  width: 100%;
+  text-align: center;
+}
+
+.custom-calendar .react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.custom-calendar button {
+  border-radius: 14px;
+  transition: 0.2s;
+}
+
+.custom-calendar button:enabled:hover {
+  background: #eff6ff;
+}
+
+.custom-calendar .react-calendar__tile--active {
+  background: #3b82f6 !important;
+  color: white !important;
+}
+
+.custom-calendar .react-calendar__navigation button {
+  min-width: 36px;
+}
 .input {
   @apply w-full border border-gray-300 px-3 py-2 rounded-xl text-sm
   focus:ring-2 focus:ring-blue-500 outline-none

@@ -12,11 +12,7 @@ function CitaList({
   const [citaCancelar, setCitaCancelar] = useState(null);
   return (
 
-    <div
-      className="
-        space-y-3 pr-2"
-
-    >
+    <div className="h-full space-y-2 sm:space-y-3 overflow-y-auto overflow-x-hidden pr-1 pb-2">
 
 
       {citas.map((c) => {
@@ -52,41 +48,51 @@ function CitaList({
           <div
             key={c.id}
             className={`
-            group flex items-center justify-between gap-4
-            bg-white border rounded-xl p-4
-            transition-all duration-200 ease-out
-            cursor-pointer
-              
-            ${borderEstado[estado]} border-l-4
-            ${estado === "cancelada" ? "opacity-60" : ""}
-            hover:shadow-md hover:bg-gray-50
-          `}
+  group
+  flex flex-col lg:flex-row
+  lg:items-center
+  lg:justify-between
+  gap-3
+
+  bg-white
+  border
+  rounded-2xl
+
+  px-3 sm:px-4
+  py-3 sm:py-4
+
+  transition-all duration-200 ease-out
+
+  ${borderEstado[estado]} border-l-4
+  ${estado === "cancelada" ? "opacity-60" : ""}
+
+  hover:shadow-sm
+  hover:bg-gray-50
+`}
           >
 
             {/* ✅ IZQUIERDA */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
 
               {/* AVATAR */}
-              <div className="
-    w-9 h-9 rounded-full bg-blue-500 text-white
-    flex items-center justify-center text-xs font-semibold
-  ">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-semibold shrink-0">
                 {c.cliente?.nombre?.charAt(0)}
               </div>
 
               {/* INFO */}
-              <div className="leading-tight space-y-1">
+              <div className="leading-tight space-y-1 min-w-0">
 
                 {/* 🔥 NOMBRE + BADGE */}
                 <div className="flex items-center gap-2 flex-wrap">
 
-                  <p className="text-sm font-semibold text-gray-800">
+                  <p className="text-sm sm:text-base font-semibold text-gray-800 truncate">
+
                     {c.cliente?.nombre} {c.cliente?.apellido}
                   </p>
 
                   <span
                     className={`
-          text-[10px] font-medium px-2 py-[2px] rounded-full
+          text-[11px] font-medium px-2 py-1 rounded-full
           ${coloresEstado[estado]}
         `}
                   >
@@ -96,12 +102,12 @@ function CitaList({
                 </div>
 
                 {/* FECHA */}
-                <p className="text-xs text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   {formatFecha(fecha)} — {formatHora(fecha)}
                 </p>
 
                 {/* MOTIVO + DURACIÓN */}
-                <p className="text-xs text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-400 truncate">
                   {c.motivo} · {c.duracion} min
                 </p>
 
@@ -110,7 +116,7 @@ function CitaList({
             </div>
 
             {/* ✅ DERECHA */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between lg:justify-end gap-2 w-full lg:w-auto pt-1 lg:pt-0">
 
               {/* ✅ BADGE PRO */}
 
@@ -118,11 +124,7 @@ function CitaList({
               {/* ✅ BOTONES (HOVER ONLY) */}
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="
-                flex items-center gap-1
-                opacity-0 group-hover:opacity-100
-                transition-opacity duration-200
-              "
+                className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition"
               >
 
                 {estado === "pendiente" && (
@@ -133,7 +135,7 @@ function CitaList({
                       className="
     text-green-500 hover:text-green-600
     hover:bg-green-100
-    p-2 rounded-md transition
+    p-2.5 sm:p-2 rounded-xl transition
   "
                       title="Facturar cita"
                     >

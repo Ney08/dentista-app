@@ -81,7 +81,7 @@ function IngresoList({
 
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition"
+                className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-200"
               >
 
 

@@ -297,36 +297,26 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
   };
 
   return (
-    <div
-      className="
-        w-full max-w-3xl
-        bg-white rounded-2xl
-        shadow-lg border border-gray-200
-        p-6 space-y-6
-      "
-    >
+    <div className="w-full h-full md:h-auto bg-white rounded-t-3xl md:rounded-2xl shadow-lg border-0 md:border border-gray-200 p-4 sm:p-5 md:p-6 flex flex-col gap-4 max-h-screen md:max-h-[90vh] overflow-y-auto overflow-x-hidden">
       {/* ✅ HEADER */}
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-semibold tracking-tight">
+      <div className="text-center space-y-1 shrink-0">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
           {isEdit ? "Editar cita ✏️" : "Nueva cita 📅"}
         </h2>
 
-        <p className="text-gray-500 text-sm">
+        <p className="text-sm text-gray-500">
           {isEdit
             ? "Modifica los datos de la cita"
             : "Selecciona cliente y servicio"}
         </p>
       </div>
 
-      <form className="grid md:grid-cols-2 gap-5">
+      <form className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 flex-1 min-h-0">
         {/* ✅ LEFT */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {clientePreset && (
             <div
-              className="
-                bg-blue-50 border border-blue-200
-                px-3 py-2 rounded-lg text-sm flex items-center gap-2
-              "
+              className="bg-blue-50 border border-blue-200 px-3 py-3 rounded-2xl text-sm flex items-center gap-2"
             >
               👤 <span className="text-gray-600">Cliente:</span>
               <strong>
@@ -339,7 +329,7 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
             value={clienteId}
             onChange={(e) => setClienteId(e.target.value)}
             disabled={!!clientePreset}
-            className="input"
+            className="input h-12 sm:h-11 text-base sm:text-sm"
           >
             <option value="">Cliente</option>
             {clientes.map((c) => (
@@ -352,7 +342,7 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
           <select
             value={motivo}
             onChange={(e) => setMotivo(e.target.value)}
-            className="input"
+            className="input h-12 sm:h-11 text-base sm:text-sm"
           >
             <option value="">Servicio / Motivo</option>
             {catalogoServicios.map((serv) => (
@@ -366,13 +356,13 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
             placeholder="Detalle adicional (opcional)"
             value={detalle}
             onChange={(e) => setDetalle(e.target.value)}
-            className="input"
+            className="input h-12 sm:h-11 text-base sm:text-sm"
           />
 
           <select
             value={duracion}
             onChange={(e) => setDuracion(parseInt(e.target.value))}
-            className="input"
+            className="input h-12 sm:h-11 text-base sm:text-sm"
           >
             <option value={30}>30 min</option>
             <option value={45}>45 min</option>
@@ -381,14 +371,12 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
         </div>
 
         {/* ✅ RIGHT */}
-        <div className="space-y-3">
+        <div className="space-y-3 flex flex-col min-h-0">
           <div
-            className="
-              border border-gray-200 rounded-xl
-              p-3 bg-gray-50
-            "
+            className="border border-gray-200 rounded-2xl p-2 bg-gray-50 overflow-hidden"
           >
             <Calendar
+              className="custom-calendar w-full border-0"
               value={fechaBase}
               onChange={(date) => {
                 if (estaDiaLleno(date)) {
@@ -420,15 +408,12 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
             />
           </div>
 
-          <p className="text-xs text-gray-400">
+          <p className="text-xs sm:text-sm text-gray-400">
             Horarios disponibles
           </p>
 
           <div
-            className="
-              grid grid-cols-3 gap-2
-              max-h-44 overflow-y-auto pr-1 horas-scroll
-            "
+           className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[26vh] sm:max-h-[32vh] overflow-y-auto overflow-x-hidden pr-1 horas-scroll"
           >
             {generarHoras().map((h) => {
               const fechaTest = crearFechaLocal(fechaBase, h);
@@ -449,7 +434,7 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
                     }
                   }}
                   className={`
-                    text-xs py-2 rounded-lg border transition
+                    text-sm sm:text-xs h-12 sm:h-10 rounded-2xl border transition active:scale-[0.98]
                     ${ocupada || esPasado
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : hora === h
@@ -468,7 +453,7 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
       {/* ✅ RESUMEN */}
       <div
         className={`
-          border rounded-xl p-4 text-sm
+          border rounded-2xl p-3 text-sm shrink-0 backdrop-blur-sm
           ${hora && clienteId
             ? "bg-blue-50 border-blue-200"
             : "bg-gray-50 border-gray-200 opacity-70"}
@@ -493,13 +478,13 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
       </div>
 
       {/* ✅ BOTONES */}
-      <div className="space-y-2">
+      <div className="sticky bottom-0 bg-white pt-2 flex flex-col sm:flex-row gap-2 shrink-0">
         <button
           type="button"
           onClick={guardar}
           disabled={loading}
           className={`
-            w-full py-2.5 rounded-xl font-medium
+           flex-1 h-12 rounded-2xl font-semibold text-sm sm:text-base shadow-sm
             text-white transition
             ${loading
               ? "bg-gray-400"
@@ -517,7 +502,7 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
           type="button"
           onClick={onClose}
           className="
-            w-full py-2.5 rounded-xl
+            flex-1 h-12 rounded-2xl font-medium
             bg-gray-100 hover:bg-gray-200
             text-gray-700 transition
           "

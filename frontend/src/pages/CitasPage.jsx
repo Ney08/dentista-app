@@ -175,45 +175,45 @@ function CitasPage() {
   return (
     <PageWrapper>
 
-      <div className="space-y-4 pb-4 ">
+      <div className="h-full flex flex-col gap-4 md:gap-5 pb-4 overflow-hidden">
 
         {/* HEADER */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Citas 📅</h1>
-          <p className="text-gray-500 text-sm">
+        <div className="text-center pt-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Citas 📅</h1>
+          <p className="text-xs sm:text-sm text-gray-500">
             Gestiona las citas del sistema
           </p>
         </div>
 
         {/* CARD PRINCIPAL */}
-        <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col h-[70vh] ">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[72vh] sm:h-[75vh] lg:h-[78vh] p-4 sm:p-5 gap-4 overflow-hidden">
           <div className="space-y-4 pb-4">
             {/* TOP BAR */}
-            <div className="flex flex-wrap justify-between items-center gap-3">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
               {/* IZQUIERDA */}
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-wrap gap-2">
 
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-sm">
+                <span className="px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg text-sm">
                   🟡 {pendientes}
                 </span>
 
-                <span className="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm">
+                <span className="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-sm">
                   🔴 {atrasadas}
                 </span>
 
-                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm">
+                <span className="px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-sm">
                   ✅ {completadas}
                 </span>
 
-                <span className="px-3 py-1 bg-gray-200 text-gray-700 rounded-lg text-sm">
+                <span className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm">
                   ⛔ {canceladas}
                 </span>
 
               </div>
 
               {/* DERECHA */}
-              <div className="flex gap-2 items-center">
+              <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full lg:w-auto">
                 <select
                   value={porPagina}
                   onChange={(e) => {
@@ -234,18 +234,18 @@ function CitasPage() {
 
                     setPagina(1);
                   }}
-                  className="border px-2 py-1 rounded text-sm"
+                  className="w-full sm:w-auto border px-3 h-11 rounded-xl text-sm sm:text-base"
                 >
                   <option value={7}>7</option>
-                  <option value={12}>12</option>
-                  <option value={20}>20</option>
+                  <option value={14}>14</option>
+                  <option value={28}>28</option>
                   <option value="all">Todos</option>
                 </select>
 
 
                 <button
                   onClick={abrirCrear}
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm shadow"
+                  className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white px-4 h-11 rounded-xl text-sm sm:text-base shadow-sm active:scale-[0.98] transition"
                 >
                   + Nueva
                 </button>
@@ -255,17 +255,7 @@ function CitasPage() {
             </div>
           </div>
           {/* ✅ LISTA CON SCROLL PRO */}
-          <div
-            className={`
-        space-y-3 pr-2
-        
-${citas.length > 7
-                ? "max-h-[730px] overflow-y-auto"
-                : ""
-              }
-
-      `}
-          >
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
 
             <CitaList
               citas={citasPaginadas}
@@ -297,7 +287,7 @@ ${citas.length > 7
           </div>
           {/* PAGINACIÓN */}
           {porPagina !== "all" && totalPaginas > 1 && (
-            <div className="mt-auto pt-4 border-t">
+            <div className="pt-3 border-t overflow-x-auto">
               <Paginacion
                 pagina={pagina}
                 totalPaginas={totalPaginas}
@@ -315,12 +305,18 @@ ${citas.length > 7
         <div
           onClick={cerrarModal}
           className={`
-    fixed inset-0 z-50 flex items-center justify-center
-    transition-all duration-200 ease-out
-    ${modalAbierto ? "visible" : "invisible"}
-    ${animar
-              ? "opacity-100 bg-black/40 backdrop-blur-md"
-              : "opacity-0"}
+    fixed inset-0 z-50
+
+    flex items-end md:items-center
+    justify-center
+
+    bg-black/40 backdrop-blur-md
+
+    transition-all duration-300
+
+    ${modalAbierto
+              ? "opacity-100 visible"
+              : "opacity-0 invisible"}
   `}
         >
 
@@ -329,12 +325,18 @@ ${citas.length > 7
 
           <div
             onClick={(e) => e.stopPropagation()}
+
             className={`
-    w-full max-w-3xl p-6
-    transform transition-all duration-200 ease-out
-    ${animar
-                ? "scale-100 opacity-100 translate-y-0"
-                : "scale-95 opacity-0 translate-y-6"}
+  w-full h-full md:h-auto
+  md:max-w-3xl
+
+  p-0 md:p-4
+
+    
+${animar
+                ? "translate-y-0 md:scale-100 opacity-100"
+                : "translate-y-full md:translate-y-0 md:scale-95 opacity-0"}
+
   `}
           >
 
