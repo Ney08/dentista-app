@@ -117,7 +117,7 @@ function ReportesPage() {
     return (
       <PageWrapper>
 
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div className="h-full max-w-6xl mx-auto flex flex-col gap-4 md:gap-6 overflow-hidden">
 
           {/* HEADER */}
           <div className="space-y-3 text-center">
@@ -137,7 +137,7 @@ function ReportesPage() {
           </div>
 
           {/* KPIs */}
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
             <div className="
             h-28 rounded-2xl
@@ -175,9 +175,9 @@ function ReportesPage() {
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* HEADER */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Reportes 📊</h1>
-          <p className="text-sm text-gray-500">
+        <div className="text-center pt-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Reportes 📊</h1>
+          <p className="text-xs sm:text-sm text-gray-500">
             {(desde || hasta)
               ? `Filtro activo`
               : labelMap[tipo]} (solo pagos completados)
@@ -185,14 +185,14 @@ function ReportesPage() {
         </div>
 
         {/* TABS */}
-        <div className="flex justify-center gap-3">
+        <div className="flex overflow-x-auto justify-start sm:justify-center gap-2 pb-1">
           {["semanal", "mensual", "anual"].map((t) => (
             <button
               key={t}
               onClick={() => setTipo(t)}
               disabled={desde || hasta}
               className={`
-                px-5 py-2 rounded-full transition
+                px-4 h-11 rounded-2xl whitespace-nowrap text-sm sm:text-base transition active:scale-[0.98]
                 ${tipo === t
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 hover:bg-gray-300"}
@@ -205,20 +205,20 @@ function ReportesPage() {
         </div>
 
         {/* ✅ FILTRO RANGO */}
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-col sm:flex-row justify-center gap-3">
 
           <input
             type="date"
             value={desde}
             onChange={(e) => setDesde(e.target.value)}
-            className="border px-3 py-2 rounded"
+            className="w-full sm:w-auto border border-gray-200 px-4 h-12 rounded-2xl text-sm sm:text-base"
           />
 
           <input
             type="date"
             value={hasta}
             onChange={(e) => setHasta(e.target.value)}
-            className="border px-3 py-2 rounded"
+            className="w-full sm:w-auto border border-gray-200 px-4 h-12 rounded-2xl text-sm sm:text-base"
           />
 
           <button
@@ -226,7 +226,7 @@ function ReportesPage() {
               setDesde("");
               setHasta("");
             }}
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+            className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 px-4 h-12 rounded-2xl text-sm sm:text-base transition"
           >
             Limpiar
           </button>
@@ -236,7 +236,7 @@ function ReportesPage() {
         {/* CARDS */}
         <div className="grid md:grid-cols-3 gap-5">
 
-          <div className="card">
+          <div className="bg-white border border-gray-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
             <p>💰 Ingresos</p>
             <p className="text-2xl font-bold text-green-600">
               RD$ {formatMoney(total)}
@@ -258,18 +258,20 @@ function ReportesPage() {
         </div>
 
         {/* BOTONES */}
-        <div className="flex justify-center gap-3">
+
+        <div className="flex flex-col sm:flex-row justify-center gap-3">
+
 
           <button
             onClick={handlePDF}
-            className="bg-blue-500 text-white px-6 py-3 rounded-xl shadow hover:brightness-110 transition active:scale-95"
+            className="w-full sm:w-auto bg-blue-500 text-white px-6 h-12 rounded-2xl shadow-sm hover:brightness-110 transition active:scale-[0.98] text-sm sm:text-base font-medium"
           >
             📄 PDF
           </button>
 
           <button
             onClick={handleExcel}
-            className="bg-green-600 text-white px-6 py-3 rounded-xl shadow hover:brightness-110 transition active:scale-95"
+            className="w-full sm:w-auto bg-green-600 text-white px-6 h-12 rounded-2xl shadow-sm hover:brightness-110 transition active:scale-[0.98] text-sm sm:text-base font-medium"
           >
             📥 Excel
           </button>
@@ -277,13 +279,13 @@ function ReportesPage() {
         </div>
 
         {/* ✅ TABLA SCROLL */}
-        <div className="bg-white rounded-xl shadow border">
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden flex-1 min-h-0">
 
-          <div className="max-h-[400px] overflow-auto">
+          <div className="max-h-[50vh] overflow-auto">
 
-            <table className="w-full text-sm">
+            <table className="w-full text-sm sm:text-base">
 
-              <thead className="bg-gray-100 sticky top-0 text-xs uppercase text-gray-600">
+              <thead className="bg-gray-50 sticky top-0 text-[11px] sm:text-xs uppercase text-gray-500 backdrop-blur-sm">
                 <tr>
                   <th className="px-3 py-2 text-left">Fecha</th>
                   <th className="px-3 py-2 text-left">Cliente</th>
@@ -302,7 +304,7 @@ function ReportesPage() {
                     className={`
                       border-t
                       ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                      hover:bg-blue-50 transition
+                      hover:bg-blue-50/60 transition-all duration-200
                     `}
                   >
                     <td className="px-3 py-2">{d.FechaStr}</td>
@@ -329,7 +331,7 @@ function ReportesPage() {
 
 
               </tbody>
-              <tfoot className="sticky bottom-0 bg-gray-100 font-bold">
+              <tfoot className="sticky bottom-0 bg-white border-t font-bold backdrop-blur-sm">
 
                 {datosOrdenados.length > 0 && (
                   <tr className="border-t bg-gray-100 font-bold">
