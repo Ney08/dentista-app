@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { useServicios } from "../../hooks/useServicios";
 import { useIngresos } from "../../hooks/useIngresos";
 import { useCitas } from "../../hooks/useCitas";
-import { formatFecha, formatHora } from "../../utils/fecha";
+import { formatFecha, formatHora, formatUTCFechaHora } from "../../utils/fecha";
 
-function IngresoForm({ clientes, initialData, onClose }) {
+function IngresoForm({ clientes, initialData, citaPreset, clientePreset, onClose }) {
   const { servicios: catalogoServicios } = useServicios();
   const { crearIngreso, actualizarIngreso } = useIngresos();
   const { citas } = useCitas(); // ✅ obtener citas
+  const [clienteId, setClienteId] = useState("");
 
   const normalize = (text) =>
     (text || "").toLowerCase().trim();
@@ -113,7 +114,30 @@ function IngresoForm({ clientes, initialData, onClose }) {
 
 
 
+  useEffect(() => {
+    if (citaPreset && !initialData) {
+      setCitaSeleccionada(citaPreset);
+      setClienteId(String(citaPreset.cliente_id));
 
+      // opcional: sugerir servicio según motivo
+      if (citaPreset.motivo) {
+        const encontrado = catalogoServicios.find(
+          s =>
+            s.nombre?.toLowerCase().trim() ===
+            citaPreset.motivo?.toLowerCase().trim()
+        );
+
+        if (encontrado) {
+          setServicios([
+            {
+              descripcion: encontrado.nombre,
+              monto: encontrado.precio
+            }
+          ]);
+        }
+      }
+    }
+  }, [citaPreset, initialData, catalogoServicios]);
 
   const {
     register,
@@ -135,23 +159,33 @@ function IngresoForm({ clientes, initialData, onClose }) {
   // ✅ EDITAR
 
   useEffect(() => {
+
     if (initialData) {
+
       setServicios(initialData.servicios || []);
       setDescuento(initialData.descuento || 0);
 
-      reset({
-        clienteId: initialData.cliente_id
+      const id =
+        initialData.cliente_id
           ? String(initialData.cliente_id)
-          : ""
+          : "";
+
+      setClienteId(id);
+
+      reset({
+        clienteId: id
       });
 
     } else {
+
+      setClienteId("");
+
       reset({
         clienteId: ""
       });
     }
-  }, [initialData, reset]);
 
+  }, [initialData, reset]);
 
 
   // ✅ AGREGAR SERVICIO
@@ -185,8 +219,9 @@ function IngresoForm({ clientes, initialData, onClose }) {
       }
     }
 
+
     const payload = {
-      cliente_id: parseInt(data.clienteId),
+      cliente_id: parseInt(clienteId),
       descuento: parseFloat(descuento) || 0,
       cita_id: citaSeleccionada?.id || null,
       servicios: servicios.map(s => ({
@@ -194,6 +229,7 @@ function IngresoForm({ clientes, initialData, onClose }) {
         monto: parseFloat(s.monto)
       }))
     };
+
 
     setLoading(true);
     const toastId = toast.loading("Guardando factura...");
@@ -249,10 +285,21 @@ function IngresoForm({ clientes, initialData, onClose }) {
         <select
           {...register("clienteId")}
           disabled={!!initialData}
+
           onChange={(e) => {
+
             const id = e.target.value;
+
+            // ✅ GUARDAR CLIENTE
+            setClienteId(id);
+
+            // ✅ react-hook-form
+            register("clienteId").onChange(e);
+
+            // ✅ auto seleccionar servicio
             autoSeleccionarServicio(id);
           }}
+
           className={`
           input
           ${initialData ? "bg-gray-100 text-gray-500" : ""}

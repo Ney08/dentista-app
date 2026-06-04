@@ -8,6 +8,8 @@ import FacturaModal from "../components/facturas/FacturaModal";
 import IngresoForm from "../components/facturas/IngresoForm";
 import PageWrapper from "../components/PageWrapper";
 import Paginacion from "../components/Paginacion";
+import { useLocation } from "react-router-dom";
+
 function IngresosPage() {
 
   const { clientes } = useClientes();
@@ -22,6 +24,15 @@ function IngresosPage() {
   const [porPagina, setPorPagina] = useState(10);
   const [orden, setOrden] = useState("fecha");
   const [pagina, setPagina] = useState(1);
+
+
+  const location = useLocation();
+
+  const citaDesdeCitas = location.state?.citaPreset;
+  const clienteDesdeCitas = location.state?.clienteSeleccionado;
+
+  const [citaPresetLocal, setCitaPresetLocal] = useState(null);
+
   // ✅ abrir/cerrar form
   const abrirNuevo = () => {
     setEditando(null);
@@ -81,6 +92,16 @@ function IngresosPage() {
     }
   }, [modalAbierto]);
 
+
+  useEffect(() => {
+    if (citaDesdeCitas) {
+      setEditando(null);
+      setCitaPresetLocal(citaDesdeCitas);
+      setModalAbierto(true);
+
+      window.history.replaceState({}, document.title);
+    }
+  }, [citaDesdeCitas]);
 
   useEffect(() => {
     if (pendientesCount > 0 && !toastMostrado.current) {
@@ -311,12 +332,16 @@ function IngresosPage() {
                   : "scale-95 opacity-0"}
             `}
             >
+
               <IngresoForm
-                key={editando?.id || "nuevo"}
+                key={editando?.id || citaPresetLocal?.id || "nuevo"}
                 clientes={clientes}
                 initialData={editando}
+                citaPreset={citaPresetLocal}
+                clientePreset={clienteDesdeCitas}
                 onClose={cerrarModal}
               />
+
             </div>
 
           </div>

@@ -15,7 +15,7 @@ function CitaList({
     <div
       className="
         space-y-3 pr-2"
-        
+
     >
 
 
@@ -127,17 +127,19 @@ function CitaList({
 
                 {estado === "pendiente" && (
                   <>
+
                     <button
-                      onClick={() => onCompletar(c.id)}
+                      onClick={() => onCompletar(c)}
                       className="
-                      text-green-500 hover:text-green-600
-                      hover:bg-green-100
-                      p-2 rounded-md transition
-                    "
-                      title="Completar"
+    text-green-500 hover:text-green-600
+    hover:bg-green-100
+    p-2 rounded-md transition
+  "
+                      title="Facturar cita"
                     >
                       ✅
                     </button>
+
 
                     <button
                       onClick={() => onEditar(c)}

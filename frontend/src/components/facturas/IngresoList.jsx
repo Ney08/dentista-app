@@ -158,7 +158,7 @@ ${facturas.length > 10
         <ConfirmModal
           mensaje={`¿Confirmar pago de ${ingresoAPagar.cliente?.nombre}?`}
           onConfirm={() => {
-            onPagar(ingresoAPagar.id);
+            onPagar(ingresoAPagar);
             setIngresoAPagar(null);
           }}
           onCancel={() => setIngresoAPagar(null)}

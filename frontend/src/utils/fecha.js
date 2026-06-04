@@ -76,3 +76,30 @@ export const crearFechaLocal = (fechaBase, horaStr) => {
 
   return fecha;
 };
+
+
+
+
+
+// ✅ Parse UTC seguro
+export const parseUTC = (fecha) => {
+
+  if (!fecha) return null;
+
+  return new Date(fecha);
+};
+
+
+
+
+export const formatUTCFechaHora = (fecha) => {
+
+  const f = parseUTC(fecha);
+
+  if (!f || isNaN(f)) return "";
+
+  return f.toLocaleString("es-DO", {
+    dateStyle: "short",
+    timeStyle: "short"
+  });
+};

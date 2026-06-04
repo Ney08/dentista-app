@@ -1,7 +1,7 @@
 import { useState, } from "react";
 import toast from "react-hot-toast";
 import CitaList from "../components/citas/CitaList";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import PageWrapper from "../components/PageWrapper";
 import CitaForm from "../components/citas/CitaForm";
@@ -19,7 +19,7 @@ function CitasPage() {
   const [porPagina, setPorPagina] = useState(7);
   const [pagina, setPagina] = useState(1);
   const [limite, setLimite] = useState(7);
-
+  const navigate = useNavigate();
 
 
 
@@ -223,7 +223,7 @@ function CitasPage() {
                   <option value={20}>20</option>
                   <option value="all">Todos</option>
                 </select>
-              
+
 
                 <button
                   onClick={abrirCrear}
@@ -253,7 +253,16 @@ ${citas.length > 7
               citas={citasPaginadas}
               getEstado={getEstado}
               onEditar={abrirEditar}
-              onCompletar={(id) => completarCita.mutate(id)}
+
+              onCompletar={(cita) => {
+                navigate("/facturaciones", {
+                  state: {
+                    citaPreset: cita,
+                    clienteSeleccionado: cita.cliente
+                  }
+                });
+              }}
+
               porPagina={porPagina}
               onCancelar={async (id) => {
                 await cancelarCita.mutateAsync(id);
