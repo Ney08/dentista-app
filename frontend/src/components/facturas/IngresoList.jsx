@@ -81,52 +81,66 @@ function IngresoList({
 
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-200"
+
+                className="
+  flex items-center gap-1.5
+
+  opacity-100
+  lg:opacity-40
+  lg:group-hover:opacity-100
+
+  transition-all duration-200
+"
+
               >
 
 
 
-                <button
-                  onClick={() => onVerFactura(i)}
-                  disabled={!i.pagado}
-                  className={`
-                    p-2.5 sm:p-2 rounded-md transition
-                    ${i.pagado
-                      ? "text-blue-500 hover:bg-blue-100"
-                      : "text-gray-400 cursor-not-allowed"}
-                  `}
-                  title="Ver factura"
-                >
-                  📄
-                </button>
 
-                <button
-                  onClick={() => onEditar(i)}
-                  disabled={i.pagado}
-                  className={`
-                    p-2.5 sm:p-2 rounded-md transition
-                    ${i.pagado
-                      ? "text-gray-400"
-                      : "text-yellow-500 hover:bg-yellow-100"}
-                  `}
-                  title="Editar"
-                >
-                  ✏️
-                </button>
+                {i.pagado && (
+                  <button
+                    onClick={() => onVerFactura(i)}
+                    className="
+      text-blue-500 hover:text-blue-600
+      hover:bg-blue-100
+      p-2 rounded-xl transition
+    "
+                    title="Ver factura"
+                  >
+                    📄
+                  </button>
+                )}
 
-                <button
-                  onClick={() => setIngresoAPagar(i)}
-                  disabled={i.pagado}
-                  className={`
-                    p-2.5 sm:p-2 rounded-md transition
-                    ${i.pagado
-                      ? "text-gray-400"
-                      : "text-purple-500 hover:bg-purple-100"}
-                  `}
-                  title="Marcar pagado"
-                >
-                  💳
-                </button>
+
+
+                {!i.pagado && (
+                  <button
+                    onClick={() => onEditar(i)}
+                    className="
+      text-yellow-500 hover:bg-yellow-100
+      p-2 rounded-xl transition
+    "
+                    title="Editar"
+                  >
+                    ✏️
+                  </button>
+                )}
+
+
+
+                {!i.pagado && (
+                  <button
+                    onClick={() => setIngresoAPagar(i)}
+                    className="
+      text-purple-500 hover:bg-purple-100
+      p-2 rounded-xl transition
+    "
+                    title="Marcar pagado"
+                  >
+                    💳
+                  </button>
+                )}
+
 
               </div>
 

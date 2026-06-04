@@ -124,32 +124,39 @@ function CitaList({
               {/* ✅ BOTONES (HOVER ONLY) */}
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition"
+                className="
+  flex items-center gap-1.5
+
+  opacity-100
+  lg:opacity-30
+  lg:group-hover:opacity-100
+
+  transition-all duration-200
+"
+
               >
 
                 {estado === "pendiente" && (
                   <>
-
                     <button
                       onClick={() => onCompletar(c)}
                       className="
-    text-green-500 hover:text-green-600
-    hover:bg-green-100
-    p-2.5 sm:p-2 rounded-xl transition
-  "
+        text-green-500 hover:text-green-600
+        hover:bg-green-100
+        p-2 rounded-xl transition
+      "
                       title="Facturar cita"
                     >
                       ✅
                     </button>
 
-
                     <button
                       onClick={() => onEditar(c)}
                       className="
-                      text-blue-500 hover:text-blue-600
-                      hover:bg-blue-100
-                      p-2 rounded-md transition
-                    "
+        text-blue-500 hover:text-blue-600
+        hover:bg-blue-100
+        p-2 rounded-xl transition
+      "
                       title="Editar"
                     >
                       ✏️
@@ -158,10 +165,10 @@ function CitaList({
                     <button
                       onClick={() => setCitaCancelar(c)}
                       className="
-                      text-gray-500 hover:text-gray-600
-                      hover:bg-gray-200
-                      p-2 rounded-md transition
-                    "
+        text-gray-500 hover:text-gray-600
+        hover:bg-gray-200
+        p-2 rounded-xl transition
+      "
                       title="Cancelar"
                     >
                       ⛔
@@ -174,28 +181,26 @@ function CitaList({
                     <button
                       onClick={() => onEditar(c)}
                       className="
-                      text-blue-500 hover:text-blue-600
-                      hover:bg-blue-100
-                      p-2 rounded-md transition
-                    "
+        text-blue-500 hover:text-blue-600
+        hover:bg-blue-100
+        p-2 rounded-xl transition
+      "
                       title="Editar"
                     >
                       ✏️
                     </button>
 
-
                     <button
                       onClick={() => setCitaCancelar(c)}
                       className="
-    text-red-500 hover:text-red-600
-    hover:bg-red-100
-    p-2 rounded-md transition
-  "
+        text-red-500 hover:text-red-600
+        hover:bg-red-100
+        p-2 rounded-xl transition
+      "
                       title="Cancelar"
                     >
                       ⛔
                     </button>
-
                   </>
                 )}
 

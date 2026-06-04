@@ -44,10 +44,11 @@ function HistorialForm({ clienteId, onAdd }) {
   };
 
   return (
-    <div className="bg-white border rounded-lg p-4 space-y-3">
+    <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-4 shadow-sm">
+
 
       {/* ✅ TITULO */}
-      <h3 className="font-semibold text-lg">
+      <h3 className="font-semibold text-xl sm:text-lg tracking-tight">
         Agregar nota clínica 🦷
       </h3>
 
@@ -57,15 +58,30 @@ function HistorialForm({ clienteId, onAdd }) {
         onChange={(e) => setTexto(e.target.value)}
         placeholder="Ej: Paciente presenta dolor en molar 16..."
         rows={3}
-        className="w-full border px-3 py-2 rounded text-sm md:text-base
-        focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+        className="
+  w-full border border-gray-200
+  px-4 py-3
+
+  rounded-2xl
+
+  text-base sm:text-sm
+
+  focus:outline-none
+  focus:ring-2 focus:ring-blue-400
+  focus:border-blue-400
+
+  resize-none
+  transition
+
+  min-h-[110px]
+"
       />
 
       {/* ✅ BOTÓN */}
       <button
         onClick={guardar}
         disabled={loading}
-        className={`w-full py-2 rounded text-white text-sm md:text-base ${
+        className={`w-full h-12 rounded-2xl text-white text-sm sm:text-base font-semibold shadow-sm transition active:scale-[0.98] ${
           loading
             ? "bg-gray-400"
             : "bg-blue-500 hover:bg-blue-600"

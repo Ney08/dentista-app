@@ -20,7 +20,7 @@ function ClienteList({
   ];
 
   return (
-    <div className="space-y-3">
+    <div className="h-full space-y-2 sm:space-y-3 overflow-y-auto overflow-x-hidden pr-1 pb-2">
 
       {clientes.map(cliente => {
 
@@ -36,42 +36,56 @@ function ClienteList({
               onSeleccionar?.(cliente);
             }}
             className={`
-              group flex items-center justify-between
-              bg-white border rounded-xl p-4
-              transition-all duration-200 ease-out cursor-pointer
+  group
 
-              ${isSelected
+  flex flex-col lg:flex-row
+  lg:items-center
+  lg:justify-between
+
+  gap-3
+
+  bg-white
+  border
+  rounded-2xl
+
+  px-3 sm:px-4
+  py-3 sm:py-4
+
+  transition-all duration-200 ease-out
+  cursor-pointer
+
+  ${isSelected
                 ? "ring-2 ring-blue-400 bg-blue-50 border-blue-300"
-                : "border-gray-200 hover:shadow-md hover:bg-gray-50"}
-            `}
+                : "border-gray-200 hover:shadow-sm hover:bg-gray-50"}
+`}
           >
 
             {/* ✅ IZQUIERDA */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
 
               {/* 🔵 AVATAR */}
               <div
                 className={`${color}
-                  w-10 h-10 rounded-full text-white
+                  w-10 h-10 sm:w-11 sm:h-11 rounded-full text-white
                   flex items-center justify-center
-                  font-semibold text-sm shadow-sm`}
+                  font-semibold text-sm shadow-sm shrink-0`}
               >
                 {cliente.nombre?.charAt(0)?.toUpperCase()}
               </div>
 
               {/* 🧾 INFO */}
-              <div className="space-y-1 leading-tight">
+              <div className="space-y-1 leading-tight min-w-0">
 
                 <div className="flex items-center gap-2 flex-wrap">
 
-                  <p className="text-sm font-semibold text-gray-800">
+                  <p className="text-sm sm:text-base font-semibold text-gray-800 truncate">
                     {cliente.nombre} {cliente.apellido}
                   </p>
 
                   {/* ✅ BADGE ESTADO PRO */}
                   <span
                     className={`
-                      text-[11px] font-medium px-2 py-[2px] rounded-full
+                      text-[11px] font-medium px-2 py-1 rounded-full
                       ${cliente.activo
                         ? "bg-green-100 text-green-700"
                         : "bg-red-100 text-red-600"}
@@ -86,12 +100,12 @@ function ClienteList({
                   ID: {cliente.cedula}
                 </p>
 
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 truncate">
                   📞 {cliente.telefono}
                 </p>
 
                 {cliente.direccion && (
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs sm:text-sm text-gray-400 truncate">
                     📍 {typeof cliente.direccion === "string"
                       ? cliente.direccion
                       : `${cliente.direccion.municipio_nombre || ""}, ${cliente.direccion.provincia_nombre || ""}`
@@ -102,14 +116,25 @@ function ClienteList({
               </div>
             </div>
 
-            {/* ✅ DERECHA (acciones hover PRO) */}
+            
+              
+<div
+  
+className="
+  flex items-center gap-1
+
+  opacity-100
+  lg:opacity-40
+  lg:group-hover:opacity-100
+
+  transition-all duration-200
+"
+
+>
+                {/* ✅ DERECHA (acciones hover PRO) */}
             <div
               onClick={(e) => e.stopPropagation()}
-              className="
-                flex items-center gap-2
-                opacity-0 group-hover:opacity-100
-                transition-opacity duration-200
-              "
+              className="flex items-center justify-end gap-2 w-full lg:w-auto"
             >
 
               {/* 🔥 ACCIÓN PRINCIPAL */}
@@ -125,23 +150,18 @@ function ClienteList({
                     }
                   });
                 }}
-                className="
-                  bg-blue-500 hover:bg-blue-600
-                  text-white text-xs font-medium
-                  px-3 py-1.5 rounded-md shadow-sm
-                  transition
-                "
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-xs font-medium px-3 h-9 sm:h-10 rounded-xl transition active:scale-[0.98] whitespace-nowrap"
               >
                 + Cita
               </button>
-
+              
               {/* ✏️ EDITAR */}
               <button
                 onClick={() => onEditarClick(cliente)}
                 className="
                   text-gray-500 hover:text-gray-700
                   hover:bg-gray-200
-                  p-2 rounded-md transition
+                  p-2.5 sm:p-2 rounded-xl transition
                 "
                 title="Editar"
               >
@@ -152,7 +172,7 @@ function ClienteList({
               <button
                 onClick={() => onToggleActivo(cliente)}
                 className={`
-                  p-2 rounded-md transition
+                  p-2.5 sm:p-2 rounded-xl transition
                   ${cliente.activo
                     ? "text-red-500 hover:bg-red-100"
                     : "text-green-600 hover:bg-green-100"}
@@ -161,7 +181,7 @@ function ClienteList({
               >
                 {cliente.activo ? "🚫" : "✅"}
               </button>
-
+            </div>
             </div>
 
           </div>

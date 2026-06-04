@@ -123,23 +123,23 @@ function ClientesPage() {
   return (
     <PageWrapper>
 
-      <div className="max-w-6xl mx-auto space-y-6 pb-6">
+      <div className="h-full max-w-6xl mx-auto flex flex-col gap-4 md:gap-6 pb-4 overflow-hidden">
 
         {/* ✅ HEADER */}
-        <div className="text-center space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight flex items-center justify-center gap-2">
+        <div className="text-center space-y-1 pt-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight flex items-center justify-center gap-2">
             Clientes 👤
           </h1>
-          <p className="text-gray-500 text-sm">
+          <p className="text-xs sm:text-sm text-gray-500">
             Gestiona los clientes del sistema
           </p>
         </div>
 
         {/* ✅ CARD PRINCIPAL */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[75vh] space-y-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[72vh] sm:h-[75vh] lg:h-[78vh] p-4 sm:p-5 gap-4 overflow-hidden">
 
           {/* ✅ TOOLBAR */}
-          <div className="flex flex-wrap justify-between items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
             <p className="text-sm text-gray-500">
               Total: <span className="font-semibold">{clientes.length}</span>
@@ -150,7 +150,7 @@ function ClientesPage() {
                 setClienteEditar(null);
                 setModalAbierto(true);
               }}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm shadow-sm transition"
+              className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white px-4 h-11 rounded-xl text-sm sm:text-base shadow-sm active:scale-[0.98] transition"
             >
               + Nuevo
             </button>
@@ -158,13 +158,13 @@ function ClientesPage() {
           </div>
 
           {/* ✅ BUSCADOR + FILTROS */}
-          <div className="flex flex-col md:flex-row gap-3">
+          <div className="flex flex-col lg:flex-row gap-3">
 
             {/* BUSCADOR */}
             <input
               type="text"
               placeholder="🔍 Buscar cliente..."
-              className="flex-1 border border-gray-200 px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full lg:flex-1 border border-gray-200 px-4 h-12 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               value={busqueda}
               onChange={(e) => {
                 setBusqueda(e.target.value);
@@ -173,12 +173,12 @@ function ClientesPage() {
             />
 
             {/* FILTROS */}
-            <div className="flex gap-3 text-sm">
+            <div className="flex flex-col sm:flex-row gap-3 text-sm">
 
               <select
                 value={orden}
                 onChange={(e) => setOrden(e.target.value)}
-                className="border px-2 py-2 rounded-lg"
+                className="w-full sm:w-auto border px-3 h-12 rounded-xl text-sm sm:text-base"
               >
                 <option value="az">A-Z</option>
                 <option value="nuevo">Más recientes</option>
@@ -194,11 +194,11 @@ function ClientesPage() {
                   setLimite(val);
                   setPagina(1);
                 }}
-                className="border px-2 py-2 rounded-lg"
+                className="w-full sm:w-auto border px-3 h-12 rounded-xl text-sm sm:text-base"
               >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={50}>50</option>
+                <option value={6}>6</option>
+                <option value={12}>12</option>
+                <option value={24}>24</option>
                 <option value="all">Todos</option>
               </select>
 
@@ -207,7 +207,7 @@ function ClientesPage() {
           </div>
 
           {/* ✅ LISTA */}
-          <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-3">
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
 
             {clientesFinal.length === 0 ? (
               <p className="text-center text-gray-500">
@@ -231,7 +231,7 @@ function ClientesPage() {
 
           {/* ✅ PAGINACIÓN */}
           {limite !== "all" && totalPaginas > 1 && (
-            <div className="pt-4 border-t flex justify-center">
+            <div className="pt-3 border-t flex justify-center overflow-x-auto">
 
               <div className="flex gap-2">
 
@@ -252,10 +252,10 @@ function ClientesPage() {
         {clienteSeleccionado && (
           <BaseModal onClose={() => setClienteSeleccionado(null)}>
 
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
 
               {/* ✅ HEADER PRO */}
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
 
                 <div className="flex items-center gap-3">
 
@@ -296,7 +296,7 @@ function ClientesPage() {
                 </h4>
 
                 {/* ✅ CONTENIDO SCROLL */}
-                <div className="max-h-[65vh] overflow-y-auto pr-2 space-y-5">
+                <div className="max-h-[65vh] overflow-y-auto overflow-x-hidden pr-1 space-y-4">
 
                   {/* 📥 FORM */}
                   <div className="
@@ -325,21 +325,36 @@ function ClientesPage() {
       <div
         onClick={cerrarModal}
         className={`
-        fixed inset-0 z-50 flex items-center justify-center
-        transition-all duration-200
-        ${modalAbierto
-            ? "opacity-100 visible bg-black/40 backdrop-blur-sm"
+    fixed inset-0 z-50
+
+    flex items-end md:items-center
+    justify-center
+
+    bg-black/40 backdrop-blur-sm
+
+    transition-all duration-300
+
+    ${modalAbierto
+            ? "opacity-100 visible"
             : "opacity-0 invisible"}
-      `}
+  `}
       >
+
         <div
           onClick={(e) => e.stopPropagation()}
+
           className={`
-          w-full max-w-2xl p-6
+  w-full h-full md:h-auto
+  md:max-w-2xl
+
+  p-0 md:p-4
+
           transform transition-all duration-200
-          ${modalAbierto
-              ? "scale-100 opacity-100"
-              : "scale-95 opacity-0"}
+          
+${modalAbierto
+              ? "translate-y-0 md:scale-100 opacity-100"
+              : "translate-y-full md:translate-y-0 md:scale-95 opacity-0"}
+
         `}
         >
 

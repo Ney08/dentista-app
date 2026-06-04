@@ -23,14 +23,11 @@ function ClienteDetalle({ cliente }) {
   if (isLoading) return <p>Cargando historial...</p>;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5">
 
       {/* ✅ FORM */}
-      <div className="
-        bg-gray-50 border border-gray-200
-        rounded-xl p-4 space-y-3
-      ">
-        <h4 className="text-sm font-semibold text-gray-600">
+      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-3 shrink-0">
+        <h4 className="text-sm sm:text-base font-semibold text-gray-600">
           📝 Agregar nota clínica
         </h4>
 
@@ -41,15 +38,12 @@ function ClienteDetalle({ cliente }) {
       </div>
 
       {/* ✅ TÍTULO HISTORIAL */}
-      <h4 className="text-sm font-semibold text-gray-600">
+      <h4 className="text-sm sm:text-base font-semibold text-gray-600">
         📚 Historial
       </h4>
 
       {/* ✅ LISTA CON SCROLL */}
-      <div className="
-        max-h-[350px] overflow-y-auto
-        pr-2 space-y-3
-      ">
+      <div className="flex-1 min-h-0 max-h-[320px] sm:max-h-[360px] overflow-y-auto overflow-x-hidden pr-1 space-y-3">
 
         {(!historial || historial.length === 0) ? (
           <p className="text-gray-500 text-sm">
@@ -61,24 +55,24 @@ function ClienteDetalle({ cliente }) {
             <div
               key={h.id}
               onClick={() => setNotaSeleccionada(h)}
-              className="
-                group flex gap-3
-                cursor-pointer
-              "
+              className="group flex gap-3 cursor-pointer items-start"
             >
 
               {/* 🔵 DOT (timeline) */}
-              <div className="mt-2 w-2 h-2 bg-blue-500 rounded-full" />
+              <div className="mt-2.5 w-2.5 h-2.5 bg-blue-500 rounded-full shrink-0" />
 
               {/* ✅ CARD */}
-              <div className="
-                flex-1 bg-white border border-gray-200
-                rounded-xl p-3 shadow-sm
-                hover:shadow-md hover:bg-gray-50
-                transition
-              ">
+              <div
+                className="
+  flex-1 bg-white border border-gray-200
+  rounded-2xl p-3 sm:p-4 shadow-sm
+  hover:shadow-sm hover:bg-gray-50 hover:border-gray-300
+  transition-all duration-200
+"
+              >
 
-                <p className="text-sm leading-relaxed">
+                <p className="text-sm sm:text-base leading-relaxed break-words">
+
 
                   {cortarTexto(h.descripcion)}
 
@@ -90,7 +84,7 @@ function ClienteDetalle({ cliente }) {
 
                 </p>
 
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs sm:text-sm text-gray-400 mt-2">
                   {formatFecha(h.fecha)}
                 </p>
 
@@ -107,13 +101,13 @@ function ClienteDetalle({ cliente }) {
       {notaSeleccionada && (
         <BaseModal onClose={() => setNotaSeleccionada(null)}>
 
-          <div className="space-y-5">
+          <div className="flex flex-col gap-4 sm:gap-5 min-h-0 h-full overflow-hidden">
 
             {/* ✅ HEADER PRO */}
-            <div className="flex justify-between items-start">
+            <div className="sticky top-0 z-10 bg-white pb-3 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
                   Nota clínica
                 </h3>
 
@@ -124,7 +118,7 @@ function ClienteDetalle({ cliente }) {
 
               <button
                 onClick={() => setNotaSeleccionada(null)}
-                className="text-sm text-gray-400 hover:text-gray-600"
+                className="text-sm text-gray-400 hover:text-gray-600 transition"
               >
                 Cerrar
               </button>
@@ -132,12 +126,14 @@ function ClienteDetalle({ cliente }) {
             </div>
 
             {/* ✅ CONTENIDO */}
-            <div className="
-              max-h-[400px] overflow-y-auto
-              bg-gray-50 border border-gray-200
-              p-4 rounded-lg text-sm
-              leading-relaxed whitespace-pre-wrap
-            ">
+            <div
+              className="
+  max-h-[55vh] overflow-y-auto overflow-x-hidden
+  bg-gray-50 border border-gray-200
+  p-4 rounded-2xl text-sm sm:text-base
+  leading-relaxed whitespace-pre-wrap break-words
+"
+            >
               {notaSeleccionada.descripcion}
             </div>
 

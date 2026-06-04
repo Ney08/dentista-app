@@ -166,63 +166,60 @@ function ClienteForm({ cliente, onClose }) {
   };
 
   return (
-    <div className="w-full bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-6">
+    <div className="w-full h-full md:h-auto bg-white rounded-t-3xl md:rounded-2xl shadow-lg border-0 md:border border-gray-200 p-4 sm:p-5 md:p-6 flex flex-col gap-4 max-h-screen md:max-h-[90vh] overflow-y-auto overflow-x-hidden">
 
       {/* ✅ HEADER */}
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-semibold tracking-tight flex items-center justify-center gap-2">
+      <div className="text-center space-y-1 shrink-0">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight flex items-center justify-center gap-2">
           {isEdit ? "Editar cliente ✏️" : "Nuevo cliente 👤"}
         </h2>
 
-        <p className="text-gray-500 text-sm">
+        <p className="text-sm text-gray-500">
           Completa la información básica
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 flex-1 min-h-0">
 
         {/* ✅ INFO PERSONAL */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        <div className="space-y-2 sm:space-y-3">
+          <h3 className="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Información básica
           </h3>
 
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input
               {...register("nombre", { required: true })}
               placeholder="Nombre"
-              className="input"
+              className="input h-12 sm:h-11 text-base sm:text-sm"
             />
 
             <input
               {...register("apellido", { required: true })}
               placeholder="Apellido"
-              className="input"
+              className="input h-12 sm:h-11 text-base sm:text-sm"
             />
           </div>
         </div>
 
         {/* ✅ IDENTIDAD */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        <div className="space-y-2 sm:space-y-3">
+          <h3 className="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Identidad
           </h3>
 
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
             {/* CÉDULA */}
             <div className="space-y-1">
               <input
                 {...register("cedula")}
                 placeholder="Cédula"
-                className={`
-                input 
-                ${cedulaError ? "border-red-500 ring-1 ring-red-300" : ""}
-              `}
+                className={`input h-12 sm:h-11 text-base sm:text-sm ${cedulaError ? "border-red-500 ring-1 ring-red-300" : ""}`}
               />
 
               {cedulaError && (
-                <p className="text-xs text-red-500">
+                <p className="text-xs sm:text-sm text-red-500">
                   {cedulaError}
                 </p>
               )}
@@ -232,19 +229,19 @@ function ClienteForm({ cliente, onClose }) {
             <input
               {...register("telefono")}
               placeholder="Teléfono"
-              className="input"
+              className="input h-12 sm:h-11 text-base sm:text-sm"
             />
 
           </div>
         </div>
 
         {/* ✅ UBICACIÓN */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        <div className="space-y-2 sm:space-y-3">
+          <h3 className="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Ubicación
           </h3>
 
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
             <select
               value={provincia ?? ""}
@@ -252,7 +249,7 @@ function ClienteForm({ cliente, onClose }) {
                 setProvincia(Number(e.target.value));
                 setMunicipio("");
               }}
-              className="input"
+              className="input h-12 sm:h-11 text-base sm:text-sm"
             >
               <option value="">Provincia</option>
               {provincias.map(p => (
@@ -265,7 +262,7 @@ function ClienteForm({ cliente, onClose }) {
             <select
               value={municipio ?? ""}
               onChange={(e) => setMunicipio(e.target.value)}
-              className="input"
+              className="input h-12 sm:h-11 text-base sm:text-sm"
             >
               <option value="">Municipio</option>
               {municipiosFiltrados.map(m => (
@@ -280,19 +277,19 @@ function ClienteForm({ cliente, onClose }) {
           <input
             {...register("calle")}
             placeholder="Dirección / Calle"
-            className="input"
+            className="input h-12 sm:h-11 text-base sm:text-sm"
           />
         </div>
 
         {/* ✅ BOTONES */}
-        <div className="space-y-2 pt-2">
+        <div className="sticky bottom-0 bg-white pt-2 flex flex-col sm:flex-row gap-2 shrink-0">
 
           {/* PRIMARY */}
           <button
             type="submit"
             disabled={loading || cedulaError}
             className={`
-            w-full py-2.5 rounded-xl font-medium
+            flex-1 h-12 rounded-2xl font-semibold text-sm sm:text-base
             text-white shadow-sm transition
 
             ${loading || cedulaError
@@ -312,7 +309,7 @@ function ClienteForm({ cliente, onClose }) {
             type="button"
             onClick={onClose}
             className="
-            w-full py-2.5 rounded-xl font-medium
+            flex-1 h-12 rounded-2xl font-medium text-sm sm:text-base
             bg-gray-100 hover:bg-gray-200
             text-gray-700 transition
           "
