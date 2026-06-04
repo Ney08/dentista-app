@@ -59,6 +59,14 @@ body {
 
 
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
 .error {
   @apply text-xs text-red-500 mt-1;
 }

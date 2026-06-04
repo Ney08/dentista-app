@@ -18,7 +18,7 @@ function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
-  const [tab, setTab] = useState("usuario");
+  const [tab, setTab] = useState("cuenta");
 
   const {
     servicios,
@@ -42,7 +42,7 @@ function SettingsPage() {
 
   const btn = `
     w-full py-2 rounded-lg text-white font-medium
-    transition hover:scale-[1.02]
+    transition-all duration-200 active:scale-[0.98]
   `;
 
   // ✅ GUARDAR USUARIO
@@ -207,90 +207,121 @@ function SettingsPage() {
   return (
     <PageWrapper>
 
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-0 space-y-5 sm:space-y-6">
 
         {/* HEADER */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">Configuración ⚙️</h1>
-          <p className="text-gray-500 text-sm">
+        <div className="text-center space-y-1 sm:space-y-2 pt-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Configuración ⚙️</h1>
+          <p className="text-sm text-gray-500">
             Administra tu cuenta y seguridad
           </p>
         </div>
 
         {/* TABS */}
-        <div className="flex gap-2 border-b pb-2 justify-center">
-          {["usuario", "seguridad", "servicios", "clientes"].map(t => (
+        <div className="flex overflow-x-auto sm:justify-center gap-2 pb-2 no-scrollbar">
+         {["cuenta", "servicios", "clientes"].map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`
-                px-4 py-1.5 rounded-lg text-sm
+                px-4 sm:px-5 h-10 sm:h-11 rounded-2xl whitespace-nowrap text-sm transition-all duration-200 shrink-0"
                 ${tab === t
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"}
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+                 : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
               `}
             >
-              {t === "usuario" && "👤 Usuario"}
-              {t === "seguridad" && "🔒 Seguridad"}
+              {t === "cuenta" && "👤 Cuenta"}
               {t === "servicios" && "🧾 Servicios"}
               {t === "clientes" && "🚫 Clientes inactivos"}
             </button>
           ))}
         </div>
 
-        {/* USUARIO */}
-        {tab === "usuario" && (
-          <div className="bg-white p-6 rounded-xl shadow border space-y-4">
+        {/* ✅ CUENTA */}
+{tab === "cuenta" && (
+  <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-7 space-y-6 sm:space-y-7 overflow-hidden">
 
-            <input
-              type="text"
-              placeholder="Nombre de usuario"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="input"
-            />
+    {/* PERFIL */}
+    <div className="space-y-3 sm:space-y-4">
 
-            <button
-              onClick={guardarUsuario}
-              disabled={loading}
-              className={`${btn} ${loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"}`}
-            >
-              {loading ? "Guardando..." : "💾 Guardar usuario"}
-            </button>
+      <div>
+        <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-gray-800">
+          Perfil
+        </h3>
 
-          </div>
-        )}
+        <p className="text-sm text-gray-500">
+          Administra tu información de acceso
+        </p>
+      </div>
 
-        {/* SEGURIDAD */}
-        {tab === "seguridad" && (
-          <div className="bg-white p-6 rounded-xl shadow border space-y-4">
+      <input
+        type="text"
+        placeholder="Nombre de usuario"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        className="input h-11 sm:h-12 rounded-2xl border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 text-sm sm:text-base"
+      />
 
-            <input
-              type="password"
-              placeholder="Contraseña actual"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input"
-            />
+      <button
+        onClick={guardarUsuario}
+        disabled={loading}
+        className={`${btn} h-12 rounded-2xl shadow-sm ${loading
+          ? "bg-gray-400"
+          : "bg-blue-500 hover:bg-blue-600"
+          }`}
+      >
+        {loading ? "Guardando..." : "💾 Guardar usuario"}
+      </button>
 
-            <input
-              type="password"
-              placeholder="Nueva contraseña"
-              value={nuevoPassword}
-              onChange={(e) => setNuevoPassword(e.target.value)}
-              className="input"
-            />
+    </div>
 
-            <button
-              onClick={cambiarPassword}
-              disabled={loading}
-              className={`${btn} ${loading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"}`}
-            >
-              {loading ? "Aplicando..." : "🔐 Cambiar contraseña"}
-            </button>
+    {/* DIVIDER */}
+    <div className="border-t border-dashed border-gray-200 my-1" />
 
-          </div>
-        )}
+    {/* PASSWORD */}
+    <div className="space-y-3 sm:space-y-4">
+
+      <div>
+        <h3 className="text-lg font-semibold text-gray-800">
+          Seguridad
+        </h3>
+
+        <p className="text-sm text-gray-500 leading-relaxed">
+          Cambia tu contraseña de acceso
+        </p>
+      </div>
+
+      <input
+        type="password"
+        placeholder="Contraseña actual"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="input h-11 sm:h-12 rounded-2xl border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 text-sm sm:text-base"
+      />
+
+      <input
+        type="password"
+        placeholder="Nueva contraseña"
+        value={nuevoPassword}
+        onChange={(e) => setNuevoPassword(e.target.value)}
+        className="input h-11 sm:h-12 rounded-2xl border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 text-sm sm:text-base"
+      />
+
+      <button
+        onClick={cambiarPassword}
+        disabled={loading}
+        className={`${btn} h-11 sm:h-12 rounded-2xl shadow-sm text-sm sm:text-base ${loading
+          ? "bg-gray-400"
+          : "bg-green-500 hover:bg-green-600"
+          }`}
+      >
+        {loading ? "Aplicando..." : "🔐 Cambiar contraseña"}
+      </button>
+
+    </div>
+
+  </div>
+)}
 
         {/* ✅ SERVICIOS */}
 
