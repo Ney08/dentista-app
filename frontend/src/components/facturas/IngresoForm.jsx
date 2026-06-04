@@ -466,16 +466,11 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
   };
 
   return (
-    <div className="
-    w-full max-w-3xl
-    bg-white rounded-2xl
-    shadow-lg border border-gray-200
-    p-6 space-y-6
-  ">
+    <div className="w-full h-full md:h-auto bg-white rounded-t-3xl md:rounded-2xl shadow-lg border-0 md:border border-gray-200 p-4 sm:p-5 md:p-6 flex flex-col gap-4 max-h-screen md:max-h-[90vh] overflow-y-auto overflow-x-hidden">
 
       {/* ✅ HEADER */}
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-semibold">
+      <div className="text-center space-y-1 shrink-0">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
           {initialData ? "Editar factura ✏️" : "Registrar factura 🧾"}
         </h2>
 
@@ -486,7 +481,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 flex-1 min-h-0">
 
         {/* ✅ CLIENTE */}
         <select
@@ -503,10 +498,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
             autoSeleccionarServicio(id);
           }}
 
-          className={`
-    input
-    ${initialData ? "bg-gray-100 text-gray-500" : ""}
-  `}
+          className={`input h-12 sm:h-11 text-base sm:text-sm ${initialData ? "bg-gray-100 text-gray-500" : ""}`}
         >
           <option value="">Seleccionar cliente</option>
           {clientes.map(c => (
@@ -522,7 +514,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
         {/* ✅ SERVICIOS */}
         <div className="space-y-3">
 
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between gap-2">
             <h4 className="text-xs uppercase font-semibold text-gray-500">
               Servicios
             </h4>
@@ -530,27 +522,19 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
             <button
               type="button"
               onClick={agregarServicio}
-              className="
-              text-sm text-blue-600 hover:text-blue-700
-              font-medium
-            "
+              className="text-sm text-blue-600 hover:text-blue-700 font-medium active:scale-[0.98] transition"
             >
               + Agregar
             </button>
           </div>
 
-          <div className="
-          space-y-3 max-h-64 overflow-y-auto pr-1
-        ">
+          <div className="space-y-2 overflow-y-auto overflow-x-hidden pr-1 max-h-[32vh] sm:max-h-[38vh] md:max-h-[40vh]">
 
             {servicios.map((s, index) => (
 
               <div
                 key={index}
-                className="
-                border border-gray-200 rounded-xl p-3
-                bg-gray-50 space-y-2
-              "
+                className="border border-gray-200 rounded-2xl p-3 bg-gray-50 space-y-2"
               >
 
                 {servicios.length > 1 && (
@@ -573,7 +557,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
                     actualizarServicio(index, "descripcion", seleccionado.nombre);
                     actualizarServicio(index, "monto", seleccionado.precio);
                   }}
-                  className="input"
+                  className="input h-12 sm:h-11 text-base sm:text-sm"
                 >
                   <option value="">Seleccionar servicio</option>
 
@@ -600,7 +584,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
                   type="number"
                   value={s.monto}
                   disabled
-                  className="input bg-gray-100"
+                  className="input h-12 sm:h-11 text-base sm:text-sm bg-gray-100"
                 />
 
               </div>
@@ -621,13 +605,13 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
             type="number"
             value={descuento}
             onChange={(e) => setDescuento(e.target.value)}
-            className="input"
+            className="input h-12 sm:h-11 text-base sm:text-sm"
           />
         </div>
 
         {/* ✅ TOTAL */}
         <div className={`
-        border rounded-xl p-4 text-center
+        border rounded-2xl p-4 text-center shrink-0
         ${total > 0
             ? "bg-green-50 border-green-200"
             : "bg-gray-50 border-gray-200"}
@@ -637,20 +621,20 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
             Total factura
           </p>
 
-          <p className="text-2xl font-semibold text-green-700">
+          <p className="text-2xl sm:text-3xl md:text-2xl font-bold text-green-700">
             RD$ {formatMoney(total)}
           </p>
 
         </div>
 
         {/* ✅ BOTONES */}
-        <div className="space-y-2">
+        <div className="flex flex-col sm:flex-row gap-2 pt-1 shrink-0">
 
           <button
             type="submit"
             disabled={loading}
             className={`
-            w-full py-2.5 rounded-xl text-white font-medium
+           flex-1 h-12 rounded-2xl text-white font-medium text-sm sm:text-base
             ${loading
                 ? "bg-gray-400"
                 : "bg-blue-500 hover:bg-blue-600"}
@@ -664,7 +648,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
             type="button"
             onClick={onClose}
             className="
-            w-full py-2.5 rounded-xl
+            flex-1 h-12 rounded-2xl
             bg-gray-100 hover:bg-gray-200
             text-gray-700 transition
           "

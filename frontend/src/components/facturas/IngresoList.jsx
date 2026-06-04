@@ -14,17 +14,7 @@ function IngresoList({
   const [ingresoAPagar, setIngresoAPagar] = useState(null);
 
   return (
-    <div
-      className={`
-        space-y-3 pr-2
-        
-${facturas.length > 10
-          ? "max-h-[820px] overflow-y-auto"
-          : ""
-        }
-
-      `}
-    >
+    <div className="h-full space-y-2 sm:space-y-3 overflow-y-auto overflow-x-hidden pr-1 pb-2">
 
       {facturas.map((i) => {
 
@@ -41,35 +31,27 @@ ${facturas.length > 10
         return (
           <div
             key={i.id}
-            className="
-              group flex items-center justify-between gap-4
-              bg-white border border-gray-200 rounded-xl px-4 py-3
-              hover:bg-gray-50 hover:shadow-sm
-              transition cursor-pointer
-            "
+            className="group flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 bg-white border border-gray-200 rounded-2xl px-3 sm:px-4 py-3 sm:py-4 hover:bg-gray-50 hover:shadow-sm transition"
           >
 
             {/* ✅ IZQUIERDA */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
 
-              <div className="
-                w-9 h-9 rounded-full bg-blue-500 text-white
-                flex items-center justify-center text-xs font-semibold
-              ">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-semibold shrink-0">
                 {letra}
               </div>
 
-              <div className="leading-tight space-y-1">
+              <div className="leading-tight space-y-1 min-w-0">
 
                 <div className="flex items-center gap-2 flex-wrap">
 
-                  <p className="text-sm font-semibold text-gray-800">
+                  <p className="text-sm sm:text-base font-semibold text-gray-800 truncate">
                     {i.cliente?.nombre} {i.cliente?.apellido}
                   </p>
 
                   <span
                     className={`
-                      text-[10px] px-2 py-[2px] rounded-full font-medium
+                      text-[11px] px-2 py-1 rounded-full font-medium
                       ${i.pagado
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"}
@@ -80,7 +62,7 @@ ${facturas.length > 10
 
                 </div>
 
-                <p className="text-xs text-gray-500">
+                <p className="text-xs md:text-sm text-gray-500">
                   {formatFecha(i.created_at)}
                 </p>
 
@@ -89,26 +71,26 @@ ${facturas.length > 10
             </div>
 
             {/* ✅ DERECHA */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto pt-1 lg:pt-0">
 
-              <span className="text-sm font-semibold text-green-600">
+              <span className="text-lg sm:text-xl lg:text-base font-bold text-green-600 whitespace-nowrap">
                 RD$ {formatMoney(total)}
               </span>
 
+
+
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="
-                  flex items-center gap-1
-                  opacity-0 group-hover:opacity-100
-                  transition
-                "
+                className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition"
               >
+
+
 
                 <button
                   onClick={() => onVerFactura(i)}
                   disabled={!i.pagado}
                   className={`
-                    p-2 rounded-md transition
+                    p-2.5 sm:p-2 rounded-md transition
                     ${i.pagado
                       ? "text-blue-500 hover:bg-blue-100"
                       : "text-gray-400 cursor-not-allowed"}
@@ -122,7 +104,7 @@ ${facturas.length > 10
                   onClick={() => onEditar(i)}
                   disabled={i.pagado}
                   className={`
-                    p-2 rounded-md transition
+                    p-2.5 sm:p-2 rounded-md transition
                     ${i.pagado
                       ? "text-gray-400"
                       : "text-yellow-500 hover:bg-yellow-100"}
@@ -136,7 +118,7 @@ ${facturas.length > 10
                   onClick={() => setIngresoAPagar(i)}
                   disabled={i.pagado}
                   className={`
-                    p-2 rounded-md transition
+                    p-2.5 sm:p-2 rounded-md transition
                     ${i.pagado
                       ? "text-gray-400"
                       : "text-purple-500 hover:bg-purple-100"}

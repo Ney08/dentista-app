@@ -25,7 +25,7 @@ function IngresosPage() {
   const [busqueda, setBusqueda] = useState("");
   const [animar, setAnimar] = useState(false);
   const [limite, setLimite] = useState(1);
-  const [porPagina, setPorPagina] = useState(10);
+  const [porPagina, setPorPagina] = useState(7);
   const [orden, setOrden] = useState("fecha");
   const [pagina, setPagina] = useState(1);
 
@@ -263,22 +263,22 @@ function IngresosPage() {
   return (
     <PageWrapper>
 
-      <div className="max-w-7xl mx-auto space-y-6 pb-6 px-4">
+      <div className="h-full max-w-7xl mx-auto flex flex-col gap-4 md:gap-6 px-3 sm:px-4 pb-4 overflow-hidden">
 
         {/* ✅ HEADER */}
-        <div className="text-center space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">
+        <div className="text-center space-y-1 pt-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
             Facturación 🧾
           </h1>
 
-          <p className="text-gray-500 text-sm">
+          <p className="text-xs sm:text-sm text-gray-500">
             Gestiona ingresos y facturas
           </p>
         </div>
 
         {/* ✅ KPI */}
         <div className={`
-        rounded-xl border p-4 text-center
+        rounded-2xl border p-4 sm:p-5 text-center
         ${totalPendiente > 0
             ? "bg-red-50 border-red-200"
             : "bg-green-50 border-green-200"}
@@ -288,17 +288,17 @@ function IngresosPage() {
             {totalPendiente > 0 ? "Pendiente" : "Todo saldado"}
           </p>
 
-          <p className="text-2xl font-bold">
+          <p className="text-2xl sm:text-3xl font-bold">
             RD$ {formatMoney(totalPendiente)}
           </p>
 
         </div>
 
         {/* ✅ CARD PRINCIPAL */}
-        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col min-h-[75vh] space-y-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[72vh] sm:h-[75vh] lg:h-[74vh] p-4 sm:p-5 gap-4 overflow-hidden">
 
           {/* ✅ TOOLBAR */}
-          <div className="flex flex-wrap justify-between items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
             <p className="text-sm text-gray-500">
               <span className="font-medium">{filtrados.length}</span> facturas · {" "}
@@ -307,21 +307,17 @@ function IngresosPage() {
 
             <button
               onClick={abrirNuevo}
-              className="
-              bg-blue-500 hover:bg-blue-600
-              text-white text-sm px-4 py-2 rounded-lg
-              shadow-sm transition
-            "
+              className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-3 rounded-xl shadow-sm transition active:scale-[0.98]"
             >
               + Nuevo
             </button>
 
           </div>
           {/* ✅ TOOLBAR */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
 
             {/* 🔍 BUSCADOR */}
-            <div className="flex-1">
+            <div className="w-full lg:flex-1">
               <input
                 placeholder="🔍 Buscar cliente..."
                 value={busqueda}
@@ -329,11 +325,7 @@ function IngresosPage() {
                   setBusqueda(e.target.value);
                   setPagina(1);
                 }}
-                className="
-        w-full border border-gray-200
-        px-4 py-2 rounded-xl text-sm
-        focus:ring-2 focus:ring-blue-500
-      "
+                className="w-full border border-gray-200 px-4 h-12 rounded-xl text-sm sm:text-base focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -341,10 +333,7 @@ function IngresosPage() {
             <select
               value={orden}
               onChange={(e) => setOrden(e.target.value)}
-              className="
-      border px-3 py-2 rounded-lg text-sm
-      hover:bg-gray-50
-    "
+              className="w-full lg:w-auto border px-3 h-12 rounded-xl text-sm sm:text-base hover:bg-gray-50"
             >
               <option value="fecha">Más recientes</option>
               <option value="az">A-Z</option>
@@ -363,20 +352,17 @@ function IngresosPage() {
                 setPorPagina(val);
                 setPagina(1);
               }}
-              className="
-      border px-3 py-2 rounded-lg text-sm
-      hover:bg-gray-50
-    "
+              className="w-full lg:w-auto border px-3 h-12 rounded-xl text-sm sm:text-base hover:bg-gray-50"
             >
               <option value={10}>10</option>
               <option value={20}>20</option>
-              <option value="todos">Todos</option>
+              <option value="all">Todos</option>
             </select>
 
           </div>
 
           {/* ✅ LISTA */}
-          <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-3">
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
 
             {filtrados.length === 0 ? (
               <p className="text-center text-gray-400">
@@ -398,7 +384,7 @@ function IngresosPage() {
 
           {/* ✅ PAGINACIÓN */}
           {limite !== "all" && totalPaginas > 1 && (
-            <div className="pt-4 border-t flex justify-center">
+            <div className="pt-3 border-t flex justify-center overflow-x-auto">
 
               <Paginacion
                 pagina={pagina}
@@ -417,25 +403,39 @@ function IngresosPage() {
       <div
         onClick={cerrarModal}
         className={`
-        fixed inset-0 z-50 flex items-center justify-center
-        transition-all duration-200
-        ${modalAbierto
-            ? "opacity-100 visible bg-black/40 backdrop-blur-sm"
+    fixed inset-0 z-50
+
+    flex items-end md:items-center
+    justify-center
+
+    bg-black/40 backdrop-blur-sm
+
+    transition-all duration-300
+
+    ${modalAbierto
+            ? "opacity-100 visible"
             : "opacity-0 invisible"}
-      `}
+  `}
       >
+        ``
 
         {modalAbierto && (
-          <div className="w-full max-w-2xl px-4">
+          <div className="w-full h-full md:h-auto md:max-w-2xl flex items-end md:items-center justify-center">
 
             <div
               onClick={(e) => e.stopPropagation()}
+
               className={`
-        transform transition-all duration-200
-        ${animar
-                  ? "scale-100 opacity-100"
-                  : "scale-95 opacity-0"}
-      `}
+  w-full
+
+  transition-all duration-300 ease-out
+
+  ${animar
+                  ? "translate-y-0 md:scale-100 opacity-100"
+                  : "translate-y-full md:translate-y-0 md:scale-95 opacity-0"}
+`}
+
+
             >
 
               {
