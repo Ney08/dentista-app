@@ -8,6 +8,8 @@ import PageWrapper from "../components/PageWrapper";
 //import { parseFechaLocal } from "../utils/fecha";
 import { useClientes } from "../hooks/useClientes";
 import Paginacion from "../components/Paginacion";
+import BaseModal from "../components/BaseModal";
+
 function ClientesPage() {
 
   const [mostrarActivos, setMostrarActivos] = useState(true);
@@ -34,7 +36,7 @@ function ClientesPage() {
 
   const [busqueda, setBusqueda] = useState("");
   const [orden, setOrden] = useState("az");
-  const [limite, setLimite] = useState(5);
+  const [limite, setLimite] = useState(6);
   const [pagina, setPagina] = useState(1);
 
   // ✅ FILTRO
@@ -115,12 +117,12 @@ function ClientesPage() {
   return (
     <PageWrapper>
 
-      <div className="space-y-4 pb-4">
+      <div className="max-w-6xl mx-auto space-y-6 pb-6">
 
-        {/* ✅ HEADER MEJORADO */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight flex items-center justify-center gap-2">
-            Clientes <span className="text-xl">👤</span>
+        {/* ✅ HEADER */}
+        <div className="text-center space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center justify-center gap-2">
+            Clientes 👤
           </h1>
           <p className="text-gray-500 text-sm">
             Gestiona los clientes del sistema
@@ -128,32 +130,35 @@ function ClientesPage() {
         </div>
 
         {/* ✅ CARD PRINCIPAL */}
-        <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col h-[71vh]">
-          <div className="space-y-4 pb-4">
-            {/* HEADER LISTA */}
-            <div className="flex justify-between items-center">
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[75vh] space-y-4">
 
-              <p className="text-sm text-gray-500">
-                Total: {clientes.length}
-              </p>
+          {/* ✅ TOOLBAR */}
+          <div className="flex flex-wrap justify-between items-center gap-3">
 
-              <button
-                onClick={() => {
-                  setClienteEditar(null);
-                  setModalAbierto(true);
-                }}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm shadow"
-              >
-                + Nuevo
-              </button>
+            <p className="text-sm text-gray-500">
+              Total: <span className="font-semibold">{clientes.length}</span>
+            </p>
 
-            </div>
+            <button
+              onClick={() => {
+                setClienteEditar(null);
+                setModalAbierto(true);
+              }}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm shadow-sm transition"
+            >
+              + Nuevo
+            </button>
+
+          </div>
+
+          {/* ✅ BUSCADOR + FILTROS */}
+          <div className="flex flex-col md:flex-row gap-3">
 
             {/* BUSCADOR */}
             <input
               type="text"
               placeholder="🔍 Buscar cliente..."
-              className="w-full border border-gray-300 px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 transition"
+              className="flex-1 border border-gray-200 px-4 py-2 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm"
               value={busqueda}
               onChange={(e) => {
                 setBusqueda(e.target.value);
@@ -161,48 +166,42 @@ function ClientesPage() {
               }}
             />
 
-            {/* CONTROLES */}
-            <div className="flex flex-wrap justify-between items-center gap-4">
+            {/* FILTROS */}
+            <div className="flex gap-3 text-sm">
 
-              <div className="flex items-center gap-2 text-sm">
-                <span>Orden:</span>
-                <select
-                  value={orden}
-                  onChange={(e) => setOrden(e.target.value)}
-                  className="border px-2 py-1 rounded"
-                >
-                  <option value="az">A-Z</option>
-                  <option value="nuevo">Más recientes</option>
-                </select>
-              </div>
+              <select
+                value={orden}
+                onChange={(e) => setOrden(e.target.value)}
+                className="border px-2 py-2 rounded-lg"
+              >
+                <option value="az">A-Z</option>
+                <option value="nuevo">Más recientes</option>
+              </select>
 
-              <div className="flex items-center gap-2 text-sm">
-                <span>Mostrar:</span>
-                <select
-                  value={limite}
-                  onChange={(e) => {
-                    const val = e.target.value === "all"
-                      ? "all"
-                      : parseInt(e.target.value);
+              <select
+                value={limite}
+                onChange={(e) => {
+                  const val = e.target.value === "all"
+                    ? "all"
+                    : parseInt(e.target.value);
 
-                    setLimite(val);
-                    setPagina(1);
-                  }}
-                  className="border px-2 py-1 rounded"
-                >
-
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={50}>50</option>
-                  <option value="all">Todos</option>
-
-                </select>
-              </div>
+                  setLimite(val);
+                  setPagina(1);
+                }}
+                className="border px-2 py-2 rounded-lg"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={50}>50</option>
+                <option value="all">Todos</option>
+              </select>
 
             </div>
+
           </div>
-          {/* LISTA */}
-          <div className="flex-1 min-h-0 overflow-y-auto pr-2 pb-6">
+
+          {/* ✅ LISTA */}
+          <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-3">
 
             {clientesFinal.length === 0 ? (
               <p className="text-center text-gray-500">
@@ -210,89 +209,143 @@ function ClientesPage() {
               </p>
             ) : (
 
-              <div className="space-y-2">
+              <ClienteList
+                clientes={clientesFinal}
+                onToggleActivo={(cliente) => handleToggleActivo(cliente)}
+                onEditarClick={(c) => {
+                  setClienteEditar(c);
+                  setModalAbierto(true);
+                }}
+                onSeleccionar={(c) => setClienteSeleccionado(c)}
+              />
 
+            )}
 
-                <ClienteList
-                  clientes={clientesFinal}
-                  onToggleActivo={(cliente) => handleToggleActivo(cliente)}
-                  onEditarClick={(c) => {
-                    setClienteEditar(c);
-                    setModalAbierto(true);
-                  }}
-                  onSeleccionar={(c) => setClienteSeleccionado(c)}
+          </div>
+
+          {/* ✅ PAGINACIÓN */}
+          {limite !== "all" && totalPaginas > 1 && (
+            <div className="pt-4 border-t flex justify-center">
+
+              <div className="flex gap-2">
+
+                <Paginacion
+                  pagina={pagina}
+                  totalPaginas={totalPaginas}
+                  onChange={setPagina}
                 />
 
               </div>
-            )}
-          </div>
-          {/* PAGINACIÓN */}
-          {limite !== "all" && totalPaginas > 1 && (
-            <div className="mt-auto pt-4 border-t">
-              <Paginacion
-                pagina={pagina}
-                totalPaginas={totalPaginas}
-                onChange={setPagina}
-              />
+
             </div>
           )}
 
         </div>
 
-        {/* ✅ DETALLE INTERACTIVO */}
+        {/* ✅ MODAL DETALLE PRO */}
         {clienteSeleccionado && (
-          <div className="bg-white p-5 rounded-2xl border shadow-md animate-fadeIn">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">
-                Detalle del cliente
-              </h3>
+          <BaseModal onClose={() => setClienteSeleccionado(null)}>
 
-              <button
-                onClick={() => setClienteSeleccionado(null)}
-                className="text-sm text-gray-400 hover:text-gray-600"
-              >
-                Cerrar
-              </button>
+            <div className="space-y-5">
+
+              {/* ✅ HEADER PRO */}
+              <div className="flex justify-between items-start">
+
+                <div className="flex items-center gap-3">
+
+                  {/* AVATAR */}
+                  <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-semibold shadow-sm">
+                    {clienteSeleccionado.nombre?.charAt(0)?.toUpperCase()}
+                  </div>
+
+                  <div>
+                    <p className="font-semibold text-gray-800">
+                      {clienteSeleccionado.nombre} {clienteSeleccionado.apellido}
+                    </p>
+
+                    <p className="text-xs text-gray-400">
+                      Historial clínico del paciente
+                    </p>
+                  </div>
+
+                </div>
+
+                <button
+                  onClick={() => setClienteSeleccionado(null)}
+                  className="text-sm text-gray-400 hover:text-gray-600 transition"
+                >
+                  Cerrar
+                </button>
+
+              </div>
+
+              {/* ✅ DIVISOR */}
+              <div className="border-t border-gray-200" />
+
+              {/* ✅ FORM + HISTORIAL */}
+              <div className="space-y-4">
+
+                <h4 className="text-sm font-semibold text-gray-600">
+                  📝 Notas clínicas
+                </h4>
+
+                {/* ✅ CONTENIDO SCROLL */}
+                <div className="max-h-[65vh] overflow-y-auto pr-2 space-y-5">
+
+                  {/* 📥 FORM */}
+                  <div className="
+            bg-gray-50 border border-gray-200
+            rounded-xl p-4 space-y-3
+          ">
+
+                    {/* Aquí ya tienes tu form dentro de ClienteDetalle */}
+                    <ClienteDetalle cliente={clienteSeleccionado} />
+
+                  </div>
+
+                </div>
+
+              </div>
+
             </div>
 
-            <ClienteDetalle cliente={clienteSeleccionado} />
-          </div>
+          </BaseModal>
         )}
+      
 
       </div>
 
-      {/* ✅ MODAL CON ANIMACIÓN */}
-
+      {/* ✅ MODAL FORM */}
       <div
         onClick={cerrarModal}
         className={`
-    fixed inset-0 z-50 flex items-center justify-center
-    transition-all duration-200 ease-out
-    ${modalAbierto
-            ? "opacity-100 visible bg-black/40 backdrop-blur-md"
+        fixed inset-0 z-50 flex items-center justify-center
+        transition-all duration-200
+        ${modalAbierto
+            ? "opacity-100 visible bg-black/40 backdrop-blur-sm"
             : "opacity-0 invisible"}
-  `}
+      `}
       >
-
-
         <div
           onClick={(e) => e.stopPropagation()}
           className={`
-      w-full max-w-3xl p-6
-      transform transition-all duration-200 ease-out
-      ${modalAbierto
-              ? "scale-100 opacity-100 translate-y-0"
-              : "scale-95 opacity-0 translate-y-6"}
-    `}
+          w-full max-w-2xl p-6
+          transform transition-all duration-200
+          ${modalAbierto
+              ? "scale-100 opacity-100"
+              : "scale-95 opacity-0"}
+        `}
         >
 
           <ClienteForm
             cliente={clienteEditar}
             onClose={cerrarModal}
           />
+
         </div>
       </div>
 
+      {/* ✅ CONFIRM */}
       {clienteADesactivar && (
         <ConfirmModal
           mensaje={`¿Desactivar a ${clienteADesactivar.nombre}?`}
@@ -304,20 +357,9 @@ function ClientesPage() {
         />
       )}
 
-      {/* {clienteAEliminar && (
-        <ConfirmModal
-          mensaje={`¿Eliminar a ${clienteAEliminar.nombre}? Esta acción no se puede deshacer.`}
-          onCancel={() => setClienteAEliminar(null)}
-          onConfirm={() => {
-            handleEliminar(clienteAEliminar.id);
-            setClienteAEliminar(null);
-            console.log(clienteAEliminar);
-          }}
-        />
-      )} */}
-
     </PageWrapper>
   );
+
 }
 
 export default ClientesPage;

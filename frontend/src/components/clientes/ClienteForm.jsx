@@ -165,28 +165,28 @@ function ClienteForm({ cliente, onClose }) {
   };
 
   return (
-    <div className="w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-100 space-y-8">
+    <div className="w-full bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-6">
 
-      {/* HEADER */}
+      {/* ✅ HEADER */}
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-semibold tracking-tight">
+        <h2 className="text-2xl font-semibold tracking-tight flex items-center justify-center gap-2">
           {isEdit ? "Editar cliente ✏️" : "Nuevo cliente 👤"}
         </h2>
+
         <p className="text-gray-500 text-sm">
           Completa la información básica
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-        {/* 🧾 INFO PERSONAL */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-600">
+        {/* ✅ INFO PERSONAL */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Información básica
           </h3>
 
-          <div className="grid md:grid-cols-2 gap-4">
-
+          <div className="grid md:grid-cols-2 gap-3">
             <input
               {...register("nombre", { required: true })}
               placeholder="Nombre"
@@ -198,27 +198,36 @@ function ClienteForm({ cliente, onClose }) {
               placeholder="Apellido"
               className="input"
             />
-
           </div>
         </div>
 
-        {/* 🆔 IDENTIDAD */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-600">
+        {/* ✅ IDENTIDAD */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Identidad
           </h3>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3">
 
-            <div>
+            {/* CÉDULA */}
+            <div className="space-y-1">
               <input
                 {...register("cedula")}
                 placeholder="Cédula"
-                className={`input ${cedulaError ? "border-red-500" : ""}`}
+                className={`
+                input 
+                ${cedulaError ? "border-red-500 ring-1 ring-red-300" : ""}
+              `}
               />
-              {cedulaError && <p className="error">{cedulaError}</p>}
+
+              {cedulaError && (
+                <p className="text-xs text-red-500">
+                  {cedulaError}
+                </p>
+              )}
             </div>
 
+            {/* TELÉFONO */}
             <input
               {...register("telefono")}
               placeholder="Teléfono"
@@ -228,13 +237,13 @@ function ClienteForm({ cliente, onClose }) {
           </div>
         </div>
 
-        {/* 📍 UBICACIÓN */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-600">
+        {/* ✅ UBICACIÓN */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Ubicación
           </h3>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3">
 
             <select
               value={provincia ?? ""}
@@ -246,25 +255,24 @@ function ClienteForm({ cliente, onClose }) {
             >
               <option value="">Provincia</option>
               {provincias.map(p => (
-                <option key={p.id} value={p.id}>{p.nombre}</option>
-              ))}
-            </select>
-
-
-            <select
-              value={municipio}
-              onChange={(e) => setMunicipio(e.target.value)}
-              className="input"
-            >
-              <option value="">Municipio</option>
-
-              {municipiosFiltrados.map(m => (
-                <option key={m.nombre} value={m.nombre} >
-                  {m.nombre}
+                <option key={p.id} value={p.id}>
+                  {p.nombre}
                 </option>
               ))}
             </select>
 
+            <select
+              value={municipio ?? ""}
+              onChange={(e) => setMunicipio(e.target.value)}
+              className="input"
+            >
+              <option value="">Municipio</option>
+              {municipiosFiltrados.map(m => (
+                <option key={m.nombre} value={m.nombre}>
+                  {m.nombre}
+                </option>
+              ))}
+            </select>
 
           </div>
 
@@ -275,20 +283,21 @@ function ClienteForm({ cliente, onClose }) {
           />
         </div>
 
-        {/* BOTONES */}
-        <div className="space-y-2">
+        {/* ✅ BOTONES */}
+        <div className="space-y-2 pt-2">
 
+          {/* PRIMARY */}
           <button
             type="submit"
             disabled={loading || cedulaError}
+            className={`
+            w-full py-2.5 rounded-xl font-medium
+            text-white shadow-sm transition
 
-            className="
-  w-full bg-gradient-to-r from-blue-500 to-blue-600
-  hover:from-blue-600 hover:to-blue-700
-  text-white py-3 rounded-xl font-medium
-  shadow-md transition
-"
-
+            ${loading || cedulaError
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-600"}
+          `}
           >
             {loading
               ? "Guardando..."
@@ -297,25 +306,24 @@ function ClienteForm({ cliente, onClose }) {
                 : "Crear cliente"}
           </button>
 
+          {/* SECONDARY */}
           <button
             type="button"
             onClick={onClose}
-
             className="
-  w-full bg-gradient-to-r from-red-500 to-red-600
-  hover:from-red-600 hover:to-red-700
-  text-white py-3 rounded-xl font-medium
-  shadow-md transition
-"
-
+            w-full py-2.5 rounded-xl font-medium
+            bg-gray-100 hover:bg-gray-200
+            text-gray-700 transition
+          "
           >
             Cancelar
           </button>
 
         </div>
 
-      </form >
-    </div >
+      </form>
+
+    </div>
   );
 }
 

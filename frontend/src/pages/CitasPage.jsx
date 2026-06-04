@@ -16,9 +16,9 @@ function CitasPage() {
   const { clientes } = useClientes();
   const [clientePresetLocal, setClientePresetLocal] = useState(null);
   const [animar, setAnimar] = useState(false);
-  const [porPagina, setPorPagina] = useState(5);
-  const [pagina, setPagina] = useState(1);
-  const [limite, setLimite] = useState(5);
+  const [porPagina, setPorPagina] = useState(1);
+  const [pagina, setPagina] = useState(12);
+  const [limite, setLimite] = useState(7);
 
 
 
@@ -195,9 +195,18 @@ function CitasPage() {
 
             </div>
           </div>
-          {/* LISTA */}
-          <div className=" pb-2">
+          {/* ✅ LISTA CON SCROLL PRO */}
+          <div
+            className={`
+        space-y-3 pr-2
+        
+${citas.length > 6
+                ? "max-h-[820px] overflow-y-auto"
+                : ""
+              }
 
+      `}
+          >
 
             <CitaList
               citas={citasPaginadas}
@@ -210,6 +219,7 @@ function CitasPage() {
                 toast.success("Cancelada");
               }}
             />
+
           </div>
           {/* PAGINACIÓN */}
           {limite !== "all" && totalPaginas > 1 && (
@@ -229,7 +239,7 @@ function CitasPage() {
       {modalAbierto && (
 
         <div
-         onClick={cerrarModal}
+          onClick={cerrarModal}
           className={`
     fixed inset-0 z-50 flex items-center justify-center
     transition-all duration-200 ease-out
@@ -244,7 +254,7 @@ function CitasPage() {
 
 
           <div
-          onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             className={`
     w-full max-w-3xl p-6
     transform transition-all duration-200 ease-out

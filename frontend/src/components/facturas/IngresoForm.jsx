@@ -223,26 +223,29 @@ function IngresoForm({ clientes, initialData, onClose }) {
   };
 
   return (
+    <div className="
+    w-full max-w-3xl
+    bg-white rounded-2xl
+    shadow-lg border border-gray-200
+    p-6 space-y-6
+  ">
 
-    <div className="w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-100 space-y-8">
+      {/* ✅ HEADER */}
+      <div className="text-center space-y-1">
+        <h2 className="text-2xl font-semibold">
+          {initialData ? "Editar factura ✏️" : "Registrar factura 🧾"}
+        </h2>
+
+        <p className="text-sm text-gray-500">
+          {initialData
+            ? "Modifica los detalles"
+            : "Completa los datos de la factura"}
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-
-        <h3 className="text-xl font-bold text-gray-800 text-center">
-          {initialData ? "Editar Factura ✏️" : "Registrar Factura 🧾"}
-          <p className="text-sm text-gray-500 text-center">
-            {initialData
-              ? "Modifica los detalles de la factura"
-              : "Completa los detalles para registrar una nueva factura"}
-          </p>
-        </h3>
-
-        {/* CLIENTE */}
-
-
-
-
+        {/* ✅ CLIENTE */}
         <select
           {...register("clienteId")}
           disabled={!!initialData}
@@ -251,14 +254,10 @@ function IngresoForm({ clientes, initialData, onClose }) {
             autoSeleccionarServicio(id);
           }}
           className={`
-    w-full border px-3 py-2 rounded input
-    ${initialData ? "bg-gray-100 text-gray-500 cursor-not-allowed" : ""}
-  `}
+          input
+          ${initialData ? "bg-gray-100 text-gray-500" : ""}
+        `}
         >
-
-
-
-
           <option value="">Seleccionar cliente</option>
           {clientes.map(c => (
             <option key={c.id} value={c.id}>
@@ -267,28 +266,39 @@ function IngresoForm({ clientes, initialData, onClose }) {
           ))}
         </select>
 
-        {/* SERVICIOS */}
-        <div className="bg-gray-50 border rounded-xl p-4 ">
+        {/* ✅ SERVICIOS */}
+        <div className="space-y-3">
 
-          {/* HEADER */}
-          <div className="flex justify-between items-center mb-3">
-            <p className="text-sm font-semibold">Servicios</p>
+          <div className="flex justify-between items-center">
+            <h4 className="text-xs uppercase font-semibold text-gray-500">
+              Servicios
+            </h4>
 
             <button
               type="button"
               onClick={agregarServicio}
-              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm shadow"
+              className="
+              text-sm text-blue-600 hover:text-blue-700
+              font-medium
+            "
             >
               + Agregar
             </button>
           </div>
 
-          {/* ✅ SCROLL CONTENEDOR */}
-          <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+          <div className="
+          space-y-3 max-h-64 overflow-y-auto pr-1
+        ">
 
             {servicios.map((s, index) => (
 
-              <div key={index} className="bg-white p-3 rounded shadow-sm">
+              <div
+                key={index}
+                className="
+                border border-gray-200 rounded-xl p-3
+                bg-gray-50 space-y-2
+              "
+              >
 
                 {servicios.length > 1 && (
                   <button
@@ -300,7 +310,6 @@ function IngresoForm({ clientes, initialData, onClose }) {
                   </button>
                 )}
 
-                {/* ✅ SELECT SERVICIO */}
                 <select
                   value={s.descripcion}
                   onChange={(e) => {
@@ -311,13 +320,12 @@ function IngresoForm({ clientes, initialData, onClose }) {
                     actualizarServicio(index, "descripcion", seleccionado.nombre);
                     actualizarServicio(index, "monto", seleccionado.precio);
                   }}
-                  className="w-full border px-3 py-2 rounded mb-2 input"
+                  className="input"
                 >
                   <option value="">Seleccionar servicio</option>
 
                   {catalogoServicios.map((serv, i) => {
 
-                    // ✅ BLOQUEAR DUPLICADOS
                     const yaSeleccionado = servicios.some(
                       (s2, i2) =>
                         s2.descripcion === serv.nombre && i2 !== index
@@ -335,12 +343,11 @@ function IngresoForm({ clientes, initialData, onClose }) {
                   })}
                 </select>
 
-                {/* MONTO */}
                 <input
                   type="number"
                   value={s.monto}
                   disabled
-                  className="w-full border px-3 py-2 rounded bg-gray-100 input"
+                  className="input bg-gray-100"
                 />
 
               </div>
@@ -348,57 +355,75 @@ function IngresoForm({ clientes, initialData, onClose }) {
             ))}
 
           </div>
+
         </div>
 
-        {/* DESCUENTO */}
-        <label className="text-sm font-semibold text-gray-600">
-          Descuento (%)
-        </label>
-        <input
+        {/* ✅ DESCUENTO */}
+        <div className="space-y-1">
+          <label className="text-xs text-gray-500 font-medium">
+            Descuento (%)
+          </label>
 
-          type="number"
-          placeholder="Descuento (%)"
-          value={descuento}
-          onChange={(e) => setDescuento(e.target.value)}
-          className="w-full border px-3 py-2 rounded input"
-        />
+          <input
+            type="number"
+            value={descuento}
+            onChange={(e) => setDescuento(e.target.value)}
+            className="input"
+          />
+        </div>
 
-        {/* TOTAL */}
-        <div className="bg-green-50 border border-green-200 p-4 rounded-xl text-center">
-          <p className="text-sm text-green-700">Total factura</p>
-          <p className="text-2xl font-bold text-green-800">
+        {/* ✅ TOTAL */}
+        <div className={`
+        border rounded-xl p-4 text-center
+        ${total > 0
+            ? "bg-green-50 border-green-200"
+            : "bg-gray-50 border-gray-200"}
+      `}>
+
+          <p className="text-xs text-gray-500">
+            Total factura
+          </p>
+
+          <p className="text-2xl font-semibold text-green-700">
             RD$ {total.toFixed(2)}
           </p>
+
         </div>
 
-        {/* BOTÓN */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="
-  w-full bg-gradient-to-r from-blue-500 to-blue-600
-  hover:from-blue-600 hover:to-blue-700
-  text-white py-3 rounded-xl font-medium
-  shadow-md transition"
-        >
-          {loading ? "Guardando..." : "✅ Guardar factura"}
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
+        {/* ✅ BOTONES */}
+        <div className="space-y-2">
 
-          className="
-  w-full bg-gradient-to-r from-red-500 to-red-600
-  hover:from-red-600 hover:to-red-700
-  text-white py-3 rounded-xl font-medium
-  shadow-md transition
-"
+          <button
+            type="submit"
+            disabled={loading}
+            className={`
+            w-full py-2.5 rounded-xl text-white font-medium
+            ${loading
+                ? "bg-gray-400"
+                : "bg-blue-500 hover:bg-blue-600"}
+            transition
+          `}
+          >
+            {loading ? "Guardando..." : "Guardar factura"}
+          </button>
 
-        >
-          Cancelar
-        </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="
+            w-full py-2.5 rounded-xl
+            bg-gray-100 hover:bg-gray-200
+            text-gray-700 transition
+          "
+          >
+            Cancelar
+          </button>
+
+        </div>
+
       </form>
-    </div >
+
+    </div>
   );
 }
 

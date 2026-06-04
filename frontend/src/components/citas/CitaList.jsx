@@ -11,149 +11,228 @@ function CitaList({
 }) {
   const [citaCancelar, setCitaCancelar] = useState(null);
   return (
-    <div className={`
-        space-y-4 pr-2
-        ${porPagina > 5 && citas.length > 5
-          ? "max-h-90 overflow-y-auto"
+
+    <div
+      className={`
+    space-y-3 pr-2
+    ${citas.length > 12
+          ? "max-h-[550px] overflow-y-auto"
           : ""
         }
-      `}>
+  `}
+    >
 
-      {citas.map(c => {
+
+      {citas.map((c) => {
 
         const estado = getEstado(c);
         const fecha = parseFechaLocal(c.fecha);
 
-        const estadoStyle = {
-          pendiente: "bg-yellow-100 text-yellow-800 border-yellow-300",
-          atrasada: "bg-red-100 text-red-800 border-red-300",
-          completada: "bg-green-100 text-green-800 border-green-300",
-          cancelada: "bg-gray-200 text-gray-700 border-gray-300"
+        const coloresEstado = {
+          pendiente: "bg-yellow-100 text-yellow-700",
+          atrasada: "bg-red-100 text-red-600",
+          completada: "bg-green-100 text-green-700",
+          cancelada: "bg-gray-200 text-gray-600"
         };
 
-        const bordeLateral = {
+        const borderEstado = {
           pendiente: "border-l-yellow-400",
           atrasada: "border-l-red-400",
           completada: "border-l-green-400",
           cancelada: "border-l-gray-400"
         };
 
-        const estadoText = {
-          pendiente: "🟡 Pendiente",
-          atrasada: "🔴 Atrasada",
-          completada: "✅ Completada",
-          cancelada: "⛔ Cancelada"
+        const estadoLabel = {
+          pendiente: "Pendiente",
+          atrasada: "Atrasada",
+          completada: "Completada",
+          cancelada: "Cancelada"
         };
 
+        const letra = c.cliente?.nombre?.charAt(0)?.toUpperCase();
+
         return (
+
           <div
             key={c.id}
             className={`
-              p-6 rounded-xl flex justify-between items-center border-l-4 border-blue-500
-              ${bordeLateral[estado]}
-              ${estado === "cancelada" ? "opacity-60" : ""}
-              ${estado === "pendiente" ? "bg-yellow-50" : ""}
-              transition hover:shadow-md hover:-translate-y-0.5 
-            `}
+            group flex items-center justify-between gap-4
+            bg-white border rounded-xl p-4
+            transition-all duration-200 ease-out
+            cursor-pointer
+              
+            ${borderEstado[estado]} border-l-4
+            ${estado === "cancelada" ? "opacity-60" : ""}
+            hover:shadow-md hover:bg-gray-50
+          `}
           >
 
-            {/* INFO */}
-            <div className="space-y-1">
-              <p className="font-semibold text-gray-800">
-                {c.cliente?.nombre} {c.cliente?.apellido}
-              </p>
+            {/* ✅ IZQUIERDA */}
+            <div className="flex items-center gap-3">
 
-              <p className="text-sm text-gray-700">
-                {formatFecha(fecha)} — {formatHora(fecha)}
-              </p>
+              {/* AVATAR */}
+              <div className="
+    w-9 h-9 rounded-full bg-blue-500 text-white
+    flex items-center justify-center text-xs font-semibold
+  ">
+                {c.cliente?.nombre?.charAt(0)}
+              </div>
 
-              <p className="text-sm text-gray-400">
-                {c.motivo}
-              </p>
-              <p className="text-sm text-gray-400">
-                Duración: {c.duracion} minutos
-              </p>
+              {/* INFO */}
+              <div className="leading-tight space-y-1">
+
+                {/* 🔥 NOMBRE + BADGE */}
+                <div className="flex items-center gap-2 flex-wrap">
+
+                  <p className="text-sm font-semibold text-gray-800">
+                    {c.cliente?.nombre} {c.cliente?.apellido}
+                  </p>
+
+                  <span
+                    className={`
+          text-[10px] font-medium px-2 py-[2px] rounded-full
+          ${coloresEstado[estado]}
+        `}
+                  >
+                    {estadoLabel[estado]}
+                  </span>
+
+                </div>
+
+                {/* FECHA */}
+                <p className="text-xs text-gray-500">
+                  {formatFecha(fecha)} — {formatHora(fecha)}
+                </p>
+
+                {/* MOTIVO + DURACIÓN */}
+                <p className="text-xs text-gray-400">
+                  {c.motivo} · {c.duracion} min
+                </p>
+
+              </div>
+
             </div>
 
-            {/* DERECHA */}
+            {/* ✅ DERECHA */}
             <div className="flex items-center gap-2">
 
-              <span className={`px-3 py-1 text-xs rounded-full border ${estadoStyle[estado]}`}>
-                {estadoText[estado]}
-              </span>
-
-              {estado === "pendiente" && (
-                <>
-                  <button
-                    onClick={() => onCompletar(c.id)}
-                    className="bg-green-500 text-white w-8 h-8 rounded-lg"
-                  >
-                    ✅
-                  </button>
-
-                  <button
-                    onClick={() => onEditar(c)}
-                    className="bg-blue-500 text-white w-8 h-8 rounded-lg"
-                  >
-                    ✏️
-                  </button>
-
-                  <button
-                    onClick={() => onCancelar(c.id)}
-                    className="bg-gray-500 text-white w-8 h-8 rounded-lg"
-                  >
-                    ⛔
-                  </button>
-                </>
-              )}
-
-              {estado === "atrasada" && (
-                <>
-                  <button
-                    onClick={() => onEditar(c)}
-                    className="bg-blue-500 text-white w-8 h-8 rounded-lg"
-                  >
-                    ✏️
-                  </button>
+              {/* ✅ BADGE PRO */}
 
 
-                  <button
-                    onClick={() => setCitaCancelar(c.id)}
-                    className="
-    bg-red-500 hover:bg-red-600
-    text-white w-8 h-8 rounded-lg
-    flex items-center justify-center
-    transition
+              {/* ✅ BOTONES (HOVER ONLY) */}
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="
+                flex items-center gap-1
+                opacity-0 group-hover:opacity-100
+                transition-opacity duration-200
+              "
+              >
+
+                {estado === "pendiente" && (
+                  <>
+                    <button
+                      onClick={() => onCompletar(c.id)}
+                      className="
+                      text-green-500 hover:text-green-600
+                      hover:bg-green-100
+                      p-2 rounded-md transition
+                    "
+                      title="Completar"
+                    >
+                      ✅
+                    </button>
+
+                    <button
+                      onClick={() => onEditar(c)}
+                      className="
+                      text-blue-500 hover:text-blue-600
+                      hover:bg-blue-100
+                      p-2 rounded-md transition
+                    "
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+
+                    <button
+                      onClick={() => setCitaCancelar(c)}
+                      className="
+                      text-gray-500 hover:text-gray-600
+                      hover:bg-gray-200
+                      p-2 rounded-md transition
+                    "
+                      title="Cancelar"
+                    >
+                      ⛔
+                    </button>
+                  </>
+                )}
+
+                {estado === "atrasada" && (
+                  <>
+                    <button
+                      onClick={() => onEditar(c)}
+                      className="
+                      text-blue-500 hover:text-blue-600
+                      hover:bg-blue-100
+                      p-2 rounded-md transition
+                    "
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+
+
+                    <button
+                      onClick={() => setCitaCancelar(c)}
+                      className="
+    text-red-500 hover:text-red-600
+    hover:bg-red-100
+    p-2 rounded-md transition
   "
-                    title="Cancelar cita"
-                  >
-                    ⛔
-                  </button>
+                      title="Cancelar"
+                    >
+                      ⛔
+                    </button>
 
-                </>
-              )}
+                  </>
+                )}
+
+              </div>
 
             </div>
 
           </div>
+
         );
       })}
-      
-{citaCancelar && (
-  <ConfirmModal
-    mensaje="¿Quieres cancelar esta cita? Esta acción no se puede deshacer."
-    onConfirm={() => {
-      onCancelar(citaCancelar); // ✅ cambia estado
-      setCitaCancelar(null);
-    }}
-    onCancel={() => setCitaCancelar(null)}
-  />
-)}
+
+
+
+
+      {citaCancelar && (
+        <ConfirmModal
+
+          mensaje={`
+¿Cancelar la cita de ${citaCancelar.cliente?.nombre}?
+📅 ${formatFecha(parseFechaLocal(citaCancelar.fecha))}
+⏰ ${formatHora(parseFechaLocal(citaCancelar.fecha))}
+`}
+
+          onConfirm={() => {
+            onCancelar(citaCancelar.id);
+            setCitaCancelar(null);
+          }}
+          onCancel={() => setCitaCancelar(null)}
+        />
+      )}
+
+
 
     </div>
-  
   );
-  
+
 }
 
 export default CitaList;

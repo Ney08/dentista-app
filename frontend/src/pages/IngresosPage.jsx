@@ -19,7 +19,7 @@ function IngresosPage() {
   const [busqueda, setBusqueda] = useState("");
   const [animar, setAnimar] = useState(false);
   const [limite, setLimite] = useState(8);
-  const [porPagina, setPorPagina] = useState(7);
+  const [porPagina, setPorPagina] = useState(12);
   const [orden, setOrden] = useState("fecha");
   const [pagina, setPagina] = useState(1);
   // ✅ abrir/cerrar form
@@ -137,168 +137,179 @@ function IngresosPage() {
   return (
     <PageWrapper>
 
-      <div className="space-y-4 pb-4">
+      <div className="max-w-7xl mx-auto space-y-6 pb-6 px-4">
 
-        {/* HEADER */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight flex justify-center gap-2">
-            Facturación <span>🧾</span>
+        {/* ✅ HEADER */}
+        <div className="text-center space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Facturación 🧾
           </h1>
+
           <p className="text-gray-500 text-sm">
             Gestiona ingresos y facturas
           </p>
         </div>
 
-        {/* MÉTRICA */}
-        <div className={`p-5 rounded-2xl text-center border ${totalPendiente > 0
-          ? "bg-red-50 border-red-200"
-          : "bg-green-50 border-green-200"
-          }`}>
-          <p className="text-sm font-medium">
-            {totalPendiente > 0 ? "💸 Pendiente" : "✅ Todo saldado"}
+        {/* ✅ KPI */}
+        <div className={`
+        rounded-xl border p-4 text-center
+        ${totalPendiente > 0
+            ? "bg-red-50 border-red-200"
+            : "bg-green-50 border-green-200"}
+      `}>
+
+          <p className="text-xs text-gray-500">
+            {totalPendiente > 0 ? "Pendiente" : "Todo saldado"}
           </p>
-          <p className="text-3xl font-bold">
+
+          <p className="text-2xl font-bold">
             RD$ {totalPendiente.toFixed(2)}
           </p>
+
         </div>
 
-        {/* CARD */}
-        <div className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 flex flex-col h-[70vh]">
-          <div className="space-y-4 pb-4">
-            {/* TOP */}
-            <div className="flex justify-between items-center flex-wrap gap-2">
-              <p className="text-sm text-gray-500">
-                📊 {filtrados.length} facturas • 🔴 {pendientesCount} pendientes
-              </p>
+        {/* ✅ CARD PRINCIPAL */}
+        <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col min-h-[75vh]">
 
+          {/* ✅ TOOLBAR */}
+          <div className="flex flex-wrap justify-between items-center gap-3">
 
-              <button
-                onClick={abrirNuevo}
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 rounded-lg text-sm shadow"
-              >
-                + Nuevo
-              </button>
+            <p className="text-sm text-gray-500">
+              <span className="font-medium">{filtrados.length}</span> facturas · {" "}
+              <span className="text-red-500">{pendientesCount}</span> pendientes
+            </p>
+
+            <button
+              onClick={abrirNuevo}
+              className="
+              bg-blue-500 hover:bg-blue-600
+              text-white text-sm px-4 py-2 rounded-lg
+              shadow-sm transition
+            "
+            >
+              + Nuevo
+            </button>
+
+          </div>
+          {/* ✅ TOOLBAR PRO */}
+          <div className="flex flex-wrap items-center gap-3">
+
+            {/* 🔍 BUSCADOR */}
+            <div className="flex-1">
+              <input
+                placeholder="🔍 Buscar cliente..."
+                value={busqueda}
+                onChange={(e) => {
+                  setBusqueda(e.target.value);
+                  setPagina(1);
+                }}
+                className="
+        w-full border border-gray-200
+        px-4 py-2 rounded-xl text-sm
+        focus:ring-2 focus:ring-blue-500
+      "
+              />
             </div>
 
-            {/* BUSCADOR */}
-            <input
-              placeholder="🔍 Buscar cliente..."
-              value={busqueda}
+            {/* 📌 ORDEN */}
+            <select
+              value={orden}
+              onChange={(e) => setOrden(e.target.value)}
+              className="
+      border px-3 py-2 rounded-lg text-sm
+      hover:bg-gray-50
+    "
+            >
+              <option value="fecha">Más recientes</option>
+              <option value="az">A-Z</option>
+              <option value="za">Z-A</option>
+            </select>
+
+            {/* 📄 MOSTRAR */}
+            <select
+              value={porPagina}
               onChange={(e) => {
-                setBusqueda(e.target.value);
+                const val =
+                  e.target.value === "todos"
+                    ? filtrados.length || 1
+                    : parseInt(e.target.value);
+
+                setPorPagina(val);
                 setPagina(1);
               }}
               className="
-    w-full border border-gray-300 px-4 py-2 rounded-xl
-    focus:ring-2 focus:ring-blue-500 transition
-  "
-            />
+      border px-3 py-2 rounded-lg text-sm
+      hover:bg-gray-50
+    "
+            >
+              <option value={12}>10</option>
+              <option value={20}>20</option>
+              <option value="todos">Todos</option>
+            </select>
 
-            {/* CONTROLES */}
-            <div className="flex flex-wrap justify-between items-center gap-4">
-
-              {/* IZQUIERDA */}
-              <div className="flex items-center gap-2 text-sm">
-                <span>Orden:</span>
-
-                <select
-                  value={orden}
-                  onChange={(e) => setOrden(e.target.value)}
-                  className="border px-2 py-1 rounded"
-                >
-                  <option value="az">A-Z</option>
-                  <option value="za">Z-A</option>
-                  <option value="fecha">Más recientes</option>
-                </select>
-              </div>
-
-              {/* DERECHA */}
-              <div className="flex items-center gap-2 text-sm">
-                <span>Mostrar:</span>
-
-                <select
-                  value={porPagina}
-                  onChange={(e) => {
-                    const val =
-                      e.target.value === "todos"
-                        ? filtrados.length || 1
-                        : parseInt(e.target.value);
-
-                    setPorPagina(val);
-                    setPagina(1);
-                  }}
-                  className="border px-2 py-1 rounded"
-                >
-                  <option value={7}>10</option>
-                  <option value={20}>20</option>
-                  <option value="todos">Todos</option>
-                </select>
-              </div>
-            </div>
           </div>
 
+          {/* ✅ LISTA */}
+          <div className="flex-1 min-h-0 overflow-y-auto pr-2 space-y-3">
 
-
-
-
-
-          {/* LISTA */}
-          <div className="flex-1 max-h-[calc(100vh-100px)] overflow-y-auto pr-2 pb-4">
             {filtrados.length === 0 ? (
-              <p className="text-center text-gray-400">No hay facturas</p>
+              <p className="text-center text-gray-400">
+                No hay facturas
+              </p>
             ) : (
 
-              
-                <IngresoList
-                  facturas={facturasPaginadas}
-                  porPagina={porPagina}
-                  onVerFactura={(i) => setFacturaPreview(i)}
-                  onEditar={abrirEditar}
-                  onPagar={marcarPagado}
-                />
+              <IngresoList
+                facturas={facturasPaginadas}
+                porPagina={porPagina}
+                onVerFactura={(i) => setFacturaPreview(i)}
+                onEditar={abrirEditar}
+                onPagar={marcarPagado}
+              />
 
             )}
+
           </div>
-          {/* PAGINACIÓN */}
+
+          {/* ✅ PAGINACIÓN */}
           {limite !== "all" && totalPaginas > 1 && (
-            <div className="mt-auto pt-4 border-t">
+            <div className="pt-4 border-t flex justify-center">
+
               <Paginacion
                 pagina={pagina}
                 totalPaginas={totalPaginas}
                 onChange={setPagina}
               />
+
             </div>
           )}
+
         </div>
+
       </div>
 
       {/* ✅ MODAL FORM */}
-
       <div
-      onClick={cerrarModal}
+        onClick={cerrarModal}
         className={`
-    fixed inset-0 z-50
-    flex items-center justify-center
-    overflow-y-auto 
-    transition-all duration-200 ease-out
-    ${modalAbierto
-            ? "opacity-100 visible bg-black/40 backdrop-blur-md"
+        fixed inset-0 z-50 flex items-center justify-center
+        transition-all duration-200
+        ${modalAbierto
+            ? "opacity-100 visible bg-black/40 backdrop-blur-sm"
             : "opacity-0 invisible"}
-  `}
+      `}
       >
-        {modalAbierto && (
 
-          <div className="w-full max-w-2xl px-4 my-10"> {/* ✅ margen vertical */}
+        {modalAbierto && (
+          <div className="w-full max-w-2xl px-4">
 
             <div
               onClick={(e) => e.stopPropagation()}
               className={`
-        w-full max-w-2xl transform transition-all duration-200 ease-out
-        ${animar
-                  ? "scale-100 opacity-100 translate-y-0"
-                  : "scale-95 opacity-0 translate-y-6"}
-      `}
-
+              transform transition-all duration-200
+              ${animar
+                  ? "scale-100 opacity-100"
+                  : "scale-95 opacity-0"}
+            `}
             >
               <IngresoForm
                 key={editando?.id || "nuevo"}
@@ -309,27 +320,31 @@ function IngresosPage() {
             </div>
 
           </div>
-
         )}
 
       </div>
 
       {/* ✅ MODAL FACTURA */}
       <div className={`
-        fixed inset-0 z-50 flex items-center justify-center
-        ${facturaPreview ? "bg-black/40 backdrop-blur-md" : "pointer-events-none"}
-        transition
-      `}>
+      fixed inset-0 z-50 flex items-center justify-center
+      ${facturaPreview
+          ? "bg-black/40 backdrop-blur-sm"
+          : "pointer-events-none"}
+      transition
+    `}>
+
         {facturaPreview && (
           <FacturaModal
             ingreso={facturaPreview}
             onClose={() => setFacturaPreview(null)}
           />
         )}
+
       </div>
 
-    </PageWrapper >
+    </PageWrapper>
   );
+
 }
 
 export default IngresosPage;

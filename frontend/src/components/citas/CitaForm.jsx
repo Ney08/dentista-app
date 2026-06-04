@@ -242,40 +242,41 @@ function CitaForm({ clientes, cita, clientePreset, onCrear, onClose }) {
   };
   return (
     <div className="
-w-full max-w-3xl
-  bg-white rounded-3xl
-  shadow-xl border border-gray-100
-  p-10 space-y-10
-  animate-fadeIn
-">
+    w-full max-w-3xl
+    bg-white rounded-2xl
+    shadow-lg border border-gray-200
+    p-6 space-y-6
+  ">
 
-      <div className="text-center">
-        <h2 className="text-xl font-bold">
-          {isEdit ? "✏️ Editar cita" : "Nueva cita 📅"}
+      {/* ✅ HEADER */}
+      <div className="text-center space-y-1">
+        <h2 className="text-2xl font-semibold tracking-tight">
+          {isEdit ? "Editar cita ✏️" : "Nueva cita 📅"}
         </h2>
-        <p className="text-sm text-gray-500">
-          {isEdit ? "Modifica los datos de la cita" : "Selecciona cliente y servicio"}
+
+        <p className="text-gray-500 text-sm">
+          {isEdit
+            ? "Modifica los datos de la cita"
+            : "Selecciona cliente y servicio"}
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <form className="grid md:grid-cols-2 gap-5">
 
-        {/* LEFT */}
+        {/* ✅ LEFT */}
         <div className="space-y-4">
 
-          {/* ✅ CLIENTE PRESELECCIONADO */}
           {clientePreset && (
-
-            <div className="bg-blue-50 border border-blue-200 p-2 rounded-lg text-sm flex items-center gap-2">
-              👤 Cliente:
+            <div className="
+            bg-blue-50 border border-blue-200
+            px-3 py-2 rounded-lg text-sm flex items-center gap-2
+          ">
+              👤 <span className="text-gray-600">Cliente:</span>
               <strong>
                 {clientePreset.nombre} {clientePreset.apellido}
               </strong>
             </div>
-
           )}
-
-          {/* SELECT CLIENTE */}
 
           <select
             value={clienteId}
@@ -284,15 +285,12 @@ w-full max-w-3xl
             className="input"
           >
             <option value="">Cliente</option>
-
             {clientes.map(c => (
               <option key={c.id} value={c.id}>
                 {c.nombre} {c.apellido}
               </option>
             ))}
           </select>
-
-
 
           <select
             value={motivo}
@@ -326,48 +324,47 @@ w-full max-w-3xl
 
         </div>
 
-        {/* RIGHT */}
+        {/* ✅ RIGHT */}
         <div className="space-y-3">
 
-          <div className="border rounded-lg p-2">
-
+          <div className="
+          border border-gray-200 rounded-xl
+          p-3 bg-gray-50
+        ">
             <Calendar
               value={fechaBase}
               onChange={(date) => {
-
                 if (estaDiaLleno(date)) {
                   toast.error("Día lleno 🚫");
                   return;
                 }
-
                 setFechaBase(date);
               }}
               minDate={getHoy()}
               tileDisabled={({ date }) => estaDiaLleno(date)}
             />
-
           </div>
 
           <p className="text-xs text-gray-400">
             Horarios disponibles
           </p>
 
-          <div className="grid grid-cols-3 gap-2 max-h-44 overflow-y-auto pr-1 horas-scroll">
+          <div className="
+          grid grid-cols-3 gap-2
+          max-h-44 overflow-y-auto pr-1 horas-scroll
+        ">
 
             {generarHoras().map((h) => {
 
               const fechaTest = new Date(`${fechaBase.toISOString().split("T")[0]}T${h}`);
-              // hora utc-4 -> local
               const ahora = new Date();
 
-              // ✅ bloquear pasado
               const esPasado = esHoy(fechaBase) && fechaTest < ahora;
-
-              // ✅ ocupado
               const ocupada = estaOcupada(fechaTest);
 
               return (
                 <button
+                  type="button"
                   key={h}
                   disabled={ocupada || esPasado}
                   onClick={() => {
@@ -377,92 +374,81 @@ w-full max-w-3xl
                     }
                   }}
                   className={`
-        text-sm px-2 py-2 rounded-lg border transition-all
-        ${ocupada || esPasado
+    text-xs py-2 rounded-lg border transition
+    ${ocupada || esPasado
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                       : hora === h
-                        ? "bg-blue-500 text-white shadow-md scale-105 ring-2 ring-blue-300"
-                        : "hover:bg-blue-50"
-                    }
-      `}
-                  title={
-                    esPasado
-                      ? "Hora pasada"
-                      : ocupada
-                        ? "Horario ocupado"
-                        : "Disponible"
-                  }
+                        ? "bg-blue-500 text-white shadow-sm ring-2 ring-blue-300"
+                        : "hover:bg-blue-50"}
+  `}
                 >
                   {h}
                 </button>
               );
             })}
 
-
           </div>
 
         </div>
 
+      </form>
+
+      {/* ✅ RESUMEN (MEJORADO) */}
+      <div className={`
+      border rounded-xl p-4 text-sm
+      ${hora && clienteId
+          ? "bg-blue-50 border-blue-200"
+          : "bg-gray-50 border-gray-200 opacity-70"}
+      transition
+    `}>
+
+        <p className="font-semibold text-gray-700">
+          {hora && clienteId ? "✅ Cita seleccionada" : "Selecciona una hora"}
+        </p>
+
+        {hora && clienteId && (
+          <>
+            <p className="text-blue-600">
+              {formatFecha(fechaBase)} — {hora}
+            </p>
+
+            <p className="text-gray-500">
+              {motivo || "Sin servicio"} • {duracion} min
+            </p>
+          </>
+        )}
+
       </div>
 
-      {hora && clienteId && (
-
-        <div
-          className={`
-    bg-blue-50 border border-blue-200 p-3 rounded-lg text-sm
-    transition-all duration-200
-    ${hora && clienteId ? "opacity-100" : "opacity-0 pointer-events-none"}
-    min-h-[80px]
-  `}
-        >
-
-
-          <p className="font-semibold text-blue-700">
-            ✅ Cita seleccionada
-          </p>
-
-
-          <p className="text-blue-600">
-            {formatFecha(fechaBase)} — {hora}
-          </p>
-
-
-          <p className="text-gray-600">
-            {motivo || "Sin servicio"} • {duracion} min
-          </p>
-
-        </div>
-      )}
-
-      <div className="flex flex-col gap-2">
+      {/* ✅ BOTONES PRO */}
+      <div className="space-y-2">
 
         <button
           onClick={guardar}
           disabled={loading}
-          className="
-  w-full bg-gradient-to-r from-blue-500 to-blue-600
-  hover:from-blue-600 hover:to-blue-700
-  text-white py-3 rounded-xl font-medium
-  shadow-md transition
-    "
+          className={`
+          w-full py-2.5 rounded-xl font-medium
+          text-white transition
+
+          ${loading
+              ? "bg-gray-400"
+              : "bg-blue-500 hover:bg-blue-600"}
+        `}
         >
           {loading
             ? "Guardando..."
             : isEdit
-              ? "✅ Guardar cambios"
-              : "✅ Crear cita"}
+              ? "Guardar cambios"
+              : "Crear cita"}
         </button>
 
-        {/* ✅ NUEVO BOTÓN CANCELAR */}
         <button
           onClick={onClose}
           className="
-      w-full py-3 rounded-xl text-white font-semibold
-      bg-gradient-to-r from-red-500 to-red-600
-      shadow-md hover:shadow-lg
-      hover:scale-[1.02] active:scale-95
-      transition
-    "
+          w-full py-2.5 rounded-xl
+          bg-gray-100 hover:bg-gray-200
+          text-gray-700 transition
+        "
         >
           Cancelar
         </button>

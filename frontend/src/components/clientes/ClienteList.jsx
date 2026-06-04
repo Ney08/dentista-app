@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function ClienteList({
   clientes,
-  onEliminarClick,
   onEditarClick,
   onSeleccionar,
   onToggleActivo
 }) {
 
   const navigate = useNavigate();
+  const [seleccionadoId, setSeleccionadoId] = useState(null);
 
-  // 🎨 colores dinámicos
   const colores = [
     "bg-blue-500",
     "bg-green-500",
@@ -20,54 +20,73 @@ function ClienteList({
   ];
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
 
       {clientes.map(cliente => {
 
         const color = colores[cliente.id % colores.length];
+        const isSelected = seleccionadoId === cliente.id;
 
         return (
 
           <div
             key={cliente.id}
-            onClick={() => onSeleccionar?.(cliente)}
-            className="
-              flex flex-col md:flex-row md:items-center md:justify-between
-              gap-4
-              bg-white
-              border border-gray-200 border-l-4 border-blue-500
-              rounded-xl p-4
-              cursor-pointer
-              shadow-sm hover:shadow-md hover:-translate-y-[2px]
-              transition-transform duration-200
-            "
+            onClick={() => {
+              setSeleccionadoId(cliente.id);
+              onSeleccionar?.(cliente);
+            }}
+            className={`
+              group flex items-center justify-between
+              bg-white border rounded-xl p-4
+              transition-all duration-200 ease-out cursor-pointer
+
+              ${isSelected
+                ? "ring-2 ring-blue-400 bg-blue-50 border-blue-300"
+                : "border-gray-200 hover:shadow-md hover:bg-gray-50"}
+            `}
           >
 
             {/* ✅ IZQUIERDA */}
             <div className="flex items-center gap-4">
 
-              {/* 🔵 AVATAR DINÁMICO PRO */}
+              {/* 🔵 AVATAR */}
               <div
                 className={`${color}
-                w-12 h-12 rounded-full text-white
-                flex items-center justify-center
-                font-semibold text-lg shadow-md`}
+                  w-10 h-10 rounded-full text-white
+                  flex items-center justify-center
+                  font-semibold text-sm shadow-sm`}
               >
                 {cliente.nombre?.charAt(0)?.toUpperCase()}
               </div>
 
               {/* 🧾 INFO */}
-              <div className="space-y-1">
+              <div className="space-y-1 leading-tight">
 
-                <p className="text-lg font-semibold text-gray-800">
-                  {cliente.nombre} {cliente.apellido}
+                <div className="flex items-center gap-2 flex-wrap">
+
+                  <p className="text-sm font-semibold text-gray-800">
+                    {cliente.nombre} {cliente.apellido}
+                  </p>
+
+                  {/* ✅ BADGE ESTADO PRO */}
+                  <span
+                    className={`
+                      text-[11px] font-medium px-2 py-[2px] rounded-full
+                      ${cliente.activo
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-600"}
+                    `}
+                  >
+                    {cliente.activo ? "Activo" : "Inactivo"}
+                  </span>
+
+                </div>
+
+                <p className="text-xs text-gray-400">
+                  ID: {cliente.cedula}
                 </p>
 
-                <p className="text-sm text-gray-400">
-                  🆔 {cliente.cedula}
-                </p>
-
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-600">
                   📞 {cliente.telefono}
                 </p>
 
@@ -83,13 +102,17 @@ function ClienteList({
               </div>
             </div>
 
-            {/* ✅ DERECHA */}
+            {/* ✅ DERECHA (acciones hover PRO) */}
             <div
-              className="flex gap-2 justify-end flex-wrap"
               onClick={(e) => e.stopPropagation()}
+              className="
+                flex items-center gap-2
+                opacity-0 group-hover:opacity-100
+                transition-opacity duration-200
+              "
             >
 
-              {/* 🔥 CREAR CITA */}
+              {/* 🔥 ACCIÓN PRINCIPAL */}
               <button
                 onClick={() => {
                   navigate("/citas", {
@@ -103,10 +126,10 @@ function ClienteList({
                   });
                 }}
                 className="
-                  flex items-center gap-1 px-3 py-1.5
                   bg-blue-500 hover:bg-blue-600
-                  text-white text-sm font-medium
-                  rounded-lg
+                  text-white text-xs font-medium
+                  px-3 py-1.5 rounded-md shadow-sm
+                  transition
                 "
               >
                 + Cita
@@ -116,30 +139,28 @@ function ClienteList({
               <button
                 onClick={() => onEditarClick(cliente)}
                 className="
-                  flex items-center gap-1 px-3 py-1.5
-                  bg-yellow-500 hover:bg-yellow-600
-                  text-white text-sm font-medium
-                  rounded-lg
+                  text-gray-500 hover:text-gray-700
+                  hover:bg-gray-200
+                  p-2 rounded-md transition
                 "
+                title="Editar"
               >
-                ✏️ Editar
+                ✏️
               </button>
 
-              {/* 🗑 Desactivar */}
-
+              {/* 🚫 TOGGLE */}
               <button
                 onClick={() => onToggleActivo(cliente)}
                 className={`
-    flex items-center gap-1 px-3 py-1.5
-    text-white text-sm rounded-lg
-    ${cliente.activo
-                    ? "bg-red-500 hover:bg-red-600"
-                    : "bg-green-500 hover:bg-green-600"}
-  `}
+                  p-2 rounded-md transition
+                  ${cliente.activo
+                    ? "text-red-500 hover:bg-red-100"
+                    : "text-green-600 hover:bg-green-100"}
+                `}
+                title={cliente.activo ? "Desactivar" : "Activar"}
               >
-                {cliente.activo ? "🚫 Desactivar" : "✅ Activar"}
+                {cliente.activo ? "🚫" : "✅"}
               </button>
-
 
             </div>
 

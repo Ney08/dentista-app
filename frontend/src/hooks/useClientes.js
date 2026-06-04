@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getClientes,
   crearCliente,
-  eliminarCliente,
   actualizarCliente
 } from "../components/services/clienteService";
 
