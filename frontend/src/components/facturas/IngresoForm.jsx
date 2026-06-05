@@ -583,8 +583,14 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
                 <input
                   type="number"
                   value={s.monto}
-                  disabled
-                  className="input h-12 sm:h-11 text-base sm:text-sm bg-gray-100"
+                  onChange={(e) =>
+                    actualizarServicio(
+                      index,
+                      "monto",
+                      e.target.value
+                    )
+                  }
+                  className="input h-12 sm:h-11 text-base sm:text-sm"
                 />
 
               </div>

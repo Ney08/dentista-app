@@ -90,17 +90,51 @@ function CitasPage() {
   };
 
   const citasFiltradas = citas.filter(c => {
-    const f = parseFechaLocal(c.fecha);
 
+    const fecha = parseFechaLocal(c.fecha);
+
+    // ✅ HOY
     if (filtro === "hoy") {
+
       return (
-        f.getDate() === hoy.getDate() &&
-        f.getMonth() === hoy.getMonth() &&
-        f.getFullYear() === hoy.getFullYear()
+        fecha.getDate() === hoy.getDate() &&
+        fecha.getMonth() === hoy.getMonth() &&
+        fecha.getFullYear() === hoy.getFullYear()
       );
+
     }
 
+    // ✅ PENDIENTES
+    if (filtro === "pendientes") {
+
+      return getEstado(c) === "pendiente";
+
+    }
+
+    // ✅ ATRASADAS
+    if (filtro === "atrasadas") {
+
+      return getEstado(c) === "atrasada";
+
+    }
+
+    // ✅ COMPLETADAS
+    if (filtro === "completadas") {
+
+      return c.estado === "completada";
+
+    }
+
+    // ✅ CANCELADAS
+    if (filtro === "canceladas") {
+
+      return c.estado === "cancelada";
+
+    }
+
+    // ✅ TODAS
     return true;
+
   });
 
   const citasActivas = citas.filter(c => c.estado !== "cancelada");
@@ -189,12 +223,13 @@ function CitasPage() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[72vh] sm:h-[75vh] lg:h-[78vh] p-4 sm:p-5 gap-4 overflow-hidden">
           <div className="space-y-4 pb-4">
             {/* TOP BAR */}
+            
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
 
               {/* IZQUIERDA */}
               <div className="flex flex-wrap gap-2">
 
-                <span className="px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg text-sm">
+                {/* <span className="px-3 py-1.5 bg-yellow-100 text-yellow-700 rounded-lg text-sm">
                   🟡 {pendientes}
                 </span>
 
@@ -208,10 +243,236 @@ function CitasPage() {
 
                 <span className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm">
                   ⛔ {canceladas}
-                </span>
-
+                </span> */}
+                
               </div>
+              {/* ✅ FILTROS PREMIUM */}
+<div className="
+  sticky top-0 z-20
+  bg-white
+  rounded-2xl
+  border border-gray-200
+  p-2
+  shadow-sm
+  overflow-x-auto
+  no-scrollbar
+">
 
+  <div className="flex gap-2 min-w-max">
+
+    {/* ✅ HOY */}
+    <button
+      onClick={() => {
+        setFiltro("hoy");
+        setPagina(1);
+      }}
+      className={`
+        flex items-center gap-2
+        px-4 sm:px-5 h-10 sm:h-11
+        rounded-2xl
+        whitespace-nowrap
+        text-sm font-medium
+        transition-all duration-200
+        active:scale-[0.98]
+
+        ${filtro === "hoy"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+          : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
+      `}
+    >
+      <span>Hoy</span>
+
+      <span className={`
+        px-2 py-0.5 rounded-full text-xs font-semibold
+
+        ${filtro === "hoy"
+          ? "bg-white/20 text-white"
+          : "bg-blue-100 text-blue-700"}
+      `}>
+        {
+          citas.filter(c => {
+
+            const fecha = parseFechaLocal(c.fecha);
+
+            return (
+              fecha.getDate() === hoy.getDate() &&
+              fecha.getMonth() === hoy.getMonth() &&
+              fecha.getFullYear() === hoy.getFullYear()
+            );
+
+          }).length
+        }
+      </span>
+    </button>
+
+    {/* ✅ PENDIENTES */}
+    <button
+      onClick={() => {
+        setFiltro("pendientes");
+        setPagina(1);
+      }}
+      className={`
+        flex items-center gap-2
+        px-4 sm:px-5 h-10 sm:h-11
+        rounded-2xl
+        whitespace-nowrap
+        text-sm font-medium
+        transition-all duration-200
+        active:scale-[0.98]
+
+        ${filtro === "pendientes"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+          : "bg-gray-100 hover:bg-yellow-50 text-yellow-700"}
+      `}
+    >
+      <span>Pendientes</span>
+
+      <span className={`
+        px-2 py-0.5 rounded-full text-xs font-semibold
+
+        ${filtro === "pendientes"
+          ? "bg-white/20 text-white"
+          : "bg-yellow-100 text-yellow-700"}
+      `}>
+        {pendientes}
+      </span>
+    </button>
+
+    {/* ✅ ATRASADAS */}
+    <button
+      onClick={() => {
+        setFiltro("atrasadas");
+        setPagina(1);
+      }}
+      className={`
+        flex items-center gap-2
+        px-4 sm:px-5 h-10 sm:h-11
+        rounded-2xl
+        whitespace-nowrap
+        text-sm font-medium
+        transition-all duration-200
+        active:scale-[0.98]
+
+        ${filtro === "atrasadas"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+          : "bg-gray-100 hover:bg-red-50 text-red-700"}
+      `}
+    >
+      <span>Atrasadas</span>
+
+      <span className={`
+        px-2 py-0.5 rounded-full text-xs font-semibold
+
+        ${filtro === "atrasadas"
+          ? "bg-white/20 text-white"
+          : "bg-red-100 text-red-700"}
+      `}>
+        {atrasadas}
+      </span>
+    </button>
+
+    {/* ✅ COMPLETADAS */}
+    <button
+      onClick={() => {
+        setFiltro("completadas");
+        setPagina(1);
+      }}
+      className={`
+        flex items-center gap-2
+        px-4 sm:px-5 h-10 sm:h-11
+        rounded-2xl
+        whitespace-nowrap
+        text-sm font-medium
+        transition-all duration-200
+        active:scale-[0.98]
+
+        ${filtro === "completadas"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+          : "bg-gray-100 hover:bg-green-50 text-green-700"}
+      `}
+    >
+      <span>Completadas</span>
+
+      <span className={`
+        px-2 py-0.5 rounded-full text-xs font-semibold
+
+        ${filtro === "completadas"
+          ? "bg-white/20 text-white"
+          : "bg-green-100 text-green-700"}
+      `}>
+        {completadas}
+      </span>
+    </button>
+
+    {/* ✅ CANCELADAS */}
+    <button
+      onClick={() => {
+        setFiltro("canceladas");
+        setPagina(1);
+      }}
+      className={`
+        flex items-center gap-2
+        px-4 sm:px-5 h-10 sm:h-11
+        rounded-2xl
+        whitespace-nowrap
+        text-sm font-medium
+        transition-all duration-200
+        active:scale-[0.98]
+
+        ${filtro === "canceladas"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+          : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
+      `}
+    >
+      <span>Canceladas</span>
+
+      <span className={`
+        px-2 py-0.5 rounded-full text-xs font-semibold
+
+        ${filtro === "canceladas"
+          ? "bg-white/20 text-white"
+          : "bg-gray-200 text-gray-700"}
+      `}>
+        {canceladas}
+      </span>
+    </button>
+
+    {/* ✅ TODAS */}
+    <button
+      onClick={() => {
+        setFiltro("all");
+        setPagina(1);
+      }}
+      className={`
+        flex items-center gap-2
+        px-4 sm:px-5 h-10 sm:h-11
+        rounded-2xl
+        whitespace-nowrap
+        text-sm font-medium
+        transition-all duration-200
+        active:scale-[0.98]
+
+        ${filtro === "all"
+          ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
+          : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
+      `}
+    >
+      <span>Todas</span>
+
+      <span className={`
+        px-2 py-0.5 rounded-full text-xs font-semibold
+
+        ${filtro === "all"
+          ? "bg-white/20 text-white"
+          : "bg-black text-white"}
+      `}>
+        {citas.length}
+      </span>
+    </button>
+
+  </div>
+
+</div>
               {/* DERECHA */}
               <div className="flex flex-col sm:flex-row gap-2 sm:items-center w-full lg:w-auto">
                 <select

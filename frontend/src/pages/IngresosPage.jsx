@@ -345,7 +345,7 @@ function IngresosPage() {
               value={porPagina}
               onChange={(e) => {
                 const val =
-                  e.target.value === "todos"
+                  e.target.value === "all"
                     ? filtrados.length || 1
                     : parseInt(e.target.value);
 

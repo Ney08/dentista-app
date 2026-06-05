@@ -13,20 +13,50 @@
   },
   {
     "id": 3,
-    "nombre": "Dolor dental",
-    "descripcion": "Consulta por dolor",
-    "precio": 2000
-  },
-  {
-    "id": 4,
     "nombre": "Ortodoncia",
     "descripcion": "Evaluación ortodóntica",
     "precio": 5000
   },
   {
-    "id": 5,
-    "nombre": "Control",
+    "id": 4,
+    "nombre": "Evaluacion",
     "descripcion": "Revisión general",
     "precio": 1000
+  },
+  {
+    "id": 5,
+    "nombre": "Endo-doncia",
+    "descripcion": "Pre-molares",
+    "precio": 14500
+  },
+  {
+    "id": 6,
+    "nombre": "Protesis-dental",
+    "descripcion": "Revisión general",
+    "precio": 1000
+  },
+   {
+    "id": 7,
+    "nombre": "Limpieza profunda",
+    "descripcion": "Revisión general",
+    "precio": 1000
+  },
+  {
+    "id": 8,
+    "nombre": "Endo-doncia",
+    "descripcion": "Molares",
+    "precio": 17500
+  },
+  {
+    "id": 9,
+    "nombre": "Endo-doncia",
+    "descripcion": "Canino",
+    "precio": 15000
+  },
+  {
+    "id": 8,
+    "nombre": "Endo-doncia",
+    "descripcion": "Centrales y laterales",
+    "precio": 12500
   }
 ]
