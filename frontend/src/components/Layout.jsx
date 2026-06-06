@@ -63,6 +63,14 @@ function Layout({ children }) {
       label: "Facturación",
       mobileLabel: "Facturas"
     },
+
+    {
+      path: "/egresos",
+      icon: "💸",
+      label: "Egresos",
+      mobileLabel: "Egresos"
+    },
+
     {
       path: "/reportes",
       icon: "📊",

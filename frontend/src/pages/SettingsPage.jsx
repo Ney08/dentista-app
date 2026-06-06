@@ -10,6 +10,7 @@ import ClientesInactivosTab from "../components/settings/ClientesInactivosTab";
 import ServiciosTab from "../components/settings/ServiciosTab";
 
 function SettingsPage() {
+
   const { updateUser } = useUser();
 
   const [username, setUsername] = useState("");
@@ -32,7 +33,7 @@ function SettingsPage() {
     clientes: clientesInactivos,
     isLoading: clientesLoading,
     toggleCliente
-  } = useClientes(false); // 🔥 SOLO INACTIVOS
+  } = useClientes(false);
 
   const [servicioAEliminar, setServicioAEliminar] = useState(null);
   const [modalServicio, setModalServicio] = useState(false);
@@ -40,18 +41,15 @@ function SettingsPage() {
 
   const USER_ID = 1;
 
-  const btn = `
-    w-full py-2 rounded-lg text-white font-medium
-    transition-all duration-200 active:scale-[0.98]
-  `;
-
   // ✅ GUARDAR USUARIO
   const guardarUsuario = async () => {
+
     if (!username.trim()) {
       return toast.error("Usuario vacío ❌");
     }
 
     try {
+
       setLoading(true);
 
       await updateUser(
@@ -61,17 +59,24 @@ function SettingsPage() {
       );
 
       toast.success("Usuario actualizado ✅");
+
       setPassword("");
 
     } catch (error) {
+
       toast.error(error.message);
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
   // ✅ CAMBIAR PASSWORD
   const cambiarPassword = () => {
+
     if (!password || !nuevoPassword) {
       return toast.error("Completa los campos ❌");
     }
@@ -81,10 +86,13 @@ function SettingsPage() {
     }
 
     setMostrarConfirmacion(true);
+
   };
 
   const confirmarCambioPassword = async () => {
+
     try {
+
       setLoading(true);
 
       await updateUser(
@@ -100,14 +108,18 @@ function SettingsPage() {
       setMostrarConfirmacion(false);
 
     } catch (error) {
+
       toast.error(error.message);
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
-
-
+  // ✅ GUARDAR SERVICIO
   const guardarServicio = async (data) => {
 
     if (!data.nombre.trim()) {
@@ -121,240 +133,255 @@ function SettingsPage() {
     try {
 
       if (data.id) {
-        // ✅ EDITAR
-        await actualizarServicio({
+
+        await actualizarServicio.mutateAsync({
           id: data.id,
           nombre: data.nombre,
           descripcion: data.descripcion,
-          precio: parseFloat(data.precio)
+          precio: parseFloat(data.precio),
+          costo_servicio: parseFloat(data.costo_servicio || 0)
         });
 
         toast.success("Servicio actualizado ✏️");
 
       } else {
-        // ✅ CREAR
-        await agregarServicio({
+
+        await agregarServicio.mutateAsync({
           nombre: data.nombre,
           descripcion: data.descripcion,
-          precio: parseFloat(data.precio)
+          precio: parseFloat(data.precio),
+          costo_servicio: parseFloat(data.costo_servicio || 0)
         });
 
         toast.success("Servicio agregado ✅");
+
       }
 
       setModalServicio(false);
       setServicioEditar(null);
 
     } catch {
+
       toast.error("Error ❌");
-      console.log(data.id);
+
     }
+
   };
-  if (
-    clientesLoading ||
-    serviciosLoading
-  ) {
+
+  // ✅ LOADING
+  if (clientesLoading || serviciosLoading) {
+
     return (
+
       <PageWrapper>
 
         <div className="max-w-5xl mx-auto space-y-6">
 
-          {/* HEADER */}
           <div className="space-y-3 text-center">
 
-            <div className="
-            h-8 w-56 mx-auto
-            bg-gray-300 rounded-xl
-            animate-pulse
-          " />
+            <div className="h-10 w-64 mx-auto bg-gray-300 rounded-2xl animate-pulse" />
 
-            <div className="
-            h-4 w-40 mx-auto
-            bg-gray-200 rounded-xl
-            animate-pulse
-          " />
+            <div className="h-4 w-40 mx-auto bg-gray-200 rounded-xl animate-pulse" />
 
           </div>
 
-          {/* CARDS */}
           <div className="grid md:grid-cols-2 gap-5">
 
-            <div className="
-            h-56 rounded-2xl
-            bg-gray-200 animate-pulse
-          " />
+            <div className="h-56 rounded-3xl bg-gray-200 animate-pulse" />
 
-            <div className="
-            h-56 rounded-2xl
-            bg-gray-200 animate-pulse
-          " />
+            <div className="h-56 rounded-3xl bg-gray-200 animate-pulse" />
 
           </div>
 
-          {/* TABLA */}
-          <div className="
-          h-[300px]
-          rounded-2xl
-          bg-gray-200
-          animate-pulse
-        " />
+          <div className="h-[300px] rounded-3xl bg-gray-200 animate-pulse" />
 
         </div>
 
       </PageWrapper>
+
     );
+
   }
+
   return (
+
     <PageWrapper>
 
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-0 space-y-5 sm:space-y-6">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-0 space-y-6">
 
         {/* HEADER */}
-        <div className="text-center space-y-1 sm:space-y-2 pt-2">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Configuración ⚙️</h1>
-          <p className="text-sm text-gray-500">
-            Administra tu cuenta y seguridad
+        <div className="text-center space-y-2 pt-2">
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-slate-800 to-slate-500 bg-clip-text text-transparent">
+            Configuración ⚙️
+          </h1>
+
+          <p className="text-sm sm:text-base text-gray-500">
+            Administra tu cuenta, seguridad y servicios
           </p>
+
         </div>
 
         {/* TABS */}
         <div className="flex overflow-x-auto sm:justify-center gap-2 pb-2 no-scrollbar">
-         {["cuenta", "servicios", "clientes"].map(t => (
+
+          {["cuenta", "servicios", "clientes"].map((t) => (
+
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`
-                px-4 sm:px-5 h-10 sm:h-11 rounded-2xl whitespace-nowrap text-sm transition-all duration-200 shrink-0"
+                px-4 sm:px-5 h-11 rounded-2xl whitespace-nowrap text-sm font-medium shrink-0 transition-all duration-200
                 ${tab === t
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm"
-                 : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-200/50"
+                  : "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 shadow-sm"}
               `}
             >
+
               {t === "cuenta" && "👤 Cuenta"}
               {t === "servicios" && "🧾 Servicios"}
               {t === "clientes" && "🚫 Clientes inactivos"}
+
             </button>
+
           ))}
+
         </div>
 
-        {/* ✅ CUENTA */}
-{tab === "cuenta" && (
-  <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-7 space-y-6 sm:space-y-7 overflow-hidden">
+        {/* CUENTA */}
+        {tab === "cuenta" && (
 
-    {/* PERFIL */}
-    <div className="space-y-3 sm:space-y-4">
+          <div className="bg-white/90 backdrop-blur-xl rounded-[32px] border border-white/40 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-300 p-5 sm:p-7 space-y-8 overflow-hidden">
 
-      <div>
-        <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-gray-800">
-          Perfil
-        </h3>
+            {/* PERFIL */}
+            <div className="space-y-5">
 
-        <p className="text-sm text-gray-500">
-          Administra tu información de acceso
-        </p>
-      </div>
+              <div>
 
-      <input
-        type="text"
-        placeholder="Nombre de usuario"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        className="input h-11 sm:h-12 rounded-2xl border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 text-sm sm:text-base"
-      />
+                <h3 className="text-xl font-bold tracking-tight text-gray-800">
+                  Perfil
+                </h3>
 
-      <button
-        onClick={guardarUsuario}
-        disabled={loading}
-        className={`${btn} h-12 rounded-2xl shadow-sm ${loading
-          ? "bg-gray-400"
-          : "bg-blue-500 hover:bg-blue-600"
-          }`}
-      >
-        {loading ? "Guardando..." : "💾 Guardar usuario"}
-      </button>
+                <p className="text-sm text-gray-500 mt-1">
+                  Administra tu información de acceso
+                </p>
 
-    </div>
+              </div>
 
-    {/* DIVIDER */}
-    <div className="border-t border-dashed border-gray-200 my-1" />
+              <input
+                type="text"
+                placeholder="Nombre de usuario"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full h-12 sm:h-14 rounded-2xl border border-gray-200 bg-white/70 px-4 text-sm sm:text-base outline-none transition-all duration-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 hover:border-blue-200"
+              />
 
-    {/* PASSWORD */}
-    <div className="space-y-3 sm:space-y-4">
+              <button
+                onClick={guardarUsuario}
+                disabled={loading}
+                className={`
+                  w-full h-12 sm:h-14 rounded-2xl text-white font-semibold transition-all duration-200 active:scale-[0.98]
+                  ${loading
+                    ? "bg-gray-400"
+                    : "bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-200/50 hover:scale-[1.01]"}
+                `}
+              >
+                {loading ? "Guardando..." : "💾 Guardar usuario"}
+              </button>
 
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800">
-          Seguridad
-        </h3>
+            </div>
 
-        <p className="text-sm text-gray-500 leading-relaxed">
-          Cambia tu contraseña de acceso
-        </p>
-      </div>
+            {/* DIVIDER */}
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
-      <input
-        type="password"
-        placeholder="Contraseña actual"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="input h-11 sm:h-12 rounded-2xl border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 text-sm sm:text-base"
-      />
+            {/* PASSWORD */}
+            <div className="space-y-5">
 
-      <input
-        type="password"
-        placeholder="Nueva contraseña"
-        value={nuevoPassword}
-        onChange={(e) => setNuevoPassword(e.target.value)}
-        className="input h-11 sm:h-12 rounded-2xl border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 text-sm sm:text-base"
-      />
+              <div>
 
-      <button
-        onClick={cambiarPassword}
-        disabled={loading}
-        className={`${btn} h-11 sm:h-12 rounded-2xl shadow-sm text-sm sm:text-base ${loading
-          ? "bg-gray-400"
-          : "bg-green-500 hover:bg-green-600"
-          }`}
-      >
-        {loading ? "Aplicando..." : "🔐 Cambiar contraseña"}
-      </button>
+                <h3 className="text-xl font-bold tracking-tight text-gray-800">
+                  Seguridad
+                </h3>
 
-    </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Cambia tu contraseña de acceso
+                </p>
 
-  </div>
-)}
+              </div>
 
-        {/* ✅ SERVICIOS */}
+              <input
+                type="password"
+                placeholder="Contraseña actual"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-12 sm:h-14 rounded-2xl border border-gray-200 bg-white/70 px-4 text-sm sm:text-base outline-none transition-all duration-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 hover:border-blue-200"
+              />
 
+              <input
+                type="password"
+                placeholder="Nueva contraseña"
+                value={nuevoPassword}
+                onChange={(e) => setNuevoPassword(e.target.value)}
+                className="w-full h-12 sm:h-14 rounded-2xl border border-gray-200 bg-white/70 px-4 text-sm sm:text-base outline-none transition-all duration-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 hover:border-blue-200"
+              />
+
+              <button
+                onClick={cambiarPassword}
+                disabled={loading}
+                className={`
+                  w-full h-12 sm:h-14 rounded-2xl text-white font-semibold transition-all duration-200 active:scale-[0.98]
+                  ${loading
+                    ? "bg-gray-400"
+                    : "bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 shadow-lg shadow-green-200/50 hover:scale-[1.01]"}
+                `}
+              >
+                {loading ? "Aplicando..." : "🔐 Cambiar contraseña"}
+              </button>
+
+            </div>
+
+          </div>
+
+        )}
+
+        {/* SERVICIOS */}
         {tab === "servicios" && (
+
           <ServiciosTab
             servicios={servicios}
             setModalServicio={setModalServicio}
             setServicioEditar={setServicioEditar}
             setServicioAEliminar={setServicioAEliminar}
           />
+
         )}
 
-
+        {/* CLIENTES */}
         {tab === "clientes" && (
+
           <ClientesInactivosTab
             clientesInactivos={clientesInactivos}
             toggleCliente={toggleCliente}
           />
+
         )}
 
       </div>
 
       {/* MODAL PASSWORD */}
       {mostrarConfirmacion && (
+
         <ConfirmModal
           mensaje="¿Seguro que quieres cambiar la contraseña? ⚠️"
           onConfirm={confirmarCambioPassword}
           onCancel={() => setMostrarConfirmacion(false)}
         />
+
       )}
 
       {/* MODAL ELIMINAR */}
       {servicioAEliminar && (
+
         <ConfirmModal
           mensaje="¿Eliminar servicio? ⚠️"
           onConfirm={() => {
@@ -364,19 +391,24 @@ function SettingsPage() {
           }}
           onCancel={() => setServicioAEliminar(null)}
         />
+
       )}
 
-      {/* ✅ MODAL SERVICIO */}
+      {/* MODAL SERVICIO */}
       {modalServicio && (
+
         <ServicioModal
           servicio={servicioEditar}
           onGuardar={guardarServicio}
           onClose={() => setModalServicio(false)}
         />
+
       )}
 
     </PageWrapper>
+
   );
+
 }
 
 export default SettingsPage;

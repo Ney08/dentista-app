@@ -35,7 +35,8 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
     useState([
       {
         descripcion: "",
-        monto: ""
+        monto: "",
+        costo_servicio: 0
       }
     ]);
 
@@ -110,7 +111,8 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       setServicios([
         {
           descripcion: "",
-          monto: ""
+          monto: "",
+          costo_servicio: 0
         }
       ]);
 
@@ -150,7 +152,8 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       setServicios([
         {
           descripcion: "",
-          monto: ""
+          monto: "",
+          costo_servicio: 0
         }
       ]);
 
@@ -196,7 +199,8 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       setServicios([
         {
           descripcion: "",
-          monto: ""
+          monto: "",
+          costo_servicio: 0
         }
       ]);
 
@@ -214,7 +218,11 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
           "",
 
         monto:
-          servicioEncontrado.precio || ""
+          servicioEncontrado.precio || "",
+
+        costo_servicio:
+          servicioEncontrado.costo_servicio || 0
+
       };
 
       return copia;
@@ -261,7 +269,11 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
               encontrado.nombre,
 
             monto:
-              encontrado.precio
+              encontrado.precio,
+
+            costo_servicio:
+              encontrado.costo_servicio || 0
+
           }
         ]);
 
@@ -283,7 +295,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       setServicios(
         initialData.servicios || []
       );
-
+      
       setDescuento(
         initialData.descuento || 0
       );
@@ -315,7 +327,8 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       ...servicios,
       {
         descripcion: "",
-        monto: ""
+        monto: "",
+        costo_servicio: 0
       }
     ]);
 
@@ -400,7 +413,11 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
           s.descripcion,
 
         monto:
-          parseFloat(s.monto)
+          parseFloat(s.monto),
+
+        costo_servicio:
+          parseFloat(s.costo_servicio || 0)
+
       }))
 
     };
@@ -444,7 +461,8 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       setServicios([
         {
           descripcion: "",
-          monto: ""
+          monto: "",
+          costo_servicio: 0
         }
       ]);
 
@@ -556,6 +574,9 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
                     actualizarServicio(index, "descripcion", seleccionado.nombre);
                     actualizarServicio(index, "monto", seleccionado.precio);
+
+                    actualizarServicio(index, "costo_servicio", seleccionado.costo_servicio || 0);
+
                   }}
                   className="input h-12 sm:h-11 text-base sm:text-sm"
                 >
@@ -582,7 +603,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
                 <input
                   type="number"
-                  value={s.monto}
+                  value={s.monto} 
                   onChange={(e) =>
                     actualizarServicio(
                       index,
@@ -593,6 +614,10 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
                   className="input h-12 sm:h-11 text-base sm:text-sm"
                 />
 
+                <p className="text-xs text-gray-400">
+                  Costo interno:
+                  RD$ {formatMoney(s.costo_servicio || 0)}
+                </p>
               </div>
 
             ))}

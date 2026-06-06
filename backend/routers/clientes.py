@@ -5,10 +5,11 @@ from database import get_db
 
 import models
 
-from schemas import ClienteCreate
+from schemas import ClienteCreate, Cliente
 
 from typing import Optional
 import re
+
 
 router = APIRouter(
     prefix="/clientes",
@@ -16,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("/", response_model=Cliente)
 def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
 
     # ✅ limpiar cédula
@@ -73,7 +74,7 @@ def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
 
 
 
-@router.get("/")
+@router.get("/", response_model=list[Cliente])
 def listar_clientes(
     activos: Optional[bool] = Query(None),
     db: Session = Depends(get_db)
@@ -93,7 +94,7 @@ def listar_clientes(
 
 
 
-@router.put("/{cliente_id}")
+@router.put("/{cliente_id}", response_model=Cliente)
 def actualizar_cliente(cliente_id: int, data: ClienteCreate, db: Session = Depends(get_db)):
 
     cliente = db.query(models.Cliente).filter(models.Cliente.id == cliente_id).first()

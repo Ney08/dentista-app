@@ -12,6 +12,13 @@ from routers.ingresos import router as ingresos_router
 from routers.citas import router as citas_router
 from routers.historiales import router as historiales_router
 
+from routers.egresos import router as egresos_router
+
+from routers.dashboard import router as dashboard_router
+
+
+from routers.servicios import (router as servicios_router)
+
 
 # ✅ CREAR TABLAS
 Base.metadata.create_all(bind=engine)
@@ -38,4 +45,9 @@ app.include_router(clientes_router)
 app.include_router(ingresos_router)
 app.include_router(citas_router)
 app.include_router(historiales_router)
+app.include_router(egresos_router)
 
+app.include_router(dashboard_router)
+
+
+app.include_router(servicios_router)

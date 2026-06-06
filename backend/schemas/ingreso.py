@@ -6,11 +6,12 @@ from typing import List, Optional
 class Servicio(BaseModel):
     descripcion: str
     monto: float
-
+    costo_servicio: float = 0
+    
 class ServicioSchema(BaseModel):
     descripcion: str
     monto: float
-    
+    costo_servicio: float = 0
     
 class IngresoCreate(BaseModel):
     cliente_id: int
@@ -33,3 +34,4 @@ class IngresoUpdateSchema(BaseModel):
     descuento: Optional[float] = 0
     servicios: List[ServicioSchema]
     
+

@@ -41,6 +41,7 @@ def crear_ingreso(data: IngresoCreate, db: Session = Depends(get_db)):
                 servicio = models.Servicios(
                     descripcion=s.descripcion,
                     monto=s.monto,
+                    costo_servicio=s.costo_servicio,
                     ingreso_id=ingreso.id
                 )
                 db.add(servicio)
@@ -79,7 +80,8 @@ def listar_ingresos(db: Session = Depends(get_db)):
                 "servicios": [
                     {
                         "descripcion": s.descripcion,
-                        "monto": s.monto
+                        "monto": s.monto,
+                        "costo_servicio": s.costo_servicio
                     }
                     for s in i.servicios
                 ],
@@ -123,7 +125,8 @@ def actualizar_ingreso(id: int, data: IngresoUpdateSchema, db: Session = Depends
         nuevo = models.Servicios(
             ingreso_id=id,
             descripcion=s.descripcion,
-            monto=s.monto
+            monto=s.monto,
+            costo_servicio=s.costo_servicio
         )
         db.add(nuevo)
 
@@ -141,7 +144,8 @@ def actualizar_ingreso(id: int, data: IngresoUpdateSchema, db: Session = Depends
         "servicios": [
             {
                 "descripcion": s.descripcion,
-                "monto": s.monto
+                "monto": s.monto,
+                "costo_servicio": s.costo_servicio
             }
             for s in ingreso.servicios
         ],
@@ -188,7 +192,8 @@ def marcar_pagado(id: int, db: Session = Depends(get_db)):
         "servicios": [
             {
                 "descripcion": s.descripcion,
-                "monto": s.monto
+                "monto": s.monto,
+                "costo_servicio": s.costo_servicio
             }
             for s in ingreso.servicios
         ],

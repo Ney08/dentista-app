@@ -31,3 +31,17 @@ from .historial import (
     HistorialCreate,
     HistorialOut
 )
+
+
+from .egreso import (
+    Egreso,
+    EgresoCreate
+)
+
+from .dashboard import DashboardResumen
+
+
+from .servicio import (
+    Servicio,
+    ServicioCreate
+)

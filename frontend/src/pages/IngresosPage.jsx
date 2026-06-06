@@ -276,27 +276,27 @@ function IngresosPage() {
           </p>
         </div>
 
-        {/* ✅ KPI */}
-        <div className={`
-        rounded-2xl border p-4 sm:p-5 text-center
-        ${totalPendiente > 0
-            ? "bg-red-50 border-red-200"
-            : "bg-green-50 border-green-200"}
-      `}>
 
-          <p className="text-xs text-gray-500">
-            {totalPendiente > 0 ? "Pendiente" : "Todo saldado"}
-          </p>
-
-          <p className="text-2xl sm:text-3xl font-bold">
-            RD$ {formatMoney(totalPendiente)}
-          </p>
-
-        </div>
 
         {/* ✅ CARD PRINCIPAL */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[72vh] sm:h-[75vh] lg:h-[74vh] p-4 sm:p-5 gap-4 overflow-hidden">
+          {/* ✅ KPI */}
+          <div className={`
+        rounded-2xl border p-4 sm:p-5 text-center
+        ${totalPendiente > 0
+              ? "bg-red-50 border-red-200"
+              : "bg-green-50 border-green-200"}
+      `}>
 
+            <p className="text-xs text-gray-500">
+              {totalPendiente > 0 ? "Pendiente" : "Todo saldado"}
+            </p>
+
+            <p className="text-2xl sm:text-3xl font-bold">
+              RD$ {formatMoney(totalPendiente)}
+            </p>
+
+          </div>
           {/* ✅ TOOLBAR */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 

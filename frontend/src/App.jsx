@@ -19,7 +19,7 @@ import IngresosPage from "./pages/IngresosPage";
 import CitasPage from "./pages/CitasPage";
 import ReportesPage from "./pages/ReportesPage";
 import SettingsPage from "./pages/SettingsPage";
-
+import EgresosPage from "./pages/EgresosPage";
 import Login from "./pages/Login";
 import Layout from "./components/Layout";
 
@@ -61,6 +61,8 @@ function App() {
                 <Route path="/citas" element={<CitasPage />} />
                 <Route path="/reportes" element={<ReportesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                
+                <Route path="/egresos"element={<EgresosPage />}/>
 
                 <Route path="*" element={<Navigate to="/" />} />
 

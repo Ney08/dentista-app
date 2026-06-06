@@ -69,35 +69,86 @@ function DashboardHome() {
   let facturasHoy = 0;
 
   let totalMes = 0;
+
+  let caja = 0;
+
+  let gananciaBruta = 0;
+
+  let gananciaNeta = 0;
+
+  let totalCostos = 0;
+
   const mesActual = ahora.getMonth();
   const anioActual = ahora.getFullYear();
 
   ingresos.forEach(i => {
 
     const servicios = i.servicios || [];
-    const subtotal = servicios.reduce((acc, s) => acc + s.monto, 0);
+
+    const subtotal = servicios.reduce(
+      (acc, s) => acc + s.monto,
+      0
+    );
+
+    const costos = servicios.reduce(
+      (acc, s) =>
+        acc + Number(s.costo_servicio || 0),
+      0
+    );
+
     const itbis = subtotal * 0.18;
-    const descuento = subtotal * ((i.descuento || 0) / 100);
-    const total = subtotal + itbis - descuento;
+
+    const descuento =
+      subtotal * ((i.descuento || 0) / 100);
+
+    const total =
+      subtotal + itbis - descuento;
+
+    totalCostos += costos;
+
+    // ✅ AQUÍ ADENTRO
+    if (i.pagado) {
+
+      caja += total;
+
+      gananciaBruta += (
+        total - costos
+      );
+
+    }
 
     if (esHoy(i.created_at)) {
+
       facturasHoy++;
-      if (i.pagado) pagadoHoy += total;
-      else pendienteHoy += total;
+
+      if (i.pagado) {
+        pagadoHoy += total;
+      } else {
+        pendienteHoy += total;
+      }
+
     }
 
     if (i.created_at) {
-      const fecha = parseFechaLocal(i.created_at);
+
+      const fecha = parseFechaLocal(
+        i.created_at
+      );
 
       if (
         fecha.getMonth() === mesActual &&
         fecha.getFullYear() === anioActual
       ) {
+
         totalMes += total;
+
       }
+
     }
 
   });
+
+  gananciaNeta = gananciaBruta;
 
   useEffect(() => {
     const citasPendientesHoy = citasHoy.filter(
@@ -206,6 +257,54 @@ function DashboardHome() {
 
         {/* KPIs */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md flex justify-between items-center">
+            <div>
+              <p className="text-xs text-gray-500">
+                Caja
+              </p>
+
+              <p className="text-xl font-bold text-green-600">
+                {formato(caja)}
+              </p>
+            </div>
+
+            <span className="text-green-500 text-xl">
+              💵
+            </span>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md flex justify-between items-center">
+            <div>
+              <p className="text-xs text-gray-500">
+                Ganancia Bruta
+              </p>
+
+              <p className="text-xl font-bold text-blue-600">
+                {formato(gananciaBruta)}
+              </p>
+            </div>
+
+            <span className="text-blue-500 text-xl">
+              📈
+            </span>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md flex justify-between items-center">
+            <div>
+              <p className="text-xs text-gray-500">
+                Costos Servicios
+              </p>
+
+              <p className="text-xl font-bold text-red-500">
+                {formato(totalCostos)}
+              </p>
+            </div>
+
+            <span className="text-red-500 text-xl">
+              🧾
+            </span>
+          </div>
+
 
           <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md flex justify-between items-center">
             <div>

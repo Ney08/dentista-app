@@ -1,52 +1,137 @@
-import { useState, useEffect } from "react";
-import serviciosData from "../data/servicios.json";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_URL } from "../config";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 export function useServicios() {
 
-  const [servicios, setServicios] = useState(serviciosData);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const saved = localStorage.getItem("servicios");
+  // ✅ GET
+  const {
+    data: servicios = [],
+    isLoading
+  } = useQuery({
 
-    if (saved) {
-      setServicios(JSON.parse(saved));
+    queryKey: ["servicios"],
+
+    queryFn: async () => {
+
+      const res = await axios.get(
+        `${API_URL}/servicios/`
+      );
+
+      return res.data;
+
     }
-  }, []);
 
-  const guardar = (lista) => {
-    setServicios(lista);
-    localStorage.setItem("servicios", JSON.stringify(lista));
-  };
+  });
 
-  const agregarServicio = (servicio) => {
-    const nuevo = {
-      id: Date.now(),
-      ...servicio
-    };
+  // ✅ CREAR
+  const agregarServicio = useMutation({
 
-    guardar([...servicios, nuevo]);
-  };
+    mutationFn: async (data) => {
 
-  const eliminarServicio = (id) => {
-    guardar(servicios.filter(s => s.id !== id));
-  };
+      const res = await axios.post(
+        `${API_URL}/servicios/`,
+        data
+      );
 
-  
-const actualizarServicio = (data) => {
+      return res.data;
 
-  const actualizados = servicios.map(s =>
-    s.id === data.id
-      ? { ...s, ...data }
-      : s
-  );
+    },
 
-  guardar(actualizados);
-};
+    onSuccess: () => {
+
+      queryClient.invalidateQueries({
+        queryKey: ["servicios"]
+      });
+
+      toast.success("Servicio creado ✅");
+
+    },
+
+    onError: () => {
+
+      toast.error("Error creando servicio ❌");
+
+    }
+
+  });
+
+  // ✅ ELIMINAR
+  const eliminarServicio = useMutation({
+
+    mutationFn: async (id) => {
+
+      await axios.delete(
+        `${API_URL}/servicios/${id}`
+      );
+
+    },
+
+    onSuccess: () => {
+
+      queryClient.invalidateQueries({
+        queryKey: ["servicios"]
+      });
+
+      toast.success("Servicio eliminado ✅");
+
+    },
+
+    onError: () => {
+
+      toast.error("Error eliminando ❌");
+
+    }
+
+  });
+
+  // ✅ ACTUALIZAR
+  const actualizarServicio = useMutation({
+
+    mutationFn: async (data) => {
+
+      const res = await axios.put(
+        `${API_URL}/servicios/${data.id}`,
+        data
+      );
+
+      return res.data;
+
+    },
+
+    onSuccess: () => {
+
+      queryClient.invalidateQueries({
+        queryKey: ["servicios"]
+      });
+
+      toast.success("Servicio actualizado ✅");
+
+    },
+
+    onError: () => {
+
+      toast.error("Error actualizando ❌");
+
+    }
+
+  });
 
   return {
+
     servicios,
+
+    isLoading,
+
     agregarServicio,
+
     eliminarServicio,
+
     actualizarServicio
+
   };
+
 }

@@ -5,6 +5,8 @@ function ServicioModal({ servicio, onGuardar, onClose }) {
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState("");
 
+  const [costoServicio, setCostoServicio] = useState("");
+
   const isEdit = !!servicio;
 
   useEffect(() => {
@@ -12,6 +14,9 @@ function ServicioModal({ servicio, onGuardar, onClose }) {
       setNombre(servicio.nombre || "");
       setDescripcion(servicio.descripcion || "");
       setPrecio(servicio.precio || "");
+
+      setCostoServicio(servicio.costo_servicio || "");
+
     }
   }, [servicio]);
 
@@ -19,10 +24,11 @@ function ServicioModal({ servicio, onGuardar, onClose }) {
     if (!nombre || !precio) return;
 
     onGuardar({
-      ...servicio,
+      ...(servicio || {}),
       nombre,
       descripcion,
-      precio: parseFloat(precio)
+      precio: parseFloat(precio),
+      costo_servicio: parseFloat(costoServicio || 0)
     });
   };
 
@@ -62,14 +68,27 @@ function ServicioModal({ servicio, onGuardar, onClose }) {
             className="input w-full"
           />
 
-          <input
-            type="number"
-            placeholder="Precio"
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-            className="input w-full"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
+            <input
+              type="number"
+              placeholder="Precio"
+              value={precio}
+              onChange={(e) => setPrecio(e.target.value)}
+              className="input w-full"
+            />
+
+            <input
+              type="number"
+              placeholder="Costo del servicio"
+              value={costoServicio}
+              onChange={(e) =>
+                setCostoServicio(e.target.value)
+              }
+              className="input w-full"
+            />
+
+          </div>
         </div>
 
         <div className="flex gap-2 mt-5">

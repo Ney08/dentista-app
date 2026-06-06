@@ -13,3 +13,7 @@ from .ingreso import (
 from .cita import Cita
 
 from .historial import Historial
+
+from .egreso import Egreso
+
+from .servicio import ServicioCatalogo
