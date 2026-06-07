@@ -1,72 +1,157 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+
 import ConfirmModal from "../components/ConfirmModal";
 import ClienteForm from "../components/clientes/ClienteForm";
 import ClienteList from "../components/clientes/ClienteList";
 import ClienteDetalle from "../components/clientes/ClienteDetalle";
 import PageWrapper from "../components/PageWrapper";
-//import { parseFechaLocal } from "../utils/fecha";
-import { useClientes } from "../hooks/useClientes";
 import Paginacion from "../components/Paginacion";
 import BaseModal from "../components/BaseModal";
 import SkeletonLoader from "../components/SkeletonLoader";
 
+import { useClientes } from "../hooks/useClientes";
+
 function ClientesPage() {
 
-  const [mostrarActivos, setMostrarActivos] = useState(true);
+  const [mostrarActivos, setMostrarActivos] =
+    useState(true);
+
   const {
     clientes,
     toggleCliente,
     isLoading
   } = useClientes(mostrarActivos);
 
+  /*
+  ==========================================
+  MODALS
+  ==========================================
+  */
 
-  // ✅ MODAL
+  const [modalAbierto, setModalAbierto] =
+    useState(false);
+
+  const [clienteEditar, setClienteEditar] =
+    useState(null);
+
+  const [clienteADesactivar, setClienteADesactivar] =
+    useState(null);
+
+  /*
+  ==========================================
+  DETALLE
+  ==========================================
+  */
+
+  const [clienteSeleccionado, setClienteSeleccionado] =
+    useState(null);
+
+  /*
+  ==========================================
+  FILTROS
+  ==========================================
+  */
+
+  const [busqueda, setBusqueda] =
+    useState("");
+
+  const [orden, setOrden] =
+    useState("az");
+
+  const [limite, setLimite] =
+    useState(6);
+
+  const [pagina, setPagina] =
+    useState(1);
+
+  /*
+  ==========================================
+  KPIS
+  ==========================================
+  */
+
+  const clientesActivos =
+    clientes.filter(c => c.activo).length;
+
+  const clientesInactivos =
+    clientes.filter(c => !c.activo).length;
+
+  const clientesTotales =
+    clientes.length;
+
+  /*
+  ==========================================
+  MODAL CLOSE
+  ==========================================
+  */
 
   const cerrarModal = () => {
+
     setModalAbierto(false);
+
     setClienteEditar(null);
+
   };
 
+  /*
+  ==========================================
+  FILTRO
+  ==========================================
+  */
 
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [clienteEditar, setClienteEditar] = useState(null);
-  const [clienteADesactivar, setClienteADesactivar] = useState(null);
-  // ✅ DETALLE
-  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
-
-  const [busqueda, setBusqueda] = useState("");
-  const [orden, setOrden] = useState("az");
-  const [limite, setLimite] = useState(6);
-  const [pagina, setPagina] = useState(1);
-
-  // ✅ FILTRO
   const filtrados = clientes.filter(c =>
+
     `${c.nombre} ${c.apellido || ""}`
       .toLowerCase()
-      .includes(busqueda.toLowerCase())
+      .includes(
+        busqueda.toLowerCase()
+      )
+
   );
 
-  // ✅ ORDEN
+  /*
+  ==========================================
+  ORDEN
+  ==========================================
+  */
 
   const ordenados = [...filtrados].sort((a, b) => {
 
     if (orden === "az") {
-      return a.nombre.localeCompare(b.nombre);
+
+      return a.nombre.localeCompare(
+        b.nombre
+      );
+
     }
 
     if (orden === "nuevo") {
-      return b.id - a.id; // ✅ MÁS NUEVO PRIMERO
+
+      return b.id - a.id;
+
     }
 
     return 0;
+
   });
 
+  /*
+  ==========================================
+  PAGINACION
+  ==========================================
+  */
 
+  const inicio =
+    (pagina - 1) *
+    (limite === "all"
+      ? ordenados.length
+      : limite);
 
-  // ✅ PAGINACIÓN
-  const inicio = (pagina - 1) * (limite === "all" ? ordenados.length : limite);
-  const fin = limite === "all" ? undefined : inicio + limite;
+  const fin =
+    limite === "all"
+      ? undefined
+      : inicio + limite;
 
   const clientesFinal =
     limite === "all"
@@ -76,164 +161,779 @@ function ClientesPage() {
   const totalPaginas =
     limite === "all"
       ? 1
-      : Math.ceil(ordenados.length / limite);
+      : Math.ceil(
+        ordenados.length / limite
+      );
 
-  // ✅ ELIMINAR
-  // const handleEliminar = async (id) => {
-  //   try {
-  //     await eliminarCliente.mutateAsync(id);
-  //     toast.success("Cliente eliminado ✅");
-  //   } catch {
-  //     toast.error("Error al eliminar ❌");
-  //   }
-  // };
+  /*
+  ==========================================
+  TOGGLE ACTIVO
+  ==========================================
+  */
 
   const handleToggleActivo = (cliente) => {
 
     if (cliente.activo) {
+
       setClienteADesactivar(cliente);
+
     } else {
+
       toggleCliente.mutate(cliente);
+
+      toast.success(
+        "Cliente activado ✅"
+      );
+
     }
+
   };
 
+  /*
+  ==========================================
+  EFFECTS
+  ==========================================
+  */
+
   useEffect(() => {
+
     if (pagina > totalPaginas) {
+
       setPagina(1);
+
     }
+
   }, [ordenados.length]);
 
-  // ✅ LOADING
+  /*
+  ==========================================
+  LOADING
+  ==========================================
+  */
+
   if (isLoading) {
+
     return (
+
       <PageWrapper>
 
-        <div className="max-w-4xl mx-auto space-y-4">
+        <div className="
+          max-w-6xl
+          mx-auto
+          space-y-6
+        ">
 
-          <SkeletonLoader alto="h-8" />
+          <SkeletonLoader alto="h-12" />
 
-          <SkeletonLoader lineas={6} />
+          <div className="
+            grid
+            grid-cols-1
+            md:grid-cols-3
+            gap-4
+          ">
+
+            <SkeletonLoader alto="h-32" />
+            <SkeletonLoader alto="h-32" />
+            <SkeletonLoader alto="h-32" />
+
+          </div>
+
+          <SkeletonLoader alto="h-[500px]" />
 
         </div>
 
       </PageWrapper>
+
     );
+
   }
 
   return (
+
     <PageWrapper>
 
-      <div className="h-full max-w-6xl mx-auto flex flex-col gap-4 md:gap-6 pb-4 overflow-hidden">
+      <div className="
+        h-full
+        max-w-7xl
+        mx-auto
 
-        {/* ✅ HEADER */}
-        <div className="text-center space-y-1 pt-2">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight flex items-center justify-center gap-2">
-            Clientes 👤
+        flex
+        flex-col
+
+        gap-6
+
+        pb-4
+
+        overflow-hidden
+      ">
+
+        {/* HEADER */}
+
+        <div className="
+          text-center
+          space-y-3
+          pt-2
+        ">
+
+          <h1 className="
+            text-4xl
+            md:text-5xl
+
+            font-black
+
+            tracking-tight
+          ">
+
+            <span className="
+              bg-gradient-to-r
+              from-slate-800
+              to-slate-500
+
+              bg-clip-text
+              text-transparent
+            ">
+              Clientes
+            </span>
+
+            <span className="ml-2">
+              👤
+            </span>
+
           </h1>
-          <p className="text-xs sm:text-sm text-gray-500">
+
+          <div className="
+            w-24
+            h-1
+
+            mx-auto
+
+            rounded-full
+
+            bg-gradient-to-r
+            from-purple-500
+            to-indigo-500
+          " />
+
+          <p className="
+            text-sm
+            sm:text-base
+
+            text-gray-500
+
+            font-medium
+          ">
             Gestiona los clientes del sistema
           </p>
+
         </div>
 
-        {/* ✅ CARD PRINCIPAL */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col h-[72vh] sm:h-[75vh] lg:h-[78vh] p-4 sm:p-5 gap-4 overflow-hidden">
+        {/* KPIS */}
 
-          {/* ✅ TOOLBAR */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="
+          grid
+          grid-cols-1
+          md:grid-cols-3
+          gap-5
+        ">
 
-            <p className="text-sm text-gray-500">
-              Total: <span className="font-semibold">{clientes.length}</span>
+          {/* TOTAL */}
+
+          <div className="
+            relative
+            overflow-hidden
+
+            bg-white/90
+            backdrop-blur-xl
+
+            border
+            border-white/40
+
+            rounded-[30px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+            transition-all
+            duration-300
+          ">
+
+            <div className="
+              absolute
+              -top-10
+              -right-10
+
+              w-40
+              h-40
+
+              rounded-full
+
+              bg-indigo-500/10
+
+              blur-3xl
+            " />
+
+            <p className="
+              text-sm
+              text-gray-500
+            ">
+              👥 Clientes totales
             </p>
+
+            <h2 className="
+              mt-2
+              text-4xl
+              font-black
+              text-slate-800
+            ">
+              {clientesTotales}
+            </h2>
+
+          </div>
+
+          {/* ACTIVOS */}
+
+          <div className="
+            relative
+            overflow-hidden
+
+            bg-white/90
+            backdrop-blur-xl
+
+            border
+            border-white/40
+
+            rounded-[30px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+            transition-all
+            duration-300
+          ">
+
+            <div className="
+              absolute
+              -top-10
+              -right-10
+
+              w-40
+              h-40
+
+              rounded-full
+
+              bg-emerald-500/10
+
+              blur-3xl
+            " />
+
+            <p className="
+              text-sm
+              text-gray-500
+            ">
+              ✅ Clientes activos
+            </p>
+
+            <h2 className="
+              mt-2
+              text-4xl
+              font-black
+              text-emerald-600
+            ">
+              {clientesActivos}
+            </h2>
+
+          </div>
+
+          {/* INACTIVOS */}
+
+          <div className="
+            relative
+            overflow-hidden
+
+            bg-white/90
+            backdrop-blur-xl
+
+            border
+            border-white/40
+
+            rounded-[30px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+            transition-all
+            duration-300
+          ">
+
+            <div className="
+              absolute
+              -top-10
+              -right-10
+
+              w-40
+              h-40
+
+              rounded-full
+
+              bg-rose-500/10
+
+              blur-3xl
+            " />
+
+            <p className="
+              text-sm
+              text-gray-500
+            ">
+              🚫 Clientes inactivos
+            </p>
+
+            <h2 className="
+              mt-2
+              text-4xl
+              font-black
+              text-rose-500
+            ">
+              {clientesInactivos}
+            </h2>
+
+          </div>
+
+        </div>
+
+        {/* MAIN CARD */}
+
+        <div className="
+          bg-white/90
+          backdrop-blur-xl
+
+          border
+          border-white/40
+
+          rounded-[34px]
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+          flex
+          flex-col
+
+          h-[72vh]
+          sm:h-[75vh]
+          lg:h-[78vh]
+
+          p-5
+          sm:p-6
+
+          gap-5
+
+          overflow-hidden
+        ">
+
+          {/* TOOLBAR */}
+
+          <div className="
+            flex
+            flex-col
+            lg:flex-row
+
+            lg:items-center
+            lg:justify-between
+
+            gap-4
+          ">
+
+            {/* LEFT */}
+
+            <div className="
+              flex
+              items-center
+              gap-3
+              flex-wrap
+            ">
+
+              <div className="
+                px-4
+                h-11
+
+                rounded-2xl
+
+                bg-gradient-to-r
+                from-indigo-50
+                to-purple-50
+
+                border
+                border-indigo-100
+
+                flex
+                items-center
+
+                text-sm
+                font-semibold
+
+                text-indigo-600
+              ">
+                {clientes.length} clientes registrados
+              </div>
+
+              <button
+                onClick={() =>
+                  setMostrarActivos(
+                    !mostrarActivos
+                  )
+                }
+                className={`
+                  h-11
+                  px-5
+
+                  rounded-2xl
+
+                  text-sm
+                  font-bold
+
+                  transition-all
+                  duration-300
+
+                  ${mostrarActivos
+                    ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }
+                `}
+              >
+                {mostrarActivos
+                  ? "Mostrando activos"
+                  : "Mostrando inactivos"}
+              </button>
+
+            </div>
+
+            {/* NUEVO */}
 
             <button
               onClick={() => {
+
                 setClienteEditar(null);
+
                 setModalAbierto(true);
+
               }}
-              className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white px-4 h-11 rounded-xl text-sm sm:text-base shadow-sm active:scale-[0.98] transition"
+              className="
+                h-12
+
+                px-6
+
+                rounded-2xl
+
+                bg-gradient-to-r
+                from-indigo-500
+                via-purple-500
+                to-violet-500
+
+                text-white
+
+                font-bold
+
+                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                hover:scale-[1.02]
+
+                active:scale-95
+
+                transition-all
+                duration-300
+              "
             >
-              + Nuevo
+              + Nuevo cliente
             </button>
 
           </div>
 
-          {/* ✅ BUSCADOR + FILTROS */}
-          <div className="flex flex-col lg:flex-row gap-3">
+          {/* BUSCADOR */}
 
-            {/* BUSCADOR */}
-            <input
-              type="text"
-              placeholder="🔍 Buscar cliente..."
-              className="w-full lg:flex-1 border border-gray-200 px-4 h-12 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-              value={busqueda}
-              onChange={(e) => {
-                setBusqueda(e.target.value);
-                setPagina(1);
-              }}
-            />
+          <div className="
+            flex
+            flex-col
+            xl:flex-row
 
-            {/* FILTROS */}
-            <div className="flex flex-col sm:flex-row gap-3 text-sm">
+            gap-4
+          ">
+
+            {/* SEARCH */}
+
+            <div className="
+              relative
+              flex-1
+            ">
+
+              <span className="
+                absolute
+                left-4
+                top-1/2
+                -translate-y-1/2
+
+                text-gray-400
+              ">
+                🔍
+              </span>
+
+              <input
+                type="text"
+                placeholder="Buscar cliente..."
+                value={busqueda}
+                onChange={(e) => {
+
+                  setBusqueda(
+                    e.target.value
+                  );
+
+                  setPagina(1);
+
+                }}
+                className="
+                  w-full
+
+                  h-14
+
+                  pl-12
+                  pr-4
+
+                  rounded-[22px]
+
+                  bg-white/80
+                  backdrop-blur-xl
+
+                  border
+                  border-white/40
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+
+                  focus:border-indigo-300
+
+                  transition-all
+                  duration-300
+                "
+              />
+
+            </div>
+
+            {/* FILTERS */}
+
+            <div className="
+              flex
+              gap-3
+            ">
 
               <select
                 value={orden}
-                onChange={(e) => setOrden(e.target.value)}
-                className="w-full sm:w-auto border px-3 h-12 rounded-xl text-sm sm:text-base"
+                onChange={(e) =>
+                  setOrden(
+                    e.target.value
+                  )
+                }
+                className="
+                  h-14
+
+                  px-4
+
+                  rounded-[22px]
+
+                  bg-white/80
+
+                  border
+                  border-white/40
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+                "
               >
-                <option value="az">A-Z</option>
-                <option value="nuevo">Más recientes</option>
+                <option value="az">
+                  A-Z
+                </option>
+
+                <option value="nuevo">
+                  Más recientes
+                </option>
+
               </select>
 
               <select
                 value={limite}
                 onChange={(e) => {
-                  const val = e.target.value === "all"
-                    ? "all"
-                    : parseInt(e.target.value);
+
+                  const val =
+                    e.target.value === "all"
+                      ? "all"
+                      : parseInt(
+                        e.target.value
+                      );
 
                   setLimite(val);
+
                   setPagina(1);
+
                 }}
-                className="w-full sm:w-auto border px-3 h-12 rounded-xl text-sm sm:text-base"
+                className="
+                  h-14
+
+                  px-4
+
+                  rounded-[22px]
+
+                  bg-white/80
+
+                  border
+                  border-white/40
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+                "
               >
-                <option value={6}>6</option>
-                <option value={12}>12</option>
-                <option value={24}>24</option>
-                <option value="all">Todos</option>
+                <option value={6}>
+                  6
+                </option>
+
+                <option value={12}>
+                  12
+                </option>
+
+                <option value={24}>
+                  24
+                </option>
+
+                <option value="all">
+                  Todos
+                </option>
+
               </select>
 
             </div>
 
           </div>
 
-          {/* ✅ LISTA */}
-          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1">
+          {/* LIST */}
+
+          <div className="
+            flex-1
+            min-h-0
+
+            overflow-y-auto
+            overflow-x-hidden
+
+            pr-1
+          ">
 
             {clientesFinal.length === 0 ? (
-              <p className="text-center text-gray-500">
-                No hay clientes
-              </p>
+
+              <div className="
+                h-full
+
+                flex
+                flex-col
+
+                items-center
+                justify-center
+
+                text-center
+              ">
+
+                <div className="
+                  w-24
+                  h-24
+
+                  rounded-[30px]
+
+                  bg-gradient-to-br
+                  from-indigo-500
+                  to-purple-500
+
+                  flex
+                  items-center
+                  justify-center
+
+                  text-5xl
+
+                  shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+                ">
+                  👥
+                </div>
+
+                <h3 className="
+                  mt-6
+
+                  text-2xl
+
+                  font-black
+
+                  text-slate-800
+                ">
+                  No hay clientes
+                </h3>
+
+                <p className="
+                  mt-2
+
+                  text-gray-500
+                ">
+                  Los clientes aparecerán aquí
+                </p>
+
+              </div>
+
             ) : (
 
               <ClienteList
                 clientes={clientesFinal}
-                onToggleActivo={(cliente) => handleToggleActivo(cliente)}
+                onToggleActivo={handleToggleActivo}
                 onEditarClick={(c) => {
+
                   setClienteEditar(c);
+
                   setModalAbierto(true);
+
                 }}
-                onSeleccionar={(c) => setClienteSeleccionado(c)}
+                onSeleccionar={(c) =>
+                  setClienteSeleccionado(c)
+                }
               />
 
             )}
 
           </div>
 
-          {/* ✅ PAGINACIÓN */}
-          {limite !== "all" && totalPaginas > 1 && (
-            <div className="pt-3 border-t flex justify-center overflow-x-auto">
+          {/* PAGINACION */}
 
-              <div className="flex gap-2">
+          {limite !== "all" &&
+            totalPaginas > 1 && (
+
+              <div className="
+                pt-4
+
+                border-t
+                border-gray-100
+
+                flex
+                justify-center
+              ">
 
                 <Paginacion
                   pagina={pagina}
@@ -243,119 +943,187 @@ function ClientesPage() {
 
               </div>
 
-            </div>
-          )}
+            )}
 
         </div>
 
-        {/* ✅ MODAL DETALLE PRO */}
+        {/* DETALLE */}
+
         {clienteSeleccionado && (
-          <BaseModal onClose={() => setClienteSeleccionado(null)}>
 
-            <div className="space-y-4 sm:space-y-5">
+          <BaseModal
+            onClose={() =>
+              setClienteSeleccionado(null)
+            }
+          >
 
-              {/* ✅ HEADER PRO */}
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+            <div className="space-y-5">
 
-                <div className="flex items-center gap-3">
+              {/* HEADER */}
 
-                  {/* AVATAR */}
-                  <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-semibold shadow-sm">
+              <div className="
+                flex
+                items-center
+                justify-between
+                gap-4
+              ">
+
+                <div className="
+                  flex
+                  items-center
+                  gap-4
+                ">
+
+                  <div className="
+                    w-14
+                    h-14
+
+                    rounded-[20px]
+
+                    bg-gradient-to-br
+                    from-indigo-500
+                    to-purple-500
+
+                    text-white
+
+                    flex
+                    items-center
+                    justify-center
+
+                    text-xl
+                    font-black
+                  ">
                     {clienteSeleccionado.nombre?.charAt(0)?.toUpperCase()}
                   </div>
 
                   <div>
-                    <p className="font-semibold text-gray-800">
-                      {clienteSeleccionado.nombre} {clienteSeleccionado.apellido}
-                    </p>
 
-                    <p className="text-xs text-gray-400">
+                    <h3 className="
+                      text-xl
+                      font-black
+                      text-slate-800
+                    ">
+                      {clienteSeleccionado.nombre}
+                      {" "}
+                      {clienteSeleccionado.apellido}
+                    </h3>
+
+                    <p className="
+                      text-sm
+                      text-gray-500
+                    ">
                       Historial clínico del paciente
                     </p>
+
                   </div>
 
                 </div>
 
                 <button
-                  onClick={() => setClienteSeleccionado(null)}
-                  className="text-sm text-gray-400 hover:text-gray-600 transition"
+                  onClick={() =>
+                    setClienteSeleccionado(null)
+                  }
+                  className="
+                    w-10
+                    h-10
+
+                    rounded-xl
+
+                    bg-slate-100
+
+                    hover:bg-slate-200
+
+                    transition-all
+                    duration-300
+                  "
                 >
-                  Cerrar
+                  ✕
                 </button>
 
               </div>
 
-              {/* ✅ DIVISOR */}
-              <div className="border-t border-gray-200" />
+              {/* DIVIDER */}
 
-              {/* ✅ FORM + HISTORIAL */}
-              <div className="space-y-4">
+              <div className="
+                border-t
+                border-gray-100
+              " />
 
-                <h4 className="text-sm font-semibold text-gray-600">
-                  📝 Notas clínicas
-                </h4>
+              {/* CONTENT */}
 
-                {/* ✅ CONTENIDO SCROLL */}
-                <div className="max-h-[65vh] overflow-y-auto overflow-x-hidden pr-1 space-y-4">
+              <div className="
+                max-h-[70vh]
 
-                  {/* 📥 FORM */}
-                  <div className="
-            bg-gray-50 border border-gray-200
-            rounded-xl p-4 space-y-3
-          ">
+                overflow-y-auto
 
-                    {/* Aquí ya tienes tu form dentro de ClienteDetalle */}
-                    <ClienteDetalle cliente={clienteSeleccionado} />
+                pr-1
+              ">
 
-                  </div>
-
-                </div>
+                <ClienteDetalle
+                  cliente={clienteSeleccionado}
+                />
 
               </div>
 
             </div>
 
           </BaseModal>
-        )}
 
+        )}
 
       </div>
 
-      {/* ✅ MODAL FORM */}
+      {/* FORM MODAL */}
+
       <div
         onClick={cerrarModal}
         className={`
-    fixed inset-0 z-50
+          fixed
+          inset-0
+          z-50
 
-    flex items-end md:items-center
-    justify-center
+          flex
+          items-end
+          md:items-center
 
-    bg-black/40 backdrop-blur-sm
+          justify-center
 
-    transition-all duration-300
+          bg-black/40
+          backdrop-blur-sm
 
-    ${modalAbierto
+          transition-all
+          duration-300
+
+          ${modalAbierto
             ? "opacity-100 visible"
-            : "opacity-0 invisible"}
-  `}
+            : "opacity-0 invisible"
+          }
+        `}
       >
 
         <div
-          onClick={(e) => e.stopPropagation()}
-
+          onClick={(e) =>
+            e.stopPropagation()
+          }
           className={`
-  w-full h-full md:h-auto
-  md:max-w-2xl
+            w-full
+            h-full
 
-  p-0 md:p-4
+            md:h-auto
+            md:max-w-2xl
 
-          transform transition-all duration-200
-          
-${modalAbierto
+            p-0
+            md:p-4
+
+            transform
+            transition-all
+            duration-300
+
+            ${modalAbierto
               ? "translate-y-0 md:scale-100 opacity-100"
-              : "translate-y-full md:translate-y-0 md:scale-95 opacity-0"}
-
-        `}
+              : "translate-y-full md:scale-95 opacity-0"
+            }
+          `}
         >
 
           <ClienteForm
@@ -364,18 +1132,33 @@ ${modalAbierto
           />
 
         </div>
+
       </div>
 
-      {/* ✅ CONFIRM */}
+      {/* CONFIRM */}
+
       {clienteADesactivar && (
+
         <ConfirmModal
           mensaje={`¿Desactivar a ${clienteADesactivar.nombre}?`}
-          onCancel={() => setClienteADesactivar(null)}
+          onCancel={() =>
+            setClienteADesactivar(null)
+          }
           onConfirm={() => {
-            toggleCliente.mutate(clienteADesactivar);
+
+            toggleCliente.mutate(
+              clienteADesactivar
+            );
+
             setClienteADesactivar(null);
+
+            toast.success(
+              "Cliente actualizado ✅"
+            );
+
           }}
         />
+
       )}
 
     </PageWrapper>

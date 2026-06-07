@@ -1,139 +1,729 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-function ClienteList({ clientes, onEditarClick, onSeleccionar, onToggleActivo }) {
+function ClienteList({
+  clientes,
+  onEditarClick,
+  onSeleccionar,
+  onToggleActivo
+}) {
 
   const navigate = useNavigate();
-  const [seleccionadoId, setSeleccionadoId] = useState(null);
 
-  const colores = ["bg-blue-500", "bg-green-500", "bg-purple-500", "bg-pink-500", "bg-indigo-500"];
+  const [seleccionadoId, setSeleccionadoId] =
+    useState(null);
+
+  const colores = [
+    "from-blue-500 to-cyan-500",
+    "from-green-500 to-emerald-500",
+    "from-purple-500 to-violet-500",
+    "from-pink-500 to-rose-500",
+    "from-indigo-500 to-blue-500"
+  ];
 
   return (
 
-    <div className="h-full space-y-2 sm:space-y-3 overflow-y-auto overflow-x-hidden pr-1 pb-2">
+    <div className="h-full space-y-6 overflow-y-auto overflow-x-hidden pr-1 pb-2">
 
       {clientes.map((cliente) => {
 
-        const color = colores[cliente.id % colores.length];
-        const isSelected = seleccionadoId === cliente.id;
+        const color =
+          colores[
+          cliente.id % colores.length
+          ];
+
+        const isSelected =
+          seleccionadoId === cliente.id;
+
+        const direccionTexto =
+          typeof cliente.direccion === "string"
+            ? cliente.direccion
+            : `${cliente.direccion?.municipio_nombre || ""}, ${cliente.direccion?.provincia_nombre || ""}`;
 
         return (
 
           <div
             key={cliente.id}
             onClick={() => {
+
               setSeleccionadoId(cliente.id);
+
               onSeleccionar?.(cliente);
+
             }}
             className={`
-              group flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 bg-white border rounded-2xl px-3 sm:px-4 py-3 sm:py-4 transition-all duration-200 ease-out cursor-pointer hover:-translate-y-[1px] hover:shadow-lg
+              group
+              relative
+              overflow-hidden
+
+              bg-white/90
+              backdrop-blur-xl
+
+              border
+              border-white/40
+
+              rounded-[34px]
+
+              p-5 sm:p-6
+
+              transition-all
+              duration-500
+
+              cursor-pointer
+
+              hover:-translate-y-[4px]
+
+              hover:border-indigo-200
+
+              hover:bg-white
+
+              hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
+
               ${isSelected
-                ? "ring-2 ring-blue-400 bg-blue-50 border-blue-300"
-                : "border-gray-200 hover:border-blue-100"}
+                ? "ring-2 ring-indigo-400 shadow-[0_25px_60px_rgba(99,102,241,0.18)]"
+                : ""
+              }
             `}
           >
 
-            {/* LEFT */}
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+            {/* TOP LINE */}
 
-              {/* AVATAR */}
-              <div className={`${color} w-10 h-10 sm:w-11 sm:h-11 rounded-full text-white flex items-center justify-center font-semibold text-sm shadow-sm shrink-0`}>
-                {cliente.nombre?.charAt(0)?.toUpperCase()}
-              </div>
+            <div
+              className={`
+                absolute
+                top-0
+                left-0
+                h-1
+                w-full
+                bg-gradient-to-r
+                ${color}
+              `}
+            />
 
-              {/* INFO */}
-              <div className="space-y-1 leading-tight min-w-0">
+            {/* GLOW TOP */}
 
-                <div className="flex items-center gap-2 flex-wrap">
+            <div className="
+              absolute
+              -top-16
+              -right-16
+              w-56
+              h-56
+              rounded-full
+              bg-indigo-500/10
+              blur-3xl
+              opacity-0
+              group-hover:opacity-100
+              transition-all
+              duration-700
+            " />
 
-                  <p className="text-sm sm:text-base font-semibold text-gray-800 truncate">
-                    {cliente.nombre} {cliente.apellido}
-                  </p>
+            {/* GLOW BOTTOM */}
 
-                  <span className={`text-[11px] font-medium px-2 py-1 rounded-full ${cliente.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
-                    {cliente.activo ? "Activo" : "Inactivo"}
-                  </span>
+            <div className="
+              absolute
+              -bottom-16
+              -left-16
+              w-56
+              h-56
+              rounded-full
+              bg-purple-500/10
+              blur-3xl
+              opacity-0
+              group-hover:opacity-100
+              transition-all
+              duration-700
+            " />
+
+            {/* CONTENT */}
+
+            <div className="
+              relative
+              z-10
+
+              flex
+              flex-col
+              xl:flex-row
+
+              xl:items-center
+              xl:justify-between
+
+              gap-6
+            ">
+
+              {/* LEFT */}
+
+              <div className="
+                flex
+                items-start
+                gap-5
+
+                min-w-0
+                flex-1
+              ">
+
+                {/* AVATAR */}
+
+                <div
+                  className={`
+                    bg-gradient-to-br
+                    ${color}
+
+                    w-16
+                    h-16
+
+                    rounded-[24px]
+
+                    text-white
+
+                    flex
+                    items-center
+                    justify-center
+
+                    font-black
+                    text-xl
+
+                    shadow-[0_15px_35px_rgba(0,0,0,0.15)]
+
+                    shrink-0
+
+                    group-hover:scale-105
+
+                    transition-all
+                    duration-300
+                  `}
+                >
+                  {cliente.nombre?.charAt(0)?.toUpperCase()}
+                </div>
+
+                {/* INFO */}
+
+                <div className="
+                  min-w-0
+                  flex-1
+                  space-y-4
+                ">
+
+                  {/* HEADER */}
+
+                  <div className="
+                    flex
+                    flex-wrap
+                    items-center
+                    gap-3
+                  ">
+
+                    <h3 className="
+                      text-lg
+                      sm:text-xl
+
+                      font-black
+
+                      text-slate-800
+
+                      truncate
+                    ">
+
+                      {cliente.nombre} {cliente.apellido}
+
+                    </h3>
+
+                    <span
+                      className={`
+                        px-3
+                        py-1.5
+
+                        rounded-full
+
+                        text-[11px]
+                        font-bold
+
+                        border
+
+                        shadow-sm
+
+                        ${cliente.activo
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                          : "bg-rose-50 text-rose-500 border-rose-200"
+                        }
+                      `}
+                    >
+                      {cliente.activo
+                        ? "Activo"
+                        : "Inactivo"}
+                    </span>
+
+                  </div>
+
+                  {/* GRID */}
+
+                  <div className="
+                    grid
+                    grid-cols-1
+                    md:grid-cols-2
+                    gap-3
+                  ">
+
+                    {/* DOCUMENTO */}
+
+                    <div className="
+                      bg-gradient-to-br
+                      from-white
+                      to-slate-100/90
+
+                      border
+                      border-white
+
+                      rounded-[24px]
+
+                      px-5
+                      py-4
+
+                      transition-all
+                      duration-300
+
+                      group-hover:shadow-sm
+                    ">
+
+                      <p className="
+                        text-[11px]
+
+                        uppercase
+
+                        tracking-[0.12em]
+
+                        text-gray-400
+
+                        font-black
+                      ">
+                        Documento
+                      </p>
+
+                      <p className="
+                        mt-2
+
+                        text-sm
+
+                        font-bold
+
+                        text-slate-700
+
+                        break-all
+                      ">
+                        {cliente.cedula || "No registrado"}
+                      </p>
+
+                    </div>
+
+                    {/* TELEFONO */}
+
+                    <div className="
+                      bg-gradient-to-br
+                      from-white
+                      to-slate-100/90
+
+                      border
+                      border-white
+
+                      rounded-[24px]
+
+                      px-5
+                      py-4
+
+                      transition-all
+                      duration-300
+
+                      group-hover:shadow-sm
+                    ">
+
+                      <p className="
+                        text-[11px]
+
+                        uppercase
+
+                        tracking-[0.12em]
+
+                        text-gray-400
+
+                        font-black
+                      ">
+                        Teléfono
+                      </p>
+
+                      <p className="
+                        mt-2
+
+                        text-sm
+
+                        font-bold
+
+                        text-slate-700
+                      ">
+                        {cliente.telefono || "No registrado"}
+                      </p>
+
+                    </div>
+
+                    {/* DIRECCION */}
+
+                    <div className="
+                      bg-gradient-to-br
+                      from-white
+                      to-slate-100/90
+
+                      border
+                      border-white
+
+                      rounded-[24px]
+
+                      px-5
+                      py-4
+
+                      md:col-span-2
+
+                      transition-all
+                      duration-300
+
+                      group-hover:shadow-sm
+                    ">
+
+                      <p className="
+                        text-[11px]
+
+                        uppercase
+
+                        tracking-[0.12em]
+
+                        text-gray-400
+
+                        font-black
+                      ">
+                        Dirección
+                      </p>
+
+                      <p className="
+                        mt-2
+
+                        text-sm
+
+                        font-bold
+
+                        text-slate-700
+
+                        truncate
+                      ">
+                        {direccionTexto || "No registrada"}
+                      </p>
+
+                    </div>
+
+                  </div>
 
                 </div>
 
-                <p className="text-xs text-gray-400">
-                  ID: {cliente.cedula}
-                </p>
+              </div>
 
-                <p className="text-sm text-gray-600 truncate">
-                  📞 {cliente.telefono}
-                </p>
+              {/* RIGHT PANEL */}
 
-                {cliente.direccion && (
+              <div
+                onClick={(e) =>
+                  e.stopPropagation()
+                }
+                className="
+                  xl:min-w-[180px]
 
-                  <p className="text-xs sm:text-sm text-gray-400 truncate">
-                    📍 {
-                      typeof cliente.direccion === "string"
-                        ? cliente.direccion
-                        : `${cliente.direccion.municipio_nombre || ""}, ${cliente.direccion.provincia_nombre || ""}`
+                  flex
+                  flex-row
+                  xl:flex-col
+
+                  items-stretch
+
+                  gap-3
+
+                  opacity-100
+
+                  transition-all
+                  duration-300
+                "
+              >
+
+                {/* NUEVA CITA */}
+
+                <button
+                  onClick={() => {
+
+                    navigate("/citas", {
+
+                      state: {
+
+                        clienteSeleccionado: {
+                          id: cliente.id,
+                          nombre: cliente.nombre,
+                          apellido: cliente.apellido
+                        }
+
+                      }
+
+                    });
+
+                  }}
+                  className="
+                    h-12
+
+                    px-5
+
+                    rounded-[20px]
+
+                    bg-gradient-to-r
+                    from-indigo-500
+                    via-purple-500
+                    to-violet-500
+
+                    text-white
+
+                    text-sm
+                    font-black
+
+                    shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                    hover:scale-[1.03]
+
+                    hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+
+                    active:scale-95
+
+                    transition-all
+                    duration-300
+
+                    whitespace-nowrap
+                  "
+                >
+                  + Nueva cita
+                </button>
+
+                {/* ACTIONS */}
+
+                <div className="
+                  flex
+                  items-center
+                  justify-center
+                  gap-3
+                ">
+
+                  {/* EDITAR */}
+
+                  <button
+                    onClick={() =>
+                      onEditarClick(cliente)
                     }
-                  </p>
+                    className="
+                      w-12
+                      h-12
 
-                )}
+                      rounded-[20px]
+
+                      bg-gradient-to-br
+                      from-slate-100
+                      to-slate-200/70
+
+                      text-slate-500
+
+                      hover:text-slate-700
+
+                      border
+                      border-white
+
+                      flex
+                      items-center
+                      justify-center
+
+                      hover:scale-110
+
+                      active:scale-95
+
+                      hover:shadow-lg
+
+                      transition-all
+                      duration-300
+                    "
+                    title="Editar"
+                  >
+                    ✏️
+                  </button>
+
+                  {/* TOGGLE */}
+
+                  <button
+                    onClick={() =>
+                      onToggleActivo(cliente)
+                    }
+                    className={`
+                      w-12
+                      h-12
+
+                      rounded-[20px]
+
+                      border
+                      border-white
+
+                      flex
+                      items-center
+                      justify-center
+
+                      hover:scale-110
+
+                      active:scale-95
+
+                      hover:shadow-lg
+
+                      transition-all
+                      duration-300
+
+                      ${cliente.activo
+                          ? "bg-gradient-to-br from-rose-50 to-rose-100 text-rose-500"
+                          : "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-500"
+                        }
+                    `}
+                    title={
+                      cliente.activo
+                        ? "Desactivar"
+                        : "Activar"
+                    }
+                  >
+                    {cliente.activo
+                      ? "🚫"
+                      : "✅"}
+                  </button>
+
+                </div>
 
               </div>
 
             </div>
 
-            {/* RIGHT */}
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 opacity-100 md:opacity-20 md:group-hover:opacity-100 transition-all duration-300"
-            >
+            {/* SELECTED INDICATOR */}
 
-              {/* NUEVA CITA */}
-              <button
-                onClick={() => {
+            {isSelected && (
 
-                  navigate("/citas", {
-                    state: {
-                      clienteSeleccionado: {
-                        id: cliente.id,
-                        nombre: cliente.nombre,
-                        apellido: cliente.apellido
-                      }
-                    }
-                  });
+              <div className="
+                absolute
+                top-5
+                right-5
+              ">
 
-                }}
-                className="h-8 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-500 hover:text-blue-600 text-xs font-medium hover:scale-[1.03] active:scale-95 transition-all duration-200 whitespace-nowrap"
-              >
-                + Cita
-              </button>
+                <div className="
+                  w-3.5
+                  h-3.5
 
-              {/* EDITAR */}
-              <button
-                onClick={() => onEditarClick(cliente)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-slate-600 hover:bg-slate-100 hover:scale-110 active:scale-95 transition-all duration-200"
-                title="Editar"
-              >
-                ✏️
-              </button>
+                  rounded-full
 
-              {/* TOGGLE */}
-              <button
-                onClick={() => onToggleActivo(cliente)}
-                className={`w-8 h-8 rounded-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 ${cliente.activo
-                  ? "text-red-300 hover:text-red-500 hover:bg-red-50"
-                  : "text-green-300 hover:text-green-500 hover:bg-green-50"
-                }`}
-                title={cliente.activo ? "Desactivar" : "Activar"}
-              >
-                {cliente.activo ? "🚫" : "✅"}
-              </button>
+                  bg-indigo-500
 
-            </div>
+                  shadow-[0_0_20px_rgba(99,102,241,0.9)]
+                " />
+
+              </div>
+
+            )}
 
           </div>
 
         );
 
       })}
+
+      {/* EMPTY */}
+
+      {clientes.length === 0 && (
+
+        <div className="
+          relative
+          overflow-hidden
+
+          bg-white/90
+          backdrop-blur-xl
+
+          border
+          border-white/40
+
+          rounded-[36px]
+
+          p-14
+
+          text-center
+
+          shadow-[0_15px_40px_rgba(0,0,0,0.05)]
+        ">
+
+          <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-52
+            h-52
+
+            rounded-full
+
+            bg-indigo-500/10
+
+            blur-3xl
+          " />
+
+          <div className="
+            relative
+            z-10
+
+            w-24
+            h-24
+
+            mx-auto
+
+            rounded-[30px]
+
+            bg-gradient-to-br
+            from-indigo-500
+            via-purple-500
+            to-violet-500
+
+            flex
+            items-center
+            justify-center
+
+            text-5xl
+            text-white
+
+            shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+          ">
+            👥
+          </div>
+
+          <h3 className="
+            mt-8
+
+            text-3xl
+
+            font-black
+
+            text-slate-800
+          ">
+            No hay clientes
+          </h3>
+
+          <p className="
+            mt-3
+
+            text-gray-500
+
+            max-w-sm
+
+            mx-auto
+          ">
+            Los clientes registrados aparecerán aquí automáticamente
+          </p>
+
+        </div>
+
+      )}
 
     </div>
 

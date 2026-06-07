@@ -1,27 +1,62 @@
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+
 import { useState, useEffect } from "react";
+
 import { useServicios } from "../../hooks/useServicios";
 import { useIngresos } from "../../hooks/useIngresos";
 import { useCitas } from "../../hooks/useCitas";
-import { formatFecha, formatHora } from "../../utils/fecha";
+
+import {
+  formatFecha,
+  formatHora
+} from "../../utils/fecha";
+
 import { formatMoney } from "../../utils/format";
 
-function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
-  const { servicios: catalogoServicios } = useServicios();
+function IngresoForm({
+  clientes,
+  initialData,
+  citaPreset,
+  onClose
+}) {
 
-  const { crearIngreso, actualizarIngreso } =
-    useIngresos();
+  /*
+  ==========================================
+  HOOKS
+  ==========================================
+  */
 
-  const { citas } = useCitas();
+  const {
+    servicios: catalogoServicios
+  } = useServicios();
 
-  // ✅ FORM
+  const {
+    crearIngreso,
+    actualizarIngreso
+  } = useIngresos();
+
+  const {
+    citas
+  } = useCitas();
+
+  /*
+  ==========================================
+  FORM
+  ==========================================
+  */
+
   const {
     handleSubmit,
     reset
   } = useForm();
 
-  // ✅ STATES
+  /*
+  ==========================================
+  STATES
+  ==========================================
+  */
+
   const [clienteId, setClienteId] =
     useState("");
 
@@ -43,7 +78,12 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
   const [descuento, setDescuento] =
     useState(0);
 
-  // ✅ NORMALIZE
+  /*
+  ==========================================
+  HELPERS
+  ==========================================
+  */
+
   const normalize = (text) => {
 
     return (text || "")
@@ -52,7 +92,12 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
   };
 
-  // ✅ SINCRONIZAR CLIENTE
+  /*
+  ==========================================
+  CLIENTE PRESET
+  ==========================================
+  */
+
   useEffect(() => {
 
     if (!citaPreset) {
@@ -60,53 +105,59 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
     }
 
     setClienteId(
-      String(citaPreset.cliente_id)
+      String(
+        citaPreset.cliente_id
+      )
     );
 
   }, [citaPreset]);
 
-  // ✅ AUTO SERVICIO
+  /*
+  ==========================================
+  AUTO SERVICIO
+  ==========================================
+  */
+
   const autoSeleccionarServicio = (
     clienteId
   ) => {
 
-    // ✅ usar cita preset directamente
     if (citaPreset) {
 
-      setCitaSeleccionada(citaPreset);
+      setCitaSeleccionada(
+        citaPreset
+      );
 
       return;
+
     }
 
-    console.log(
-      "👉 TODAS LAS CITAS:",
+    const ahora =
+      new Date();
+
+    const citasCliente =
       citas
-    );
-
-    console.log(
-      "👉 CLIENTE SELECCIONADO:",
-      clienteId
-    );
-
-    const ahora = new Date();
-
-    const citasCliente = citas
-      .filter(
-        c =>
-          Number(c.cliente_id) ===
-          Number(clienteId) &&
-          c.estado === "pendiente"
-      )
-      .map(c => ({
-        ...c,
-        fechaObj: new Date(
-          c.fecha.replace("T", " ")
+        .filter(
+          c =>
+            Number(c.cliente_id) ===
+            Number(clienteId) &&
+            c.estado === "pendiente"
         )
-      }));
+        .map(c => ({
+          ...c,
+          fechaObj: new Date(
+            c.fecha.replace(
+              "T",
+              " "
+            )
+          )
+        }));
 
     if (citasCliente.length === 0) {
 
-      setCitaSeleccionada(null);
+      setCitaSeleccionada(
+        null
+      );
 
       setServicios([
         {
@@ -121,52 +172,63 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       );
 
       return;
+
     }
 
-    // ✅ cita de hoy
-    const hoy = new Date();
+    const hoy =
+      new Date();
 
-    const citaHoy = citasCliente.find(
-      c =>
-        c.fechaObj.toDateString() ===
-        hoy.toDateString()
+    const citaHoy =
+      citasCliente.find(
+        c =>
+          c.fechaObj.toDateString() ===
+          hoy.toDateString()
+      );
+
+    let citaElegida =
+      citaHoy;
+
+    if (!citaElegida) {
+
+      citaElegida =
+        citasCliente.sort(
+          (a, b) =>
+            Math.abs(
+              a.fechaObj - ahora
+            ) -
+            Math.abs(
+              b.fechaObj - ahora
+            )
+        )[0];
+
+    }
+
+    if (!citaElegida) {
+
+      setCitaSeleccionada(
+        null
+      );
+
+      setServicios([
+        {
+          descripcion: "",
+          monto: "",
+          costo_servicio: 0
+        }
+      ]);
+
+      toast(
+        "No hay citas relacionadas ⚠️"
+      );
+
+      return;
+
+    }
+
+    setCitaSeleccionada(
+      citaElegida
     );
 
-    let citaElegida = citaHoy;
-
-    // ✅ más cercana
-    if (!citaElegida) {
-
-      citaElegida = citasCliente.sort(
-        (a, b) =>
-          Math.abs(a.fechaObj - ahora) -
-          Math.abs(b.fechaObj - ahora)
-      )[0];
-
-    }
-
-    if (!citaElegida) {
-
-      setCitaSeleccionada(null);
-
-      setServicios([
-        {
-          descripcion: "",
-          monto: "",
-          costo_servicio: 0
-        }
-      ]);
-
-      toast(
-        "No hay citas relacionadas ⚠️"
-      );
-
-      return;
-    }
-
-    setCitaSeleccionada(citaElegida);
-
-    // ✅ auto servicio
     if (!citaElegida.motivo) {
       return;
     }
@@ -174,18 +236,22 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
     const servicioEncontrado =
       catalogoServicios.find(s => {
 
-        const nombre = normalize(
-          s?.nombre || s?.descripcion
-        );
+        const nombre =
+          normalize(
+            s?.nombre ||
+            s?.descripcion
+          );
 
-        const motivo = normalize(
-          citaElegida?.motivo
-        );
+        const motivo =
+          normalize(
+            citaElegida?.motivo
+          );
 
         return motivo
           .split(" ")
           .some(
-            p => nombre.includes(p)
+            p =>
+              nombre.includes(p)
           );
 
       });
@@ -205,13 +271,16 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       ]);
 
       return;
+
     }
 
     setServicios(prev => {
 
-      const copia = [...prev];
+      const copia =
+        [...prev];
 
       copia[0] = {
+
         descripcion:
           servicioEncontrado.nombre ||
           servicioEncontrado.descripcion ||
@@ -235,7 +304,12 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
   };
 
-  // ✅ PRESET CITA
+  /*
+  ==========================================
+  PRESET CITA
+  ==========================================
+  */
+
   useEffect(() => {
 
     if (
@@ -245,9 +319,10 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       return;
     }
 
-    setCitaSeleccionada(citaPreset);
+    setCitaSeleccionada(
+      citaPreset
+    );
 
-    // ✅ servicio automático
     if (citaPreset.motivo) {
 
       const encontrado =
@@ -273,7 +348,6 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
             costo_servicio:
               encontrado.costo_servicio || 0
-
           }
         ]);
 
@@ -287,7 +361,12 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
     catalogoServicios
   ]);
 
-  // ✅ EDITAR
+  /*
+  ==========================================
+  EDITAR
+  ==========================================
+  */
+
   useEffect(() => {
 
     if (initialData) {
@@ -295,7 +374,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       setServicios(
         initialData.servicios || []
       );
-      
+
       setDescuento(
         initialData.descuento || 0
       );
@@ -320,7 +399,12 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
     citaPreset
   ]);
 
-  // ✅ AGREGAR SERVICIO
+  /*
+  ==========================================
+  CRUD SERVICIOS
+  ==========================================
+  */
+
   const agregarServicio = () => {
 
     setServicios([
@@ -334,7 +418,6 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
   };
 
-  // ✅ ELIMINAR SERVICIO
   const eliminarServicio = (index) => {
 
     setServicios(
@@ -345,29 +428,39 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
   };
 
-  // ✅ ACTUALIZAR SERVICIO
   const actualizarServicio = (
     index,
     campo,
     valor
   ) => {
 
-    const nuevos = [...servicios];
+    const nuevos =
+      [...servicios];
 
-    nuevos[index][campo] = valor;
+    nuevos[index][campo] =
+      valor;
 
-    setServicios(nuevos);
+    setServicios(
+      nuevos
+    );
 
   };
 
-  // ✅ TOTAL
-  const subtotal = servicios.reduce(
-    (acc, s) =>
-      acc + Number(s.monto || 0),
-    0
-  );
+  /*
+  ==========================================
+  TOTAL
+  ==========================================
+  */
 
-  const itbis = subtotal * 0.18;
+  const subtotal =
+    servicios.reduce(
+      (acc, s) =>
+        acc + Number(s.monto || 0),
+      0
+    );
+
+  const itbis =
+    subtotal * 0.18;
 
   const descuentoValor =
     subtotal *
@@ -378,7 +471,12 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
     itbis -
     descuentoValor;
 
-  // ✅ SUBMIT
+  /*
+  ==========================================
+  SUBMIT
+  ==========================================
+  */
+
   const onSubmit = async () => {
 
     for (let s of servicios) {
@@ -393,6 +491,7 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
         );
 
         return;
+
       }
 
     }
@@ -400,25 +499,35 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
     const payload = {
 
       cliente_id:
-        parseInt(clienteId),
+        parseInt(
+          clienteId
+        ),
 
       descuento:
-        parseFloat(descuento) || 0,
+        parseFloat(
+          descuento
+        ) || 0,
 
       cita_id:
         citaSeleccionada?.id || null,
 
-      servicios: servicios.map(s => ({
-        descripcion:
-          s.descripcion,
+      servicios:
+        servicios.map(s => ({
 
-        monto:
-          parseFloat(s.monto),
+          descripcion:
+            s.descripcion,
 
-        costo_servicio:
-          parseFloat(s.costo_servicio || 0)
+          monto:
+            parseFloat(
+              s.monto
+            ),
 
-      }))
+          costo_servicio:
+            parseFloat(
+              s.costo_servicio || 0
+            )
+
+        }))
 
     };
 
@@ -484,126 +593,659 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
   };
 
   return (
-    <div className="w-full h-full md:h-auto bg-white rounded-t-3xl md:rounded-2xl shadow-lg border-0 md:border border-gray-200 p-4 sm:p-5 md:p-6 flex flex-col gap-4 max-h-screen md:max-h-[90vh] overflow-y-auto overflow-x-hidden">
 
-      {/* ✅ HEADER */}
-      <div className="text-center space-y-1 shrink-0">
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
-          {initialData ? "Editar factura ✏️" : "Registrar factura 🧾"}
+    <div className="
+      relative
+      overflow-hidden
+
+      w-full
+      h-full
+
+      md:h-auto
+      md:max-h-[92vh]
+
+      bg-white/95
+      backdrop-blur-2xl
+
+      rounded-t-[36px]
+      md:rounded-[36px]
+
+      border-0
+      md:border
+      border-white/40
+
+      shadow-[0_25px_80px_rgba(0,0,0,0.15)]
+
+      p-5
+      sm:p-6
+
+      flex
+      flex-col
+
+      gap-6
+
+      overflow-y-auto
+      overflow-x-hidden
+    ">
+
+      {/* GLOW */}
+
+      <div className="
+        absolute
+        -top-20
+        -right-20
+
+        w-72
+        h-72
+
+        rounded-full
+
+        bg-indigo-500/10
+
+        blur-3xl
+      " />
+
+      {/* HEADER */}
+
+      <div className="
+        relative
+        z-10
+
+        text-center
+
+        space-y-3
+
+        shrink-0
+      ">
+
+        <h2 className="
+          text-3xl
+          sm:text-4xl
+
+          font-black
+
+          tracking-tight
+
+          text-slate-800
+        ">
+
+          {initialData
+            ? "Editar factura ✏️"
+            : "Registrar factura 🧾"}
+
         </h2>
 
-        <p className="text-sm text-gray-500">
+        <div className="
+          w-20
+          h-1
+
+          mx-auto
+
+          rounded-full
+
+          bg-gradient-to-r
+          from-indigo-500
+          to-purple-500
+        " />
+
+        <p className="
+          text-sm
+          sm:text-base
+
+          text-gray-500
+        ">
+
           {initialData
-            ? "Modifica los detalles"
-            : "Completa los datos de la factura"}
+            ? "Modifica los detalles de la factura"
+            : "Completa los datos de facturación"}
+
         </p>
+
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 flex-1 min-h-0">
+      {/* FORM */}
 
-        {/* ✅ CLIENTE */}
-        <select
-          value={clienteId}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="
+          relative
+          z-10
 
-          disabled={!!initialData}
+          flex
+          flex-col
 
-          onChange={(e) => {
+          gap-6
 
-            const id = e.target.value;
+          flex-1
+          min-h-0
+        "
+      >
 
-            setClienteId(id);
+        {/* CLIENTE */}
 
-            autoSeleccionarServicio(id);
-          }}
+        <div className="
+          bg-gradient-to-br
+          from-white
+          to-slate-50
 
-          className={`input h-12 sm:h-11 text-base sm:text-sm ${initialData ? "bg-gray-100 text-gray-500" : ""}`}
-        >
-          <option value="">Seleccionar cliente</option>
-          {clientes.map(c => (
-            <option
-              key={c.id}
-              value={String(c.id)}
-            >
-              {c.nombre} {c.apellido}
+          border
+          border-white
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-sm
+
+          space-y-4
+        ">
+
+          <div className="
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-gradient-to-br
+              from-indigo-500
+              to-purple-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              text-xl
+            ">
+              👤
+            </div>
+
+            <div>
+
+              <h3 className="
+                text-sm
+
+                font-black
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-slate-700
+              ">
+                Cliente
+              </h3>
+
+              <p className="
+                text-xs
+                text-gray-400
+              ">
+                Selecciona el paciente
+              </p>
+
+            </div>
+
+          </div>
+
+          <select
+            value={clienteId}
+
+            disabled={!!initialData}
+
+            onChange={(e) => {
+
+              const id =
+                e.target.value;
+
+              setClienteId(id);
+
+              autoSeleccionarServicio(
+                id
+              );
+
+            }}
+
+            className={`
+              w-full
+
+              h-14
+
+              px-5
+
+              rounded-[24px]
+
+              bg-white/80
+
+              border
+              border-slate-200
+
+              text-slate-700
+
+              shadow-sm
+
+              focus:outline-none
+
+              focus:ring-4
+              focus:ring-indigo-500/10
+
+              focus:border-indigo-300
+
+              transition-all
+              duration-300
+
+              ${initialData
+                ? "bg-slate-100 text-slate-400"
+                : ""
+              }
+            `}
+          >
+
+            <option value="">
+              Seleccionar cliente
             </option>
-          ))}
-        </select>
 
-        {/* ✅ SERVICIOS */}
-        <div className="space-y-3">
+            {clientes.map(c => (
 
-          <div className="flex items-center justify-between gap-2">
-            <h4 className="text-xs uppercase font-semibold text-gray-500">
-              Servicios
-            </h4>
+              <option
+                key={c.id}
+                value={String(c.id)}
+              >
+                {c.nombre}
+                {" "}
+                {c.apellido}
+              </option>
+
+            ))}
+
+          </select>
+
+          {/* CITA */}
+
+          {citaSeleccionada && (
+
+            <div className="
+              bg-gradient-to-r
+              from-emerald-50
+              to-green-50
+
+              border
+              border-emerald-100
+
+              rounded-[24px]
+
+              p-4
+
+              flex
+              flex-col
+              sm:flex-row
+
+              sm:items-center
+              sm:justify-between
+
+              gap-3
+            ">
+
+              <div>
+
+                <p className="
+                  text-xs
+
+                  uppercase
+
+                  tracking-[0.12em]
+
+                  font-black
+
+                  text-emerald-500
+                ">
+                  Cita vinculada
+                </p>
+
+                <p className="
+                  mt-1
+
+                  text-sm
+
+                  font-bold
+
+                  text-slate-700
+                ">
+                  {formatFecha(
+                    citaSeleccionada.fecha
+                  )}
+                  {" • "}
+                  {formatHora(
+                    citaSeleccionada.fecha
+                  )}
+                </p>
+
+              </div>
+
+              <div className="
+                px-4
+                py-2
+
+                rounded-2xl
+
+                bg-white
+
+                text-sm
+                font-semibold
+
+                text-emerald-600
+
+                shadow-sm
+              ">
+                {citaSeleccionada.motivo}
+              </div>
+
+            </div>
+
+          )}
+
+        </div>
+
+        {/* SERVICIOS */}
+
+        <div className="
+          bg-gradient-to-br
+          from-white
+          to-slate-50
+
+          border
+          border-white
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-sm
+
+          flex
+          flex-col
+
+          gap-5
+
+          min-h-0
+        ">
+
+          {/* HEADER */}
+
+          <div className="
+            flex
+            items-center
+            justify-between
+
+            gap-3
+          ">
+
+            <div className="
+              flex
+              items-center
+              gap-3
+            ">
+
+              <div className="
+                w-12
+                h-12
+
+                rounded-[18px]
+
+                bg-gradient-to-br
+                from-emerald-500
+                to-green-500
+
+                text-white
+
+                flex
+                items-center
+                justify-center
+
+                text-xl
+              ">
+                🦷
+              </div>
+
+              <div>
+
+                <h3 className="
+                  text-sm
+
+                  font-black
+
+                  uppercase
+
+                  tracking-[0.12em]
+
+                  text-slate-700
+                ">
+                  Servicios
+                </h3>
+
+                <p className="
+                  text-xs
+                  text-gray-400
+                ">
+                  Procedimientos incluidos
+                </p>
+
+              </div>
+
+            </div>
 
             <button
               type="button"
               onClick={agregarServicio}
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium active:scale-[0.98] transition"
+              className="
+                h-11
+
+                px-5
+
+                rounded-2xl
+
+                bg-gradient-to-r
+                from-indigo-500
+                to-purple-500
+
+                text-white
+
+                text-sm
+                font-bold
+
+                shadow-[0_10px_30px_rgba(99,102,241,0.25)]
+
+                hover:scale-[1.03]
+
+                active:scale-95
+
+                transition-all
+                duration-300
+              "
             >
               + Agregar
             </button>
+
           </div>
 
-          <div className="space-y-2 overflow-y-auto overflow-x-hidden pr-1 max-h-[32vh] sm:max-h-[38vh] md:max-h-[40vh]">
+          {/* ITEMS */}
+
+          <div className="
+            space-y-4
+
+            overflow-y-auto
+            overflow-x-hidden
+
+            pr-1
+
+            max-h-[38vh]
+          ">
 
             {servicios.map((s, index) => (
 
               <div
                 key={index}
-                className="border border-gray-200 rounded-2xl p-3 bg-gray-50 space-y-2"
+                className="
+                  relative
+
+                  bg-white/80
+
+                  border
+                  border-slate-200
+
+                  rounded-[28px]
+
+                  p-4
+
+                  shadow-sm
+
+                  space-y-4
+                "
               >
 
+                {/* DELETE */}
+
                 {servicios.length > 1 && (
+
                   <button
                     type="button"
-                    onClick={() => eliminarServicio(index)}
-                    className="text-red-500 text-xs float-right"
+                    onClick={() =>
+                      eliminarServicio(index)
+                    }
+                    className="
+                      absolute
+                      top-4
+                      right-4
+
+                      w-9
+                      h-9
+
+                      rounded-xl
+
+                      bg-red-50
+
+                      text-red-500
+
+                      hover:bg-red-100
+
+                      transition-all
+                      duration-300
+                    "
                   >
-                    ❌
+                    ✕
                   </button>
+
                 )}
+
+                {/* SELECT */}
 
                 <select
                   value={s.descripcion}
                   onChange={(e) => {
-                    const seleccionado = catalogoServicios.find(
-                      serv => serv.nombre === e.target.value
+
+                    const seleccionado =
+                      catalogoServicios.find(
+                        serv =>
+                          serv.nombre ===
+                          e.target.value
+                      );
+
+                    actualizarServicio(
+                      index,
+                      "descripcion",
+                      seleccionado.nombre
                     );
 
-                    actualizarServicio(index, "descripcion", seleccionado.nombre);
-                    actualizarServicio(index, "monto", seleccionado.precio);
+                    actualizarServicio(
+                      index,
+                      "monto",
+                      seleccionado.precio
+                    );
 
-                    actualizarServicio(index, "costo_servicio", seleccionado.costo_servicio || 0);
+                    actualizarServicio(
+                      index,
+                      "costo_servicio",
+                      seleccionado.costo_servicio || 0
+                    );
 
                   }}
-                  className="input h-12 sm:h-11 text-base sm:text-sm"
+                  className="
+                    w-full
+
+                    h-14
+
+                    px-5
+
+                    rounded-[22px]
+
+                    bg-white
+
+                    border
+                    border-slate-200
+
+                    text-slate-700
+
+                    shadow-sm
+
+                    focus:outline-none
+
+                    focus:ring-4
+                    focus:ring-indigo-500/10
+
+                    focus:border-indigo-300
+
+                    transition-all
+                    duration-300
+                  "
                 >
-                  <option value="">Seleccionar servicio</option>
+
+                  <option value="">
+                    Seleccionar servicio
+                  </option>
 
                   {catalogoServicios.map((serv, i) => {
 
-                    const yaSeleccionado = servicios.some(
-                      (s2, i2) =>
-                        s2.descripcion === serv.nombre && i2 !== index
-                    );
+                    const yaSeleccionado =
+                      servicios.some(
+                        (s2, i2) =>
+                          s2.descripcion ===
+                          serv.nombre &&
+                          i2 !== index
+                      );
 
                     return (
+
                       <option
                         key={i}
                         value={serv.nombre}
                         disabled={yaSeleccionado}
                       >
-                        {serv.nombre} (RD$ {formatMoney(serv.precio)})
+                        {serv.nombre}
+                        {" "}
+                        (RD$
+                        {" "}
+                        {formatMoney(serv.precio)}
+                        )
+
                       </option>
+
                     );
+
                   })}
+
                 </select>
+
+                {/* PRECIO */}
 
                 <input
                   type="number"
-                  value={s.monto} 
+                  value={s.monto}
                   onChange={(e) =>
                     actualizarServicio(
                       index,
@@ -611,13 +1253,78 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
                       e.target.value
                     )
                   }
-                  className="input h-12 sm:h-11 text-base sm:text-sm"
+                  placeholder="Monto del servicio"
+                  className="
+                    w-full
+
+                    h-14
+
+                    px-5
+
+                    rounded-[22px]
+
+                    bg-white
+
+                    border
+                    border-slate-200
+
+                    text-slate-700
+
+                    shadow-sm
+
+                    focus:outline-none
+
+                    focus:ring-4
+                    focus:ring-emerald-500/10
+
+                    focus:border-emerald-300
+
+                    transition-all
+                    duration-300
+                  "
                 />
 
-                <p className="text-xs text-gray-400">
-                  Costo interno:
-                  RD$ {formatMoney(s.costo_servicio || 0)}
-                </p>
+                {/* COSTO */}
+
+                <div className="
+                  flex
+                  items-center
+                  justify-between
+
+                  bg-slate-50
+
+                  border
+                  border-slate-100
+
+                  rounded-[20px]
+
+                  px-4
+                  py-3
+                ">
+
+                  <span className="
+                    text-sm
+                    text-gray-500
+                  ">
+                    Costo interno
+                  </span>
+
+                  <span className="
+                    text-sm
+
+                    font-bold
+
+                    text-slate-700
+                  ">
+                    RD$
+                    {" "}
+                    {formatMoney(
+                      s.costo_servicio || 0
+                    )}
+                  </span>
+
+                </div>
+
               </div>
 
             ))}
@@ -626,63 +1333,421 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
 
         </div>
 
-        {/* ✅ DESCUENTO */}
-        <div className="space-y-1">
-          <label className="text-xs text-gray-500 font-medium">
-            Descuento (%)
-          </label>
+        {/* RESUMEN */}
 
-          <input
-            type="number"
-            value={descuento}
-            onChange={(e) => setDescuento(e.target.value)}
-            className="input h-12 sm:h-11 text-base sm:text-sm"
-          />
+        <div className="
+          bg-gradient-to-br
+          from-white
+          to-slate-50
+
+          border
+          border-white
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-sm
+
+          space-y-5
+        ">
+
+          {/* HEADER */}
+
+          <div className="
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-gradient-to-br
+              from-yellow-500
+              to-orange-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              text-xl
+            ">
+              💰
+            </div>
+
+            <div>
+
+              <h3 className="
+                text-sm
+
+                font-black
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-slate-700
+              ">
+                Resumen factura
+              </h3>
+
+              <p className="
+                text-xs
+                text-gray-400
+              ">
+                Totales e impuestos
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* DESCUENTO */}
+
+          <div className="
+            space-y-2
+          ">
+
+            <label className="
+              text-xs
+
+              font-bold
+
+              text-gray-500
+            ">
+              Descuento (%)
+            </label>
+
+            <input
+              type="number"
+              value={descuento}
+              onChange={(e) =>
+                setDescuento(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+
+                h-14
+
+                px-5
+
+                rounded-[22px]
+
+                bg-white
+
+                border
+                border-slate-200
+
+                text-slate-700
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-yellow-500/10
+
+                focus:border-yellow-300
+
+                transition-all
+                duration-300
+              "
+            />
+
+          </div>
+
+          {/* TOTALS */}
+
+          <div className="
+            grid
+            grid-cols-1
+            sm:grid-cols-3
+
+            gap-4
+          ">
+
+            {/* SUBTOTAL */}
+
+            <div className="
+              bg-white
+
+              border
+              border-slate-100
+
+              rounded-[24px]
+
+              p-4
+
+              text-center
+            ">
+
+              <p className="
+                text-xs
+
+                uppercase
+
+                tracking-[0.12em]
+
+                font-black
+
+                text-gray-400
+              ">
+                Subtotal
+              </p>
+
+              <p className="
+                mt-2
+
+                text-xl
+
+                font-black
+
+                text-slate-700
+              ">
+                RD$
+                {" "}
+                {formatMoney(subtotal)}
+              </p>
+
+            </div>
+
+            {/* ITBIS */}
+
+            <div className="
+              bg-white
+
+              border
+              border-slate-100
+
+              rounded-[24px]
+
+              p-4
+
+              text-center
+            ">
+
+              <p className="
+                text-xs
+
+                uppercase
+
+                tracking-[0.12em]
+
+                font-black
+
+                text-gray-400
+              ">
+                ITBIS
+              </p>
+
+              <p className="
+                mt-2
+
+                text-xl
+
+                font-black
+
+                text-orange-500
+              ">
+                RD$
+                {" "}
+                {formatMoney(itbis)}
+              </p>
+
+            </div>
+
+            {/* DESCUENTO */}
+
+            <div className="
+              bg-white
+
+              border
+              border-slate-100
+
+              rounded-[24px]
+
+              p-4
+
+              text-center
+            ">
+
+              <p className="
+                text-xs
+
+                uppercase
+
+                tracking-[0.12em]
+
+                font-black
+
+                text-gray-400
+              ">
+                Descuento
+              </p>
+
+              <p className="
+                mt-2
+
+                text-xl
+
+                font-black
+
+                text-rose-500
+              ">
+                - RD$
+                {" "}
+                {formatMoney(descuentoValor)}
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* TOTAL FINAL */}
+
+          <div className="
+            bg-gradient-to-r
+            from-emerald-500
+            to-green-500
+
+            rounded-[30px]
+
+            p-6
+
+            text-white
+
+            shadow-[0_20px_45px_rgba(16,185,129,0.28)]
+
+            text-center
+          ">
+
+            <p className="
+              text-xs
+
+              uppercase
+
+              tracking-[0.14em]
+
+              font-black
+
+              text-white/70
+            ">
+              Total factura
+            </p>
+
+            <p className="
+              mt-3
+
+              text-4xl
+
+              font-black
+            ">
+              RD$
+              {" "}
+              {formatMoney(total)}
+            </p>
+
+          </div>
+
         </div>
 
-        {/* ✅ TOTAL */}
-        <div className={`
-        border rounded-2xl p-4 text-center shrink-0
-        ${total > 0
-            ? "bg-green-50 border-green-200"
-            : "bg-gray-50 border-gray-200"}
-      `}>
+        {/* ACTIONS */}
 
-          <p className="text-xs text-gray-500">
-            Total factura
-          </p>
+        <div className="
+          sticky
+          bottom-0
 
-          <p className="text-2xl sm:text-3xl md:text-2xl font-bold text-green-700">
-            RD$ {formatMoney(total)}
-          </p>
+          bg-white/90
+          backdrop-blur-xl
 
-        </div>
+          pt-2
 
-        {/* ✅ BOTONES */}
-        <div className="flex flex-col sm:flex-row gap-2 pt-1 shrink-0">
+          flex
+          flex-col
+          sm:flex-row
+
+          gap-3
+
+          shrink-0
+        ">
 
           <button
             type="submit"
             disabled={loading}
             className={`
-           flex-1 h-12 rounded-2xl text-white font-medium text-sm sm:text-base
-            ${loading
+              flex-1
+
+              h-14
+
+              rounded-[24px]
+
+              text-white
+
+              text-sm
+              sm:text-base
+
+              font-black
+
+              transition-all
+              duration-300
+
+              active:scale-[0.98]
+
+              ${loading
                 ? "bg-gray-400"
-                : "bg-blue-500 hover:bg-blue-600"}
-            transition
-          `}
+                : `
+                  bg-gradient-to-r
+                  from-indigo-500
+                  via-purple-500
+                  to-violet-500
+
+                  shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                  hover:scale-[1.01]
+
+                  hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+                `
+              }
+            `}
           >
-            {loading ? "Guardando..." : "Guardar factura"}
+
+            {loading
+              ? "Guardando..."
+              : "Guardar factura"}
+
           </button>
 
           <button
             type="button"
             onClick={onClose}
             className="
-            flex-1 h-12 rounded-2xl
-            bg-gray-100 hover:bg-gray-200
-            text-gray-700 transition
-          "
+              flex-1
+
+              h-14
+
+              rounded-[24px]
+
+              bg-slate-100
+
+              hover:bg-slate-200
+
+              text-slate-700
+
+              font-semibold
+
+              transition-all
+              duration-300
+
+              active:scale-[0.98]
+            "
           >
             Cancelar
           </button>
@@ -692,7 +1757,9 @@ function IngresoForm({ clientes, initialData, citaPreset, onClose }) {
       </form>
 
     </div>
+
   );
+
 }
 
 export default IngresoForm;

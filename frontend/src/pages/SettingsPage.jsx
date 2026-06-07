@@ -207,23 +207,284 @@ function SettingsPage() {
 
     <PageWrapper>
 
-      <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-0 space-y-6">
+      <div className="
+      max-w-[1600px]
+
+      mx-auto
+
+      px-3
+      sm:px-4
+
+      space-y-6
+    ">
 
         {/* HEADER */}
-        <div className="text-center space-y-2 pt-2">
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-r from-slate-800 to-slate-500 bg-clip-text text-transparent">
-            Configuración ⚙️
+        <div className="
+        text-center
+        space-y-3
+        pt-2
+      ">
+
+          <h1 className="
+          text-4xl
+          md:text-5xl
+
+          font-black
+
+          tracking-tight
+        ">
+
+            <span className="
+            bg-gradient-to-r
+            from-slate-800
+            to-slate-500
+
+            bg-clip-text
+            text-transparent
+          ">
+              Configuración
+            </span>
+
+            <span className="ml-2">
+              ⚙️
+            </span>
+
           </h1>
 
-          <p className="text-sm sm:text-base text-gray-500">
-            Administra tu cuenta, seguridad y servicios
+          <div className="
+          w-24
+          h-1
+
+          mx-auto
+
+          rounded-full
+
+          bg-gradient-to-r
+          from-purple-500
+          to-indigo-500
+        " />
+
+          <p className="
+          text-sm
+          sm:text-base
+
+          text-gray-500
+
+          font-medium
+        ">
+            Administra cuenta, seguridad y sistema
           </p>
 
         </div>
 
+        {/* KPIS */}
+
+        <div className="
+        grid
+        grid-cols-1
+        sm:grid-cols-2
+        xl:grid-cols-3
+
+        gap-5
+      ">
+
+          {/* SERVICIOS */}
+
+          <div className="
+          relative
+          overflow-hidden
+
+          bg-white/90
+          backdrop-blur-xl
+
+          border
+          border-white/40
+
+          rounded-[30px]
+
+          p-6
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+          hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+          transition-all
+          duration-300
+        ">
+
+            <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-indigo-500/10
+
+            blur-3xl
+          " />
+
+            <p className="
+            text-sm
+            text-gray-500
+          ">
+              🧾 Servicios
+            </p>
+
+            <h2 className="
+            mt-2
+
+            text-4xl
+
+            font-black
+
+            text-indigo-500
+          ">
+              {servicios.length}
+            </h2>
+
+          </div>
+
+          {/* CLIENTES */}
+
+          <div className="
+          relative
+          overflow-hidden
+
+          bg-white/90
+          backdrop-blur-xl
+
+          border
+          border-white/40
+
+          rounded-[30px]
+
+          p-6
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+          hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+          transition-all
+          duration-300
+        ">
+
+            <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-rose-500/10
+
+            blur-3xl
+          " />
+
+            <p className="
+            text-sm
+            text-gray-500
+          ">
+              🚫 Clientes inactivos
+            </p>
+
+            <h2 className="
+            mt-2
+
+            text-4xl
+
+            font-black
+
+            text-rose-500
+          ">
+              {clientesInactivos.length}
+            </h2>
+
+          </div>
+
+          {/* SEGURIDAD */}
+
+          <div className="
+          relative
+          overflow-hidden
+
+          bg-white/90
+          backdrop-blur-xl
+
+          border
+          border-white/40
+
+          rounded-[30px]
+
+          p-6
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+          hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+          transition-all
+          duration-300
+        ">
+
+            <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-emerald-500/10
+
+            blur-3xl
+          " />
+
+            <p className="
+            text-sm
+            text-gray-500
+          ">
+              🔐 Seguridad
+            </p>
+
+            <h2 className="
+            mt-2
+
+            text-4xl
+
+            font-black
+
+            text-emerald-500
+          ">
+              Activa
+            </h2>
+
+          </div>
+
+        </div>
+
         {/* TABS */}
-        <div className="flex overflow-x-auto sm:justify-center gap-2 pb-2 no-scrollbar">
+
+        <div className="
+        flex
+        overflow-x-auto
+
+        sm:justify-center
+
+        gap-3
+
+        pb-2
+
+        no-scrollbar
+      ">
 
           {["cuenta", "servicios", "clientes"].map((t) => (
 
@@ -231,16 +492,61 @@ function SettingsPage() {
               key={t}
               onClick={() => setTab(t)}
               className={`
-                px-4 sm:px-5 h-11 rounded-2xl whitespace-nowrap text-sm font-medium shrink-0 transition-all duration-200
-                ${tab === t
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-200/50"
-                  : "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 shadow-sm"}
-              `}
+              h-12
+
+              px-5
+
+              rounded-[20px]
+
+              whitespace-nowrap
+
+              text-sm
+              font-bold
+
+              shrink-0
+
+              transition-all
+              duration-300
+
+              border
+
+              ${tab === t
+                  ? `
+                  bg-gradient-to-r
+                  from-indigo-500
+                  via-purple-500
+                  to-violet-500
+
+                  text-white
+
+                  border-transparent
+
+                  shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                  scale-[1.02]
+                `
+                  : `
+                  bg-white/90
+                  backdrop-blur-xl
+
+                  border-white/40
+
+                  text-slate-700
+
+                  hover:bg-white
+                `
+                }
+            `}
             >
 
-              {t === "cuenta" && "👤 Cuenta"}
-              {t === "servicios" && "🧾 Servicios"}
-              {t === "clientes" && "🚫 Clientes inactivos"}
+              {t === "cuenta" &&
+                "👤 Cuenta"}
+
+              {t === "servicios" &&
+                "🧾 Servicios"}
+
+              {t === "clientes" &&
+                "🚫 Clientes inactivos"}
 
             </button>
 
@@ -249,93 +555,384 @@ function SettingsPage() {
         </div>
 
         {/* CUENTA */}
+
         {tab === "cuenta" && (
 
-          <div className="bg-white/90 backdrop-blur-xl rounded-[32px] border border-white/40 shadow-[0_10px_40px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-300 p-5 sm:p-7 space-y-8 overflow-hidden">
+          <div className="
+          grid
+          grid-cols-1
+          xl:grid-cols-2
+
+          gap-6
+        ">
 
             {/* PERFIL */}
-            <div className="space-y-5">
 
-              <div>
+            <div className="
+            bg-white/90
+            backdrop-blur-xl
 
-                <h3 className="text-xl font-bold tracking-tight text-gray-800">
-                  Perfil
-                </h3>
+            border
+            border-white/40
 
-                <p className="text-sm text-gray-500 mt-1">
-                  Administra tu información de acceso
-                </p>
+            rounded-[34px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+            space-y-6
+          ">
+
+              {/* HEADER */}
+
+              <div className="
+              flex
+              items-center
+              gap-4
+            ">
+
+                <div className="
+                w-14
+                h-14
+
+                rounded-[22px]
+
+                bg-gradient-to-br
+                from-indigo-500
+                to-purple-500
+
+                text-white
+
+                flex
+                items-center
+                justify-center
+
+                text-2xl
+              ">
+                  👤
+                </div>
+
+                <div>
+
+                  <h3 className="
+                  text-2xl
+
+                  font-black
+
+                  text-slate-800
+                ">
+                    Perfil
+                  </h3>
+
+                  <p className="
+                  text-sm
+                  text-gray-500
+                ">
+                    Configuración de usuario
+                  </p>
+
+                </div>
 
               </div>
+
+              {/* INPUT */}
 
               <input
                 type="text"
                 placeholder="Nombre de usuario"
+
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full h-12 sm:h-14 rounded-2xl border border-gray-200 bg-white/70 px-4 text-sm sm:text-base outline-none transition-all duration-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 hover:border-blue-200"
+
+                onChange={(e) =>
+                  setUsername(
+                    e.target.value
+                  )
+                }
+
+                className="
+                w-full
+
+                h-14
+
+                px-5
+
+                rounded-[22px]
+
+                bg-white
+
+                border
+                border-slate-200
+
+                hover:border-indigo-300
+
+                text-slate-700
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+
+                focus:border-indigo-300
+
+                transition-all
+                duration-300
+              "
               />
+
+              {/* BUTTON */}
 
               <button
                 onClick={guardarUsuario}
                 disabled={loading}
                 className={`
-                  w-full h-12 sm:h-14 rounded-2xl text-white font-semibold transition-all duration-200 active:scale-[0.98]
-                  ${loading
+                w-full
+
+                h-14
+
+                rounded-[24px]
+
+                text-white
+
+                font-black
+
+                transition-all
+                duration-300
+
+                active:scale-[0.98]
+
+                ${loading
                     ? "bg-gray-400"
-                    : "bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-200/50 hover:scale-[1.01]"}
-                `}
+                    : `
+                    bg-gradient-to-r
+                    from-indigo-500
+                    via-purple-500
+                    to-violet-500
+
+                    shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                    hover:scale-[1.01]
+                  `
+                  }
+              `}
               >
-                {loading ? "Guardando..." : "💾 Guardar usuario"}
+
+                {loading
+                  ? "Guardando..."
+                  : "💾 Guardar usuario"}
+
               </button>
 
             </div>
 
-            {/* DIVIDER */}
-            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-
             {/* PASSWORD */}
-            <div className="space-y-5">
 
-              <div>
+            <div className="
+            bg-white/90
+            backdrop-blur-xl
 
-                <h3 className="text-xl font-bold tracking-tight text-gray-800">
-                  Seguridad
-                </h3>
+            border
+            border-white/40
 
-                <p className="text-sm text-gray-500 mt-1">
-                  Cambia tu contraseña de acceso
-                </p>
+            rounded-[34px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+            space-y-6
+          ">
+
+              {/* HEADER */}
+
+              <div className="
+              flex
+              items-center
+              gap-4
+            ">
+
+                <div className="
+                w-14
+                h-14
+
+                rounded-[22px]
+
+                bg-gradient-to-br
+                from-emerald-500
+                to-green-500
+
+                text-white
+
+                flex
+                items-center
+                justify-center
+
+                text-2xl
+              ">
+                  🔐
+                </div>
+
+                <div>
+
+                  <h3 className="
+                  text-2xl
+
+                  font-black
+
+                  text-slate-800
+                ">
+                    Seguridad
+                  </h3>
+
+                  <p className="
+                  text-sm
+                  text-gray-500
+                ">
+                    Cambiar contraseña
+                  </p>
+
+                </div>
 
               </div>
 
-              <input
-                type="password"
-                placeholder="Contraseña actual"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-12 sm:h-14 rounded-2xl border border-gray-200 bg-white/70 px-4 text-sm sm:text-base outline-none transition-all duration-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 hover:border-blue-200"
-              />
+              {/* INPUTS */}
 
-              <input
-                type="password"
-                placeholder="Nueva contraseña"
-                value={nuevoPassword}
-                onChange={(e) => setNuevoPassword(e.target.value)}
-                className="w-full h-12 sm:h-14 rounded-2xl border border-gray-200 bg-white/70 px-4 text-sm sm:text-base outline-none transition-all duration-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 hover:border-blue-200"
-              />
+              <div className="
+              space-y-4
+            ">
+
+                <input
+                  type="password"
+                  placeholder="Contraseña actual"
+
+                  value={password}
+
+                  onChange={(e) =>
+                    setPassword(
+                      e.target.value
+                    )
+                  }
+
+                  className="
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[22px]
+
+                  bg-white
+
+                  border
+                  border-slate-200
+
+                  hover:border-emerald-300
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-emerald-500/10
+
+                  focus:border-emerald-300
+
+                  transition-all
+                  duration-300
+                "
+                />
+
+                <input
+                  type="password"
+                  placeholder="Nueva contraseña"
+
+                  value={nuevoPassword}
+
+                  onChange={(e) =>
+                    setNuevoPassword(
+                      e.target.value
+                    )
+                  }
+
+                  className="
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[22px]
+
+                  bg-white
+
+                  border
+                  border-slate-200
+
+                  hover:border-emerald-300
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-emerald-500/10
+
+                  focus:border-emerald-300
+
+                  transition-all
+                  duration-300
+                "
+                />
+
+              </div>
+
+              {/* BUTTON */}
 
               <button
                 onClick={cambiarPassword}
                 disabled={loading}
                 className={`
-                  w-full h-12 sm:h-14 rounded-2xl text-white font-semibold transition-all duration-200 active:scale-[0.98]
-                  ${loading
+                w-full
+
+                h-14
+
+                rounded-[24px]
+
+                text-white
+
+                font-black
+
+                transition-all
+                duration-300
+
+                active:scale-[0.98]
+
+                ${loading
                     ? "bg-gray-400"
-                    : "bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 shadow-lg shadow-green-200/50 hover:scale-[1.01]"}
-                `}
+                    : `
+                    bg-gradient-to-r
+                    from-emerald-500
+                    to-green-500
+
+                    shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+
+                    hover:scale-[1.01]
+                  `
+                  }
+              `}
               >
-                {loading ? "Aplicando..." : "🔐 Cambiar contraseña"}
+
+                {loading
+                  ? "Aplicando..."
+                  : "🔐 Cambiar contraseña"}
+
               </button>
 
             </div>
@@ -345,6 +942,7 @@ function SettingsPage() {
         )}
 
         {/* SERVICIOS */}
+
         {tab === "servicios" && (
 
           <ServiciosTab
@@ -357,6 +955,7 @@ function SettingsPage() {
         )}
 
         {/* CLIENTES */}
+
         {tab === "clientes" && (
 
           <ClientesInactivosTab
@@ -368,39 +967,54 @@ function SettingsPage() {
 
       </div>
 
-      {/* MODAL PASSWORD */}
+      {/* MODALS */}
+
       {mostrarConfirmacion && (
 
         <ConfirmModal
           mensaje="¿Seguro que quieres cambiar la contraseña? ⚠️"
           onConfirm={confirmarCambioPassword}
-          onCancel={() => setMostrarConfirmacion(false)}
+          onCancel={() =>
+            setMostrarConfirmacion(false)
+          }
         />
 
       )}
 
-      {/* MODAL ELIMINAR */}
       {servicioAEliminar && (
 
         <ConfirmModal
           mensaje="¿Eliminar servicio? ⚠️"
           onConfirm={() => {
-            eliminarServicio(servicioAEliminar.id);
-            toast.success("Eliminado 🗑️");
-            setServicioAEliminar(null);
+
+            eliminarServicio(
+              servicioAEliminar.id
+            );
+
+            toast.success(
+              "Eliminado 🗑️"
+            );
+
+            setServicioAEliminar(
+              null
+            );
+
           }}
-          onCancel={() => setServicioAEliminar(null)}
+          onCancel={() =>
+            setServicioAEliminar(null)
+          }
         />
 
       )}
 
-      {/* MODAL SERVICIO */}
       {modalServicio && (
 
         <ServicioModal
           servicio={servicioEditar}
           onGuardar={guardarServicio}
-          onClose={() => setModalServicio(false)}
+          onClose={() =>
+            setModalServicio(false)
+          }
         />
 
       )}
@@ -408,7 +1022,6 @@ function SettingsPage() {
     </PageWrapper>
 
   );
-
 }
 
 export default SettingsPage;

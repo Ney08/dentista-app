@@ -1,20 +1,41 @@
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
+
 import toast from "react-hot-toast";
+
 import { useClientes } from "../../hooks/useClientes";
 
 import provincias from "../../data/provincias.json";
 import municipios from "../../data/municipios.json";
-import { API_URL } from "../../config";
 
-function ClienteForm({ cliente, onClose }) {
+function ClienteForm({
+  cliente,
+  onClose
+}) {
 
+  /*
+  ==========================================
+  HELPERS
+  ==========================================
+  */
 
   const normalizarCedula = (cedula) =>
     cedula?.replace(/[^0-9]/g, "") || "";
 
-  const { clientes, crearCliente, editarCliente } = useClientes();
-  const isEdit = !!cliente;
+  /*
+  ==========================================
+  HOOKS
+  ==========================================
+  */
+
+  const {
+    clientes,
+    crearCliente,
+    editarCliente
+  } = useClientes();
+
+  const isEdit =
+    !!cliente;
 
   const {
     register,
@@ -24,19 +45,48 @@ function ClienteForm({ cliente, onClose }) {
     formState: { errors }
   } = useForm();
 
-  const [loading, setLoading] = useState(false);
-  const [cedulaError, setCedulaError] = useState("");
-  const [provincia, setProvincia] = useState(null);
-  const [municipio, setMunicipio] = useState("");
+  /*
+  ==========================================
+  STATES
+  ==========================================
+  */
 
-  const cedulaInput = watch("cedula");
+  const [loading, setLoading] =
+    useState(false);
 
-  const municipiosFiltrados = municipios.filter(
-    (m) => Number(m.provinciaId) === Number(provincia)
-  );
+  const [cedulaError, setCedulaError] =
+    useState("");
 
-  // ✅ CARGAR DATOS SI ES EDIT
+  const [provincia, setProvincia] =
+    useState(null);
+
+  const [municipio, setMunicipio] =
+    useState("");
+
+  const cedulaInput =
+    watch("cedula");
+
+  /*
+  ==========================================
+  MUNICIPIOS
+  ==========================================
+  */
+
+  const municipiosFiltrados =
+    municipios.filter(
+      (m) =>
+        Number(m.provinciaId) ===
+        Number(provincia)
+    );
+
+  /*
+  ==========================================
+  CARGAR DATOS EDIT
+  ==========================================
+  */
+
   useEffect(() => {
+
     if (cliente) {
 
       reset({
@@ -44,28 +94,44 @@ function ClienteForm({ cliente, onClose }) {
         apellido: cliente.apellido,
         cedula: cliente.cedula,
         telefono: cliente.telefono,
-        calle: cliente.direccion?.calle || ""
+        calle:
+          cliente.direccion?.calle || ""
       });
 
       const normalizar = (txt) =>
         txt?.toLowerCase().trim();
 
-      const provinciaEncontrada = provincias.find(
-        p => normalizar(p.nombre) === normalizar(cliente.direccion?.provincia_nombre)
+      const provinciaEncontrada =
+        provincias.find(
+          p =>
+            normalizar(p.nombre) ===
+            normalizar(
+              cliente.direccion?.provincia_nombre
+            )
+        );
+
+      const municipioEncontrado =
+        municipios.find(
+          m =>
+            normalizar(m.nombre) ===
+            normalizar(
+              cliente.direccion?.municipio_nombre
+            ) &&
+            Number(m.provinciaId) ===
+            Number(
+              provinciaEncontrada?.id
+            )
+        );
+
+      setProvincia(
+        provinciaEncontrada?.id || null
       );
 
-      const municipioEncontrado = municipios.find(
-        m =>
-          normalizar(m.nombre) === normalizar(cliente.direccion?.municipio_nombre) &&
-          Number(m.provinciaId) === Number(provinciaEncontrada?.id)
+      setMunicipio(
+        municipioEncontrado?.nombre || ""
       );
-
-      setProvincia(provinciaEncontrada?.id || null);
-      setMunicipio(municipioEncontrado?.nombre || "");
 
     } else {
-
-      // ✅🔥 ESTE ERA EL QUE TE FALTABA
 
       reset({
         nombre: "",
@@ -76,64 +142,131 @@ function ClienteForm({ cliente, onClose }) {
       });
 
       setProvincia(null);
+
       setMunicipio("");
+
     }
 
   }, [cliente, reset]);
 
+  /*
+  ==========================================
+  VALIDAR CEDULA
+  ==========================================
+  */
 
-
-  // ✅ VALIDACIÓN CÉDULA
   useEffect(() => {
 
-    const cedulaNormalizada = normalizarCedula(cedulaInput);
-
-    if (!cedulaNormalizada || cedulaNormalizada.length < 6) {
-      setCedulaError("");
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-
-      const existente = clientes.find(c =>
-        normalizarCedula(c.cedula) === cedulaNormalizada
+    const cedulaNormalizada =
+      normalizarCedula(
+        cedulaInput
       );
 
-      if (existente && (!isEdit || existente.id !== cliente?.id)) {
-        setCedulaError("Cédula ya registrada");
-      } else {
-        setCedulaError("");
-      }
+    if (
+      !cedulaNormalizada ||
+      cedulaNormalizada.length < 6
+    ) {
 
-    }, 300);
+      setCedulaError("");
 
-    return () => clearTimeout(timeout);
+      return;
 
-  }, [cedulaInput, clientes, isEdit, cliente]);
+    }
+
+    const timeout =
+      setTimeout(() => {
+
+        const existente =
+          clientes.find(c =>
+            normalizarCedula(
+              c.cedula
+            ) === cedulaNormalizada
+          );
+
+        if (
+          existente &&
+          (
+            !isEdit ||
+            existente.id !== cliente?.id
+          )
+        ) {
+
+          setCedulaError(
+            "Cédula ya registrada"
+          );
+
+        } else {
+
+          setCedulaError("");
+
+        }
+
+      }, 300);
+
+    return () =>
+      clearTimeout(timeout);
+
+  }, [
+    cedulaInput,
+    clientes,
+    isEdit,
+    cliente
+  ]);
+
+  /*
+  ==========================================
+  SUBMIT
+  ==========================================
+  */
 
   const onSubmit = async (data) => {
 
-    if (cedulaError) return toast.error("Cédula duplicada ❌");
-    if (!provincia || !municipio) return toast.error("Ubicación requerida ⚠️");
+    if (cedulaError) {
+
+      return toast.error(
+        "Cédula duplicada ❌"
+      );
+
+    }
+
+    if (
+      !provincia ||
+      !municipio
+    ) {
+
+      return toast.error(
+        "Ubicación requerida ⚠️"
+      );
+
+    }
 
     try {
+
       setLoading(true);
 
-      console.log("🔵 DATA FORM:", data);
-      console.log("🟢 PROVINCIA (state):", provincia);
-      console.log("🟡 MUNICIPIO (state):", municipio);
-
       const payload = {
-        ...data,
-        direccion: {
-          provincia_nombre:
-            provincias.find(p => Number(p.id) === Number(provincia))?.nombre ?? null,
 
-          municipio_nombre: municipio,
-          calle: data.calle || ""
+        ...data,
+
+        direccion: {
+
+          provincia_nombre:
+            provincias.find(
+              p =>
+                Number(p.id) ===
+                Number(provincia)
+            )?.nombre ?? null,
+
+          municipio_nombre:
+            municipio,
+
+          calle:
+            data.calle || ""
+
         }
+
       };
-      console.log("🚀 PAYLOAD FINAL:", payload);
+
       if (isEdit) {
 
         await editarCliente.mutateAsync({
@@ -141,178 +274,950 @@ function ClienteForm({ cliente, onClose }) {
           data: payload
         });
 
-        toast.success("Cliente actualizado ✅");
+        toast.success(
+          "Cliente actualizado ✅"
+        );
 
       } else {
 
-        await crearCliente.mutateAsync(payload);
-        toast.success("Cliente creado ✅");
+        await crearCliente.mutateAsync(
+          payload
+        );
+
+        toast.success(
+          "Cliente creado ✅"
+        );
+
       }
 
-      console.log("Provincia seleccionada:", provincia);
-      console.log("Municipio seleccionado:", municipio);
-
       reset();
+
       setProvincia(null);
+
       setMunicipio("");
 
-      onClose(); // ✅ cerrar modal
+      onClose();
 
     } catch {
-      toast.error("Error ❌");
+
+      toast.error(
+        "Error ❌"
+      );
+
     }
 
     setLoading(false);
+
   };
 
   return (
-    <div className="w-full h-full md:h-auto bg-white rounded-t-3xl md:rounded-2xl shadow-lg border-0 md:border border-gray-200 p-4 sm:p-5 md:p-6 flex flex-col gap-4 max-h-screen md:max-h-[90vh] overflow-y-auto overflow-x-hidden">
 
-      {/* ✅ HEADER */}
-      <div className="text-center space-y-1 shrink-0">
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight flex items-center justify-center gap-2">
-          {isEdit ? "Editar cliente ✏️" : "Nuevo cliente 👤"}
+    <div className="
+      relative
+      overflow-hidden
+
+      w-full
+      h-full
+
+      md:h-auto
+      md:max-h-[92vh]
+
+      bg-white/95
+      backdrop-blur-2xl
+
+      rounded-t-[36px]
+      md:rounded-[36px]
+
+      border-0
+      md:border
+      border-white/40
+
+      shadow-[0_25px_80px_rgba(0,0,0,0.15)]
+
+      p-5
+      sm:p-6
+
+      flex
+      flex-col
+
+      gap-6
+
+      overflow-y-auto
+      overflow-x-hidden
+    ">
+
+      {/* GLOW */}
+
+      <div className="
+        absolute
+        -top-20
+        -right-20
+
+        w-72
+        h-72
+
+        rounded-full
+
+        bg-purple-500/10
+
+        blur-3xl
+      " />
+
+      {/* HEADER */}
+
+      <div className="
+        relative
+        z-10
+
+        text-center
+
+        space-y-3
+
+        shrink-0
+      ">
+
+        <h2 className="
+          text-3xl
+          sm:text-4xl
+
+          font-black
+
+          tracking-tight
+
+          text-slate-800
+        ">
+
+          {isEdit
+            ? "Editar cliente ✏️"
+            : "Nuevo cliente 👤"}
+
         </h2>
 
-        <p className="text-sm text-gray-500">
+        <div className="
+          w-20
+          h-1
+
+          mx-auto
+
+          rounded-full
+
+          bg-gradient-to-r
+          from-indigo-500
+          to-purple-500
+        " />
+
+        <p className="
+          text-sm
+          sm:text-base
+
+          text-gray-500
+        ">
           Completa la información básica
         </p>
+
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 flex-1 min-h-0">
+      {/* FORM */}
 
-        {/* ✅ INFO PERSONAL */}
-        <div className="space-y-2 sm:space-y-3">
-          <h3 className="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            Información básica
-          </h3>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="
+          relative
+          z-10
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input
-              {...register("nombre", { required: true })}
-              placeholder="Nombre"
-              className="input h-12 sm:h-11 text-base sm:text-sm"
-            />
+          flex
+          flex-col
 
-            <input
-              {...register("apellido", { required: true })}
-              placeholder="Apellido"
-              className="input h-12 sm:h-11 text-base sm:text-sm"
-            />
+          gap-6
+
+          flex-1
+          min-h-0
+        "
+      >
+
+        {/* INFO BASICA */}
+
+        <div className="
+          bg-gradient-to-br
+          from-white
+          to-slate-50
+
+          border
+          border-white
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-sm
+
+          space-y-4
+        ">
+
+          <div className="
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-gradient-to-br
+              from-indigo-500
+              to-purple-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              text-xl
+            ">
+              👤
+            </div>
+
+            <div>
+
+              <h3 className="
+                text-sm
+
+                font-black
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-slate-700
+              ">
+                Información básica
+              </h3>
+
+              <p className="
+                text-xs
+                text-gray-400
+              ">
+                Datos personales del cliente
+              </p>
+
+            </div>
+
           </div>
+
+          <div className="
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+
+            gap-4
+          ">
+
+            {/* NOMBRE */}
+
+            <div className="space-y-2">
+
+              <label className="
+                text-xs
+
+                font-bold
+
+                text-gray-500
+              ">
+                Nombre
+              </label>
+
+              <input
+                {...register(
+                  "nombre",
+                  { required: true }
+                )}
+                placeholder="Nombre"
+                className="
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[24px]
+
+                  bg-white/80
+
+                  border
+                  border-slate-200
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+
+                  focus:border-indigo-300
+
+                  transition-all
+                  duration-300
+                "
+              />
+
+            </div>
+
+            {/* APELLIDO */}
+
+            <div className="space-y-2">
+
+              <label className="
+                text-xs
+
+                font-bold
+
+                text-gray-500
+              ">
+                Apellido
+              </label>
+
+              <input
+                {...register(
+                  "apellido",
+                  { required: true }
+                )}
+                placeholder="Apellido"
+                className="
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[24px]
+
+                  bg-white/80
+
+                  border
+                  border-slate-200
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+
+                  focus:border-indigo-300
+
+                  transition-all
+                  duration-300
+                "
+              />
+
+            </div>
+
+          </div>
+
         </div>
 
-        {/* ✅ IDENTIDAD */}
-        <div className="space-y-2 sm:space-y-3">
-          <h3 className="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            Identidad
-          </h3>
+        {/* IDENTIDAD */}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="
+          bg-gradient-to-br
+          from-white
+          to-slate-50
 
-            {/* CÉDULA */}
-            <div className="space-y-1">
+          border
+          border-white
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-sm
+
+          space-y-4
+        ">
+
+          <div className="
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-gradient-to-br
+              from-emerald-500
+              to-green-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              text-xl
+            ">
+              🪪
+            </div>
+
+            <div>
+
+              <h3 className="
+                text-sm
+
+                font-black
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-slate-700
+              ">
+                Identidad
+              </h3>
+
+              <p className="
+                text-xs
+                text-gray-400
+              ">
+                Documento y contacto
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+
+            gap-4
+          ">
+
+            {/* CEDULA */}
+
+            <div className="
+              space-y-2
+            ">
+
+              <label className="
+                text-xs
+
+                font-bold
+
+                text-gray-500
+              ">
+                Cédula
+              </label>
+
               <input
                 {...register("cedula")}
                 placeholder="Cédula"
-                className={`input h-12 sm:h-11 text-base sm:text-sm ${cedulaError ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                className={`
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[24px]
+
+                  bg-white/80
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+
+                  transition-all
+                  duration-300
+
+                  ${cedulaError
+                    ? `
+                      border
+                      border-red-300
+
+                      focus:ring-red-500/10
+                    `
+                    : `
+                      border
+                      border-slate-200
+
+                      focus:ring-indigo-500/10
+                      focus:border-indigo-300
+                    `
+                  }
+                `}
               />
 
               {cedulaError && (
-                <p className="text-xs sm:text-sm text-red-500">
+
+                <p className="
+                  text-sm
+                  text-red-500
+
+                  font-medium
+                ">
                   {cedulaError}
                 </p>
+
               )}
+
             </div>
 
-            {/* TELÉFONO */}
+            {/* TELEFONO */}
+
+            <div className="
+              space-y-2
+            ">
+
+              <label className="
+                text-xs
+
+                font-bold
+
+                text-gray-500
+              ">
+                Teléfono
+              </label>
+
+              <input
+                {...register("telefono")}
+                placeholder="Teléfono"
+                className="
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[24px]
+
+                  bg-white/80
+
+                  border
+                  border-slate-200
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+
+                  focus:border-indigo-300
+
+                  transition-all
+                  duration-300
+                "
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* UBICACION */}
+
+        <div className="
+          bg-gradient-to-br
+          from-white
+          to-slate-50
+
+          border
+          border-white
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-sm
+
+          space-y-4
+        ">
+
+          <div className="
+            flex
+            items-center
+            gap-3
+          ">
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-gradient-to-br
+              from-rose-500
+              to-pink-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              text-xl
+            ">
+              📍
+            </div>
+
+            <div>
+
+              <h3 className="
+                text-sm
+
+                font-black
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-slate-700
+              ">
+                Ubicación
+              </h3>
+
+              <p className="
+                text-xs
+                text-gray-400
+              ">
+                Provincia y dirección
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="
+            grid
+            grid-cols-1
+            sm:grid-cols-2
+
+            gap-4
+          ">
+
+            {/* PROVINCIA */}
+
+            <div className="
+              space-y-2
+            ">
+
+              <label className="
+                text-xs
+
+                font-bold
+
+                text-gray-500
+              ">
+                Provincia
+              </label>
+
+              <select
+                value={provincia ?? ""}
+                onChange={(e) => {
+
+                  setProvincia(
+                    Number(
+                      e.target.value
+                    )
+                  );
+
+                  setMunicipio("");
+
+                }}
+                className="
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[24px]
+
+                  bg-white/80
+
+                  border
+                  border-slate-200
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+
+                  focus:border-indigo-300
+
+                  transition-all
+                  duration-300
+                "
+              >
+
+                <option value="">
+                  Provincia
+                </option>
+
+                {provincias.map((p) => (
+
+                  <option
+                    key={p.id}
+                    value={p.id}
+                  >
+                    {p.nombre}
+                  </option>
+
+                ))}
+
+              </select>
+
+            </div>
+
+            {/* MUNICIPIO */}
+
+            <div className="
+              space-y-2
+            ">
+
+              <label className="
+                text-xs
+
+                font-bold
+
+                text-gray-500
+              ">
+                Municipio
+              </label>
+
+              <select
+                value={municipio ?? ""}
+                onChange={(e) =>
+                  setMunicipio(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
+
+                  h-14
+
+                  px-5
+
+                  rounded-[24px]
+
+                  bg-white/80
+
+                  border
+                  border-slate-200
+
+                  text-slate-700
+
+                  shadow-sm
+
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+
+                  focus:border-indigo-300
+
+                  transition-all
+                  duration-300
+                "
+              >
+
+                <option value="">
+                  Municipio
+                </option>
+
+                {municipiosFiltrados.map((m) => (
+
+                  <option
+                    key={m.nombre}
+                    value={m.nombre}
+                  >
+                    {m.nombre}
+                  </option>
+
+                ))}
+
+              </select>
+
+            </div>
+
+          </div>
+
+          {/* CALLE */}
+
+          <div className="
+            space-y-2
+          ">
+
+            <label className="
+              text-xs
+
+              font-bold
+
+              text-gray-500
+            ">
+              Dirección / Calle
+            </label>
+
             <input
-              {...register("telefono")}
-              placeholder="Teléfono"
-              className="input h-12 sm:h-11 text-base sm:text-sm"
+              {...register("calle")}
+              placeholder="Dirección / Calle"
+              className="
+                w-full
+
+                h-14
+
+                px-5
+
+                rounded-[24px]
+
+                bg-white/80
+
+                border
+                border-slate-200
+
+                text-slate-700
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+
+                focus:border-indigo-300
+
+                transition-all
+                duration-300
+              "
             />
 
           </div>
+
         </div>
 
-        {/* ✅ UBICACIÓN */}
-        <div className="space-y-2 sm:space-y-3">
-          <h3 className="text-[11px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            Ubicación
-          </h3>
+        {/* ACTIONS */}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="
+          sticky
+          bottom-0
 
-            <select
-              value={provincia ?? ""}
-              onChange={(e) => {
-                setProvincia(Number(e.target.value));
-                setMunicipio("");
-              }}
-              className="input h-12 sm:h-11 text-base sm:text-sm"
-            >
-              <option value="">Provincia</option>
-              {provincias.map(p => (
-                <option key={p.id} value={p.id}>
-                  {p.nombre}
-                </option>
-              ))}
-            </select>
+          bg-white/90
+          backdrop-blur-xl
 
-            <select
-              value={municipio ?? ""}
-              onChange={(e) => setMunicipio(e.target.value)}
-              className="input h-12 sm:h-11 text-base sm:text-sm"
-            >
-              <option value="">Municipio</option>
-              {municipiosFiltrados.map(m => (
-                <option key={m.nombre} value={m.nombre}>
-                  {m.nombre}
-                </option>
-              ))}
-            </select>
+          pt-2
 
-          </div>
+          flex
+          flex-col
+          sm:flex-row
 
-          <input
-            {...register("calle")}
-            placeholder="Dirección / Calle"
-            className="input h-12 sm:h-11 text-base sm:text-sm"
-          />
-        </div>
+          gap-3
 
-        {/* ✅ BOTONES */}
-        <div className="sticky bottom-0 bg-white pt-2 flex flex-col sm:flex-row gap-2 shrink-0">
+          shrink-0
+        ">
 
           {/* PRIMARY */}
+
           <button
             type="submit"
-            disabled={loading || cedulaError}
+            disabled={
+              loading ||
+              cedulaError
+            }
             className={`
-            flex-1 h-12 rounded-2xl font-semibold text-sm sm:text-base
-            text-white shadow-sm transition
+              flex-1
 
-            ${loading || cedulaError
+              h-14
+
+              rounded-[24px]
+
+              text-white
+
+              text-sm
+              sm:text-base
+
+              font-black
+
+              transition-all
+              duration-300
+
+              active:scale-[0.98]
+
+              ${loading || cedulaError
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"}
-          `}
+                : `
+                  bg-gradient-to-r
+                  from-indigo-500
+                  via-purple-500
+                  to-violet-500
+
+                  shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                  hover:scale-[1.01]
+
+                  hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+                `
+              }
+            `}
           >
+
             {loading
               ? "Guardando..."
               : isEdit
                 ? "Actualizar cliente"
                 : "Crear cliente"}
+
           </button>
 
           {/* SECONDARY */}
+
           <button
             type="button"
             onClick={onClose}
             className="
-            flex-1 h-12 rounded-2xl font-medium text-sm sm:text-base
-            bg-gray-100 hover:bg-gray-200
-            text-gray-700 transition
-          "
+              flex-1
+
+              h-14
+
+              rounded-[24px]
+
+              bg-slate-100
+
+              hover:bg-slate-200
+
+              text-slate-700
+
+              font-semibold
+
+              transition-all
+              duration-300
+
+              active:scale-[0.98]
+            "
           >
             Cancelar
           </button>
@@ -322,7 +1227,9 @@ function ClienteForm({ cliente, onClose }) {
       </form>
 
     </div>
+
   );
+
 }
 
 export default ClienteForm;
