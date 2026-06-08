@@ -8,7 +8,7 @@ import { useServicios } from "../hooks/useServicios";
 import { useClientes } from "../hooks/useClientes";
 import ClientesInactivosTab from "../components/settings/ClientesInactivosTab";
 import ServiciosTab from "../components/settings/ServiciosTab";
-
+import BaseModal from "../components/BaseModal";
 function SettingsPage() {
 
   const { updateUser } = useUser();
@@ -73,6 +73,25 @@ function SettingsPage() {
     }
 
   };
+  
+const [modalAbierto, setModalAbierto] =
+  useState(false);
+
+const abrirCrear = () => {
+
+  setServicioEditar(null);
+
+  setModalAbierto(true);
+
+};
+
+const cerrarModal = () => {
+
+  setModalAbierto(false);
+
+  setServicioEditar(null);
+
+};
 
   // ✅ CAMBIAR PASSWORD
   const cambiarPassword = () => {

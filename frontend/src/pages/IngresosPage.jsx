@@ -13,6 +13,7 @@ import IngresoList from "../components/facturas/IngresoList";
 import FacturaModal from "../components/facturas/FacturaModal";
 import IngresoForm from "../components/facturas/IngresoForm";
 
+import BaseModal from "../components/BaseModal";
 import PageWrapper from "../components/PageWrapper";
 import Paginacion from "../components/Paginacion";
 import SkeletonLoader from "../components/SkeletonLoader";
@@ -641,7 +642,7 @@ function IngresosPage() {
 
           {/* PAGADO */}
 
-          <div className="
+          {/* <div className="
             relative
             overflow-hidden
 
@@ -699,11 +700,11 @@ function IngresosPage() {
               {formatMoney(totalPagado)}
             </h2>
 
-          </div>
+          </div> */}
 
           {/* FACTURAS */}
 
-          <div className="
+          {/* <div className="
             relative
             overflow-hidden
 
@@ -759,7 +760,7 @@ function IngresosPage() {
               {ingresos.length}
             </h2>
 
-          </div>
+          </div> */}
 
           {/* PENDIENTES */}
 
@@ -905,10 +906,10 @@ function IngresosPage() {
                 ">
                   {filtrados.length}
                   {" "}
-                  facturas registradas
+                  facturas
                 </div>
 
-                <div className="
+                {/* <div className="
                   px-4
                   h-11
 
@@ -932,7 +933,7 @@ function IngresosPage() {
                   {pendientesCount}
                   {" "}
                   pendientes
-                </div>
+                </div> */}
 
               </div>
 
@@ -1262,81 +1263,17 @@ function IngresosPage() {
 
       </div>
 
-     
+
 
       {/* ✅ MODAL FORM */}
 
-<div
-  onClick={cerrarModal}
-  className={`
-    fixed
-    inset-0
-    z-50
+      {modalAbierto && (
 
-    flex
-    items-end
+        <BaseModal
+          onClose={cerrarModal}
+        >
 
-    justify-center
-
-    bg-black/50
-    backdrop-blur-md
-
-    transition-all
-    duration-300
-
-    ${modalAbierto
-      ? "opacity-100 visible"
-      : "opacity-0 invisible"
-    }
-  `}
->
-
-  {modalAbierto && (
-
-    <div className="
-      w-full
-
-      flex
-      items-end
-      justify-center
-    ">
-
-      <div
-        onClick={(e) =>
-          e.stopPropagation()
-        }
-
-        className={`
-          w-full
-
-          md:max-w-3xl
-
-          p-0
-          md:p-4
-
-          will-change-transform
-
-          transform
-
-          transition-all
-          duration-700
-
-          ease-[cubic-bezier(0.22,1,0.36,1)]
-
-          ${animar
-            ? `
-              translate-y-0
-              opacity-100
-            `
-            : `
-              translate-y-full
-              opacity-0
-            `
-          }
-        `}
-      >
-
-        <IngresoForm
+          <IngresoForm
           key={
             editando?.id ||
             citaPresetLocal?.id ||
@@ -1352,17 +1289,15 @@ function IngresosPage() {
           onClose={cerrarModal}
         />
 
-      </div>
+        </BaseModal>
 
-    </div>
+      )}
 
-  )}
 
-</div>
 
-      {/* FACTURA MODAL */}
+      {/* FACTURA MODAL */ }
 
-      <div className={`
+  <div className={`
         fixed
         inset-0
         z-50
@@ -1374,25 +1309,25 @@ function IngresosPage() {
         transition
 
         ${facturaPreview
-          ? "bg-black/40 backdrop-blur-sm"
-          : "pointer-events-none"
-        }
+      ? "bg-black/40 backdrop-blur-sm"
+      : "pointer-events-none"
+    }
       `}>
 
-        {facturaPreview && (
+    {facturaPreview && (
 
-          <FacturaModal
-            ingreso={facturaPreview}
-            onClose={() =>
-              setFacturaPreview(null)
-            }
-          />
+      <FacturaModal
+        ingreso={facturaPreview}
+        onClose={() =>
+          setFacturaPreview(null)
+        }
+      />
 
-        )}
+    )}
 
-      </div>
+  </div>
 
-    </PageWrapper>
+    </PageWrapper >
   );
 
 }

@@ -805,45 +805,62 @@ function Login() {
 
       {/* ✅ RECOVERY MODAL */}
 
-      {mostrarRecovery && (
+      <div
+        onClick={cerrarModal}
+        className={`
+    fixed
+    inset-0
+    z-50
+
+    flex
+    items-end
+    md:items-center
+
+    justify-center
+
+    bg-black/40
+    backdrop-blur-sm
+
+    transition-all
+    duration-300
+
+    px-4
+
+    ${mostrarRecovery
+            ? "opacity-100 visible"
+            : "opacity-0 invisible"
+          }
+  `}
+      >
+
+        {/* ✅ MODAL */}
 
         <div
-          onClick={cerrarModal}
-          className="
-            fixed
-            inset-0
-            z-50
+          onClick={(e) =>
+            e.stopPropagation()
+          }
 
-            flex
-            items-end
+          className={`
+    w-full
 
-            justify-center
+    md:max-w-2xl
 
-            bg-black/50
-            backdrop-blur-md
-          "
+    p-0
+    md:p-4
+
+    transform
+    transition-all
+    duration-300
+
+    ${mostrarRecovery
+              ? "translate-y-0 md:scale-100 opacity-100"
+              : "translate-y-full md:scale-95 opacity-0"
+            }
+  `}
         >
 
-          {/* ✅ MODAL */}
 
-          <div
-            onClick={(e) =>
-              e.stopPropagation()
-            }
-
-            className="
-              w-full
-
-              md:max-w-2xl
-
-              p-0
-              md:p-4
-
-              animate-[slideUp_.55s_cubic-bezier(0.22,1,0.36,1)]
-            "
-          >
-
-            <div className="
+          <div className="
               relative
               overflow-hidden
 
@@ -865,9 +882,9 @@ function Login() {
               space-y-6
             ">
 
-              {/* GLOW */}
+            {/* GLOW */}
 
-              <div className="
+            <div className="
                 absolute
                 -top-20
                 -right-20
@@ -882,9 +899,9 @@ function Login() {
                 blur-3xl
               " />
 
-              {/* HEADER */}
+            {/* HEADER */}
 
-              <div className="
+            <div className="
                 relative
                 z-10
 
@@ -893,7 +910,7 @@ function Login() {
                 space-y-3
               ">
 
-                <div className="
+              <div className="
                   w-24
                   h-24
 
@@ -916,10 +933,10 @@ function Login() {
 
                   shadow-[0_20px_50px_rgba(99,102,241,0.35)]
                 ">
-                  🔐
-                </div>
+                🔐
+              </div>
 
-                <h2 className="
+              <h2 className="
                   text-4xl
 
                   font-black
@@ -928,10 +945,10 @@ function Login() {
 
                   text-slate-800
                 ">
-                  Recuperar contraseña
-                </h2>
+                Recuperar contraseña
+              </h2>
 
-                <div className="
+              <div className="
                   w-20
                   h-1
 
@@ -944,46 +961,46 @@ function Login() {
                   to-violet-500
                 " />
 
-                <p className="
+              <p className="
                   text-sm
                   text-gray-500
                 ">
-                  Usuario:
-                  {" "}
-                  <span className="
+                Usuario:
+                {" "}
+                <span className="
                     font-bold
                     text-slate-700
                   ">
-                    {username ||
-                      "No definido"}
-                  </span>
-                </p>
+                  {username ||
+                    "No definido"}
+                </span>
+              </p>
 
-              </div>
+            </div>
 
-              {/* FORM */}
+            {/* FORM */}
 
-              <div className="
+            <div className="
                 relative
                 z-10
 
                 space-y-5
               ">
 
-                {/* CLAVE */}
+              {/* CLAVE */}
 
-                <input
-                  placeholder="Clave de seguridad"
+              <input
+                placeholder="Clave de seguridad"
 
-                  value={claveSeguridad}
+                value={claveSeguridad}
 
-                  onChange={(e) =>
-                    setClaveSeguridad(
-                      e.target.value
-                    )
-                  }
+                onChange={(e) =>
+                  setClaveSeguridad(
+                    e.target.value
+                  )
+                }
 
-                  className={`
+                className={`
                     w-full
 
                     h-14
@@ -1006,14 +1023,14 @@ function Login() {
                     duration-300
 
                     ${claveSeguridad &&
-                      !claveValida
-                        ? `
+                    !claveValida
+                    ? `
                           border-red-400
 
                           focus:ring-4
                           focus:ring-red-500/10
                         `
-                        : `
+                    : `
                           border-slate-200
 
                           hover:border-indigo-300
@@ -1023,14 +1040,14 @@ function Login() {
 
                           focus:border-indigo-300
                         `
-                    }
+                  }
                   `}
-                />
+              />
 
-                {/* ERROR */}
+              {/* ERROR */}
 
-                {claveSeguridad &&
-                  !claveValida && (
+              {claveSeguridad &&
+                !claveValida && (
 
                   <p className="
                     text-sm
@@ -1044,22 +1061,22 @@ function Login() {
 
                 )}
 
-                {/* PASSWORD */}
+              {/* PASSWORD */}
 
-                <input
-                  type="password"
+              <input
+                type="password"
 
-                  placeholder="Nueva contraseña"
+                placeholder="Nueva contraseña"
 
-                  value={nuevaPassword}
+                value={nuevaPassword}
 
-                  onChange={(e) =>
-                    setNuevaPassword(
-                      e.target.value
-                    )
-                  }
+                onChange={(e) =>
+                  setNuevaPassword(
+                    e.target.value
+                  )
+                }
 
-                  className="
+                className="
                     w-full
 
                     h-14
@@ -1089,79 +1106,23 @@ function Login() {
                     transition-all
                     duration-300
                   "
-                />
+              />
 
-                {/* BUTTONS */}
+              {/* BUTTONS */}
 
-                <div className="
+              <div className="
                   flex
                   flex-col
                   sm:flex-row
 
                   gap-3
                 ">
-
-                  {/* SAVE */}
-
-                  <button
-                    onClick={
-                      recuperarPassword
-                    }
-
-                    disabled={
-                      !claveValida ||
-                      nuevaPassword.length < 4 ||
-                      loading
-                    }
-
-                    className={`
-                      flex-1
-
-                      h-14
-
-                      rounded-[24px]
-
-                      text-white
-
-                      font-black
-
-                      transition-all
-                      duration-300
-
-                      active:scale-[0.98]
-
-                      ${claveValida &&
-                        nuevaPassword.length >= 4
-                          ? `
-                            bg-gradient-to-r
-                            from-emerald-500
-                            to-green-500
-
-                            shadow-[0_15px_35px_rgba(16,185,129,0.28)]
-
-                            hover:scale-[1.01]
-                          `
-                          : `
-                            bg-gray-400
-
-                            cursor-not-allowed
-                          `
-                      }
-                    `}
-                  >
-
-                    {loading
-                      ? "Guardando..."
-                      : "Guardar"}
-
-                  </button>
-
                   {/* CANCEL */}
 
-                  <button
-                    onClick={cerrarModal}
+                <button
+                  onClick={cerrarModal}
 
-                    className="
+                  className="
                       flex-1
 
                       h-14
@@ -1182,11 +1143,66 @@ function Login() {
 
                       active:scale-[0.98]
                     "
-                  >
-                    Cancelar
-                  </button>
+                >
+                  Cancelar
+                </button>
+                
+                {/* SAVE */}
 
-                </div>
+                <button
+                  onClick={
+                    recuperarPassword
+                  }
+
+                  disabled={
+                    !claveValida ||
+                    nuevaPassword.length < 4 ||
+                    loading
+                  }
+
+                  className={`
+                      flex-1
+
+                      h-14
+
+                      rounded-[24px]
+
+                      text-white
+
+                      font-black
+
+                      transition-all
+                      duration-300
+
+                      active:scale-[0.98]
+
+                      ${claveValida &&
+                      nuevaPassword.length >= 4
+                      ? `
+                            bg-gradient-to-r
+                            from-emerald-500
+                            to-green-500
+
+                            shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+
+                            hover:scale-[1.01]
+                          `
+                      : `
+                            bg-gray-400
+
+                            cursor-not-allowed
+                          `
+                    }
+                    `}
+                >
+
+                  {loading
+                    ? "Guardando..."
+                    : "Guardar"}
+
+                </button>
+
+                
 
               </div>
 
@@ -1196,7 +1212,8 @@ function Login() {
 
         </div>
 
-      )}
+      </div>
+
 
     </>
 

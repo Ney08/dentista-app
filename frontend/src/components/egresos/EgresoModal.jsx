@@ -799,7 +799,37 @@ function EgresoModal({
           gap-3
         ">
 
-          {/* SAVE */}
+         
+
+          {/* CANCEL */}
+
+          <button
+            onClick={onClose}
+            className="
+              flex-1
+
+              h-14
+
+              rounded-[24px]
+
+              bg-slate-100
+
+              hover:bg-slate-200
+
+              text-slate-700
+
+              font-semibold
+
+              transition-all
+              duration-300
+
+              active:scale-[0.98]
+            "
+          >
+            Cancelar
+          </button>
+          
+             {/* SAVE */}
 
           <button
             onClick={guardar}
@@ -840,35 +870,6 @@ function EgresoModal({
               : "Crear egreso"}
 
           </button>
-
-          {/* CANCEL */}
-
-          <button
-            onClick={onClose}
-            className="
-              flex-1
-
-              h-14
-
-              rounded-[24px]
-
-              bg-slate-100
-
-              hover:bg-slate-200
-
-              text-slate-700
-
-              font-semibold
-
-              transition-all
-              duration-300
-
-              active:scale-[0.98]
-            "
-          >
-            Cancelar
-          </button>
-
         </div>
 
       </div>

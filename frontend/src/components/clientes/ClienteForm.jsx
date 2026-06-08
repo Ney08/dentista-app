@@ -757,8 +757,10 @@ function ClienteForm({
                       border
                       border-slate-200
 
-                      focus:ring-indigo-500/10
-                      focus:border-indigo-300
+                     focus:ring-4
+                    focus:ring-emerald-500/10
+
+                    focus:border-emerald-300
                     `
                   }
                 `}
@@ -819,9 +821,9 @@ function ClienteForm({
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                    focus:ring-emerald-500/10
 
-                  focus:border-indigo-300
+                    focus:border-emerald-300
 
                   transition-all
                   duration-300
@@ -965,9 +967,9 @@ function ClienteForm({
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+              focus:ring-rose-500/10
 
-                  focus:border-indigo-300
+              focus:border-rose-300
 
                   transition-all
                   duration-300
@@ -1003,7 +1005,7 @@ function ClienteForm({
                 text-xs
 
                 font-bold
-
+                
                 text-gray-500
               ">
                 Municipio
@@ -1037,9 +1039,9 @@ function ClienteForm({
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+              focus:ring-rose-500/10
 
-                  focus:border-indigo-300
+              focus:border-rose-300
 
                   transition-all
                   duration-300
@@ -1052,7 +1054,7 @@ function ClienteForm({
 
                 {municipiosFiltrados.map((m) => (
 
-                  <option
+                  <option 
                     key={m.nombre}
                     value={m.nombre}
                   >
@@ -1107,9 +1109,9 @@ function ClienteForm({
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+              focus:ring-rose-500/10
 
-                focus:border-indigo-300
+              focus:border-rose-300
 
                 transition-all
                 duration-300
@@ -1141,6 +1143,32 @@ function ClienteForm({
         ">
 
           {/* PRIMARY */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="
+              flex-1
+
+              h-14
+
+              rounded-[24px]
+
+              bg-slate-100
+
+              hover:bg-slate-200
+
+              text-slate-700
+
+              font-semibold
+
+              transition-all
+              duration-300
+
+              active:scale-[0.98]
+            "
+          >
+            Cancelar
+          </button>
 
           <button
             type="submit"
@@ -1193,34 +1221,7 @@ function ClienteForm({
 
           </button>
 
-          {/* SECONDARY */}
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="
-              flex-1
-
-              h-14
-
-              rounded-[24px]
-
-              bg-slate-100
-
-              hover:bg-slate-200
-
-              text-slate-700
-
-              font-semibold
-
-              transition-all
-              duration-300
-
-              active:scale-[0.98]
-            "
-          >
-            Cancelar
-          </button>
 
         </div>
 

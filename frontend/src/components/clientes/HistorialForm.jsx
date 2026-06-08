@@ -83,260 +83,265 @@ function HistorialForm({
 
   return (
 
+  <div className="
+    relative
+    overflow-hidden
+
+    bg-white/75
+    backdrop-blur-2xl
+
+    border
+    border-white/50
+
+    rounded-[32px]
+
+    p-6
+
+    shadow-[0_20px_50px_rgba(0,0,0,0.10)]
+
+    space-y-6
+  ">
+
+    {/* AMBIENT GLOW */}
+
+    <div className="
+      absolute
+      -top-16
+      -right-16
+
+      w-56
+      h-56
+
+      rounded-full
+
+      bg-indigo-500/10
+
+      blur-3xl
+    " />
+
+    {/* HEADER */}
+
     <div className="
       relative
-      overflow-hidden
+      z-10
 
-      bg-white/90
-      backdrop-blur-xl
+      flex
+      items-start
+      justify-between
 
-      border
-      border-white/40
-
-      rounded-[32px]
-
-      p-5
-      sm:p-6
-
-      shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-
-      space-y-5
+      gap-4
     ">
 
-      {/* GLOW */}
+      <div>
+
+        <h3 className="
+          text-2xl
+
+          font-black
+
+          tracking-tight
+
+          text-slate-800
+        ">
+
+          Agregar nota clínica
+
+          <span className="ml-2">
+            🦷
+          </span>
+
+        </h3>
+
+        <p className="
+          mt-1
+
+          text-sm
+
+          text-slate-500
+        ">
+          Registra observaciones y seguimiento del paciente
+        </p>
+
+      </div>
+
+      {/* ICON */}
 
       <div className="
-        absolute
-        -top-10
-        -right-10
+        hidden
+        sm:flex
 
-        w-44
-        h-44
-
-        rounded-full
-
-        bg-indigo-500/10
-
-        blur-3xl
-      " />
-
-      {/* HEADER */}
-
-      <div className="
         relative
-        z-10
+        overflow-hidden
 
+        w-14
+        h-14
+
+        rounded-[22px]
+
+        bg-gradient-to-br
+        from-indigo-500
+        via-purple-500
+        to-violet-500
+
+        shadow-[0_12px_30px_rgba(99,102,241,0.22)]
+
+        items-center
+        justify-center
+      ">
+
+        <div className="
+          absolute
+          inset-0
+
+          bg-white/10
+        " />
+
+        <span className="
+          relative
+          z-10
+
+          text-xl
+          text-white
+        ">
+          📝
+        </span>
+
+      </div>
+
+    </div>
+
+    {/* TEXTAREA SECTION */}
+
+    <div className="
+      relative
+      z-10
+
+      space-y-3
+    ">
+
+      <label className="
+        block
+
+        text-[11px]
+
+        uppercase
+
+        tracking-[0.14em]
+
+        font-black
+
+        text-slate-400
+      ">
+        Nota clínica
+      </label>
+
+      <textarea
+        value={texto}
+        onChange={(e) =>
+          setTexto(e.target.value)
+        }
+        placeholder="Ej: Paciente presenta dolor en molar 16, sensibilidad al frío y molestias al masticar..."
+        rows={5}
+        className="
+          w-full
+
+          min-h-[180px]
+
+          rounded-[28px]
+
+          bg-white/60
+          backdrop-blur-xl
+
+          border
+          border-white/50
+
+          px-5
+          py-5
+
+          text-sm
+          sm:text-base
+
+          text-slate-700
+
+          placeholder:text-slate-400
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.04)]
+
+          focus:outline-none
+
+          focus:ring-4
+          focus:ring-indigo-500/10
+
+          focus:border-indigo-300
+
+          transition-all
+          duration-300
+
+          resize-none
+        "
+      />
+
+      {/* FOOTER INFO */}
+
+      <div className="
         flex
         items-center
         justify-between
 
-        gap-4
+        gap-3
       ">
 
-        <div>
+        <p className="
+          text-xs
 
-          <h3 className="
-            text-xl
-            sm:text-2xl
-
-            font-black
-
-            tracking-tight
-
-            text-slate-800
-          ">
-
-            Agregar nota clínica
-
-            <span className="ml-2">
-              🦷
-            </span>
-
-          </h3>
-
-          <p className="
-            mt-1
-
-            text-sm
-
-            text-gray-500
-          ">
-            Registra observaciones y seguimiento del paciente
-          </p>
-
-        </div>
-
-        {/* ICON */}
+          text-slate-400
+        ">
+          Las notas clínicas se guardan en el historial del paciente
+        </p>
 
         <div className="
           hidden
           sm:flex
 
-          w-14
-          h-14
-
-          rounded-[20px]
-
-          bg-gradient-to-br
-          from-indigo-500
-          via-purple-500
-          to-violet-500
-
-          text-white
-
           items-center
-          justify-center
+          gap-2
 
-          text-2xl
+          text-xs
+          font-semibold
 
-          shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+          text-indigo-500
         ">
-          📝
+          ✨ Historial clínico
         </div>
 
       </div>
 
-      {/* DIVIDER */}
+    </div>
 
-      <div className="
-        border-t
-        border-gray-100
-      " />
+    {/* BUTTON */}
 
-      {/* TEXTAREA CARD */}
+    <div className="
+      relative
+      z-10
 
-      <div className="
-        relative
-        z-10
-
-        bg-gradient-to-br
-        from-white
-        to-slate-50
-
-        border
-        border-white
-
-        rounded-[28px]
-
-        p-4
-        sm:p-5
-
-        shadow-sm
-      ">
-
-        <label className="
-          block
-
-          text-[11px]
-
-          uppercase
-
-          tracking-[0.14em]
-
-          font-black
-
-          text-gray-400
-        ">
-          Nota clínica
-        </label>
-
-        <textarea
-          value={texto}
-          onChange={(e) =>
-            setTexto(e.target.value)
-          }
-          placeholder="Ej: Paciente presenta dolor en molar 16, sensibilidad al frío y molestias al masticar..."
-          rows={5}
-          className="
-            w-full
-
-            mt-4
-
-            border
-            border-slate-200
-
-            bg-white/80
-
-            px-5
-            py-4
-
-            rounded-[24px]
-
-            text-sm
-            sm:text-base
-
-            text-slate-700
-
-            placeholder:text-gray-400
-
-            focus:outline-none
-
-            focus:ring-4
-            focus:ring-indigo-500/10
-
-            focus:border-indigo-400
-
-            resize-none
-
-            transition-all
-            duration-300
-
-            min-h-[170px]
-
-            shadow-inner
-          "
-        />
-
-        {/* FOOTER */}
-
-        <div className="
-          mt-4
-
-          flex
-          items-center
-          justify-between
-
-          gap-3
-        ">
-
-          <p className="
-            text-xs
-            text-gray-400
-          ">
-            Las notas clínicas se guardan automáticamente en el historial del paciente
-          </p>
-
-          <div className="
-            hidden
-            sm:flex
-
-            items-center
-            gap-2
-
-            text-xs
-            font-semibold
-
-            text-indigo-500
-          ">
-            ✨ Historial clínico
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* BUTTON */}
+      flex
+      justify-center
+    ">
 
       <button
         onClick={guardar}
         disabled={loading}
         className={`
+          group
+
           relative
           overflow-hidden
 
-          w-full
-
           h-14
+
+          min-w-[240px]
+
+          px-8
 
           rounded-[24px]
 
@@ -355,22 +360,23 @@ function HistorialForm({
           active:scale-[0.98]
 
           ${loading
-            ? "bg-gray-400 cursor-not-allowed"
+            ? `
+              bg-slate-400
+              cursor-not-allowed
+            `
             : `
               bg-gradient-to-r
               from-indigo-500
               via-purple-500
               to-violet-500
 
-              hover:scale-[1.01]
+              hover:scale-[1.02]
 
-              hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+              hover:shadow-[0_20px_45px_rgba(99,102,241,0.32)]
             `
           }
         `}
       >
-
-        {/* SHINE */}
 
         {!loading && (
 
@@ -378,17 +384,14 @@ function HistorialForm({
             absolute
             inset-0
 
-            bg-gradient-to-r
-            from-transparent
-            via-white/20
-            to-transparent
+            opacity-0
 
-            -translate-x-full
+            bg-white/10
 
-            hover:translate-x-full
+            group-hover:opacity-100
 
             transition-all
-            duration-1000
+            duration-300
           " />
 
         )}
@@ -397,7 +400,8 @@ function HistorialForm({
 
           {loading
             ? "Guardando..."
-            : "Guardar historial"}
+            : "Guardar historial"
+          }
 
         </span>
 
@@ -405,7 +409,10 @@ function HistorialForm({
 
     </div>
 
-  );
+  </div>
+
+);
+
 
 }
 

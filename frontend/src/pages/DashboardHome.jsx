@@ -197,61 +197,73 @@ function DashboardHome() {
       title: "Caja",
       value: formato(caja),
       color: "text-green-600",
-      icon: "💵"
+      icon: "💵",
+      tint: "from-emerald-500/15 via-emerald-500/5 to-white/30"
     },
     {
       title: "Ganancia Bruta",
       value: formato(gananciaBruta),
       color: "text-blue-600",
-      icon: "📈"
+      icon: "📈",
+
+      tint: "from-blue-500/15 via-blue-500/5 to-white/30"
+
     },
     {
       title: "Costos Servicios",
       value: formato(totalCostos),
       color: "text-red-500",
-      icon: "🧾"
+      icon: "🧾",
+      tint: "from-rose-500/15 via-rose-500/5 to-white/30"
     },
     {
       title: "Egresos",
       value: formato(totalEgresos),
       color: "text-rose-500",
-      icon: "💸"
+      icon: "💸",
+      tint: "from-pink-500/15 via-pink-500/5 to-white/30"
     },
     {
       title: "Clientes hoy",
       value: clientesHoy,
       color: "text-slate-700",
-      icon: "👤"
+      icon: "👤",
+      tint: "from-indigo-500/15 via-indigo-500/5 to-white/30"
     },
     {
       title: "Citas hoy",
       value: cantidadCitasHoy,
       color: "text-indigo-600",
-      icon: "📅"
+      icon: "📅",
+      tint: "from-indigo-500/10 to-white/40"
     },
     {
       title: "Pagado hoy",
       value: formato(pagadoHoy),
       color: "text-green-600",
-      icon: "💰"
+      icon: "💰",
+      tint: "from-emerald-500/15 via-emerald-500/5 to-white/30"
     },
     {
       title: "Pendiente",
       value: formato(pendienteHoy),
       color: "text-red-500",
-      icon: "⚠️"
+      icon: "⚠️",
+      tint: "from-rose-500/15 via-rose-500/5 to-white/30"
     },
     {
       title: "Facturas",
       value: facturasHoy,
       color: "text-purple-600",
-      icon: "🧾"
+      icon: "🧾",
+      tint: "from-indigo-500/15 via-indigo-500/5 to-white/30"
     },
     {
       title: "Mes",
       value: formato(totalMes),
       color: "text-blue-600",
-      icon: "📊"
+      icon: "📊",
+      tint: "from-blue-500/15 via-blue-500/5 to-white/30"
     }
   ];
 
@@ -279,17 +291,38 @@ function DashboardHome() {
 
   }, [showKpis, kpis.length]);
 
-  const cardKpi = `
-    bg-white/90 backdrop-blur-xl border border-white/40
-    rounded-[30px] p-6
-    shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-    hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-    hover:-translate-y-[2px]
-    hover:scale-[1.015]
-    transition-all duration-300
-    flex justify-between items-center
-    min-h-[130px]
-  `;
+  const cardKpi = (tint) => `
+  relative
+  overflow-hidden
+
+  bg-gradient-to-br
+  ${tint}
+
+  backdrop-blur-xl
+
+  border
+  border-white/40
+
+  rounded-[30px]
+
+  p-6
+
+  shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+  hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+  hover:-translate-y-[2px]
+  hover:scale-[1.015]
+
+  transition-all
+  duration-300
+
+  flex
+  justify-between
+  items-center
+
+  min-h-[130px]
+`;
 
   const collapseButton = (show, action) => (
 
@@ -455,9 +488,31 @@ function DashboardHome() {
         </div>
 
         {/* ESTADOS */}
-        <div className="flex flex-wrap justify-center gap-3 text-sm">
+        {/* <div className="flex flex-wrap justify-center gap-3 text-sm">
 
-          <span className="bg-yellow-100 text-yellow-700 border border-yellow-200 px-4 py-1.5 rounded-full font-medium shadow-sm">
+          <span className="
+  bg-yellow-500/10
+  backdrop-blur-xl
+
+  text-yellow-700
+
+  border
+  border-yellow-200/40
+
+  px-4
+  py-2
+
+  rounded-full
+
+  font-semibold
+
+  shadow-[0_8px_25px_rgba(0,0,0,0.05)]
+
+  transition-all
+  duration-300
+
+  hover:scale-[1.03]
+">
             🟡 {pendientes}
           </span>
 
@@ -473,7 +528,7 @@ function DashboardHome() {
             ⛔ {canceladas}
           </span>
 
-        </div>
+        </div> */}
 
         {/* CITAS */}
         <div className="bg-gradient-to-br from-white to-yellow-50/40 backdrop-blur-xl border border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.06)] rounded-[32px] p-6 space-y-5">
@@ -508,7 +563,27 @@ function DashboardHome() {
 
             {citasHoy.length === 0 ? (
 
-              <div className="h-40 flex items-center justify-center rounded-3xl bg-white/60 border border-dashed border-gray-200">
+              <div className="
+  relative
+  overflow-hidden
+
+  h-40
+
+  flex
+  items-center
+  justify-center
+
+  rounded-[30px]
+
+  bg-white/70
+  backdrop-blur-xl
+
+  border
+  border-white/40
+
+  shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+">
+
 
                 <p className="text-gray-500">
                   No hay citas hoy ✅
@@ -528,9 +603,45 @@ function DashboardHome() {
 
                     <div
                       key={c.id}
-                      className="bg-gradient-to-br from-white to-gray-50 border border-gray-100 rounded-3xl p-5 hover:shadow-xl hover:-translate-y-[2px] transition-all duration-300"
-                    >
+                      className="
+    relative
+    overflow-hidden
 
+    bg-white/90
+    backdrop-blur-xl
+
+    border
+    border-white/40
+
+    rounded-[30px]
+
+    p-5
+
+    shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+    hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+    hover:-translate-y-[2px]
+    hover:scale-[1.01]
+
+    transition-all
+    duration-300
+  "
+                    >
+                      <div className="
+  absolute
+  -top-10
+  -right-10
+
+  w-32
+  h-32
+
+  rounded-full
+
+  bg-indigo-500/10
+
+  blur-3xl
+" />
                       <div className="space-y-3">
 
                         <div className="flex items-center justify-between">
@@ -772,10 +883,25 @@ function DashboardHome() {
 
                           <div
                             key={idx}
-                            className={cardKpi}
+                            className={cardKpi()}
                           >
 
-                            <div>
+
+                            <div
+                              className={`
+    absolute
+    inset-0
+
+    opacity-80
+
+    bg-gradient-to-br
+
+    ${kpi.tint}
+  `}
+                            />
+
+
+                            <div className="relative z-10">
 
                               <p className="
                     text-xs
@@ -796,10 +922,14 @@ function DashboardHome() {
 
                             </div>
 
+
                             <span className="
-                  text-3xl
-                  opacity-80
-                ">
+  relative z-10
+
+  text-3xl
+  opacity-80
+">
+
                               {kpi.icon}
                             </span>
 
@@ -853,90 +983,199 @@ function DashboardHome() {
         </div>
 
         {/* GRAFICOS */}
-        <div className="space-y-5">
+       {/* GRAFICOS */}
+<div className="space-y-5">
 
-          <div className="flex items-center justify-between">
+  <div className="flex items-center justify-between">
 
-            <div>
+    <div>
 
-              <h3 className="text-xl font-bold text-slate-800">
-                📊 Analíticas
-              </h3>
+      <h3 className="text-xl font-bold text-slate-800">
+        📊 Analíticas
+      </h3>
 
-              <p className="text-sm text-gray-500 mt-1">
-                Visualización de tendencias y rendimiento
-              </p>
+      <p className="text-sm text-gray-500 mt-1">
+        Visualización de tendencias y rendimiento
+      </p>
 
-            </div>
+    </div>
 
-            {collapseButton(
-              showCharts,
-              () => setShowCharts(!showCharts)
-            )}
+    {collapseButton(
+      showCharts,
+      () => setShowCharts(!showCharts)
+    )}
+
+  </div>
+
+  <div className={`
+    overflow-hidden transition-all duration-500
+    ${showCharts
+      ? "max-h-[3000px] opacity-100"
+      : "max-h-0 opacity-0"}
+  `}>
+
+    <div className="grid gap-6 xl:grid-cols-3 pt-1">
+
+      {[
+        {
+          title: "📈 Ingresos",
+          tint: `
+            from-indigo-500/10
+            via-indigo-500/5
+            to-transparent
+          `,
+          glow: "bg-indigo-500/5",
+          component: (
+            <GraficoIngresos
+              ingresos={ingresos}
+              egresos={egresos}
+            />
+          )
+        },
+        {
+          title: "👥 Clientes",
+          tint: `
+            from-emerald-500/10
+            via-emerald-500/5
+            to-transparent
+          `,
+          glow: "bg-emerald-500/5",
+          component: (
+            <GraficoClientes
+              clientes={clientes}
+            />
+          )
+        },
+        {
+          title: "📅 Citas",
+          tint: `
+            from-orange-500/10
+            via-orange-500/5
+            to-transparent
+          `,
+          glow: "bg-orange-500/5",
+          component: (
+            <GraficoCitas
+              citas={citas}
+            />
+          )
+        }
+      ].map((g, idx) => (
+
+        <div
+          key={idx}
+          className="
+            relative
+            overflow-hidden
+
+            bg-white/85
+            backdrop-blur-xl
+
+            border
+            border-white/40
+
+            rounded-[32px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+
+            hover:-translate-y-[2px]
+            hover:scale-[1.01]
+
+            transition-all
+            duration-300
+
+            h-[500px]
+
+            flex
+            flex-col
+          "
+        >
+
+          {/* TINT */}
+          <div
+            className={`
+              absolute
+              inset-0
+
+              opacity-40
+
+              bg-gradient-to-br
+
+              ${g.tint}
+            `}
+          />
+
+          {/* GLOW */}
+          <div
+            className={`
+              absolute
+              -top-12
+              -right-12
+
+              w-44
+              h-44
+
+              rounded-full
+
+              blur-3xl
+
+              ${g.glow}
+            `}
+          />
+
+          {/* HEADER */}
+          <div className="
+            relative
+            z-10
+
+            mb-5
+
+            text-center
+          ">
+
+            <h3 className="
+              text-sm
+
+              font-black
+
+              tracking-wide
+
+              text-slate-700
+            ">
+              {g.title}
+            </h3>
 
           </div>
 
-          <div className={`
-            overflow-hidden transition-all duration-500
-            ${showCharts
-              ? "max-h-[3000px] opacity-100"
-              : "max-h-0 opacity-0"}
-          `}>
+          {/* CHART */}
+          <div className="
+            relative
+            z-10
 
-            <div className="grid gap-6 xl:grid-cols-3 pt-1">
+            flex-1
 
-              {[
-                {
-                  title: "📈 Ingresos",
-                  component: (
-                    <GraficoIngresos
-                      ingresos={ingresos}
-                      egresos={egresos}
-                    />
-                  )
-                },
-                {
-                  title: "👥 Clientes",
-                  component: (
-                    <GraficoClientes
-                      clientes={clientes}
-                    />
-                  )
-                },
-                {
-                  title: "📅 Citas",
-                  component: (
-                    <GraficoCitas
-                      citas={citas}
-                    />
-                  )
-                }
-              ].map((g, idx) => (
+            min-h-0
+          ">
 
-                <div
-                  key={idx}
-                  className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-[32px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] hover:scale-[1.01] transition-all duration-300 h-[460px] flex flex-col"
-                >
-
-                  <h3 className="text-sm font-bold text-slate-700 mb-4 text-center">
-                    {g.title}
-                  </h3>
-
-                  <div className="flex-1">
-                    <div className="h-full w-full">
-                      {g.component}
-                    </div>
-                  </div>
-
-                </div>
-
-              ))}
-
+            <div className="h-full w-full">
+              {g.component}
             </div>
 
           </div>
 
         </div>
+
+      ))}
+
+    </div>
+
+  </div>
+
+</div>
 
       </div>
 

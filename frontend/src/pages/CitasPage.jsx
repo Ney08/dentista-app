@@ -8,7 +8,7 @@ import CitaForm from "../components/citas/CitaForm";
 import CitaList from "../components/citas/CitaList";
 import Paginacion from "../components/Paginacion";
 import SkeletonLoader from "../components/SkeletonLoader";
-
+import BaseModal from "../components/BaseModal";
 import { useClientes } from "../hooks/useClientes";
 import { useCitas } from "../hooks/useCitas";
 
@@ -1125,79 +1125,34 @@ function CitasPage() {
 
       {/* MODAL */}
 
+      {/* FORM MODAL */}
       {modalAbierto && (
 
-        <div
-          onClick={cerrarModal}
-          className={`
-            fixed
-            inset-0
-            z-50
-
-            flex
-            items-end
-            md:items-center
-
-            justify-center
-
-            bg-black/40
-            backdrop-blur-md
-
-            transition-all
-            duration-300
-
-            ${modalAbierto
-              ? "opacity-100 visible"
-              : "opacity-0 invisible"
-            }
-          `}
+        <BaseModal
+          onClose={cerrarModal}
         >
 
-          <div
-            onClick={(e) =>
-              e.stopPropagation()
+          <CitaForm
+            key={
+              citaEditar?.id ||
+              clientePresetLocal?.id ||
+              "nuevo"
             }
-            className={`
-              w-full
-              h-full
+            clientes={clientes}
+            cita={citaEditar}
+            clientePreset={clientePresetLocal}
+            onCrear={cerrarModal}
+            onClose={cerrarModal}
+          />
 
-              md:h-auto
-              md:max-w-3xl
-
-              p-0
-              md:p-4
-
-              transform
-              transition-all
-              duration-300
-
-              ${animar
-                ? "translate-y-0 md:scale-100 opacity-100"
-                : "translate-y-full md:scale-95 opacity-0"
-              }
-            `}
-          >
-
-            <CitaForm
-              key={
-                citaEditar?.id ||
-                clientePresetLocal?.id ||
-                "nuevo"
-              }
-              clientes={clientes}
-              cita={citaEditar}
-              clientePreset={clientePresetLocal}
-              onCrear={cerrarModal}
-              onClose={cerrarModal}
-            />
-
-          </div>
-
-        </div>
+        </BaseModal>
 
       )}
 
-    </PageWrapper>
+
+
+
+    </PageWrapper >
   );
 
 }

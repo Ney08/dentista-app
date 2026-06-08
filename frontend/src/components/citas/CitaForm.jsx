@@ -1417,7 +1417,33 @@ function CitaForm({
 
         shrink-0
       ">
+         <button
+          type="button"
+          onClick={onClose}
+          className="
+            flex-1
 
+            h-14
+
+            rounded-[24px]
+
+            bg-slate-100
+
+            hover:bg-slate-200
+
+            text-slate-700
+
+            font-semibold
+
+            transition-all
+            duration-300
+
+            active:scale-[0.98]
+          "
+        >
+          Cancelar
+        </button>
+        
         <button
           type="button"
           onClick={guardar}
@@ -1467,32 +1493,7 @@ function CitaForm({
 
         </button>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="
-            flex-1
-
-            h-14
-
-            rounded-[24px]
-
-            bg-slate-100
-
-            hover:bg-slate-200
-
-            text-slate-700
-
-            font-semibold
-
-            transition-all
-            duration-300
-
-            active:scale-[0.98]
-          "
-        >
-          Cancelar
-        </button>
+       
 
       </div>
 

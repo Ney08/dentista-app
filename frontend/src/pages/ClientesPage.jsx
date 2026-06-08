@@ -60,11 +60,24 @@ function ClientesPage() {
     useState("az");
 
   const [limite, setLimite] =
-    useState(6);
+    useState(3);
 
   const [pagina, setPagina] =
     useState(1);
+  const glassInner = `
+  bg-white/70
+  backdrop-blur-xl
 
+  border
+  border-white/50
+
+  shadow-[0_8px_25px_rgba(0,0,0,0.05)]
+
+  hover:border-indigo-200
+
+  transition-all
+  duration-300
+`;
   /*
   ==========================================
   KPIS
@@ -141,7 +154,7 @@ function ClientesPage() {
   PAGINACION
   ==========================================
   */
-
+  
   const inicio =
     (pagina - 1) *
     (limite === "all"
@@ -559,7 +572,7 @@ function ClientesPage() {
               flex-wrap
             ">
 
-              <div className="
+              {/* <div className="
                 px-4
                 h-11
 
@@ -581,7 +594,7 @@ function ClientesPage() {
                 text-indigo-600
               ">
                 {clientes.length} clientes registrados
-              </div>
+              </div> */}
 
               <button
                 onClick={() =>
@@ -1074,56 +1087,10 @@ function ClientesPage() {
       </div>
 
       {/* FORM MODAL */}
+      {modalAbierto && (
 
-      <div
-        onClick={cerrarModal}
-        className={`
-          fixed
-          inset-0
-          z-50
-
-          flex
-          items-end
-          md:items-center
-
-          justify-center
-
-          bg-black/40
-          backdrop-blur-sm
-
-          transition-all
-          duration-300
-
-          ${modalAbierto
-            ? "opacity-100 visible"
-            : "opacity-0 invisible"
-          }
-        `}
-      >
-
-        <div
-          onClick={(e) =>
-            e.stopPropagation()
-          }
-          className={`
-            w-full
-            h-full
-
-            md:h-auto
-            md:max-w-2xl
-
-            p-0
-            md:p-4
-
-            transform
-            transition-all
-            duration-300
-
-            ${modalAbierto
-              ? "translate-y-0 md:scale-100 opacity-100"
-              : "translate-y-full md:scale-95 opacity-0"
-            }
-          `}
+        <BaseModal
+          onClose={cerrarModal}
         >
 
           <ClienteForm
@@ -1131,9 +1098,9 @@ function ClientesPage() {
             onClose={cerrarModal}
           />
 
-        </div>
+        </BaseModal>
 
-      </div>
+      )}
 
       {/* CONFIRM */}
 

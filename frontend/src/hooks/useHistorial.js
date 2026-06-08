@@ -14,7 +14,7 @@ export const useHistorial = (clienteId) => {
     queryFn: async () => {
 
       const res = await fetch(
-        `${API_URL}/clientes/${clienteId}/historial`
+        `${API_URL}/historiales/clientes/${clienteId}/historial`
       );
 
       if (!res.ok) {

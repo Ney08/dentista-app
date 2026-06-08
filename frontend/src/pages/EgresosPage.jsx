@@ -6,7 +6,7 @@ import PageWrapper from "../components/PageWrapper";
 import SkeletonLoader from "../components/SkeletonLoader";
 import Paginacion from "../components/Paginacion";
 import ConfirmModal from "../components/ConfirmModal";
-
+import BaseModal from "../components/BaseModal";
 import EgresoModal from "../components/egresos/EgresoModal";
 import EgresoList from "../components/egresos/EgresoList";
 
@@ -969,91 +969,23 @@ function EgresosPage() {
 
       {/* ✅ MODAL */}
 
+
       {modalAbierto && (
 
-        <div
-          onClick={cerrarModal}
-          className={`
-      fixed
-      inset-0
-      z-50
-
-      flex
-      items-end
-
-      justify-center
-
-      bg-black/50
-      backdrop-blur-md
-
-      transition-all
-      duration-300
-
-      ${modalAbierto
-              ? "opacity-100 visible"
-              : "opacity-0 invisible"
-            }
-    `}
+        <BaseModal
+          onClose={cerrarModal}
         >
 
-          <div className="
-      w-full
+          <EgresoModal
+            egreso={egresoEditar}
+            onGuardar={guardarEgreso}
+            onClose={cerrarModal}
+          />
 
-      flex
-      items-end
-      justify-center
-    ">
-
-            {/* ✅ TRANSICIÓN DE ABAJO HACIA ARRIBA */}
-
-            <div
-              onClick={(e) =>
-                e.stopPropagation()
-              }
-
-              className={`
-          w-full
-
-          md:max-w-3xl
-
-          p-0
-          md:p-4
-
-          will-change-transform
-
-          transform
-
-          transition-all
-          duration-700
-
-          ease-[cubic-bezier(0.22,1,0.36,1)]
-
-          ${animar
-                  ? `
-              translate-y-0
-              opacity-100
-            `
-                  : `
-              translate-y-full
-              opacity-0
-            `
-                }
-        `}
-            >
-
-              <EgresoModal
-                egreso={egresoEditar}
-                onGuardar={guardarEgreso}
-                onClose={cerrarModal}
-              />
-
-            </div>
-
-          </div>
-
-        </div>
+        </BaseModal>
 
       )}
+
 
 
       {/* CONFIRM DELETE */}

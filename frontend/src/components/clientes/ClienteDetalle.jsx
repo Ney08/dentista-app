@@ -1,149 +1,970 @@
 import { useState } from "react";
+
+import toast from "react-hot-toast";
+
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  X
+} from "lucide-react";
+
 import HistorialForm from "./HistorialForm";
+
 import BaseModal from "../BaseModal";
-import { useHistorial } from "../../hooks/useHistorial";
-import { formatFecha } from "../../utils/fecha";
+
+import {
+  useHistorial
+} from "../../hooks/useHistorial";
+
+import {
+  formatFecha
+} from "../../utils/fecha";
+
+import { API_URL } from "../../config";
 
 function ClienteDetalle({ cliente }) {
 
-  const { historial = [], isLoading, crearHistorial } = useHistorial(cliente?.id);
-  const [notaSeleccionada, setNotaSeleccionada] = useState(null);
+  const {
+    historial = [],
+    isLoading,
+    crearHistorial
+  } = useHistorial(cliente?.id);
 
-  //  helper texto
+  const [notaSeleccionada, setNotaSeleccionada] =
+    useState(null);
 
-  const cortarTexto = (texto, limite = 30) => {
+  const [menuAbierto, setMenuAbierto] =
+    useState(null);
+
+  const [editando, setEditando] =
+    useState(null);
+
+  const [textoEditado, setTextoEditado] =
+    useState("");
+
+  /*
+  ==========================================
+  HELPERS
+  ==========================================
+  */
+
+  const cortarTexto = (
+    texto,
+    limite = 90
+  ) => {
+
     if (!texto) return "";
+
     return texto.length > limite
       ? texto.slice(0, limite) + "..."
       : texto;
+
   };
 
+  /*
+  ==========================================
+  ELIMINAR
+  ==========================================
+  */
 
-  if (!cliente?.id) return <p>Selecciona un cliente...</p>;
-  if (isLoading) return <p>Cargando historial...</p>;
+  const eliminarNota = async (id) => {
+
+    const confirmar =
+      window.confirm(
+        "¿Eliminar esta nota clínica?"
+      );
+
+    if (!confirmar) return;
+
+    try {
+
+      const res = await fetch(
+        `${API_URL}/historiales/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      if (!res.ok) {
+
+        throw new Error();
+
+      }
+
+      toast.success(
+        "Nota eliminada ✅"
+      );
+
+      window.location.reload();
+
+    } catch {
+
+      toast.error(
+        "Error al eliminar ❌"
+      );
+
+    }
+
+  };
+
+  /*
+  ==========================================
+  GUARDAR EDICION
+  ==========================================
+  */
+
+  const guardarEdicion = async () => {
+
+    if (!textoEditado.trim()) {
+
+      toast.error(
+        "La nota no puede estar vacía ⚠️"
+      );
+
+      return;
+
+    }
+
+    try {
+
+      const res = await fetch(
+        `${API_URL}/historiales/${editando.id}`,
+        {
+          method: "PUT",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            cliente_id: cliente.id,
+            descripcion: textoEditado
+          })
+        }
+      );
+
+      if (!res.ok) {
+
+        throw new Error();
+
+      }
+
+      toast.success(
+        "Nota actualizada ✅"
+      );
+
+      setEditando(null);
+
+      setTextoEditado("");
+
+      window.location.reload();
+
+    } catch {
+
+      toast.error(
+        "Error al actualizar ❌"
+      );
+
+    }
+
+  };
+
+  /*
+  ==========================================
+  STATES
+  ==========================================
+  */
+
+  if (!cliente?.id) {
+
+    return (
+      <p>
+        Selecciona un cliente...
+      </p>
+    );
+
+  }
+
+  if (isLoading) {
+
+    return (
+      <p>
+        Cargando historial...
+      </p>
+    );
+
+  }
 
   return (
-    <div className="space-y-4 sm:space-y-5">
 
-      {/* ✅ FORM */}
-      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 space-y-3 shrink-0">
-        <h4 className="text-sm sm:text-base font-semibold text-gray-600">
-          📝 Agregar nota clínica
-        </h4>
+    <div className="
+      space-y-6
+    ">
 
-        <HistorialForm
-          clienteId={cliente.id}
-          onAdd={(data) => crearHistorial.mutate(data)}
-        />
+      {/* FORM */}
+
+      <HistorialForm
+        clienteId={cliente.id}
+        onAdd={(data) =>
+          crearHistorial.mutate(data)
+        }
+      />
+
+      {/* HEADER */}
+
+      <div className="
+        flex
+        items-center
+        justify-between
+
+        gap-3
+      ">
+
+        <div>
+
+          <h4 className="
+            text-lg
+
+            font-black
+
+            tracking-tight
+
+            text-slate-800
+          ">
+            📚 Historial clínico
+          </h4>
+
+          <p className="
+            text-sm
+
+            text-slate-400
+          ">
+            Observaciones y seguimiento del paciente
+          </p>
+
+        </div>
+
+        <div className="
+          px-3
+          py-1.5
+
+          rounded-full
+
+          bg-indigo-500/10
+
+          text-indigo-600
+
+          text-xs
+          font-bold
+        ">
+          {historial.length} notas
+        </div>
+
       </div>
 
-      {/* ✅ TÍTULO HISTORIAL */}
-      <h4 className="text-sm sm:text-base font-semibold text-gray-600">
-        📚 Historial
-      </h4>
+      {/* LIST */}
 
-      {/* ✅ LISTA CON SCROLL */}
-      <div className="flex-1 min-h-0 max-h-[320px] sm:max-h-[360px] overflow-y-auto overflow-x-hidden pr-1 space-y-3">
+      <div className="
+        flex-1
+
+        min-h-0
+
+        max-h-[420px]
+
+        overflow-y-auto
+        overflow-x-hidden
+
+        pr-1
+
+        space-y-3
+      ">
 
         {(!historial || historial.length === 0) ? (
-          <p className="text-gray-500 text-sm">
-            No hay historial...
-          </p>
+
+          <div className="
+            bg-white
+
+            border
+            border-slate-200
+
+            rounded-[28px]
+
+            p-8
+
+            text-center
+          ">
+
+            <p className="
+              text-slate-500
+            ">
+              No hay historial clínico registrado
+            </p>
+
+          </div>
+
         ) : (
 
-          (historial || []).map((h) => (
+          (historial || []).map((h, index) => (
+
             <div
               key={h.id}
-              onClick={() => setNotaSeleccionada(h)}
-              className="group flex gap-3 cursor-pointer items-start"
+              className="
+                group
+
+                relative
+
+                flex
+                gap-4
+              "
             >
 
-              {/* 🔵 DOT (timeline) */}
-              <div className="mt-2.5 w-2.5 h-2.5 bg-blue-500 rounded-full shrink-0" />
+              {/* LEFT BORDER */}
 
-              {/* ✅ CARD */}
+              <div className={`
+                w-[4px]
+
+                rounded-full
+
+                shrink-0
+
+                ${index === 0
+                  ? `
+                    bg-gradient-to-b
+                    from-indigo-500
+                    to-purple-500
+                  `
+                  : `
+                    bg-slate-200
+                  `
+                }
+              `} />
+
+              {/* CARD */}
+
               <div
+                onClick={() =>
+                  setNotaSeleccionada(h)
+                }
                 className="
-  flex-1 bg-white border border-gray-200
-  rounded-2xl p-3 sm:p-4 shadow-sm
-  hover:shadow-sm hover:bg-gray-50 hover:border-gray-300
-  transition-all duration-200
-"
+                  relative
+
+                  flex-1
+
+                  cursor-pointer
+
+                  bg-white
+
+                  border
+                  border-slate-200/80
+
+                  rounded-[28px]
+
+                  p-5
+
+                  shadow-[0_10px_30px_rgba(0,0,0,0.04)]
+
+                  hover:-translate-y-[2px]
+
+                  hover:shadow-[0_18px_40px_rgba(0,0,0,0.06)]
+
+                  hover:border-indigo-200
+
+                  transition-all
+                  duration-300
+                "
               >
 
-                <p className="text-sm sm:text-base leading-relaxed break-words">
+                {/* TOP ACTIONS */}
 
+                <div className="
+                  absolute
+                  top-4
+                  right-4
+                ">
+
+                  <button
+                    onClick={(e) => {
+
+                      e.stopPropagation();
+
+                      setMenuAbierto(
+                        menuAbierto === h.id
+                          ? null
+                          : h.id
+                      );
+
+                    }}
+                    className="
+                      opacity-0
+
+                      group-hover:opacity-100
+
+                      w-9
+                      h-9
+
+                      rounded-[14px]
+
+                      bg-white/90
+
+                      border
+                      border-slate-200
+
+                      text-slate-500
+
+                      hover:text-indigo-600
+
+                      hover:border-indigo-200
+
+                      transition-all
+                      duration-300
+
+                      flex
+                      items-center
+                      justify-center
+                    "
+                  >
+
+                    <MoreHorizontal size={16} />
+
+                  </button>
+
+                  {/* MENU */}
+
+                  {menuAbierto === h.id && (
+
+                    <div className="
+                      absolute
+                      top-11
+                      right-0
+                      z-20
+
+                      w-44
+
+                      bg-white
+
+                      border
+                      border-slate-200
+
+                      rounded-[20px]
+
+                      shadow-[0_15px_40px_rgba(0,0,0,0.10)]
+
+                      overflow-hidden
+                    ">
+
+                      {/* EDIT */}
+
+                      <button
+                        onClick={(e) => {
+
+                          e.stopPropagation();
+
+                          setEditando(h);
+
+                          setTextoEditado(
+                            h.descripcion
+                          );
+
+                          setMenuAbierto(null);
+
+                        }}
+                        className="
+                          w-full
+
+                          px-4
+                          py-3
+
+                          flex
+                          items-center
+                          gap-3
+
+                          text-sm
+                          font-medium
+
+                          text-slate-700
+
+                          hover:bg-indigo-50
+
+                          transition-all
+                          duration-200
+                        "
+                      >
+
+                        <Pencil size={16} />
+
+                        Editar nota
+
+                      </button>
+
+                      {/* DELETE */}
+
+                      <button
+                        onClick={(e) => {
+
+                          e.stopPropagation();
+
+                          eliminarNota(h.id);
+
+                          setMenuAbierto(null);
+
+                        }}
+                        className="
+                          w-full
+
+                          px-4
+                          py-3
+
+                          flex
+                          items-center
+                          gap-3
+
+                          text-sm
+                          font-medium
+
+                          text-rose-500
+
+                          hover:bg-rose-50
+
+                          transition-all
+                          duration-200
+                        "
+                      >
+
+                        <Trash2 size={16} />
+
+                        Eliminar nota
+
+                      </button>
+
+                    </div>
+
+                  )}
+
+                </div>
+
+                {/* RECENT BADGE */}
+
+                {index === 0 && (
+
+                  <div className="
+                    inline-flex
+
+                    items-center
+                    gap-2
+
+                    px-3
+                    py-1.5
+
+                    rounded-full
+
+                    bg-gradient-to-r
+                    from-indigo-500/10
+                    to-purple-500/10
+
+                    text-indigo-600
+
+                    text-[11px]
+                    font-black
+
+                    mb-4
+                  ">
+
+                    ✨ Nota reciente
+
+                  </div>
+
+                )}
+
+                {/* TEXT */}
+
+                <p className="
+                  text-sm
+                  sm:text-base
+
+                  leading-relaxed
+
+                  text-slate-700
+
+                  break-words
+
+                  pr-10
+                ">
 
                   {cortarTexto(h.descripcion)}
 
-                  {h.descripcion?.length > 80 && (
-                    <span className="text-blue-500 text-xs ml-1">
+                  {h.descripcion?.length > 90 && (
+
+                    <span className="
+                      ml-2
+
+                      text-indigo-500
+
+                      text-sm
+                      font-semibold
+
+                      hover:text-indigo-600
+                    ">
                       ver más
                     </span>
+
                   )}
 
                 </p>
 
-                <p className="text-xs sm:text-sm text-gray-400 mt-2">
-                  {formatFecha(h.fecha)}
-                </p>
+                {/* FOOTER */}
+
+                <div className="
+                  mt-4
+
+                  flex
+                  items-center
+                  justify-between
+
+                  gap-3
+                ">
+
+                  <p className="
+                    text-sm
+
+                    text-slate-400
+
+                    font-medium
+                  ">
+                    {formatFecha(h.fecha)}
+                  </p>
+
+                </div>
 
               </div>
 
             </div>
+
           ))
 
         )}
 
       </div>
 
-      {/* ✅ MODAL DETALLE PRO */}
+      {/* DETAIL MODAL */}
+
       {notaSeleccionada && (
-        <BaseModal onClose={() => setNotaSeleccionada(null)}>
 
-          <div className="flex flex-col gap-4 sm:gap-5 min-h-0 h-full overflow-hidden">
+        <BaseModal
+          onClose={() =>
+            setNotaSeleccionada(null)
+          }
+          maxWidth="max-w-3xl"
+        >
 
-            {/* ✅ HEADER PRO */}
-            <div className="sticky top-0 z-10 bg-white pb-3 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+          <div className="
+            flex
+            flex-col
+
+            gap-6
+          ">
+
+            {/* HEADER */}
+
+            <div className="
+              flex
+              items-start
+              justify-between
+
+              gap-4
+            ">
 
               <div>
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
-                  Nota clínica
+
+                <div className="
+                  inline-flex
+
+                  items-center
+                  gap-2
+
+                  px-3
+                  py-1.5
+
+                  rounded-full
+
+                  bg-indigo-500/10
+
+                  text-indigo-600
+
+                  text-xs
+                  font-black
+
+                  mb-4
+                ">
+
+                  📋 Nota clínica
+
+                </div>
+
+                <h3 className="
+                  text-2xl
+
+                  font-black
+
+                  tracking-tight
+
+                  text-slate-800
+                ">
+                  Detalle clínico
                 </h3>
 
-                <p className="text-xs text-gray-400">
-                  {formatFecha(notaSeleccionada.fecha)}
+                <p className="
+                  mt-2
+
+                  text-sm
+
+                  text-slate-400
+                ">
+                  {formatFecha(
+                    notaSeleccionada.fecha
+                  )}
                 </p>
+
               </div>
 
+              {/* CLOSE */}
+
               <button
-                onClick={() => setNotaSeleccionada(null)}
-                className="text-sm text-gray-400 hover:text-gray-600 transition"
+                onClick={() =>
+                  setNotaSeleccionada(null)
+                }
+                className="
+                  w-11
+                  h-11
+
+                  rounded-[18px]
+
+                  bg-slate-100
+
+                  border
+                  border-slate-200
+
+                  text-slate-500
+
+                  hover:bg-slate-200
+
+                  hover:text-slate-700
+
+                  transition-all
+                  duration-300
+
+                  flex
+                  items-center
+                  justify-center
+                "
               >
-                Cerrar
+
+                <X size={18} />
+
               </button>
 
             </div>
 
-            {/* ✅ CONTENIDO */}
-            <div
-              className="
-  max-h-[55vh] overflow-y-auto overflow-x-hidden
-  bg-gray-50 border border-gray-200
-  p-4 rounded-2xl text-sm sm:text-base
-  leading-relaxed whitespace-pre-wrap break-words
-"
-            >
+            {/* CONTENT */}
+
+            <div className="
+              bg-slate-50/80
+
+              border
+              border-slate-200/80
+
+              rounded-[30px]
+
+              p-6
+
+              text-sm
+              sm:text-base
+
+              leading-relaxed
+
+              text-slate-700
+
+              whitespace-pre-wrap
+              break-words
+
+              shadow-inner
+            ">
+
               {notaSeleccionada.descripcion}
+
             </div>
 
           </div>
 
         </BaseModal>
+
+      )}
+
+      {/* EDIT MODAL */}
+
+      {editando && (
+
+        <BaseModal
+          onClose={() =>
+            setEditando(null)
+          }
+          maxWidth="max-w-2xl"
+        >
+
+          <div className="
+            space-y-6
+          ">
+
+            {/* HEADER */}
+
+            <div>
+
+              <h3 className="
+                text-2xl
+
+                font-black
+
+                tracking-tight
+
+                text-slate-800
+              ">
+                ✏️ Editar nota clínica
+              </h3>
+
+              <p className="
+                mt-1
+
+                text-sm
+
+                text-slate-500
+              ">
+                Actualiza la observación clínica del paciente
+              </p>
+
+            </div>
+
+            {/* TEXTAREA */}
+
+            <textarea
+              value={textoEditado}
+              onChange={(e) =>
+                setTextoEditado(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+
+                min-h-[220px]
+
+                rounded-[28px]
+
+                bg-slate-50/80
+
+                border
+                border-slate-200
+
+                px-5
+                py-5
+
+                text-slate-700
+
+                placeholder:text-slate-400
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+
+                focus:border-indigo-300
+
+                resize-none
+
+                transition-all
+                duration-300
+              "
+            />
+
+            {/* ACTIONS */}
+
+            <div className="
+              flex
+              items-center
+              justify-end
+
+              gap-3
+            ">
+
+              <button
+                onClick={() =>
+                  setEditando(null)
+                }
+                className="
+                  h-12
+
+                  px-5
+
+                  rounded-[20px]
+
+                  bg-slate-100
+
+                  border
+                  border-slate-200
+
+                  text-slate-600
+
+                  font-semibold
+
+                  hover:bg-slate-200
+
+                  transition-all
+                  duration-300
+                "
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={guardarEdicion}
+                className="
+                  h-12
+
+                  px-6
+
+                  rounded-[20px]
+
+                  bg-gradient-to-r
+                  from-indigo-500
+                  to-purple-500
+
+                  text-white
+
+                  font-bold
+
+                  shadow-[0_12px_30px_rgba(99,102,241,0.25)]
+
+                  hover:scale-[1.02]
+
+                  transition-all
+                  duration-300
+                "
+              >
+                Guardar cambios
+              </button>
+
+            </div>
+
+          </div>
+
+        </BaseModal>
+
       )}
 
     </div>
+
   );
+
 }
 
 export default ClienteDetalle;

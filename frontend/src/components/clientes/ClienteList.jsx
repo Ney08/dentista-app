@@ -20,7 +20,7 @@ function ClienteList({
     "from-pink-500 to-rose-500",
     "from-indigo-500 to-blue-500"
   ];
-
+  
   return (
 
     <div className="h-full space-y-6 overflow-y-auto overflow-x-hidden pr-1 pb-2">
@@ -467,37 +467,66 @@ function ClienteList({
 
                   }}
                   className="
-                    h-12
+    group
 
-                    px-5
+    relative
+    overflow-hidden
 
-                    rounded-[20px]
+    h-11
 
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+    px-4
 
-                    text-white
+    rounded-2xl
 
-                    text-sm
-                    font-black
+    bg-gradient-to-r
+    from-indigo-500
+    via-purple-500
+    to-violet-500
 
-                    shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+    text-white
 
-                    hover:scale-[1.03]
+    text-sm
+    font-bold
 
-                    hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+    shadow-[0_12px_30px_rgba(99,102,241,0.25)]
 
-                    active:scale-95
+    hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
 
-                    transition-all
-                    duration-300
+    hover:scale-[1.03]
 
-                    whitespace-nowrap
-                  "
+    active:scale-[0.97]
+
+    transition-all
+    duration-300
+
+    flex
+    items-center
+    gap-2
+  "
                 >
-                  + Nueva cita
+
+                  <div className="
+    absolute
+    inset-0
+
+    opacity-0
+
+    bg-white/10
+
+    group-hover:opacity-100
+
+    transition-all
+    duration-300
+  " />
+
+                  <span className="relative z-10 text-base">
+                    📅
+                  </span>
+
+                  <span className="relative z-10">
+                    Cita
+                  </span>
+
                 </button>
 
                 {/* ACTIONS */}
@@ -579,9 +608,9 @@ function ClienteList({
                       duration-300
 
                       ${cliente.activo
-                          ? "bg-gradient-to-br from-rose-50 to-rose-100 text-rose-500"
-                          : "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-500"
-                        }
+                        ? "bg-gradient-to-br from-rose-50 to-rose-100 text-rose-500"
+                        : "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-500"
+                      }
                     `}
                     title={
                       cliente.activo

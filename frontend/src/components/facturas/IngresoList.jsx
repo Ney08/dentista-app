@@ -528,35 +528,45 @@ function IngresoList({
                       onVerFactura(i)
                     }
                     className="
-                      h-12
+    group
 
-                      px-5
+    relative
+    overflow-hidden
 
-                      rounded-[20px]
+    h-11
 
-                      bg-gradient-to-r
-                      from-indigo-500
+    px-5
+
+    rounded-[22px]
+
+    bg-gradient-to-r
+   from-indigo-500
                       via-purple-500
                       to-violet-500
 
-                      text-white
+    text-white
 
-                      text-sm
-                      font-black
+    text-sm
+    font-black
 
-                      shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+    shadow-[0_12px_30px_rgba(16,185,129,0.22)]
 
-                      hover:scale-[1.03]
+    hover:shadow-[0_18px_40px_rgba(16,185,129,0.30)]
 
-                      hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+    hover:scale-[1.02]
 
-                      active:scale-95
+    active:scale-[0.97]
 
-                      transition-all
-                      duration-300
+    transition-all
+    duration-300
 
-                      whitespace-nowrap
-                    "
+    whitespace-nowrap
+
+    flex
+    items-center
+    justify-center
+    gap-2.5
+  "
                   >
                     📄 Ver factura
                   </button>
@@ -576,36 +586,80 @@ function IngresoList({
                         setIngresoAPagar(i)
                       }
                       className="
-                        h-12
+    group
 
-                        px-5
+    relative
+    overflow-hidden
 
-                        rounded-[20px]
+    h-11
 
-                        bg-gradient-to-r
-                        from-emerald-500
-                        to-green-500
+    px-5
 
-                        text-white
+    rounded-[22px]
 
-                        text-sm
-                        font-black
+    bg-gradient-to-r
+    from-emerald-500
+    via-green-500
+    to-emerald-600
 
-                        shadow-[0_15px_35px_rgba(16,185,129,0.25)]
+    text-white
 
-                        hover:scale-[1.03]
+    text-sm
+    font-black
 
-                        hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+    shadow-[0_12px_30px_rgba(16,185,129,0.22)]
 
-                        active:scale-95
+    hover:shadow-[0_18px_40px_rgba(16,185,129,0.30)]
 
-                        transition-all
-                        duration-300
+    hover:scale-[1.02]
 
-                        whitespace-nowrap
-                      "
+    active:scale-[0.97]
+
+    transition-all
+    duration-300
+
+    whitespace-nowrap
+
+    flex
+    items-center
+    justify-center
+    gap-2.5
+  "
                     >
-                      💳 Marcar pagado
+
+                      {/* GLOW */}
+
+                      <div className="
+    absolute
+    inset-0
+
+    opacity-0
+
+    bg-white/10
+
+    group-hover:opacity-100
+
+    transition-all
+    duration-300
+  " />
+
+                      {/* ICON */}
+
+                      <span className="
+    relative
+    z-10
+
+    text-sm
+  ">
+                        💳
+                      </span>
+
+                      {/* TEXT */}
+
+                      <span className="relative z-10">
+                        Marcar pagado
+                      </span>
+
                     </button>
 
                     {/* ACTIONS */}
@@ -625,33 +679,35 @@ function IngresoList({
                           onEditar(i)
                         }
                         className="
-                          w-12
-                          h-12
+                      w-12
+                      h-12
 
-                          rounded-[20px]
+                      rounded-[20px]
 
-                          bg-gradient-to-br
-                          from-yellow-50
-                          to-amber-100
+                      bg-gradient-to-br
+                      from-slate-100
+                      to-slate-200/70
 
-                          text-yellow-600
+                      text-slate-500
 
-                          border
-                          border-white
+                      hover:text-slate-700
 
-                          flex
-                          items-center
-                          justify-center
+                      border
+                      border-white
 
-                          hover:scale-110
+                      flex
+                      items-center
+                      justify-center
 
-                          active:scale-95
+                      hover:scale-110
 
-                          hover:shadow-lg
+                      active:scale-95
 
-                          transition-all
-                          duration-300
-                        "
+                      hover:shadow-lg
+
+                      transition-all
+                      duration-300
+                    "
                         title="Editar"
                       >
                         ✏️

@@ -1,147 +1,323 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import {
+  useState,
+  useEffect
+} from "react";
+
+import {
+  Link,
+  useLocation
+} from "react-router-dom";
+
+
+import {
+  LayoutDashboard,
+  Users,
+  CalendarDays,
+  Receipt,
+  Wallet,
+  BarChart3,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight
+} from "lucide-react";
+
+
 import ConfirmModal from "./ConfirmModal";
-import { useAuthContext } from "../context/AuthContext";
+
+import {
+  useAuthContext
+} from "../context/AuthContext";
 
 function Layout({ children }) {
 
-  const [abierto, setAbierto] = useState(false);
-  const [mostrarLogout, setMostrarLogout] = useState(false);
-  const [showMobileNav, setShowMobileNav] = useState(true);
-  const location = useLocation();
-  const { logout } = useAuthContext();
+  const [abierto, setAbierto] =
+    useState(true);
+
+  const [mostrarLogout, setMostrarLogout] =
+    useState(false);
+
+  const [showMobileNav, setShowMobileNav] =
+    useState(true);
+
+  const location =
+    useLocation();
+
+  const { logout } =
+    useAuthContext();
+
   useEffect(() => {
 
-    let lastScrollY = window.scrollY;
+    let lastScrollY =
+      window.scrollY;
 
     const handleScroll = () => {
 
-      const currentScrollY = window.scrollY;
+      const currentScrollY =
+        window.scrollY;
 
-      // ✅ BAJANDO
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+      if (
+        currentScrollY > lastScrollY &&
+        currentScrollY > 80
+      ) {
+
         setShowMobileNav(false);
-      }
 
-      // ✅ SUBIENDO
-      else {
+      } else {
+
         setShowMobileNav(true);
+
       }
 
-      lastScrollY = currentScrollY;
+      lastScrollY =
+        currentScrollY;
+
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener(
+      "scroll",
+      handleScroll
+    );
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+
     };
 
   }, []);
+
   const menu = [
     {
       path: "/",
-      icon: "🏠",
+      icon: LayoutDashboard,
       label: "Dashboard",
       mobileLabel: "Inicio"
     },
     {
       path: "/clientes",
-      icon: "👤",
+      icon: Users,
       label: "Clientes",
       mobileLabel: "Clientes"
     },
     {
       path: "/citas",
-      icon: "📅",
+      icon: CalendarDays,
       label: "Citas",
       mobileLabel: "Citas"
     },
     {
       path: "/facturaciones",
-      icon: "🧾",
+      icon: Receipt,
       label: "Facturación",
       mobileLabel: "Facturas"
     },
-
     {
       path: "/egresos",
-      icon: "💸",
+      icon: Wallet,
       label: "Egresos",
       mobileLabel: "Egresos"
     },
-
     {
       path: "/reportes",
-      icon: "📊",
+      icon: BarChart3,
       label: "Reportes",
       mobileLabel: "Reportes"
     },
     {
       path: "/settings",
-      icon: "⚙️",
+      icon: Settings,
       label: "Configuración",
       mobileLabel: "Ajustes"
-    },
+    }
   ];
 
   const confirmarLogout = () => {
+
     logout();
+
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb]">
 
-      {/* ✅ MOBILE TOPBAR */}
+    <div className="
+      min-h-screen
+
+      bg-[#f5f7fb]
+    ">
+
+      {/* MOBILE TOPBAR */}
+
       <div className="
         md:hidden
-        sticky top-0 z-40
 
-        h-14
+        sticky
+        top-0
+        z-40
+
+        h-16
+
         px-4
 
-        flex items-center justify-between
+        flex
+        items-center
+        justify-between
 
-        bg-white/80
-        backdrop-blur-xl
+        bg-white/70
+        backdrop-blur-2xl
 
-        border-b border-gray-200
+        border-b
+        border-white/50
+
+        shadow-[0_10px_30px_rgba(0,0,0,0.04)]
       ">
 
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🦷</span>
+        <div className="
+          flex
+          items-center
+          gap-3
+        ">
 
-          <span className="font-bold tracking-tight text-gray-800">
-            DentalApp
-          </span>
+          <div className="
+            relative
+
+            w-11
+            h-11
+
+            rounded-[18px]
+
+            bg-gradient-to-br
+            from-indigo-500
+            via-purple-500
+            to-violet-500
+
+            shadow-[0_15px_35px_rgba(99,102,241,0.30)]
+
+            flex
+            items-center
+            justify-center
+          ">
+
+            <div className="
+              absolute
+              inset-0
+
+              rounded-[18px]
+
+              bg-white/10
+            " />
+
+            
+<span className="text-white text-xl">
+  🦷
+</span>
+
+
+          </div>
+
+          <div>
+
+            <p className="
+              text-sm
+
+              font-black
+
+              tracking-tight
+
+              text-slate-800
+            ">
+              DentalApp
+            </p>
+
+            <p className="
+              text-[11px]
+
+              text-slate-400
+            ">
+              Gestión clínica inteligente
+            </p>
+
+          </div>
+
         </div>
 
         <button
-          onClick={() => setAbierto(true)}
+          onClick={() =>
+            setAbierto(true)
+          }
           className="
-            w-10 h-10 rounded-2xl
+            group
 
-            flex items-center justify-center
+            relative
+            overflow-hidden
 
-            bg-gray-100 hover:bg-gray-200
+            w-11
+            h-11
 
-            border border-gray-200
+            rounded-[20px]
 
-            transition-all duration-200
-            active:scale-[0.98]
+            bg-white/50
+            backdrop-blur-xl
+
+            border
+            border-white/50
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+
+            hover:border-indigo-200
+
+            hover:shadow-[0_15px_35px_rgba(99,102,241,0.15)]
+
+            active:scale-[0.96]
+
+            transition-all
+            duration-300
+
+            flex
+            items-center
+            justify-center
           "
         >
-          ☰
+
+          <div className="
+            absolute
+            inset-0
+
+            opacity-0
+
+            bg-gradient-to-br
+            from-indigo-500/10
+            to-purple-500/10
+
+            group-hover:opacity-100
+
+            transition-all
+            duration-300
+          " />
+
+          <Menu size={19} />
+
         </button>
 
       </div>
 
-      {/* ✅ OVERLAY MOBILE */}
+      {/* MOBILE OVERLAY */}
+
       {abierto && (
+
         <div
-          onClick={() => setAbierto(false)}
+          onClick={() =>
+            setAbierto(false)
+          }
           className="
-            fixed inset-0 z-40
+            fixed
+            inset-0
+            z-40
 
             bg-black/40
             backdrop-blur-sm
@@ -149,14 +325,21 @@ function Layout({ children }) {
             md:hidden
           "
         />
+
       )}
 
-      {/* ✅ SIDEBAR DESKTOP */}
+      {/* DESKTOP SIDEBAR */}
+
       <aside
         className={`
-          hidden md:flex
+          hidden
+          md:flex
 
-          fixed top-0 left-0 z-50
+          fixed
+          top-0
+          left-0
+          z-50
+
           h-screen
 
           flex-col
@@ -166,189 +349,447 @@ function Layout({ children }) {
           via-[#081226]
           to-[#020617]
 
-          border-r border-white/5
+          border-r
+          border-white/5
 
-          text-white
+          shadow-[0_20px_60px_rgba(0,0,0,0.45)]
 
-          transition-all duration-300 ease-out
+          transition-all
+          duration-300
+          ease-out
 
-          ${abierto ? "w-64" : "w-20"}
+          ${abierto
+            ? "w-[290px]"
+            : "w-[92px]"
+          }
         `}
       >
 
-        {/* ✅ HEADER */}
+        {/* SIDEBAR GLOW */}
+
         <div className="
-          h-20 px-4
+          absolute
+          top-0
+          left-0
 
-          flex items-center justify-between
+          w-full
+          h-64
 
-          border-b border-white/5
+          bg-indigo-500/10
+
+          blur-3xl
+
+          pointer-events-none
+        " />
+
+        {/* HEADER */}
+
+        <div className="
+          relative
+          z-10
+
+          h-24
+
+          px-5
+
+          flex
+          items-center
+          justify-between
+
+          border-b
+          border-white/5
         ">
 
           {abierto && (
-            <div className="flex items-center gap-3">
+
+            <div className="
+              flex
+              items-center
+              gap-4
+            ">
 
               <div className="
-                w-10 h-10 rounded-2xl
+                relative
 
-                flex items-center justify-center
+                w-14
+                h-14
+
+                rounded-[24px]
 
                 bg-gradient-to-br
-                from-blue-500
-                to-indigo-500
+                from-indigo-500
+                via-purple-500
+                to-violet-500
 
-                shadow-lg
+                shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+
+                flex
+                items-center
+                justify-center
               ">
-                🦷
+
+                <div className="
+                  absolute
+                  inset-0
+
+                  rounded-[24px]
+
+                  bg-white/10
+                " />
+
+                
+<span className="text-white text-xl">
+  🦷
+</span>
+
+
               </div>
 
               <div>
-                <p className="font-semibold tracking-tight text-white">
+
+                <p className="
+                  text-lg
+
+                  font-black
+
+                  tracking-tight
+
+                  text-white
+                ">
                   DentalApp
                 </p>
 
-                <p className="text-xs text-gray-400">
-                  SaaS Dental
+                <p className="
+                  text-xs
+
+                  text-slate-400
+                ">
+                  Gestión clínica inteligente
                 </p>
+
               </div>
 
             </div>
+
           )}
 
           <button
-            onClick={() => setAbierto(!abierto)}
+            onClick={() =>
+              setAbierto(!abierto)
+            }
             className="
-              w-11 h-11 rounded-2xl
+              group
 
-              flex items-center justify-center
+              relative
+              overflow-hidden
 
-              bg-white/5 hover:bg-white/10
+              w-12
+              h-12
 
-              border border-white/10
+              rounded-[22px]
 
-              transition-all duration-200
+              bg-white/5
+              backdrop-blur-xl
+
+              border
+              border-white/10
+
+              shadow-[0_10px_30px_rgba(0,0,0,0.25)]
+
+              hover:bg-white/10
+
+              hover:border-indigo-400/20
+
+              hover:shadow-[0_15px_35px_rgba(99,102,241,0.15)]
+
+              active:scale-[0.96]
+
+              transition-all
+              duration-300
+
+              flex
+              items-center
+              justify-center
             "
           >
-            ☰
+
+            <div className="
+              absolute
+              inset-0
+
+              opacity-0
+
+              bg-gradient-to-br
+              from-indigo-500/10
+              to-purple-500/10
+
+              group-hover:opacity-100
+
+              transition-all
+              duration-300
+            " />
+
+            {abierto ? (
+
+              <ChevronLeft size={20} />
+
+            ) : (
+
+              <ChevronRight size={20} />
+
+            )}
+
           </button>
 
         </div>
 
-        {/* ✅ NAV */}
+        {/* NAV */}
+
         <nav className="
+          relative
+          z-10
+
           flex-1
 
-          px-3 py-4
+          px-4
+          py-5
 
-          space-y-1.5
+          space-y-2
 
-          overflow-y-auto overflow-x-hidden
+          overflow-y-auto
+          overflow-x-hidden
         ">
 
           {menu.map((item) => {
 
-            const active = location.pathname === item.path;
+            const active =
+              location.pathname === item.path;
+
+            const Icon =
+              item.icon;
 
             return (
+
               <Link
                 key={item.path}
                 to={item.path}
                 className={`
+                  group
+
                   relative
+                  overflow-hidden
 
-                  flex items-center
-                  gap-3
+                  flex
+                  items-center
 
-                  px-3
-                  h-12
+                  gap-4
 
-                  rounded-2xl
+                  h-14
 
-                  transition-all duration-200
+                  px-4
+
+                  rounded-[24px]
+
+                  transition-all
+                  duration-300
 
                   ${active
                     ? `
                       bg-gradient-to-r
-                      from-[#3b82f6]
-                      to-[#6366f1]
+                      from-indigo-500
+                      via-purple-500
+                      to-violet-500
 
                       text-white
-                      shadow-sm
+
+                      shadow-[0_15px_40px_rgba(99,102,241,0.28)]
                     `
                     : `
-                      text-gray-400
+                      text-slate-300
+
+                      hover:bg-white/5
 
                       hover:text-white
-                      hover:bg-white/5
-                      hover:translate-x-1
+
+                      hover:translate-x-[3px]
                     `
                   }
                 `}
               >
 
-                {/* ACTIVE BAR */}
                 {active && (
-                  <span className="
-                    absolute left-0 top-2 bottom-2
-                    w-1 rounded-r-full
-                    bg-blue-300
+
+                  <div className="
+                    absolute
+                    inset-0
+
+                    bg-white/10
+
+                    opacity-60
                   " />
+
                 )}
 
-                {/* ICON */}
-                <span className="text-[18px] shrink-0">
-                  {item.icon}
-                </span>
+                <div className={`
+                  relative
+                  z-10
 
-                {/* LABEL */}
+                  w-10
+                  h-10
+
+                  rounded-[18px]
+
+                  flex
+                  items-center
+                  justify-center
+
+                  transition-all
+                  duration-300
+
+                  ${active
+                    ? `
+                      bg-white/15
+                    `
+                    : `
+                      bg-white/[0.03]
+
+                      group-hover:bg-white/10
+                    `
+                  }
+                `}>
+
+                  <Icon size={20} />
+
+                </div>
+
                 {abierto && (
-                  <span className="text-sm font-medium truncate">
+
+                  <span className="
+                    relative
+                    z-10
+
+                    text-sm
+
+                    font-semibold
+
+                    tracking-tight
+
+                    truncate
+                  ">
                     {item.label}
                   </span>
+
                 )}
 
               </Link>
+
             );
+
           })}
 
         </nav>
 
-        {/* ✅ FOOTER */}
-        <div className="
-          p-3
+        {/* FOOTER */}
 
-          border-t border-white/5
+        <div className="
+          relative
+          z-10
+
+          p-4
+
+          border-t
+          border-white/5
         ">
 
           <button
-            onClick={() => setMostrarLogout(true)}
+            onClick={() =>
+              setMostrarLogout(true)
+            }
             className="
-              flex items-center gap-3
+              group
+
+              relative
+              overflow-hidden
+
+              flex
+              items-center
+
+              gap-4
 
               w-full
-              h-12
+              h-14
 
-              px-3
+              px-4
 
-              rounded-2xl
+              rounded-[24px]
 
-              text-red-400
+              bg-rose-500/10
 
-              hover:bg-red-500/10
-              hover:text-red-300
+              border
+              border-rose-500/10
 
-              transition-all duration-200
+              text-rose-300
+
+              hover:bg-rose-500/15
+
+              hover:border-rose-400/20
+
+              hover:text-white
+
+              transition-all
+              duration-300
             "
           >
 
-            <span className="text-lg">
-              🚪
-            </span>
+            <div className="
+              absolute
+              inset-0
+
+              opacity-0
+
+              bg-gradient-to-r
+              from-rose-500/10
+              to-pink-500/10
+
+              group-hover:opacity-100
+
+              transition-all
+              duration-300
+            " />
+
+            <div className="
+              relative
+              z-10
+
+              w-10
+              h-10
+
+              rounded-[18px]
+
+              bg-white/5
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <LogOut size={18} />
+
+            </div>
 
             {abierto && (
-              <span className="text-sm font-medium">
+
+              <span className="
+                relative
+                z-10
+
+                text-sm
+
+                font-semibold
+              ">
                 Cerrar sesión
               </span>
+
             )}
 
           </button>
@@ -357,204 +798,262 @@ function Layout({ children }) {
 
       </aside>
 
-      {/* ✅ MOBILE DRAWER */}
+      {/* MOBILE DRAWER */}
+
       <aside
         className={`
-          fixed top-0 left-0 z-50
+          fixed
+          top-0
+          left-0
+          z-50
 
           md:hidden
 
           h-screen
-          w-72
+          w-[290px]
 
-          flex flex-col
+          flex
+          flex-col
 
           bg-gradient-to-b
           from-[#0f172a]
           via-[#081226]
           to-[#020617]
 
-          border-r border-white/5
+          border-r
+          border-white/5
 
-          text-white
+          shadow-[0_20px_60px_rgba(0,0,0,0.45)]
 
-          transition-transform duration-300 ease-out
+          transition-transform
+          duration-300
+          ease-out
 
           ${abierto
             ? "translate-x-0"
-            : "-translate-x-full"}
+            : "-translate-x-full"
+          }
         `}
       >
 
-        {/* ✅ MOBILE HEADER */}
+        {/* MOBILE CONTENT SAME STYLE */}
+
         <div className="
-          h-16 px-4
+          h-24
 
-          flex items-center justify-between
+          px-5
 
-          border-b border-white/5
+          flex
+          items-center
+          justify-between
+
+          border-b
+          border-white/5
         ">
 
-          <div className="flex items-center gap-3">
+          <div className="
+            flex
+            items-center
+            gap-4
+          ">
 
             <div className="
-              w-10 h-10 rounded-2xl
+              w-14
+              h-14
 
-              flex items-center justify-center
+              rounded-[24px]
 
               bg-gradient-to-br
-              from-blue-500
-              to-indigo-500
+              from-indigo-500
+              via-purple-500
+              to-violet-500
+
+              flex
+              items-center
+              justify-center
+
+              shadow-[0_18px_40px_rgba(99,102,241,0.35)]
             ">
-              🦷
+
+              
+<span className="text-white text-xl">
+  🦷
+</span>
+
+
             </div>
 
             <div>
-              <p className="font-semibold tracking-tight">
+
+              <p className="
+                text-lg
+
+                font-black
+
+                tracking-tight
+
+                text-white
+              ">
                 DentalApp
               </p>
 
-              <p className="text-xs text-gray-400">
-                SaaS Dental
+              <p className="
+                text-xs
+
+                text-slate-400
+              ">
+                Gestión clínica inteligente
               </p>
+
             </div>
 
           </div>
 
           <button
-            onClick={() => setAbierto(false)}
+            onClick={() =>
+              setAbierto(false)
+            }
             className="
-              w-10 h-10 rounded-2xl
+              w-11
+              h-11
 
-              flex items-center justify-center
+              rounded-[20px]
 
               bg-white/5
 
-              border border-white/10
+              border
+              border-white/10
+
+              text-slate-200
+
+              flex
+              items-center
+              justify-center
             "
           >
-            ✕
+            <X size={20} />
           </button>
 
         </div>
 
-        {/* ✅ MOBILE NAV */}
         <nav className="
           flex-1
 
-          px-3 py-4
+          px-4
+          py-5
 
-          space-y-1.5
+          space-y-2
         ">
 
           {menu.map((item) => {
 
-            const active = location.pathname === item.path;
+            const active =
+              location.pathname === item.path;
+
+            const Icon =
+              item.icon;
 
             return (
+
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={() => setAbierto(false)}
+                onClick={() =>
+                  setAbierto(false)
+                }
                 className={`
-                  relative
+                  flex
+                  items-center
 
-                  flex items-center
-                  gap-3
+                  gap-4
 
-                  px-3
-                  h-12
+                  h-14
 
-                  rounded-2xl
+                  px-4
 
-                  transition-all duration-200
+                  rounded-[24px]
+
+                  transition-all
+                  duration-300
 
                   ${active
                     ? `
                       bg-gradient-to-r
-                      from-[#3b82f6]
-                      to-[#6366f1]
+                      from-indigo-500
+                      via-purple-500
+                      to-violet-500
 
                       text-white
+
+                      shadow-[0_15px_40px_rgba(99,102,241,0.28)]
                     `
                     : `
-                      text-gray-400
+                      text-slate-300
+
                       hover:bg-white/5
                     `
                   }
                 `}
               >
 
-                <span className="text-[18px]">
-                  {item.icon}
-                </span>
+                <div className={`
+                  w-10
+                  h-10
 
-                <span className="text-sm font-medium">
+                  rounded-[18px]
+
+                  flex
+                  items-center
+                  justify-center
+
+                  ${active
+                    ? "bg-white/15"
+                    : "bg-white/[0.03]"
+                  }
+                `}>
+
+                  <Icon size={20} />
+
+                </div>
+
+                <span className="
+                  text-sm
+
+                  font-semibold
+                ">
                   {item.label}
                 </span>
 
               </Link>
+
             );
+
           })}
 
         </nav>
 
-        {/* ✅ MOBILE FOOTER */}
-        <div className="
-          p-3
-
-          border-t border-white/5
-        ">
-
-          <button
-            onClick={() => setMostrarLogout(true)}
-            className="
-              flex items-center gap-3
-
-              w-full
-              h-12
-
-              px-3
-
-              rounded-2xl
-
-              text-red-400
-
-              hover:bg-red-500/10
-
-              transition-all duration-200
-            "
-          >
-
-            <span className="text-lg">
-              🚪
-            </span>
-
-            <span className="text-sm font-medium">
-              Cerrar sesión
-            </span>
-
-          </button>
-
-        </div>
-
       </aside>
 
-      {/* ✅ CONTENIDO */}
+      {/* CONTENT */}
+
       <main
         className={`
-          transition-all duration-300
-
           min-h-screen
 
+          transition-all
+          duration-300
+
           ${abierto
-            ? "md:ml-64"
-            : "md:ml-20"}
+            ? "md:ml-[290px]"
+            : "md:ml-[92px]"
+          }
         `}
       >
 
         <div className="
-          p-3 sm:p-4 md:p-6
+          p-3
+          sm:p-4
+          md:p-6
 
           max-w-7xl
           mx-auto
@@ -564,93 +1063,140 @@ function Layout({ children }) {
 
       </main>
 
-      {/* ✅ MOBILE BOTTOM NAV */}
+      {/* MOBILE BOTTOM NAV */}
+
       <div
         className={`
-  fixed bottom-3 left-3 right-3 z-40
+          fixed
+          bottom-3
+          left-3
+          right-3
+          z-40
 
-  md:hidden
+          md:hidden
 
-  bg-white/80
-  backdrop-blur-xl
+          bg-white/70
+          backdrop-blur-2xl
 
-  border border-gray-200/70
+          border
+          border-white/50
 
-  rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.12)]
+          rounded-[30px]
 
-  px-2 py-1.5
+          shadow-[0_10px_40px_rgba(0,0,0,0.10)]
 
-  flex items-center justify-around
+          px-2
+          py-2
 
-  transition-all duration-300 ease-out
+          flex
+          items-center
+          justify-around
 
-  ${showMobileNav
-            ? "translate-y-0 opacity-100"
-            : "translate-y-24 opacity-0 pointer-events-none"}
-`}
+          transition-all
+          duration-300
+
+          ${showMobileNav
+            ? `
+              translate-y-0
+              opacity-100
+            `
+            : `
+              translate-y-24
+              opacity-0
+              pointer-events-none
+            `
+          }
+        `}
       >
 
         {menu.map((item) => {
 
-          const active = location.pathname === item.path;
+          const active =
+            location.pathname === item.path;
+
+          const Icon =
+            item.icon;
 
           return (
+
             <Link
               key={item.path}
               to={item.path}
               className={`
-                flex flex-col
-                items-center justify-center
+                relative
 
-                min-w-[58px]
+                flex
+                flex-col
 
-                px-2 py-1.5
+                items-center
+                justify-center
 
-                rounded-2xl
+                min-w-[60px]
 
-                transition-all duration-200
+                px-2
+                py-2
+
+                rounded-[22px]
+
+                transition-all
+                duration-300
 
                 ${active
                   ? `
                     bg-gradient-to-r
-                    from-[#3b82f6]
-                    to-[#6366f1]
+                    from-indigo-500
+                    via-purple-500
+                    to-violet-500
 
                     text-white
-                    shadow-sm
+
+                    shadow-[0_12px_30px_rgba(99,102,241,0.25)]
                   `
                   : `
-                    text-gray-500
+                    text-slate-500
                   `
                 }
               `}
             >
 
-              <span className="text-lg">
-                {item.icon}
-              </span>
+              <Icon size={18} />
 
-              <span className="text-[9px] font-medium mt-1">
+              <span className="
+                text-[10px]
+
+                font-semibold
+
+                mt-1
+              ">
                 {item.mobileLabel}
               </span>
 
             </Link>
+
           );
+
         })}
 
       </div>
 
-      {/* ✅ LOGOUT MODAL */}
+      {/* LOGOUT MODAL */}
+
       {mostrarLogout && (
+
         <ConfirmModal
           mensaje="¿Seguro que quieres cerrar sesión? ⚠️"
           onConfirm={confirmarLogout}
-          onCancel={() => setMostrarLogout(false)}
+          onCancel={() =>
+            setMostrarLogout(false)
+          }
         />
+
       )}
 
     </div>
+
   );
+
 }
 
 export default Layout;

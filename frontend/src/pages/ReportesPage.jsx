@@ -149,21 +149,22 @@ function ReportesPage() {
         `${ingreso.cliente?.nombre || ""} ${ingreso.cliente?.apellido || ""}`.trim(),
 
       Tratamientos:
-        tratamientos
-          .map(s => {
+  tratamientos
+    .map((s) => {
 
-            return (
-              serviciosMap[s.servicio_id] ||
-              serviciosMap[s.catalogo_servicio_id] ||
-              s.servicio ||
-              s.nombre_servicio ||
-              s.nombre ||
-              "Procedimiento",
-              console.log(s.nombre_servicio)
-            );
+      const nombreServicio =
+        serviciosMap[s.servicio_id] ||
+        serviciosMap[s.catalogo_servicio_id] ||
+        serviciosMap[s.servicio_catalogo_id] ||
+        s.nombre_servicio ||
+        s.nombre ||
+        s.servicio;
 
-          })
-          .join(", "),
+      return nombreServicio || "Procedimiento";
+
+    })
+    .filter(Boolean)
+    .join(", "),
       Subtotal: subtotal,
 
       ITBIS: itbis,

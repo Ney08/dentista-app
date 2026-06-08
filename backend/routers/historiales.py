@@ -37,3 +37,62 @@ def ver_historial(cliente_id: int, db: Session = Depends(get_db)):
     return db.query(models.Historial).filter(
         models.Historial.cliente_id == cliente_id
     ).all()
+    
+    
+    
+@router.delete("/{historial_id}")
+def eliminar_historial(
+    historial_id: int,
+    db: Session = Depends(get_db)
+):
+
+    historial = db.query(
+        models.Historial
+    ).filter(
+        models.Historial.id == historial_id
+    ).first()
+
+    if not historial:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Historial no encontrado"
+        )
+
+    db.delete(historial)
+
+    db.commit()
+
+    return {
+        "message": "Historial eliminado ✅"
+    }
+
+
+
+@router.put("/{historial_id}")
+def actualizar_historial(
+    historial_id: int,
+    data: HistorialCreate,
+    db: Session = Depends(get_db)
+):
+
+    historial = db.query(
+        models.Historial
+    ).filter(
+        models.Historial.id == historial_id
+    ).first()
+
+    if not historial:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Historial no encontrado"
+        )
+
+    historial.descripcion = data.descripcion
+
+    db.commit()
+
+    db.refresh(historial)
+
+    return historial
