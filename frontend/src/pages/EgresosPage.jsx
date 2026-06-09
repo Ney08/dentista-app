@@ -9,7 +9,19 @@ import ConfirmModal from "../components/ConfirmModal";
 import BaseModal from "../components/BaseModal";
 import EgresoModal from "../components/egresos/EgresoModal";
 import EgresoList from "../components/egresos/EgresoList";
-
+import {
+  Wallet,
+  WalletCards,
+  BadgeDollarSign,
+  TrendingDown,
+  CalendarDays,
+  CalendarClock,
+  BarChart3,
+  PieChart,
+  Receipt,
+  CircleDollarSign,
+  Plus
+} from "lucide-react";
 import { useEgresos } from "../hooks/useEgresos";
 
 import { formatMoney } from "../utils/format";
@@ -309,720 +321,1031 @@ function EgresosPage() {
 
   return (
 
-    <PageWrapper>
+  <PageWrapper>
+
+    <div className="
+      h-full
+
+      w-full
+
+      flex
+      flex-col
+
+      gap-7
+
+      pb-4
+
+      overflow-hidden
+
+      px-3
+      sm:px-5
+    ">
+
+      {/* HEADER */}
 
       <div className="
-        h-full
-
-        max-w-[1600px]
-
-        mx-auto
-
         flex
         flex-col
+        xl:flex-row
 
-        gap-6
+        xl:items-center
+        xl:justify-between
 
-        pb-4
-
-        overflow-hidden
+        gap-5
       ">
 
-        {/* HEADER */}
+        {/* LEFT */}
 
-        <div className="
-          text-center
-          space-y-3
-          pt-2
-        ">
+        <div>
+
+          <div className="
+            inline-flex
+
+            items-center
+            gap-2
+
+            px-4
+            py-2
+
+            rounded-full
+
+            bg-indigo-500/10
+
+            border
+            border-indigo-100
+
+            text-indigo-600
+
+            text-sm
+            font-semibold
+
+            mb-4
+          ">
+
+            <WalletCards size={14} />
+
+            Control financiero
+
+          </div>
 
           <h1 className="
-            text-4xl
-            md:text-5xl
+            text-3xl
+            md:text-4xl
 
             font-black
 
             tracking-tight
+
+            text-slate-800
           ">
 
-            <span className="
-              bg-gradient-to-r
-              from-slate-800
-              to-slate-500
-
-              bg-clip-text
-              text-transparent
-            ">
-              Egresos
-            </span>
-
-            <span className="ml-2">
-              💸
-            </span>
+            Gestión de egresos
 
           </h1>
 
-          <div className="
-            w-24
-            h-1
-
-            mx-auto
-
-            rounded-full
-
-            bg-gradient-to-r
-            from-purple-500
-            to-indigo-500
-          " />
-
           <p className="
+            mt-2
+
             text-sm
             sm:text-base
 
-            text-gray-500
-
-            font-medium
+            text-slate-500
           ">
-            Gestiona los gastos del negocio
+            Seguimiento y control de gastos clínicos
           </p>
 
         </div>
 
-        {/* KPIS */}
+        {/* RIGHT */}
 
         <div className="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          xl:grid-cols-4
-
-          gap-5
-        ">
-
-          {/* TOTAL */}
-
-          <div className="
-            relative
-            overflow-hidden
-
-            bg-white/90
-            backdrop-blur-xl
-
-            border
-            border-white/40
-
-            rounded-[30px]
-
-            p-6
-
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-
-            transition-all
-            duration-300
-          ">
-
-            <div className="
-              absolute
-              -top-10
-              -right-10
-
-              w-40
-              h-40
-
-              rounded-full
-
-              bg-rose-500/10
-
-              blur-3xl
-            " />
-
-            <p className="
-              text-sm
-              text-gray-500
-            ">
-              💸 Total egresos
-            </p>
-
-            <h2 className="
-              mt-2
-
-              text-4xl
-
-              font-black
-
-              text-rose-500
-            ">
-              RD$
-              {" "}
-              {formatMoney(totalEgresos)}
-            </h2>
-
-          </div>
-
-          {/* HOY */}
-
-          <div className="
-            relative
-            overflow-hidden
-
-            bg-white/90
-            backdrop-blur-xl
-
-            border
-            border-white/40
-
-            rounded-[30px]
-
-            p-6
-
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-
-            transition-all
-            duration-300
-          ">
-
-            <div className="
-              absolute
-              -top-10
-              -right-10
-
-              w-40
-              h-40
-
-              rounded-full
-
-              bg-orange-500/10
-
-              blur-3xl
-            " />
-
-            <p className="
-              text-sm
-              text-gray-500
-            ">
-              📅 Gastado hoy
-            </p>
-
-            <h2 className="
-              mt-2
-
-              text-4xl
-
-              font-black
-
-              text-orange-500
-            ">
-              RD$
-              {" "}
-              {formatMoney(totalHoy)}
-            </h2>
-
-          </div>
-
-          {/* MES */}
-
-          <div className="
-            relative
-            overflow-hidden
-
-            bg-white/90
-            backdrop-blur-xl
-
-            border
-            border-white/40
-
-            rounded-[30px]
-
-            p-6
-
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-
-            transition-all
-            duration-300
-          ">
-
-            <div className="
-              absolute
-              -top-10
-              -right-10
-
-              w-40
-              h-40
-
-              rounded-full
-
-              bg-pink-500/10
-
-              blur-3xl
-            " />
-
-            <p className="
-              text-sm
-              text-gray-500
-            ">
-              📊 Total mes
-            </p>
-
-            <h2 className="
-              mt-2
-
-              text-4xl
-
-              font-black
-
-              text-pink-500
-            ">
-              RD$
-              {" "}
-              {formatMoney(totalMes)}
-            </h2>
-
-          </div>
-
-          {/* PROMEDIO */}
-
-          <div className="
-            relative
-            overflow-hidden
-
-            bg-white/90
-            backdrop-blur-xl
-
-            border
-            border-white/40
-
-            rounded-[30px]
-
-            p-6
-
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-
-            transition-all
-            duration-300
-          ">
-
-            <div className="
-              absolute
-              -top-10
-              -right-10
-
-              w-40
-              h-40
-
-              rounded-full
-
-              bg-indigo-500/10
-
-              blur-3xl
-            " />
-
-            <p className="
-              text-sm
-              text-gray-500
-            ">
-              🧾 Promedio
-            </p>
-
-            <h2 className="
-              mt-2
-
-              text-4xl
-
-              font-black
-
-              text-indigo-500
-            ">
-              RD$
-              {" "}
-              {formatMoney(promedioEgreso)}
-            </h2>
-
-          </div>
-
-        </div>
-
-        {/* MAIN CARD */}
-
-        <div className="
-          bg-white/90
-          backdrop-blur-xl
+          bg-white/95
+          backdrop-blur-md
 
           border
-          border-white/40
+          border-slate-200/80
 
-          rounded-[34px]
+          rounded-[30px]
 
-          shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+          px-6
+          py-5
 
-          flex
-          flex-col
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-          h-[72vh]
-          sm:h-[75vh]
-          lg:h-[78vh]
-
-          p-5
-          sm:p-6
-
-          gap-5
-
-          overflow-hidden
+          min-w-[260px]
         ">
 
-          {/* TOP */}
+          <p className="
+            text-xs
+
+            uppercase
+
+            tracking-[0.14em]
+
+            font-black
+
+            text-slate-400
+          ">
+            Balance de gastos
+          </p>
 
           <div className="
+            mt-3
+
             flex
-            flex-col
-            xl:flex-row
-
-            xl:items-center
-            xl:justify-between
-
-            gap-4
+            items-center
+            justify-between
           ">
 
-            {/* INFO */}
+            <div>
 
-            <div className="
-              flex
-              items-center
-              gap-3
-              flex-wrap
-            ">
+              <h3 className="
+                text-3xl
 
-              <div className="
-                px-4
-                h-11
+                font-black
 
-                rounded-2xl
+                text-indigo-600
+              ">
+                RD$
+                {" "}
+                {formatMoney(totalEgresos)}
+              </h3>
 
-                bg-gradient-to-r
-                from-rose-50
-                to-pink-50
+              <p className="
+                mt-1
 
-                border
-                border-rose-100
+                text-xs
 
-                flex
-                items-center
-
-                text-sm
                 font-semibold
 
-                text-rose-600
+                text-slate-500
               ">
-                {cantidadEgresos}
-                {" "}
-                egresos registrados
-              </div>
+                Gastos registrados
+              </p>
 
             </div>
-
-            {/* CONTROLES */}
 
             <div className="
-              flex
-              flex-col
-              sm:flex-row
+              w-14
+              h-14
 
-              gap-3
+              rounded-[20px]
+
+              bg-gradient-to-br
+              from-indigo-500
+              via-purple-500
+              to-violet-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
             ">
 
-              <select
-                value={porPagina}
-                onChange={(e) => {
-
-                  const val =
-                    e.target.value === "all"
-                      ? "all"
-                      : parseInt(
-                        e.target.value
-                      );
-
-                  setPorPagina(val);
-
-                  setPagina(1);
-
-                }}
-                className="
-                  h-12
-
-                  px-4
-
-                  rounded-2xl
-
-                  bg-white/80
-
-                  border
-                  border-white/40
-
-                  shadow-sm
-
-                  focus:outline-none
-
-                  focus:ring-4
-                  focus:ring-rose-500/10
-                "
-              >
-
-                <option value={7}>
-                  7
-                </option>
-
-                <option value={14}>
-                  14
-                </option>
-
-                <option value={28}>
-                  28
-                </option>
-
-                <option value="all">
-                  Todos
-                </option>
-
-              </select>
-
-              <button
-                onClick={abrirCrear}
-                className="
-                  h-12
-
-                  min-w-[170px]
-
-                  px-6
-
-                  rounded-2xl
-
-                  bg-gradient-to-r
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
-
-                  text-white
-
-                  font-black
-
-                  shadow-[0_15px_35px_rgba(99,102,241,0.28)]
-
-                  hover:scale-[1.02]
-
-                  active:scale-95
-
-                  transition-all
-                  duration-300
-                "
-              >
-                + Nuevo egreso
-              </button>
+              <BadgeDollarSign size={22} />
 
             </div>
 
           </div>
-
-          {/* LIST */}
-
-          <div className="
-            flex-1
-            min-h-0
-
-            overflow-y-auto
-            overflow-x-hidden
-
-            pr-1
-          ">
-
-            {egresosPaginados.length === 0 ? (
-
-              <div className="
-                h-full
-
-                flex
-                flex-col
-
-                items-center
-                justify-center
-
-                text-center
-              ">
-
-                <div className="
-                  w-24
-                  h-24
-
-                  rounded-[30px]
-
-                  bg-gradient-to-br
-                  from-rose-500
-                  via-pink-500
-                  to-red-500
-
-                  flex
-                  items-center
-                  justify-center
-
-                  text-5xl
-                  text-white
-
-                  shadow-[0_20px_50px_rgba(244,63,94,0.35)]
-                ">
-                  💸
-                </div>
-
-                <h3 className="
-                  mt-6
-
-                  text-3xl
-
-                  font-black
-
-                  text-slate-800
-                ">
-                  No hay egresos
-                </h3>
-
-                <p className="
-                  mt-3
-
-                  text-gray-500
-
-                  max-w-sm
-                ">
-                  Los gastos registrados aparecerán aquí automáticamente
-                </p>
-
-              </div>
-
-            ) : (
-
-              <EgresoList
-                egresos={egresosPaginados}
-                onEditar={abrirEditar}
-                onEliminar={(egreso) => {
-
-                  setEgresoEliminar(
-                    egreso
-                  );
-
-                }}
-              />
-
-            )}
-
-          </div>
-
-          {/* PAGINACION */}
-
-          {porPagina !== "all" &&
-            totalPaginas > 1 && (
-
-              <div className="
-                pt-4
-
-                border-t
-                border-gray-100
-
-                flex
-                justify-center
-              ">
-
-                <div className="
-                  bg-white/80
-                  backdrop-blur-xl
-
-                  border
-                  border-white/40
-
-                  rounded-[24px]
-
-                  p-2
-
-                  shadow-sm
-                ">
-
-                  <Paginacion
-                    pagina={pagina}
-                    totalPaginas={totalPaginas}
-                    onChange={setPagina}
-                  />
-
-                </div>
-
-              </div>
-
-            )}
 
         </div>
 
       </div>
 
-      {/* MODAL */}
+      {/* KPIS */}
 
-      {/* ✅ MODAL */}
+      <div className="
+        grid
+        grid-cols-1
+        sm:grid-cols-2
+        xl:grid-cols-4
 
+        gap-5
+      ">
 
-      {modalAbierto && (
+        {/* TOTAL */}
 
-        <BaseModal
+        <div className="
+          relative
+          overflow-hidden
+
+          bg-white/95
+          backdrop-blur-md
+
+          border
+          border-slate-200/80
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+          hover:-translate-y-[2px]
+
+          transition-all
+          duration-300
+        ">
+
+          <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-rose-500/10
+
+            blur-3xl
+          " />
+
+          <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+            <div>
+
+              <p className="
+                text-sm
+
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                <Wallet size={14} />
+
+                Total egresos
+
+              </p>
+
+              <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-rose-500
+              ">
+
+                RD$
+                {" "}
+                {formatMoney(totalEgresos)}
+
+              </h2>
+
+            </div>
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-rose-50
+
+              text-rose-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <TrendingDown size={20} />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* HOY */}
+
+        <div className="
+          relative
+          overflow-hidden
+
+          bg-white/95
+          backdrop-blur-md
+
+          border
+          border-slate-200/80
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+          hover:-translate-y-[2px]
+
+          transition-all
+          duration-300
+        ">
+
+          <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-yellow-500/10
+
+            blur-3xl
+          " />
+
+          <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+            <div>
+
+              <p className="
+                text-sm
+
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                <CalendarDays size={14} />
+
+                Gastado hoy
+
+              </p>
+
+              <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-yellow-500
+              ">
+
+                RD$
+                {" "}
+                {formatMoney(totalHoy)}
+
+              </h2>
+
+            </div>
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-yellow-50
+
+              text-yellow-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <CalendarClock size={20} />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* MES */}
+
+        <div className="
+          relative
+          overflow-hidden
+
+          bg-white/95
+          backdrop-blur-md
+
+          border
+          border-slate-200/80
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+          hover:-translate-y-[2px]
+
+          transition-all
+          duration-300
+        ">
+
+          <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-indigo-500/10
+
+            blur-3xl
+          " />
+
+          <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+            <div>
+
+              <p className="
+                text-sm
+
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                <BarChart3 size={14} />
+
+                Total mes
+
+              </p>
+
+              <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-indigo-600
+              ">
+
+                RD$
+                {" "}
+                {formatMoney(totalMes)}
+
+              </h2>
+
+            </div>
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-indigo-50
+
+              text-indigo-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <PieChart size={20} />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* PROMEDIO */}
+
+        <div className="
+          relative
+          overflow-hidden
+
+          bg-white/95
+          backdrop-blur-md
+
+          border
+          border-slate-200/80
+
+          rounded-[30px]
+
+          p-5
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+          hover:-translate-y-[2px]
+
+          transition-all
+          duration-300
+        ">
+
+          <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-emerald-500/10
+
+            blur-3xl
+          " />
+
+          <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+            <div>
+
+              <p className="
+                text-sm
+
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                <Receipt size={14} />
+
+                Promedio
+
+              </p>
+
+              <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-emerald-600
+              ">
+
+                RD$
+                {" "}
+                {formatMoney(promedioEgreso)}
+
+              </h2>
+
+            </div>
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-emerald-50
+
+              text-emerald-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <CircleDollarSign size={20} />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* MAIN CARD */}
+
+      <div className="
+        bg-white/95
+        backdrop-blur-md
+
+        border
+        border-slate-200/80
+
+        rounded-[38px]
+
+        shadow-[0_20px_60px_rgba(15,23,42,0.06)]
+
+        flex
+        flex-col
+
+        h-[78vh]
+
+        p-5
+        sm:p-6
+
+        gap-5
+
+        overflow-hidden
+      ">
+
+        {/* TOP */}
+
+        <div className="
+          flex
+          flex-col
+          xl:flex-row
+
+          xl:items-center
+          xl:justify-between
+
+          gap-4
+        ">
+
+          {/* INFO */}
+
+          <div className="
+            flex
+            items-center
+            gap-3
+
+            flex-wrap
+          ">
+
+            <div className="
+              px-4
+              h-11
+
+              rounded-2xl
+
+              bg-rose-50
+
+              border
+              border-rose-100
+
+              flex
+              items-center
+              gap-2
+
+              text-sm
+              font-semibold
+
+              text-rose-500
+            ">
+
+              <Receipt size={14} />
+
+              {cantidadEgresos}
+              {" "}
+              egresos registrados
+
+            </div>
+
+          </div>
+
+          {/* CONTROLES */}
+
+          <div className="
+            flex
+            flex-col
+            sm:flex-row
+
+            gap-3
+          ">
+
+            <select
+              value={porPagina}
+              onChange={(e) => {
+
+                const val =
+                  e.target.value === "all"
+                    ? "all"
+                    : parseInt(
+                      e.target.value
+                    );
+
+                setPorPagina(val);
+
+                setPagina(1);
+
+              }}
+              className="
+                h-12
+
+                px-4
+
+                rounded-2xl
+
+                bg-slate-50/90
+
+                border
+                border-slate-200/70
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+              "
+            >
+
+              <option value={7}>
+                7
+              </option>
+
+              <option value={14}>
+                14
+              </option>
+
+              <option value={28}>
+                28
+              </option>
+
+              <option value="all">
+                Todos
+              </option>
+
+            </select>
+
+            <button
+              onClick={abrirCrear}
+              className="
+                group
+
+                relative
+                overflow-hidden
+
+                h-12
+
+                min-w-[180px]
+
+                px-6
+
+                rounded-2xl
+
+                bg-gradient-to-r
+                from-indigo-500
+                via-purple-500
+                to-violet-500
+
+                text-white
+
+                font-black
+
+                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+
+                hover:-translate-y-[2px]
+
+                active:scale-95
+
+                transition-all
+                duration-300
+
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
+            >
+
+              <Plus
+                size={18}
+                className="
+                  group-hover:rotate-90
+
+                  transition-all
+                  duration-300
+                "
+              />
+
+              Nuevo egreso
+
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* LIST */}
+
+        <div className="
+          flex-1
+          min-h-0
+
+          overflow-y-auto
+          overflow-x-hidden
+
+          pr-2
+
+          scrollbar-thin
+          scrollbar-thumb-indigo-200/70
+          scrollbar-track-transparent
+        ">
+
+          {egresosPaginados.length === 0 ? (
+
+            <div className="
+              h-full
+
+              flex
+              flex-col
+
+              items-center
+              justify-center
+
+              text-center
+            ">
+
+              <div className="
+                relative
+
+                w-28
+                h-28
+
+                rounded-[34px]
+
+                bg-gradient-to-br
+                from-indigo-500
+                via-purple-500
+                to-violet-500
+
+                flex
+                items-center
+                justify-center
+
+                text-white
+
+                shadow-[0_25px_60px_rgba(99,102,241,0.35)]
+              ">
+
+                <div className="
+                  absolute
+                  inset-0
+
+                  rounded-[34px]
+
+                  bg-white/10
+
+                  blur-xl
+                " />
+
+                <WalletCards
+                  size={42}
+                  className="relative z-10"
+                />
+
+              </div>
+
+              <h3 className="
+                mt-6
+
+                text-3xl
+
+                font-black
+
+                text-slate-800
+              ">
+                No hay egresos
+              </h3>
+
+              <p className="
+                mt-3
+
+                text-slate-500
+
+                max-w-sm
+              ">
+                Los gastos registrados aparecerán aquí automáticamente
+              </p>
+
+            </div>
+
+          ) : (
+
+            <EgresoList
+              egresos={egresosPaginados}
+              onEditar={abrirEditar}
+              onEliminar={(egreso) => {
+
+                setEgresoEliminar(
+                  egreso
+                );
+
+              }}
+            />
+
+          )}
+
+        </div>
+
+        {/* PAGINACION */}
+
+        {porPagina !== "all" &&
+          totalPaginas > 1 && (
+
+            <div className="
+              pt-5
+
+              border-t
+              border-slate-100
+
+              flex
+              justify-center
+
+              shrink-0
+            ">
+
+              <Paginacion
+                pagina={pagina}
+                totalPaginas={totalPaginas}
+                onChange={setPagina}
+              />
+
+            </div>
+
+          )}
+
+      </div>
+
+    </div>
+
+    {/* MODAL */}
+
+    {modalAbierto && (
+
+      <BaseModal
+        onClose={cerrarModal}
+      >
+
+        <EgresoModal
+          egreso={egresoEditar}
+          onGuardar={guardarEgreso}
           onClose={cerrarModal}
-        >
-
-          <EgresoModal
-            egreso={egresoEditar}
-            onGuardar={guardarEgreso}
-            onClose={cerrarModal}
-          />
-
-        </BaseModal>
-
-      )}
-
-
-
-      {/* CONFIRM DELETE */}
-
-      {egresoEliminar && (
-
-        <ConfirmModal
-
-          mensaje={`
-¿Eliminar el egreso
-"${egresoEliminar.descripcion}"?
-          `}
-
-          onConfirm={async () => {
-
-            await eliminarEgreso.mutateAsync(
-              egresoEliminar.id
-            );
-
-            setEgresoEliminar(null);
-
-            toast.success(
-              "Egreso eliminado ✅"
-            );
-
-          }}
-
-          onCancel={() =>
-            setEgresoEliminar(null)
-          }
-
         />
 
-      )}
+      </BaseModal>
 
-    </PageWrapper>
-  );
+    )}
+
+    {/* CONFIRM DELETE */}
+
+    {egresoEliminar && (
+
+      <ConfirmModal
+
+        mensaje={`
+¿Eliminar el egreso
+"${egresoEliminar.descripcion}"?
+        `}
+
+        onConfirm={async () => {
+
+          await eliminarEgreso.mutateAsync(
+            egresoEliminar.id
+          );
+
+          setEgresoEliminar(null);
+
+          toast.success(
+            "Egreso eliminado ✅"
+          );
+
+        }}
+
+        onCancel={() =>
+          setEgresoEliminar(null)
+        }
+
+      />
+
+    )}
+
+  </PageWrapper>
+);
 
 }
 

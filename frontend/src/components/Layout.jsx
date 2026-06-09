@@ -1055,7 +1055,7 @@ function Layout({ children }) {
           sm:p-4
           md:p-6
 
-          max-w-7xl
+          max-w-[1700px]
           mx-auto
         ">
           {children}

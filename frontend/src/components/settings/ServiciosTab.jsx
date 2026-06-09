@@ -1,3 +1,14 @@
+import {
+  FolderCog,
+  Plus,
+  Pencil,
+  Trash2,
+  Receipt,
+  BadgeDollarSign,
+  Sparkles,
+  PackageOpen
+} from "lucide-react";
+
 import { formatMoney } from "../../utils/format";
 
 function ServiciosTab({
@@ -10,15 +21,15 @@ function ServiciosTab({
   return (
 
     <div className="
-      bg-white/90
-      backdrop-blur-xl
+      bg-white/95
+      backdrop-blur-md
 
       border
-      border-white/40
+      border-slate-200/80
 
       rounded-[34px]
 
-      shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+      shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
       p-5
       sm:p-6
@@ -67,11 +78,11 @@ function ServiciosTab({
             items-center
             justify-center
 
-            text-3xl
-
             shadow-[0_20px_45px_rgba(99,102,241,0.30)]
           ">
-            🧾
+
+            <FolderCog size={30} />
+
           </div>
 
           <div>
@@ -86,18 +97,22 @@ function ServiciosTab({
 
               text-slate-800
             ">
+
               Servicios
+
             </h3>
 
             <p className="
               mt-1
 
               text-sm
-              text-gray-500
+              text-slate-500
             ">
+
               {servicios.length}
               {" "}
               servicio(s) registrados
+
             </p>
 
           </div>
@@ -114,7 +129,6 @@ function ServiciosTab({
             setModalServicio(true);
 
           }}
-
           className="
             h-12
 
@@ -142,9 +156,18 @@ function ServiciosTab({
 
             transition-all
             duration-300
+
+            flex
+            items-center
+            justify-center
+            gap-2
           "
         >
-          + Nuevo servicio
+
+          <Plus size={18} />
+
+          Nuevo servicio
+
         </button>
 
       </div>
@@ -193,13 +216,13 @@ function ServiciosTab({
                 items-center
                 justify-center
 
-                text-6xl
-
                 text-white
 
                 shadow-[0_20px_50px_rgba(99,102,241,0.35)]
               ">
-                📭
+
+                <PackageOpen size={52} />
+
               </div>
 
               <h3 className="
@@ -211,17 +234,21 @@ function ServiciosTab({
 
                 text-slate-800
               ">
+
                 No hay servicios
+
               </h3>
 
               <p className="
                 mt-3
 
-                text-gray-500
+                text-slate-500
 
                 max-w-sm
               ">
+
                 Los servicios registrados aparecerán aquí automáticamente
+
               </p>
 
             </div>
@@ -240,11 +267,11 @@ function ServiciosTab({
                 relative
                 overflow-hidden
 
-                bg-white/90
-                backdrop-blur-xl
+                bg-white/95
+                backdrop-blur-md
 
                 border
-                border-white/40
+                border-slate-200/70
 
                 rounded-[32px]
 
@@ -346,15 +373,15 @@ function ServiciosTab({
                     items-center
                     justify-center
 
-                    text-2xl
-
                     text-white
 
                     shadow-[0_15px_35px_rgba(99,102,241,0.25)]
 
                     shrink-0
                   ">
-                    🦷
+
+                    <Sparkles size={28} />
+
                   </div>
 
                   {/* INFO */}
@@ -387,7 +414,9 @@ function ServiciosTab({
 
                         break-words
                       ">
+
                         {s.nombre}
+
                       </h4>
 
                       <span className="
@@ -409,8 +438,16 @@ function ServiciosTab({
                         uppercase
 
                         tracking-[0.08em]
+
+                        flex
+                        items-center
+                        gap-1
                       ">
+
+                        <Receipt size={10} />
+
                         servicio
+
                       </span>
 
                     </div>
@@ -438,11 +475,13 @@ function ServiciosTab({
 
                           tracking-[0.12em]
 
-                          text-gray-400
+                          text-slate-400
 
                           font-black
                         ">
+
                           Descripción
+
                         </p>
 
                         <p className="
@@ -454,7 +493,9 @@ function ServiciosTab({
 
                           leading-relaxed
                         ">
+
                           {s.descripcion}
+
                         </p>
 
                       </div>
@@ -488,19 +529,34 @@ function ServiciosTab({
                         shadow-[0_15px_35px_rgba(16,185,129,0.25)]
                       ">
 
-                        <p className="
-                          text-[11px]
-
-                          uppercase
-
-                          tracking-[0.12em]
-
-                          font-black
-
-                          text-white/70
+                        <div className="
+                          flex
+                          items-center
+                          gap-2
                         ">
-                          Precio
-                        </p>
+
+                          <BadgeDollarSign
+                            size={14}
+                            className="text-white/70"
+                          />
+
+                          <p className="
+                            text-[11px]
+
+                            uppercase
+
+                            tracking-[0.12em]
+
+                            font-black
+
+                            text-white/70
+                          ">
+
+                            Precio
+
+                          </p>
+
+                        </div>
 
                         <p className="
                           mt-2
@@ -511,9 +567,11 @@ function ServiciosTab({
 
                           font-black
                         ">
+
                           RD$
                           {" "}
                           {formatMoney(s.precio)}
+
                         </p>
 
                       </div>
@@ -535,19 +593,34 @@ function ServiciosTab({
                         shadow-[0_15px_35px_rgba(244,63,94,0.25)]
                       ">
 
-                        <p className="
-                          text-[11px]
-
-                          uppercase
-
-                          tracking-[0.12em]
-
-                          font-black
-
-                          text-white/70
+                        <div className="
+                          flex
+                          items-center
+                          gap-2
                         ">
-                          Costo
-                        </p>
+
+                          <Receipt
+                            size={14}
+                            className="text-white/70"
+                          />
+
+                          <p className="
+                            text-[11px]
+
+                            uppercase
+
+                            tracking-[0.12em]
+
+                            font-black
+
+                            text-white/70
+                          ">
+
+                            Costo
+
+                          </p>
+
+                        </div>
 
                         <p className="
                           mt-2
@@ -558,11 +631,13 @@ function ServiciosTab({
 
                           font-black
                         ">
+
                           RD$
                           {" "}
                           {formatMoney(
                             s.costo_servicio || 0
                           )}
+
                         </p>
 
                       </div>
@@ -584,19 +659,34 @@ function ServiciosTab({
                         shadow-[0_15px_35px_rgba(99,102,241,0.25)]
                       ">
 
-                        <p className="
-                          text-[11px]
-
-                          uppercase
-
-                          tracking-[0.12em]
-
-                          font-black
-
-                          text-white/70
+                        <div className="
+                          flex
+                          items-center
+                          gap-2
                         ">
-                          Ganancia
-                        </p>
+
+                          <Sparkles
+                            size={14}
+                            className="text-white/70"
+                          />
+
+                          <p className="
+                            text-[11px]
+
+                            uppercase
+
+                            tracking-[0.12em]
+
+                            font-black
+
+                            text-white/70
+                          ">
+
+                            Ganancia
+
+                          </p>
+
+                        </div>
 
                         <p className="
                           mt-2
@@ -607,12 +697,14 @@ function ServiciosTab({
 
                           font-black
                         ">
+
                           RD$
                           {" "}
                           {formatMoney(
                             (s.precio || 0) -
                             (s.costo_servicio || 0)
                           )}
+
                         </p>
 
                       </div>
@@ -645,7 +737,6 @@ function ServiciosTab({
                       setModalServicio(true);
 
                     }}
-
                     className="
                       h-12
 
@@ -670,9 +761,18 @@ function ServiciosTab({
 
                       transition-all
                       duration-300
+
+                      flex
+                      items-center
+                      justify-center
+                      gap-2
                     "
                   >
-                    ✏️ Editar
+
+                    <Pencil size={15} />
+
+                    Editar
+
                   </button>
 
                   {/* DELETE */}
@@ -681,7 +781,6 @@ function ServiciosTab({
                     onClick={() =>
                       setServicioAEliminar(s)
                     }
-
                     className="
                       h-12
 
@@ -702,9 +801,18 @@ function ServiciosTab({
                       duration-300
 
                       active:scale-95
+
+                      flex
+                      items-center
+                      justify-center
+                      gap-2
                     "
                   >
-                    🗑️ Eliminar
+
+                    <Trash2 size={15} />
+
+                    Eliminar
+
                   </button>
 
                 </div>

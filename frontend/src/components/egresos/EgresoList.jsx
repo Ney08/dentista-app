@@ -1,6 +1,16 @@
 import { formatMoney } from "../../utils/format";
 import { formatFecha } from "../../utils/fecha";
 
+import {
+  WalletCards,
+  CalendarDays,
+  Receipt,
+  Pencil,
+  Trash2,
+  BadgeDollarSign,
+  FileText
+} from "lucide-react";
+
 function EgresoList({
   egresos,
   onEditar,
@@ -30,29 +40,45 @@ function EgresoList({
         ">
 
           <div className="
+            relative
+
             w-28
             h-28
 
             mx-auto
 
-            rounded-[32px]
+            rounded-[34px]
 
             bg-gradient-to-br
-            from-rose-500
-            via-pink-500
-            to-red-500
+            from-indigo-500
+            via-purple-500
+            to-violet-500
 
             flex
             items-center
             justify-center
 
-            text-6xl
-
             text-white
 
-            shadow-[0_20px_50px_rgba(244,63,94,0.35)]
+            shadow-[0_25px_60px_rgba(99,102,241,0.35)]
           ">
-            💸
+
+            <div className="
+              absolute
+              inset-0
+
+              rounded-[34px]
+
+              bg-white/10
+
+              blur-xl
+            " />
+
+            <WalletCards
+              size={42}
+              className="relative z-10"
+            />
+
           </div>
 
           <h3 className="
@@ -70,7 +96,7 @@ function EgresoList({
           <p className="
             mt-3
 
-            text-gray-500
+            text-slate-500
 
             max-w-sm
           ">
@@ -88,7 +114,7 @@ function EgresoList({
   return (
 
     <div className="
-      space-y-5
+      space-y-4
     ">
 
       {egresos.map((e) => (
@@ -101,22 +127,23 @@ function EgresoList({
             relative
             overflow-hidden
 
-            bg-white/90
-            backdrop-blur-xl
+            bg-white/95
+            backdrop-blur-md
 
             border
-            border-white/40
+            border-slate-200/80
 
-            rounded-[32px]
+            rounded-[34px]
 
             p-5
-            sm:p-6
 
             shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-            hover:shadow-[0_20px_45px_rgba(0,0,0,0.08)]
+            hover:shadow-[0_20px_45px_rgba(99,102,241,0.08)]
 
-            hover:-translate-y-[3px]
+            hover:border-indigo-200
+
+            hover:-translate-y-[2px]
 
             transition-all
             duration-500
@@ -131,12 +158,12 @@ function EgresoList({
             left-0
 
             w-full
-            h-1
+            h-[3px]
 
             bg-gradient-to-r
-            from-rose-500
+            from-rose-400
             via-pink-500
-            to-red-500
+            to-rose-500
           " />
 
           {/* GLOW */}
@@ -169,12 +196,9 @@ function EgresoList({
             relative
             z-10
 
-            flex
-            flex-col
-            xl:flex-row
-
-            xl:items-center
-            xl:justify-between
+            grid
+            grid-cols-1
+            2xl:grid-cols-[1fr_auto]
 
             gap-5
           ">
@@ -194,28 +218,47 @@ function EgresoList({
               {/* ICON */}
 
               <div className="
+                relative
+
                 w-16
                 h-16
 
                 rounded-[24px]
 
                 bg-gradient-to-br
-                from-rose-500
-                to-pink-500
+                from-indigo-500
+                via-purple-500
+                to-violet-500
 
                 flex
                 items-center
                 justify-center
 
-                text-2xl
-
                 text-white
 
-                shadow-[0_15px_35px_rgba(244,63,94,0.25)]
+                shadow-[0_15px_35px_rgba(99,102,241,0.25)]
 
                 shrink-0
               ">
-                💸
+
+                <WalletCards size={24} />
+
+                <div className="
+                  absolute
+                  -bottom-1
+                  -right-1
+
+                  w-5
+                  h-5
+
+                  rounded-full
+
+                  border-4
+                  border-white
+
+                  bg-rose-500
+                " />
+
               </div>
 
               {/* INFO */}
@@ -231,48 +274,192 @@ function EgresoList({
 
                 <div className="
                   flex
-                  flex-wrap
+                  flex-col
+                  xl:flex-row
 
-                  items-center
+                  xl:items-start
+                  xl:justify-between
 
-                  gap-3
+                  gap-4
                 ">
 
-                  <h3 className="
-                    text-lg
-                    sm:text-xl
+                  {/* LEFT */}
 
-                    font-black
+                  <div className="min-w-0">
 
-                    text-slate-800
+                    <div className="
+                      flex
+                      flex-wrap
 
-                    truncate
-                  ">
-                    {e.descripcion}
-                  </h3>
+                      items-center
 
-                  <span className="
-                    px-3
-                    py-1.5
+                      gap-3
+                    ">
 
-                    rounded-full
+                      <h3 className="
+                        text-lg
+                        sm:text-xl
 
-                    bg-rose-50
+                        font-black
+
+                        text-slate-800
+
+                        truncate
+                      ">
+                        {e.descripcion}
+                      </h3>
+
+                      <span className="
+                        px-3
+                        py-1.5
+
+                        rounded-full
+
+                        bg-rose-50
+
+                        border
+                        border-rose-100
+
+                        text-rose-500
+
+                        text-[11px]
+                        font-bold
+                      ">
+
+                        Gasto operativo
+
+                      </span>
+
+                    </div>
+
+                    {/* MINI TAGS */}
+
+                    <div className="
+                      mt-3
+
+                      flex
+                      flex-wrap
+
+                      items-center
+                      gap-2
+                    ">
+
+                      <div className="
+                        inline-flex
+
+                        items-center
+                        gap-2
+
+                        px-3
+                        py-1.5
+
+                        rounded-full
+
+                        bg-indigo-50
+
+                        text-indigo-600
+
+                        text-xs
+                        font-semibold
+                      ">
+
+                        <Receipt size={12} />
+
+                        Egreso financiero
+
+                      </div>
+
+                      <div className="
+                        inline-flex
+
+                        items-center
+                        gap-2
+
+                        px-3
+                        py-1.5
+
+                        rounded-full
+
+                        bg-slate-100
+
+                        text-slate-600
+
+                        text-xs
+                        font-semibold
+                      ">
+
+                        <FileText size={12} />
+
+                        Control administrativo
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* STATUS */}
+
+                  <div className="
+                    shrink-0
+
+                    rounded-[24px]
 
                     border
                     border-rose-100
 
-                    text-rose-500
+                    bg-rose-50
 
-                    text-[11px]
-                    font-black
+                    px-5
+                    py-4
 
-                    uppercase
-
-                    tracking-[0.08em]
+                    min-w-[220px]
                   ">
-                    gasto
-                  </span>
+
+                    <div className="
+                      flex
+                      items-center
+                      gap-2
+
+                      text-sm
+                      font-bold
+
+                      text-slate-700
+                    ">
+
+                      <BadgeDollarSign size={15} />
+
+                      Estado del gasto
+
+                    </div>
+
+                    <p className="
+                      mt-3
+
+                      text-base
+
+                      font-black
+
+                      text-slate-800
+                    ">
+
+                      Egreso registrado
+
+                    </p>
+
+                    <p className="
+                      mt-1
+
+                      text-xs
+
+                      text-slate-500
+                    ">
+
+                      Seguimiento financiero
+
+                    </p>
+
+                  </div>
 
                 </div>
 
@@ -281,20 +468,19 @@ function EgresoList({
                 <div className="
                   grid
                   grid-cols-1
-                  md:grid-cols-3
+                  md:grid-cols-2
+                  xl:grid-cols-3
 
-                  gap-3
+                  gap-4
                 ">
 
                   {/* CATEGORIA */}
 
                   <div className="
-                    bg-gradient-to-br
-                    from-white
-                    to-slate-100/90
+                    bg-slate-50/80
 
                     border
-                    border-white
+                    border-slate-200/60
 
                     rounded-[24px]
 
@@ -302,22 +488,29 @@ function EgresoList({
                     py-4
                   ">
 
-                    <p className="
+                    <div className="
+                      flex
+                      items-center
+                      gap-2
+
+                      text-slate-400
+
                       text-[11px]
+                      font-black
 
                       uppercase
 
                       tracking-[0.12em]
-
-                      text-gray-400
-
-                      font-black
                     ">
+
+                      <Receipt size={12} />
+
                       Categoría
-                    </p>
+
+                    </div>
 
                     <p className="
-                      mt-2
+                      mt-3
 
                       text-sm
 
@@ -325,7 +518,9 @@ function EgresoList({
 
                       text-slate-700
                     ">
+
                       {e.categoria || "General"}
+
                     </p>
 
                   </div>
@@ -333,12 +528,10 @@ function EgresoList({
                   {/* FECHA */}
 
                   <div className="
-                    bg-gradient-to-br
-                    from-white
-                    to-slate-100/90
+                    bg-slate-50/80
 
                     border
-                    border-white
+                    border-slate-200/60
 
                     rounded-[24px]
 
@@ -346,22 +539,29 @@ function EgresoList({
                     py-4
                   ">
 
-                    <p className="
+                    <div className="
+                      flex
+                      items-center
+                      gap-2
+
+                      text-slate-400
+
                       text-[11px]
+                      font-black
 
                       uppercase
 
                       tracking-[0.12em]
-
-                      text-gray-400
-
-                      font-black
                     ">
+
+                      <CalendarDays size={12} />
+
                       Fecha
-                    </p>
+
+                    </div>
 
                     <p className="
-                      mt-2
+                      mt-3
 
                       text-sm
 
@@ -369,26 +569,29 @@ function EgresoList({
 
                       text-slate-700
                     ">
+
                       {formatFecha(e.created_at)}
+
                     </p>
 
                   </div>
 
-                  {/* MONTO */}
+                  {/* TOTAL */}
 
                   <div className="
                     bg-gradient-to-r
-                    from-rose-500
-                    to-pink-500
+                    from-indigo-500
+                    via-purple-500
+                    to-violet-500
 
-                    rounded-[24px]
+                    rounded-[28px]
 
-                    px-5
+                    px-6
                     py-4
 
                     text-white
 
-                    shadow-[0_15px_35px_rgba(244,63,94,0.25)]
+                    shadow-[0_15px_35px_rgba(99,102,241,0.18)]
                   ">
 
                     <p className="
@@ -396,26 +599,54 @@ function EgresoList({
 
                       uppercase
 
-                      tracking-[0.12em]
+                      tracking-[0.14em]
 
                       font-black
 
                       text-white/70
                     ">
-                      Total
+                      Total egreso
                     </p>
 
-                    <p className="
+                    <div className="
                       mt-2
 
-                      text-2xl
+                      flex
+                      items-center
+                      justify-between
 
-                      font-black
+                      gap-3
                     ">
-                      RD$
-                      {" "}
-                      {formatMoney(e.monto)}
-                    </p>
+
+                      <h2 className="
+                        text-2xl
+
+                        font-black
+                      ">
+
+                        RD$
+                        {" "}
+                        {formatMoney(e.monto)}
+
+                      </h2>
+
+                      <div className="
+                        px-3
+                        py-1.5
+
+                        rounded-full
+
+                        bg-white/15
+
+                        text-xs
+                        font-bold
+                      ">
+
+                        Registrado
+
+                      </div>
+
+                    </div>
 
                   </div>
 
@@ -426,10 +657,10 @@ function EgresoList({
                 {e.observacion && (
 
                   <div className="
-                    bg-slate-50
+                    bg-slate-50/80
 
                     border
-                    border-slate-100
+                    border-slate-200/60
 
                     rounded-[24px]
 
@@ -437,22 +668,29 @@ function EgresoList({
                     py-4
                   ">
 
-                    <p className="
+                    <div className="
+                      flex
+                      items-center
+                      gap-2
+
+                      text-slate-400
+
                       text-[11px]
+                      font-black
 
                       uppercase
 
                       tracking-[0.12em]
-
-                      text-gray-400
-
-                      font-black
                     ">
+
+                      <FileText size={12} />
+
                       Observación
-                    </p>
+
+                    </div>
 
                     <p className="
-                      mt-2
+                      mt-3
 
                       text-sm
 
@@ -474,11 +712,24 @@ function EgresoList({
             {/* ACTIONS */}
 
             <div className="
+              self-center
+
+              2xl:w-[190px]
+
+              bg-slate-50/80
+
+              border
+              border-slate-200/70
+
+              rounded-[28px]
+
+              p-4
+
               flex
               flex-row
-              xl:flex-col
+              2xl:flex-col
 
-              items-center
+              items-stretch
 
               gap-3
             ">
@@ -494,28 +745,38 @@ function EgresoList({
 
                   px-5
 
-                  rounded-[20px]
+                  rounded-2xl
 
                   bg-gradient-to-r
-                  from-orange-400
-                  to-amber-500
+                  from-indigo-500
+                  via-purple-500
+                  to-violet-500
 
                   text-white
 
                   text-sm
                   font-black
 
-                  shadow-[0_15px_35px_rgba(251,146,60,0.28)]
+                  shadow-[0_12px_30px_rgba(99,102,241,0.25)]
 
-                  hover:scale-[1.04]
+                  hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
 
-                  active:scale-95
+                  hover:scale-[1.02]
 
                   transition-all
                   duration-300
+
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
                 "
               >
-                ✏️ Editar
+
+                <Pencil size={15} />
+
+                Editar
+
               </button>
 
               {/* DELETE */}
@@ -529,24 +790,34 @@ function EgresoList({
 
                   px-5
 
-                  rounded-[20px]
+                  rounded-2xl
 
-                  bg-slate-100
+                  bg-rose-50
 
-                  hover:bg-slate-200
+                  border
+                  border-rose-100
 
-                  text-slate-700
+                  text-rose-500
 
                   text-sm
                   font-bold
 
+                  hover:bg-rose-100
+
                   transition-all
                   duration-300
 
-                  active:scale-95
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
                 "
               >
-                🗑️ Eliminar
+
+                <Trash2 size={15} />
+
+                Eliminar
+
               </button>
 
             </div>

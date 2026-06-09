@@ -1,3 +1,12 @@
+import {
+  Users,
+  UserX,
+  Phone,
+  ShieldCheck,
+  Power,
+  Inbox
+} from "lucide-react";
+
 import toast from "react-hot-toast";
 
 function ClientesInactivosTab({
@@ -8,15 +17,15 @@ function ClientesInactivosTab({
   return (
 
     <div className="
-      bg-white/90
-      backdrop-blur-xl
+      bg-white/95
+      backdrop-blur-md
 
       border
-      border-white/40
+      border-slate-200/80
 
       rounded-[34px]
 
-      shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+      shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
       p-5
       sm:p-6
@@ -26,7 +35,7 @@ function ClientesInactivosTab({
       overflow-hidden
     ">
 
-      {/* ✅ HEADER */}
+      {/* HEADER */}
 
       <div className="
         flex
@@ -39,7 +48,7 @@ function ClientesInactivosTab({
         gap-4
       ">
 
-        {/* ✅ INFO */}
+        {/* INFO */}
 
         <div className="
           flex
@@ -65,11 +74,11 @@ function ClientesInactivosTab({
             items-center
             justify-center
 
-            text-3xl
-
             shadow-[0_20px_45px_rgba(244,63,94,0.30)]
           ">
-            🚫
+
+            <UserX size={30} />
+
           </div>
 
           <div>
@@ -84,18 +93,22 @@ function ClientesInactivosTab({
 
               text-slate-800
             ">
+
               Clientes inactivos
+
             </h3>
 
             <p className="
               mt-1
 
               text-sm
-              text-gray-500
+              text-slate-500
             ">
+
               {clientesInactivos.length}
               {" "}
               cliente(s) desactivados
+
             </p>
 
           </div>
@@ -104,7 +117,7 @@ function ClientesInactivosTab({
 
       </div>
 
-      {/* ✅ LIST */}
+      {/* LIST */}
 
       <div className="
         space-y-6
@@ -148,13 +161,13 @@ function ClientesInactivosTab({
                 items-center
                 justify-center
 
-                text-6xl
-
                 text-white
 
                 shadow-[0_20px_50px_rgba(244,63,94,0.35)]
               ">
-                📭
+
+                <Inbox size={52} />
+
               </div>
 
               <h3 className="
@@ -166,17 +179,21 @@ function ClientesInactivosTab({
 
                 text-slate-800
               ">
+
                 No hay clientes inactivos
+
               </h3>
 
               <p className="
                 mt-3
 
-                text-gray-500
+                text-slate-500
 
                 max-w-sm
               ">
+
                 Todos los clientes están activos actualmente
+
               </p>
 
             </div>
@@ -195,11 +212,11 @@ function ClientesInactivosTab({
                 relative
                 overflow-hidden
 
-                bg-white/90
-                backdrop-blur-xl
+                bg-white/95
+                backdrop-blur-md
 
                 border
-                border-white/40
+                border-slate-200/70
 
                 rounded-[32px]
 
@@ -217,7 +234,7 @@ function ClientesInactivosTab({
               "
             >
 
-              {/* ✅ TOP BORDER */}
+              {/* TOP BORDER */}
 
               <div className="
                 absolute
@@ -233,7 +250,7 @@ function ClientesInactivosTab({
                 to-red-500
               " />
 
-              {/* ✅ GLOW */}
+              {/* GLOW */}
 
               <div className="
                 absolute
@@ -257,7 +274,7 @@ function ClientesInactivosTab({
                 duration-700
               " />
 
-              {/* ✅ CONTENT */}
+              {/* CONTENT */}
 
               <div className="
                 relative
@@ -273,7 +290,7 @@ function ClientesInactivosTab({
                 gap-6
               ">
 
-                {/* ✅ LEFT */}
+                {/* LEFT */}
 
                 <div className="
                   flex
@@ -285,7 +302,7 @@ function ClientesInactivosTab({
                   min-w-0
                 ">
 
-                  {/* ✅ ICON */}
+                  {/* ICON */}
 
                   <div className="
                     w-16
@@ -301,18 +318,18 @@ function ClientesInactivosTab({
                     items-center
                     justify-center
 
-                    text-2xl
-
                     text-white
 
                     shadow-[0_15px_35px_rgba(244,63,94,0.25)]
 
                     shrink-0
                   ">
-                    👤
+
+                    <Users size={28} />
+
                   </div>
 
-                  {/* ✅ INFO */}
+                  {/* INFO */}
 
                   <div className="
                     flex-1
@@ -321,7 +338,7 @@ function ClientesInactivosTab({
                     space-y-4
                   ">
 
-                    {/* ✅ HEADER */}
+                    {/* HEADER */}
 
                     <div className="
                       flex
@@ -342,9 +359,11 @@ function ClientesInactivosTab({
 
                         break-words
                       ">
+
                         {c.nombre}
                         {" "}
                         {c.apellido}
+
                       </h4>
 
                       <span className="
@@ -366,13 +385,21 @@ function ClientesInactivosTab({
                         uppercase
 
                         tracking-[0.08em]
+
+                        flex
+                        items-center
+                        gap-1
                       ">
+
+                        <Power size={10} />
+
                         inactivo
+
                       </span>
 
                     </div>
 
-                    {/* ✅ GRID */}
+                    {/* GRID */}
 
                     <div className="
                       grid
@@ -382,15 +409,13 @@ function ClientesInactivosTab({
                       gap-3
                     ">
 
-                      {/* ✅ TELEFONO */}
+                      {/* TELEFONO */}
 
                       <div className="
-                        bg-gradient-to-br
-                        from-white
-                        to-slate-100/90
+                        bg-slate-50
 
                         border
-                        border-white
+                        border-slate-200/60
 
                         rounded-[24px]
 
@@ -398,19 +423,34 @@ function ClientesInactivosTab({
                         py-4
                       ">
 
-                        <p className="
-                          text-[11px]
-
-                          uppercase
-
-                          tracking-[0.12em]
-
-                          text-gray-400
-
-                          font-black
+                        <div className="
+                          flex
+                          items-center
+                          gap-2
                         ">
-                          Teléfono
-                        </p>
+
+                          <Phone
+                            size={13}
+                            className="text-slate-400"
+                          />
+
+                          <p className="
+                            text-[11px]
+
+                            uppercase
+
+                            tracking-[0.12em]
+
+                            text-slate-400
+
+                            font-black
+                          ">
+
+                            Teléfono
+
+                          </p>
+
+                        </div>
 
                         <p className="
                           mt-2
@@ -421,12 +461,14 @@ function ClientesInactivosTab({
 
                           text-slate-700
                         ">
+
                           {c.telefono || "No registrado"}
+
                         </p>
 
                       </div>
 
-                      {/* ✅ ESTADO */}
+                      {/* ESTADO */}
 
                       <div className="
                         bg-gradient-to-r
@@ -441,26 +483,36 @@ function ClientesInactivosTab({
                         text-white
 
                         shadow-[0_15px_35px_rgba(244,63,94,0.25)]
-
-                        hover:shadow-[0_25px_55px_rgba(236,72,153,0.35)]
-
-                        transition-all
-                        duration-300
                       ">
 
-                        <p className="
-                          text-[11px]
-
-                          uppercase
-
-                          tracking-[0.12em]
-
-                          font-black
-
-                          text-white/70
+                        <div className="
+                          flex
+                          items-center
+                          gap-2
                         ">
-                          Estado
-                        </p>
+
+                          <UserX
+                            size={13}
+                            className="text-white/70"
+                          />
+
+                          <p className="
+                            text-[11px]
+
+                            uppercase
+
+                            tracking-[0.12em]
+
+                            font-black
+
+                            text-white/70
+                          ">
+
+                            Estado
+
+                          </p>
+
+                        </div>
 
                         <p className="
                           mt-2
@@ -471,7 +523,9 @@ function ClientesInactivosTab({
 
                           font-black
                         ">
+
                           Inactivo
+
                         </p>
 
                       </div>
@@ -482,7 +536,7 @@ function ClientesInactivosTab({
 
                 </div>
 
-                {/* ✅ ACTIONS */}
+                {/* ACTIONS */}
 
                 <div className="
                   flex
@@ -494,7 +548,7 @@ function ClientesInactivosTab({
                   gap-3
                 ">
 
-                  {/* ✅ ACTIVAR */}
+                  {/* ACTIVAR */}
 
                   <button
                     onClick={() => {
@@ -513,7 +567,6 @@ function ClientesInactivosTab({
                       );
 
                     }}
-
                     className="
                       h-12
 
@@ -540,9 +593,18 @@ function ClientesInactivosTab({
 
                       transition-all
                       duration-300
+
+                      flex
+                      items-center
+                      justify-center
+                      gap-2
                     "
                   >
-                    ✅ Activar
+
+                    <ShieldCheck size={16} />
+
+                    Activar
+
                   </button>
 
                 </div>

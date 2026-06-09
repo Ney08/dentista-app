@@ -2,6 +2,17 @@ import { useEffect, useState } from "react";
 
 import { formatMoney } from "../../utils/format";
 
+import {
+  WalletCards,
+  Receipt,
+  BadgeDollarSign,
+  FileText,
+  CreditCard,
+  Save,
+  X,
+  ClipboardList
+} from "lucide-react";
+
 function EgresoModal({
   egreso,
   onGuardar,
@@ -105,38 +116,7 @@ function EgresoModal({
   return (
 
     <div className="
-      relative
-      overflow-hidden
-
-      w-full
-      h-full
-
-      md:h-auto
-      md:max-h-[92vh]
-
-      bg-white/95
-      backdrop-blur-2xl
-
-      rounded-t-[36px]
-      md:rounded-[36px]
-
-      border-0
-      md:border
-
-      border-white/40
-
-      shadow-[0_25px_80px_rgba(0,0,0,0.15)]
-
-      p-5
-      sm:p-6
-
-      flex
-      flex-col
-
-      gap-6
-
-      overflow-y-auto
-      overflow-x-hidden
+      
     ">
 
       {/* GLOW */}
@@ -159,52 +139,78 @@ function EgresoModal({
       {/* HEADER */}
 
       <div className="
-        relative
-        z-10
+  relative
+  z-10
 
-        text-center
+  text-center
 
-        space-y-3
+  space-y-3
 
-        shrink-0
-      ">
+  shrink-0
+">
+
+        <div className="
+    mx-auto
+
+    w-20
+    h-20
+
+    rounded-[28px]
+
+    bg-gradient-to-br
+    from-indigo-500
+    via-purple-500
+    to-violet-500
+
+    text-white
+
+    flex
+    items-center
+    justify-center
+
+    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+  ">
+
+          <WalletCards size={34} />
+
+        </div>
 
         <h2 className="
-          text-3xl
-          sm:text-4xl
+    text-3xl
+    sm:text-4xl
 
-          font-black
+    font-black
 
-          tracking-tight
+    tracking-tight
 
-          text-slate-800
-        ">
+    text-slate-800
+  ">
 
           {isEdit
-            ? "Editar egreso 💸"
-            : "Nuevo egreso 💸"}
+            ? "Editar egreso"
+            : "Nuevo egreso"}
 
         </h2>
 
         <div className="
-          w-20
-          h-1
+    w-20
+    h-1
 
-          mx-auto
+    mx-auto
 
-          rounded-full
+    rounded-full
 
-          bg-gradient-to-r
-          from-rose-500
-          to-pink-500
-        " />
+    bg-gradient-to-r
+    from-indigo-500
+    to-purple-500
+  " />
 
         <p className="
-          text-sm
-          sm:text-base
+    text-sm
+    sm:text-base
 
-          text-gray-500
-        ">
+    text-slate-500
+  ">
           Registra un gasto del negocio
         </p>
 
@@ -225,71 +231,71 @@ function EgresoModal({
         {/* INFORMACION */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          space-y-5
-        ">
+  space-y-5
+">
 
           {/* HEADER */}
 
           <div className="
-            flex
-            items-center
+    flex
+    items-center
 
-            gap-3
-          ">
+    gap-3
+  ">
 
             <div className="
-              w-12
-              h-12
+      w-12
+      h-12
 
-              rounded-[18px]
+      rounded-[18px]
 
-              bg-gradient-to-br
-              from-rose-500
-              to-pink-500
+      bg-gradient-to-br
+      from-indigo-500
+      via-purple-500
+      to-violet-500
 
-              flex
-              items-center
-              justify-center
+      flex
+      items-center
+      justify-center
 
-              text-white
-              text-xl
-            ">
-              📤
+      text-white
+    ">
+
+              <ClipboardList size={20} />
+
             </div>
 
             <div>
 
               <h3 className="
-                text-sm
+        text-sm
 
-                font-black
+        font-black
 
-                uppercase
+        uppercase
 
-                tracking-[0.12em]
+        tracking-[0.12em]
 
-                text-slate-700
-              ">
+        text-slate-700
+      ">
                 Información básica
               </h3>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
+        text-xs
+        text-slate-400
+      ">
                 Datos generales del egreso
               </p>
 
@@ -299,49 +305,88 @@ function EgresoModal({
 
           {/* DESCRIPCION */}
 
-          <input
-            type="text"
-            placeholder="Descripción"
+          <div className="space-y-2">
 
-            value={descripcion}
+            {/* <label className="
+    text-xs
 
-            onChange={(e) =>
-              setDescripcion(
-                e.target.value
-              )
-            }
+    font-bold
 
-            className="
-              w-full
+    text-slate-500
 
-              h-14
+    flex
+    items-center
+    gap-2
+  ">
 
-              px-5
+              <Receipt size={13} />
 
-              rounded-[22px]
+              Descripción
 
-              bg-white
+            </label> */}
 
-              border
-              border-slate-200
+            <input
+              type="text"
+              placeholder="Descripción"
 
-              text-slate-700
+              value={descripcion}
 
-              shadow-sm
+              onChange={(e) =>
+                setDescripcion(
+                  e.target.value
+                )
+              }
 
-              focus:outline-none
+              className="
+      w-full
 
-              focus:ring-4
-              focus:ring-rose-500/10
+      h-14
 
-              focus:border-rose-300
+      px-5
 
-              transition-all
-              duration-300
-            "
-          />
+      rounded-[22px]
 
+      bg-white
+
+      border
+      border-slate-200
+
+      text-slate-700
+
+      shadow-sm
+
+      focus:outline-none
+
+      focus:ring-4
+      focus:ring-indigo-500/10
+
+      focus:border-indigo-300
+
+      transition-all
+      duration-300
+    "
+            />
+
+          </div>
           {/* CATEGORIA */}
+
+          {/* <label className="
+    text-xs
+
+    font-bold
+
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+            <ClipboardList size={13} />
+
+            Categoría
+
+          </label> */}
 
           <select
             value={categoria}
@@ -418,74 +463,73 @@ function EgresoModal({
 
         </div>
 
-        {/* MONTO */}
+        {/* PAGO */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          space-y-5
-        ">
+  space-y-5
+">
 
           {/* HEADER */}
 
           <div className="
-            flex
-            items-center
+    flex
+    items-center
 
-            gap-3
-          ">
+    gap-3
+  ">
 
             <div className="
-              w-12
-              h-12
+      w-12
+      h-12
 
-              rounded-[18px]
+      rounded-[18px]
 
-              bg-gradient-to-br
-              from-orange-500
-              to-amber-500
+      bg-gradient-to-br
+      from-emerald-500
+      to-green-500
 
-              flex
-              items-center
-              justify-center
+      flex
+      items-center
+      justify-center
 
-              text-white
-              text-xl
-            ">
-              💰
+      text-white
+    ">
+
+              <BadgeDollarSign size={20} />
+
             </div>
 
             <div>
 
               <h3 className="
-                text-sm
+        text-sm
 
-                font-black
+        font-black
 
-                uppercase
+        uppercase
 
-                tracking-[0.12em]
+        tracking-[0.12em]
 
-                text-slate-700
-              ">
+        text-slate-700
+      ">
                 Pago
               </h3>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
+        text-xs
+        text-slate-400
+      ">
                 Información financiera
               </p>
 
@@ -505,250 +549,311 @@ function EgresoModal({
 
             {/* MONTO */}
 
-            <input
-              type="number"
-              placeholder="Monto"
+            <div className="space-y-2">
 
-              value={monto}
+              {/* <label className="
+    text-xs
 
-              onChange={(e) =>
-                setMonto(
-                  e.target.value
-                )
-              }
+    font-bold
 
-              className="
-                w-full
+    text-slate-500
 
-                h-14
+    flex
+    items-center
+    gap-2
+  ">
 
-                px-5
+                <WalletCards size={13} />
 
-                rounded-[22px]
+                Monto
 
-                bg-white
+              </label> */}
 
-                border
-                border-slate-200
+              <input
+                type="number"
+                placeholder="Monto"
 
-                text-slate-700
+                value={monto}
 
-                shadow-sm
+                onChange={(e) =>
+                  setMonto(
+                    e.target.value
+                  )
+                }
 
-                focus:outline-none
+                className="
+      w-full
 
-                focus:ring-4
-                focus:ring-orange-500/10
+      h-14
 
-                focus:border-orange-300
+      px-5
 
-                transition-all
-                duration-300
-              "
-            />
+      rounded-[22px]
+
+      bg-white
+
+      border
+      border-slate-200
+
+      text-slate-700
+
+      shadow-sm
+
+      focus:outline-none
+
+      focus:ring-4
+      focus:ring-emerald-500/10
+
+      focus:border-emerald-300
+
+      transition-all
+      duration-300
+    "
+              />
+
+            </div>
 
             {/* METODO */}
 
-            <select
-              value={metodoPago}
+            <div className="space-y-2">
 
-              onChange={(e) =>
-                setMetodoPago(
-                  e.target.value
-                )
-              }
+              {/* <label className="
+    text-xs
 
-              className="
-                w-full
+    font-bold
 
-                h-14
+    text-slate-500
 
-                px-5
+    flex
+    items-center
+    gap-2
+  ">
 
-                rounded-[22px]
+                <CreditCard size={13} />
 
-                bg-white
+                Método de pago
 
-                border
-                border-slate-200
+              </label> */}
 
-                text-slate-700
+              <select
+                value={metodoPago}
 
-                shadow-sm
+                onChange={(e) =>
+                  setMetodoPago(
+                    e.target.value
+                  )
+                }
 
-                focus:outline-none
+                className="
+      w-full
 
-                focus:ring-4
-                focus:ring-orange-500/10
+      h-14
 
-                focus:border-orange-300
+      px-5
 
-                transition-all
-                duration-300
-              "
-            >
+      rounded-[22px]
 
-              <option value="">
-                Selecciona método
-              </option>
+      bg-white
 
-              <option value="Efectivo">
-                Efectivo
-              </option>
+      border
+      border-slate-200
 
-              <option value="Transferencia">
-                Transferencia
-              </option>
+      text-slate-700
 
-              <option value="Tarjeta">
-                Tarjeta
-              </option>
+      shadow-sm
 
-            </select>
+      focus:outline-none
 
-          </div>
+      focus:ring-4
+      focus:ring-emerald-500/10
 
-          {/* KPI */}
+      focus:border-emerald-300
 
-          <div className="
-            bg-gradient-to-r
-            from-rose-500
-            to-pink-500
+      transition-all
+      duration-300
+    "
+              >
+            
 
-            rounded-[28px]
+                <option value="">
+                  Selecciona método
+                </option>
 
-            p-6
+                <option value="Efectivo">
+                  Efectivo
+                </option>
 
-            text-white
+                <option value="Transferencia">
+                  Transferencia
+                </option>
 
-            shadow-[0_20px_45px_rgba(244,63,94,0.28)]
+                <option value="Tarjeta">
+                  Tarjeta
+                </option>
 
-            text-center
-          ">
-
-            <p className="
-              text-xs
-
-              uppercase
-
-              tracking-[0.14em]
-
-              font-black
-
-              text-white/70
-            ">
-              Total egreso
-            </p>
-
-            <p className="
-              mt-3
-
-              text-4xl
-
-              tracking-tight
-
-              font-black
-            ">
-              RD$
-              {" "}
-              {formatMoney(monto || 0)}
-            </p>
-
-          </div>
-
-        </div>
-
-        {/* OBSERVACION */}
-
-        <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
-
-          border
-          border-white
-
-          rounded-[30px]
-
-          p-5
-
-          shadow-sm
-
-          space-y-5
-        ">
-
-          {/* HEADER */}
-
-          <div className="
-            flex
-            items-center
-
-            gap-3
-          ">
+              </select>
+                
+            </div>
+                 </div>
+            {/* KPI */}
 
             <div className="
-              w-12
-              h-12
+  bg-gradient-to-r
+  from-indigo-500
+  via-purple-500
+  to-violet-500
 
-              rounded-[18px]
+  rounded-[28px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              to-purple-500
+  p-6
 
-              flex
-              items-center
-              justify-center
+  text-white
 
-              text-white
-              text-xl
-            ">
-              📝
-            </div>
+  shadow-[0_20px_45px_rgba(99,102,241,0.25)]
 
-            <div>
+  text-center
+">
 
-              <h3 className="
-                text-sm
+              <div className="
+    flex
+    items-center
+    justify-center
+    gap-2
+  ">
 
-                font-black
+                <BadgeDollarSign
+                  size={16}
+                  className="text-white/80"
+                />
 
-                uppercase
+                <p className="
+      text-xs
 
-                tracking-[0.12em]
+      uppercase
 
-                text-slate-700
-              ">
-                Observación
-              </h3>
+      tracking-[0.14em]
+
+      font-black
+
+      text-white/70
+    ">
+                  Total egreso
+                </p>
+
+              </div>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
-                Información adicional
+    mt-3
+
+    text-4xl
+
+    tracking-tight
+
+    font-black
+  ">
+
+                RD$
+                {" "}
+                {formatMoney(monto || 0)}
+
               </p>
 
             </div>
 
+
           </div>
 
-          {/* TEXTAREA */}
+          {/* OBSERVACION */}
 
-          <textarea
-            rows={5}
+          <div className="
+  bg-slate-50/70
 
-            placeholder="Observación adicional..."
+  border
+  border-slate-200/70
 
-            value={observacion}
+  rounded-[30px]
 
-            onChange={(e) =>
-              setObservacion(
-                e.target.value
-              )
-            }
+  p-5
 
-            className="
+  shadow-sm
+
+  space-y-5
+">
+
+            {/* HEADER */}
+
+            <div className="
+    flex
+    items-center
+
+    gap-3
+  ">
+
+              <div className="
+      w-12
+      h-12
+
+      rounded-[18px]
+
+      bg-gradient-to-br
+      from-indigo-500
+      via-purple-500
+      to-violet-500
+
+      flex
+      items-center
+      justify-center
+
+      text-white
+    ">
+
+                <FileText size={20} />
+
+              </div>
+
+              <div>
+
+                <h3 className="
+        text-sm
+
+        font-black
+
+        uppercase
+
+        tracking-[0.12em]
+
+        text-slate-700
+      ">
+                  Observación
+                </h3>
+
+                <p className="
+        text-xs
+        text-slate-400
+      ">
+                  Información adicional
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* TEXTAREA */}
+
+            <textarea
+              rows={5}
+
+              placeholder="Observación adicional..."
+
+              value={observacion}
+
+              onChange={(e) =>
+                setObservacion(
+                  e.target.value
+                )
+              }
+
+              className="
               w-full
 
               rounded-[24px]
@@ -777,107 +882,122 @@ function EgresoModal({
               transition-all
               duration-300
             "
-          />
+            />
 
-        </div>
+          </div>
 
-        {/* ACTIONS */}
+          {/* ACTIONS */}
 
-        <div className="
-          sticky
-          bottom-0
+          <div className="
+  sticky
+  bottom-0
 
-          bg-white/90
-          backdrop-blur-xl
+  bg-white/90
+  backdrop-blur-xl
 
-          pt-2
+  pt-2
 
-          flex
-          flex-col
-          sm:flex-row
+  flex
+  flex-col
+  sm:flex-row
 
-          gap-3
-        ">
+  gap-3
+">
 
-         
+            {/* CANCEL */}
 
-          {/* CANCEL */}
+            <button
+              onClick={onClose}
+              className="
+      flex-1
 
-          <button
-            onClick={onClose}
-            className="
-              flex-1
+      h-14
 
-              h-14
+      rounded-[24px]
 
-              rounded-[24px]
+      bg-slate-100
 
-              bg-slate-100
+      hover:bg-slate-200
 
-              hover:bg-slate-200
+      text-slate-700
 
-              text-slate-700
+      font-semibold
 
-              font-semibold
+      transition-all
+      duration-300
 
-              transition-all
-              duration-300
+      active:scale-[0.98]
 
-              active:scale-[0.98]
-            "
-          >
-            Cancelar
-          </button>
-          
-             {/* SAVE */}
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
+            >
 
-          <button
-            onClick={guardar}
-            className="
-              flex-1
+              <X size={18} />
 
-              h-14
+              Cancelar
 
-              rounded-[24px]
+            </button>
 
-              bg-gradient-to-r
-              from-rose-500
-              via-pink-500
-              to-red-500
+            {/* SAVE */}
 
-              text-white
+            <button
+              onClick={guardar}
+              className="
+      flex-1
 
-              text-sm
-              sm:text-base
+      h-14
 
-              font-black
+      rounded-[24px]
 
-              shadow-[0_15px_35px_rgba(244,63,94,0.28)]
+      bg-gradient-to-r
+      from-indigo-500
+      via-purple-500
+      to-violet-500
 
-              hover:scale-[1.01]
+      text-white
 
-              hover:shadow-[0_20px_45px_rgba(244,63,94,0.35)]
+      text-sm
+      sm:text-base
 
-              active:scale-[0.98]
+      font-black
 
-              transition-all
-              duration-300
-            "
-          >
+      shadow-[0_15px_35px_rgba(99,102,241,0.28)]
 
-            {isEdit
-              ? "Guardar cambios"
-              : "Crear egreso"}
+      hover:scale-[1.01]
 
-          </button>
+      hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+
+      active:scale-[0.98]
+
+      transition-all
+      duration-300
+
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
+            >
+
+              <Save size={18} />
+
+              {isEdit
+                ? "Guardar cambios"
+                : "Crear egreso"}
+
+            </button>
+
+          </div>
+
         </div>
 
       </div>
 
-    </div>
-
-  );
+      );
 
 }
 
-export default EgresoModal;
+      export default EgresoModal;

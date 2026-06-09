@@ -6,6 +6,16 @@ import {
 
 import { useState } from "react";
 
+import {
+  CalendarDays,
+  Clock3,
+  TimerReset,
+  CheckCircle2,
+  Pencil,
+  XCircle,
+  AlertTriangle
+} from "lucide-react";
+
 import ConfirmModal from "../../components/ConfirmModal";
 
 function CitaList({
@@ -32,11 +42,18 @@ function CitaList({
 
     <div className="
       h-full
-      space-y-6
+
+      space-y-4
+
       overflow-y-auto
       overflow-x-hidden
+
       pr-2
       pb-2
+
+      scrollbar-thin
+      scrollbar-thumb-indigo-200/70
+      scrollbar-track-transparent
     ">
 
       {citas.map((c) => {
@@ -128,14 +145,15 @@ function CitaList({
             key={c.id}
             className={`
               group
+
               relative
               overflow-hidden
 
-              bg-white/90
-              backdrop-blur-xl
+              bg-white/95
+              backdrop-blur-md
 
               border
-              border-white/40
+              border-slate-200/80
 
               rounded-[34px]
 
@@ -145,11 +163,11 @@ function CitaList({
               transition-all
               duration-500
 
-              hover:-translate-y-[4px]
+              hover:-translate-y-[2px]
 
-              hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
+              hover:shadow-[0_20px_45px_rgba(99,102,241,0.08)]
 
-              hover:border-indigo-100
+              hover:border-indigo-200
 
               ${estado === "cancelada"
                 ? "opacity-60"
@@ -166,7 +184,7 @@ function CitaList({
                 top-0
                 left-0
 
-                h-1
+                h-[3px]
                 w-full
 
                 bg-gradient-to-r
@@ -209,12 +227,9 @@ function CitaList({
               relative
               z-10
 
-              flex
-              flex-col
-              xl:flex-row
-
-              xl:items-center
-              xl:justify-between
+              grid
+              grid-cols-1
+              2xl:grid-cols-[1fr_auto]
 
               gap-6
             ">
@@ -224,16 +239,18 @@ function CitaList({
               <div className="
                 flex
                 items-start
+
                 gap-5
 
                 min-w-0
-                flex-1
               ">
 
                 {/* AVATAR */}
 
                 <div
                   className={`
+                    relative
+
                     bg-gradient-to-br
                     ${colorAvatar}
 
@@ -253,6 +270,9 @@ function CitaList({
 
                     shrink-0
 
+                    ring-4
+                    ring-white
+
                     shadow-[0_15px_35px_rgba(0,0,0,0.15)]
 
                     group-hover:scale-105
@@ -261,9 +281,34 @@ function CitaList({
                     duration-300
                   `}
                 >
+
                   {c.cliente?.nombre
                     ?.charAt(0)
                     ?.toUpperCase()}
+
+                  <div className={`
+                    absolute
+                    -bottom-1
+                    -right-1
+
+                    w-5
+                    h-5
+
+                    rounded-full
+
+                    border-4
+                    border-white
+
+                    ${estado === "pendiente"
+                      ? "bg-yellow-400"
+                      : estado === "atrasada"
+                        ? "bg-rose-500"
+                        : estado === "completada"
+                          ? "bg-emerald-500"
+                          : "bg-slate-400"
+                    }
+                  `} />
+
                 </div>
 
                 {/* INFO */}
@@ -271,105 +316,269 @@ function CitaList({
                 <div className="
                   min-w-0
                   flex-1
-                  space-y-4
+
+                  space-y-5
                 ">
 
                   {/* HEADER */}
 
                   <div className="
                     flex
-                    flex-wrap
-                    items-center
-                    gap-3
+                    flex-col
+                    xl:flex-row
+
+                    xl:items-start
+                    xl:justify-between
+
+                    gap-4
                   ">
 
-                    <h3 className="
-                      text-lg
-                      sm:text-xl
+                    {/* LEFT */}
 
-                      font-black
+                    <div className="min-w-0">
 
-                      text-slate-800
+                      <div className="
+                        flex
+                        flex-wrap
 
-                      truncate
-                    ">
+                        items-center
 
-                      {c.cliente?.nombre}
-                      {" "}
-                      {c.cliente?.apellido}
+                        gap-3
+                      ">
 
-                    </h3>
+                        <h3 className="
+                          text-lg
+                          sm:text-xl
 
-                    <span
-                      className={`
-                        px-3
-                        py-1.5
+                          font-black
 
-                        rounded-full
+                          text-slate-800
 
-                        text-[11px]
+                          truncate
+                        ">
+
+                          {c.cliente?.nombre}{" "}
+                          {c.cliente?.apellido}
+
+                        </h3>
+
+                        <span
+                          className={`
+                            px-3
+                            py-1.5
+
+                            rounded-full
+
+                            text-[11px]
+                            font-bold
+
+                            border
+
+                            shadow-sm
+
+                            ${coloresEstado[estado]}
+                          `}
+                        >
+
+                          {estadoLabel[estado]}
+
+                        </span>
+
+                      </div>
+
+                      {/* MINI INFO */}
+
+                      <div className="
+                        mt-3
+
+                        flex
+                        flex-wrap
+
+                        items-center
+                        gap-2
+                      ">
+
+                        <div className="
+                          inline-flex
+
+                          items-center
+                          gap-2
+
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          bg-indigo-50
+
+                          text-indigo-600
+
+                          text-xs
+                          font-semibold
+                        ">
+
+                          <CalendarDays size={12} />
+
+                          Agenda clínica
+
+                        </div>
+
+                        <div className="
+                          inline-flex
+
+                          items-center
+                          gap-2
+
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          bg-slate-100
+
+                          text-slate-600
+
+                          text-xs
+                          font-semibold
+                        ">
+
+                          <Clock3 size={12} />
+
+                          Seguimiento activo
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    {/* STATUS CARD */}
+
+                    {/* <div className={`
+                      shrink-0
+
+                      rounded-[24px]
+
+                      border
+
+                      px-5
+                      py-4
+
+                      min-w-[230px]
+
+                      ${estado === "pendiente"
+                        ? "bg-yellow-50 border-yellow-100"
+                        : estado === "atrasada"
+                          ? "bg-rose-50 border-rose-100"
+                          : estado === "completada"
+                            ? "bg-emerald-50 border-emerald-100"
+                            : "bg-slate-50 border-slate-200"
+                      }
+                    `}>
+
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-sm
                         font-bold
+                      ">
 
-                        border
+                        <AlertTriangle size={15} />
 
-                        shadow-sm
+                        Estado de la cita
 
-                        ${coloresEstado[estado]}
-                      `}
-                    >
-                      {estadoLabel[estado]}
-                    </span>
+                      </div>
+
+                      <p className="
+                        mt-3
+
+                        text-base
+
+                        font-black
+
+                        text-slate-800
+                      ">
+
+                        {estadoLabel[estado]}
+
+                      </p>
+
+                      <p className="
+                        mt-1
+
+                        text-xs
+
+                        text-slate-500
+                      ">
+
+                        Control clínico y agenda médica
+
+                      </p>
+
+                    </div> */}
 
                   </div>
 
-                  {/* INFO GRID */}
+                  {/* GRID */}
 
                   <div className="
                     grid
                     grid-cols-1
-                    lg:grid-cols-4
+                    md:grid-cols-2
+                    xl:grid-cols-4
 
-                    gap-3
+                    gap-4
                   ">
 
                     {/* FECHA */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
-                        uppercase
-                        tracking-[0.12em]
-                        text-gray-400
                         font-black
+
+                        uppercase
+
+                        tracking-[0.12em]
                       ">
+
+                        <CalendarDays size={12} />
+
                         Fecha
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
+
                         text-sm
+
                         font-bold
+
                         text-slate-700
                       ">
+
                         {formatFecha(fecha)}
+
                       </p>
 
                     </div>
@@ -377,41 +586,50 @@ function CitaList({
                     {/* HORA */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
-                        uppercase
-                        tracking-[0.12em]
-                        text-gray-400
                         font-black
+
+                        uppercase
+
+                        tracking-[0.12em]
                       ">
+
+                        <Clock3 size={12} />
+
                         Hora
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
+
                         text-sm
+
                         font-bold
+
                         text-slate-700
                       ">
+
                         {formatHora(fecha)}
+
                       </p>
 
                     </div>
@@ -419,83 +637,101 @@ function CitaList({
                     {/* DURACION */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
-                        uppercase
-                        tracking-[0.12em]
-                        text-gray-400
                         font-black
+
+                        uppercase
+
+                        tracking-[0.12em]
                       ">
+
+                        <TimerReset size={12} />
+
                         Duración
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
+
                         text-sm
+
                         font-bold
+
                         text-slate-700
                       ">
+
                         {c.duracion} min
+
                       </p>
 
                     </div>
 
-                    {/* ESTADO */}
+                    {/* TIPO */}
 
                     {/* <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
-                        uppercase
-                        tracking-[0.12em]
-                        text-gray-400
                         font-black
+
+                        uppercase
+
+                        tracking-[0.12em]
                       ">
-                        Estado
-                      </p>
+
+                        <CheckCircle2 size={12} />
+
+                        Tipo
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
+
                         text-sm
+
                         font-bold
+
                         text-slate-700
                       ">
-                        {estadoLabel[estado]}
+
+                        Consulta clínica
+
                       </p>
 
                     </div> */}
@@ -503,45 +739,48 @@ function CitaList({
                     {/* MOTIVO */}
 
                     <div className="
-                      lg:col-span-4
+                      md:col-span-2
+                      xl:col-span-4
 
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
                       <p className="
                         text-[11px]
+
                         uppercase
+
                         tracking-[0.12em]
-                        text-gray-400
+
+                        text-slate-400
+
                         font-black
                       ">
                         Motivo de la cita
                       </p>
 
                       <p className="
-                        mt-2
+                        mt-3
+
                         text-sm
+
                         font-bold
+
                         text-slate-700
 
                         break-words
                       ">
+
                         {c.motivo || "Sin motivo"}
+
                       </p>
 
                     </div>
@@ -559,16 +798,27 @@ function CitaList({
                   e.stopPropagation()
                 }
                 className="
-                  xl:min-w-[180px]
+    self-center
 
-                  flex
-                  flex-row
-                  xl:flex-col
+    2xl:w-[210px]
 
-                  items-stretch
+    bg-slate-50/80
 
-                  gap-3
-                "
+    border
+    border-slate-200/70
+
+    rounded-[28px]
+
+    p-4
+
+    flex
+    flex-row
+    2xl:flex-col
+
+    items-stretch
+
+    gap-3
+  "
               >
 
                 {/* PENDIENTE */}
@@ -584,172 +834,125 @@ function CitaList({
                         onCompletar(c)
                       }
                       className="
-    group
+          h-12
 
-    relative
-    overflow-hidden
+          px-5
 
-    h-11
+          rounded-2xl
 
-    px-5
+          bg-gradient-to-r
+          from-emerald-500
+          via-green-500
+          to-emerald-600
 
-    rounded-[22px]
+          text-white
 
-    bg-gradient-to-r
-    from-emerald-500
-    via-green-500
-    to-emerald-600
+          text-sm
+          font-black
 
-    text-white
+          shadow-[0_12px_30px_rgba(16,185,129,0.22)]
 
-    text-sm
-    font-black
+          hover:shadow-[0_18px_40px_rgba(16,185,129,0.30)]
 
-    shadow-[0_12px_30px_rgba(16,185,129,0.22)]
+          hover:scale-[1.02]
 
-    hover:shadow-[0_18px_40px_rgba(16,185,129,0.30)]
+          transition-all
+          duration-300
 
-    hover:scale-[1.02]
-
-    active:scale-[0.97]
-
-    transition-all
-    duration-300
-
-    whitespace-nowrap
-
-    flex
-    items-center
-    justify-center
-    gap-2.5
-  "
+          flex
+          items-center
+          justify-center
+          gap-2
+        "
                     >
 
-                      {/* GLOW */}
+                      <CheckCircle2 size={15} />
 
-                      <div className="
-    absolute
-    inset-0
-
-    opacity-0
-
-    bg-white/10
-
-    group-hover:opacity-100
-
-    transition-all
-    duration-300
-  " />
-
-                      {/* ICON */}
-
-                      <span className="
-    relative
-    z-10
-
-    text-sm
-  ">
-                        ✓
-                      </span>
-
-                      {/* TEXT */}
-
-                      <span className="relative z-10">
-                        Completar
-                      </span>
+                      Completar
 
                     </button>
 
-                    {/* ACTIONS */}
+                    {/* EDIT */}
 
-                    <div className="
-                      flex
-                      items-center
-                      justify-center
-                      gap-3
-                    ">
+                    <button
+                      onClick={() =>
+                        onEditar(c)
+                      }
+                      className="
+          h-12
 
-                      {/* EDITAR */}
+          px-5
 
-                      <button
-                        onClick={() =>
-                          onEditar(c)
-                        }
-                        className="
-                      w-12
-                      h-12
+          rounded-2xl
 
-                      rounded-[20px]
+          bg-slate-100
 
-                      bg-gradient-to-br
-                      from-slate-100
-                      to-slate-200/70
+          border
+          border-slate-200
 
-                      text-slate-500
+          text-slate-700
 
-                      hover:text-slate-700
+          text-sm
+          font-bold
 
-                      border
-                      border-white
+          hover:bg-slate-200
 
-                      flex
-                      items-center
-                      justify-center
+          transition-all
+          duration-300
 
-                      hover:scale-110
+          flex
+          items-center
+          justify-center
+          gap-2
+        "
+                    >
 
-                      active:scale-95
+                      <Pencil size={15} />
 
-                      hover:shadow-lg
+                      Editar
 
-                      transition-all
-                      duration-300
-                    "
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
+                    </button>
 
-                      {/* CANCELAR */}
+                    {/* CANCEL */}
 
-                      <button
-                        onClick={() =>
-                          setCitaCancelar(c)
-                        }
-                        className="
-                          w-12
-                          h-12
+                    <button
+                      onClick={() =>
+                        setCitaCancelar(c)
+                      }
+                      className="
+          h-12
 
-                          rounded-[20px]
+          px-5
 
-                          bg-gradient-to-br
-                          from-slate-100
-                          to-slate-200/70
+          rounded-2xl
 
-                          text-slate-500
+          bg-rose-50
 
-                          border
-                          border-white
+          border
+          border-rose-100
 
-                          flex
-                          items-center
-                          justify-center
+          text-rose-500
 
-                          hover:scale-110
+          text-sm
+          font-bold
 
-                          active:scale-95
+          hover:bg-rose-100
 
-                          hover:shadow-lg
+          transition-all
+          duration-300
 
-                          transition-all
-                          duration-300
-                        "
-                        title="Cancelar"
-                      >
-                        ⛔
-                      </button>
+          flex
+          items-center
+          justify-center
+          gap-2
+        "
+                    >
 
-                    </div>
+                      <XCircle size={15} />
+
+                      Cancelar
+
+                    </button>
 
                   </>
 
@@ -768,36 +971,42 @@ function CitaList({
                         onEditar(c)
                       }
                       className="
-                        h-12
+          h-12
 
-                        px-5
+          px-5
 
-                        rounded-[20px]
+          rounded-2xl
 
-                        bg-gradient-to-r
-                        from-blue-500
-                        to-cyan-500
+          bg-gradient-to-r
+          from-indigo-500
+          via-purple-500
+          to-violet-500
 
-                        text-white
+          text-white
 
-                        text-sm
-                        font-black
+          text-sm
+          font-black
 
-                        shadow-[0_15px_35px_rgba(59,130,246,0.25)]
+          shadow-[0_12px_30px_rgba(99,102,241,0.25)]
 
-                        hover:scale-[1.03]
+          hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
 
-                        hover:shadow-[0_20px_45px_rgba(59,130,246,0.35)]
+          hover:scale-[1.02]
 
-                        active:scale-95
+          transition-all
+          duration-300
 
-                        transition-all
-                        duration-300
-
-                        whitespace-nowrap
-                      "
+          flex
+          items-center
+          justify-center
+          gap-2
+        "
                     >
-                      ✏️ Reagendar
+
+                      <Pencil size={15} />
+
+                      Reagendar
+
                     </button>
 
                     {/* CANCELAR */}
@@ -807,36 +1016,38 @@ function CitaList({
                         setCitaCancelar(c)
                       }
                       className="
-                        h-12
+          h-12
 
-                        px-5
+          px-5
 
-                        rounded-[20px]
+          rounded-2xl
 
-                        bg-gradient-to-r
-                        from-rose-500
-                        to-red-500
+          bg-rose-50
 
-                        text-white
+          border
+          border-rose-100
 
-                        text-sm
-                        font-black
+          text-rose-500
 
-                        shadow-[0_15px_35px_rgba(239,68,68,0.25)]
+          text-sm
+          font-bold
 
-                        hover:scale-[1.03]
+          hover:bg-rose-100
 
-                        hover:shadow-[0_20px_45px_rgba(239,68,68,0.35)]
+          transition-all
+          duration-300
 
-                        active:scale-95
-
-                        transition-all
-                        duration-300
-
-                        whitespace-nowrap
-                      "
+          flex
+          items-center
+          justify-center
+          gap-2
+        "
                     >
-                      ⛔ Cancelar
+
+                      <XCircle size={15} />
+
+                      Cancelar
+
                     </button>
 
                   </>

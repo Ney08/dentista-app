@@ -18,6 +18,17 @@ import PageWrapper from "../components/PageWrapper";
 import Paginacion from "../components/Paginacion";
 import SkeletonLoader from "../components/SkeletonLoader";
 
+import {
+  Search,
+  Plus,
+  Wallet,
+  BadgeDollarSign,
+  Receipt,
+  AlertTriangle,
+  FileText,
+  CalendarDays
+} from "lucide-react";
+
 function IngresosPage() {
 
   /*
@@ -480,345 +491,617 @@ function IngresosPage() {
     <PageWrapper>
 
       <div className="
-        h-full
+      h-full
 
-        max-w-[1600px]
+      w-full
 
-        mx-auto
+      flex
+      flex-col
 
-        flex
-        flex-col
+      gap-7
 
-        gap-6
+      pb-4
 
-        pb-4
+      overflow-hidden
 
-        overflow-hidden
-      ">
+      px-3
+      sm:px-5
+    ">
 
         {/* HEADER */}
 
         <div className="
-          text-center
-          space-y-3
-          pt-2
-        ">
+        flex
+        flex-col
+        xl:flex-row
 
-          <h1 className="
-            text-4xl
-            md:text-5xl
+        xl:items-center
+        xl:justify-between
+
+        gap-5
+      ">
+
+          {/* LEFT */}
+
+          <div>
+
+            <div className="
+            inline-flex
+
+            items-center
+            gap-2
+
+            px-4
+            py-2
+
+            rounded-full
+
+            bg-indigo-500/10
+
+            border
+            border-indigo-100
+
+            text-indigo-600
+
+            text-sm
+            font-semibold
+
+            mb-4
+          ">
+
+              <Wallet size={14} />
+
+              CRM financiero
+
+            </div>
+
+            <h1 className="
+            text-3xl
+            md:text-4xl
 
             font-black
 
             tracking-tight
+
+            text-slate-800
           ">
 
-            <span className="
-              bg-gradient-to-r
-              from-slate-800
-              to-slate-500
+              Facturación clínica
 
-              bg-clip-text
-              text-transparent
-            ">
-              Facturación
-            </span>
+            </h1>
 
-            <span className="ml-2">
-              🧾
-            </span>
+            <p className="
+            mt-2
 
-          </h1>
-
-          <div className="
-            w-24
-            h-1
-
-            mx-auto
-
-            rounded-full
-
-            bg-gradient-to-r
-            from-purple-500
-            to-indigo-500
-          " />
-
-          <p className="
             text-sm
             sm:text-base
 
-            text-gray-500
-
-            font-medium
+            text-slate-500
           ">
-            Gestiona ingresos y facturas
-          </p>
+              Control clínico de ingresos y facturas
+            </p>
 
-          <p className="
+          </div>
+
+          {/* RIGHT */}
+
+          <div className="
+          bg-white/95
+          backdrop-blur-md
+
+          border
+          border-slate-200/80
+
+          rounded-[30px]
+
+          px-6
+          py-5
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+          min-w-[260px]
+        ">
+
+            <p className="
             text-xs
-            sm:text-sm
 
-            text-gray-400
+            uppercase
+
+            tracking-[0.14em]
+
+            font-black
+
+            text-slate-400
           ">
-            {formatFecha(
-              new Date()
-            )}
-          </p>
+              Facturación total
+            </p>
+
+            <div className="
+            mt-3
+
+            flex
+            items-center
+            justify-between
+          ">
+
+              <div>
+
+                <h3 className="
+                text-3xl
+
+                font-black
+
+                text-indigo-600
+              ">
+                  RD$
+                  {" "}
+                  {formatMoney(totalPagado)}
+                </h3>
+
+                <p className="
+                mt-1
+
+                text-xs
+
+                font-semibold
+
+                text-slate-500
+              ">
+                  Ingresos registrados
+                </p>
+
+              </div>
+
+              <div className="
+              w-14
+              h-14
+
+              rounded-[20px]
+
+              bg-gradient-to-br
+              from-indigo-500
+              via-purple-500
+              to-violet-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+            ">
+
+                <Receipt size={22} />
+
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
         {/* KPIS */}
 
         <div className="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          xl:grid-cols-4
+        grid
+        grid-cols-1
+        sm:grid-cols-2
+        xl:grid-cols-4
 
-          gap-5
-        ">
+        gap-5
+      ">
 
           {/* PENDIENTE */}
 
           <div className="
-            relative
-            overflow-hidden
+          relative
+          overflow-hidden
 
-            bg-white/90
-            backdrop-blur-xl
+          bg-white/95
+          backdrop-blur-md
 
-            border
-            border-white/40
+          border
+          border-slate-200/80
 
-            rounded-[30px]
+          rounded-[30px]
 
-            p-6
+          p-5
 
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-            transition-all
-            duration-300
+          hover:-translate-y-[2px]
 
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-          ">
+          transition-all
+          duration-300
+        ">
 
             <div className="
-              absolute
-              -top-10
-              -right-10
+            absolute
+            -top-10
+            -right-10
 
-              w-40
-              h-40
+            w-40
+            h-40
 
-              rounded-full
+            rounded-full
 
-              bg-red-500/10
+            bg-rose-500/10
 
-              blur-3xl
-            " />
+            blur-3xl
+          " />
 
-            <p className="
-              text-sm
-              text-gray-500
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+              <div>
+
+                <p className="
+                text-sm
+
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <BadgeDollarSign size={14} />
+
+                  Pendiente
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-rose-500
+              ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(totalPendiente)}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-rose-50
+
+              text-rose-500
+
+              flex
+              items-center
+              justify-center
             ">
-              💸 Pendiente
-            </p>
 
-            <h2 className="
-              mt-2
+                <Wallet size={20} />
 
-              text-4xl
+              </div>
 
-              font-black
-
-              text-red-500
-            ">
-              RD$
-              {" "}
-              {formatMoney(totalPendiente)}
-            </h2>
+            </div>
 
           </div>
 
           {/* PAGADO */}
 
-          {/* <div className="
-            relative
-            overflow-hidden
+          <div className="
+          relative
+          overflow-hidden
 
-            bg-white/90
-            backdrop-blur-xl
+          bg-white/95
+          backdrop-blur-md
 
-            border
-            border-white/40
+          border
+          border-slate-200/80
 
-            rounded-[30px]
+          rounded-[30px]
 
-            p-6
+          p-5
 
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-            transition-all
-            duration-300
+          hover:-translate-y-[2px]
 
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-          ">
+          transition-all
+          duration-300
+        ">
 
             <div className="
-              absolute
-              -top-10
-              -right-10
+            absolute
+            -top-10
+            -right-10
 
-              w-40
-              h-40
+            w-40
+            h-40
 
-              rounded-full
+            rounded-full
 
-              bg-emerald-500/10
+            bg-emerald-500/10
 
-              blur-3xl
-            " />
+            blur-3xl
+          " />
 
-            <p className="
-              text-sm
-              text-gray-500
-            ">
-              ✅ Pagado
-            </p>
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
 
-            <h2 className="
-              mt-2
+              <div>
 
-              text-4xl
+                <p className="
+                text-sm
 
-              font-black
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <BadgeDollarSign size={14} />
+
+                  Pagado
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-emerald-600
+              ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(totalPagado)}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-emerald-50
 
               text-emerald-500
-            ">
-              RD$
-              {" "}
-              {formatMoney(totalPagado)}
-            </h2>
 
-          </div> */}
+              flex
+              items-center
+              justify-center
+            ">
+
+                <Wallet size={20} />
+
+              </div>
+
+            </div>
+
+          </div>
 
           {/* FACTURAS */}
 
-          {/* <div className="
-            relative
-            overflow-hidden
+          <div className="
+          relative
+          overflow-hidden
 
-            bg-white/90
-            backdrop-blur-xl
+          bg-white/95
+          backdrop-blur-md
 
-            border
-            border-white/40
+          border
+          border-slate-200/80
 
-            rounded-[30px]
+          rounded-[30px]
 
-            p-6
+          p-5
 
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-            transition-all
-            duration-300
+          hover:-translate-y-[2px]
 
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-          ">
+          transition-all
+          duration-300
+        ">
 
             <div className="
-              absolute
-              -top-10
-              -right-10
+            absolute
+            -top-10
+            -right-10
 
-              w-40
-              h-40
+            w-40
+            h-40
 
-              rounded-full
+            rounded-full
 
-              bg-indigo-500/10
+            bg-indigo-500/10
 
-              blur-3xl
-            " />
+            blur-3xl
+          " />
 
-            <p className="
-              text-sm
-              text-gray-500
-            ">
-              🧾 Facturas
-            </p>
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
 
-            <h2 className="
-              mt-2
+              <div>
 
-              text-4xl
+                <p className="
+                text-sm
 
-              font-black
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <FileText size={14} />
+
+                  Facturas
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-indigo-600
+              ">
+
+                  {ingresos.length}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-indigo-50
 
               text-indigo-500
-            ">
-              {ingresos.length}
-            </h2>
 
-          </div> */}
+              flex
+              items-center
+              justify-center
+            ">
+
+                <Receipt size={20} />
+
+              </div>
+
+            </div>
+
+          </div>
 
           {/* PENDIENTES */}
 
           <div className="
-            relative
-            overflow-hidden
+          relative
+          overflow-hidden
 
-            bg-white/90
-            backdrop-blur-xl
+          bg-white/95
+          backdrop-blur-md
 
-            border
-            border-white/40
+          border
+          border-slate-200/80
 
-            rounded-[30px]
+          rounded-[30px]
 
-            p-6
+          p-5
 
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-            transition-all
-            duration-300
+          hover:-translate-y-[2px]
 
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-          ">
+          transition-all
+          duration-300
+        ">
 
             <div className="
-              absolute
-              -top-10
-              -right-10
+            absolute
+            -top-10
+            -right-10
 
-              w-40
-              h-40
+            w-40
+            h-40
 
-              rounded-full
+            rounded-full
 
-              bg-yellow-500/10
+            bg-yellow-500/10
 
-              blur-3xl
-            " />
+            blur-3xl
+          " />
 
-            <p className="
-              text-sm
-              text-gray-500
-            ">
-              ⚠️ Pendientes
-            </p>
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
 
-            <h2 className="
-              mt-2
+              <div>
 
-              text-4xl
+                <p className="
+                text-sm
 
-              font-black
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <AlertTriangle size={14} />
+
+                  Pendientes
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-yellow-500
+              ">
+
+                  {pendientesCount}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-yellow-50
 
               text-yellow-500
+
+              flex
+              items-center
+              justify-center
             ">
-              {pendientesCount}
-            </h2>
+
+                <CalendarDays size={20} />
+
+              </div>
+
+            </div>
 
           </div>
 
@@ -827,113 +1110,118 @@ function IngresosPage() {
         {/* MAIN CARD */}
 
         <div className="
-          bg-white/90
-          backdrop-blur-xl
+        bg-white/95
+        backdrop-blur-md
 
-          border
-          border-white/40
+        border
+        border-slate-200/80
 
-          rounded-[34px]
+        rounded-[38px]
 
-          shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+        shadow-[0_20px_60px_rgba(15,23,42,0.06)]
 
-          flex
-          flex-col
+        flex
+        flex-col
 
-          h-[72vh]
-          sm:h-[75vh]
-          lg:h-[76vh]
+        h-[78vh]
 
-          p-5
-          sm:p-6
+        p-5
+        sm:p-6
 
-          gap-5
+        gap-5
 
-          overflow-hidden
-        ">
+        overflow-hidden
+      ">
 
           {/* TOOLBAR */}
 
           <div className="
-            flex
-            flex-col
+          flex
+          flex-col
 
-            gap-4
-          ">
+          gap-4
+        ">
 
             {/* TOP */}
 
             <div className="
-              flex
-              flex-col
-              xl:flex-row
+            flex
+            flex-col
+            xl:flex-row
 
-              xl:items-center
-              xl:justify-between
+            xl:items-center
+            xl:justify-between
 
-              gap-4
-            ">
+            gap-4
+          ">
 
               {/* INFO */}
 
               <div className="
-                flex
-                items-center
-                gap-3
-                flex-wrap
-              ">
+              flex
+              items-center
+              gap-3
+
+              flex-wrap
+            ">
 
                 <div className="
-                  px-4
-                  h-11
+                px-4
+                h-11
 
-                  rounded-2xl
+                rounded-2xl
 
-                  bg-gradient-to-r
-                  from-indigo-50
-                  to-purple-50
+                bg-indigo-50
 
-                  border
-                  border-indigo-100
+                border
+                border-indigo-100
 
-                  flex
-                  items-center
+                flex
+                items-center
+                gap-2
 
-                  text-sm
-                  font-semibold
+                text-sm
+                font-semibold
 
-                  text-indigo-600
-                ">
+                text-indigo-600
+              ">
+
+                  <Receipt size={14} />
+
                   {filtrados.length}
                   {" "}
                   facturas
+
                 </div>
 
-                {/* <div className="
-                  px-4
-                  h-11
+                <div className="
+                px-4
+                h-11
 
-                  rounded-2xl
+                rounded-2xl
 
-                  bg-gradient-to-r
-                  from-red-50
-                  to-rose-50
+                bg-rose-50
 
-                  border
-                  border-red-100
+                border
+                border-rose-100
 
-                  flex
-                  items-center
+                flex
+                items-center
+                gap-2
 
-                  text-sm
-                  font-semibold
+                text-sm
+                font-semibold
 
-                  text-red-500
-                ">
+                text-rose-500
+              ">
+
+                  <AlertTriangle size={14} />
+
                   {pendientesCount}
                   {" "}
                   pendientes
-                </div> */}
+
+                </div>
 
               </div>
 
@@ -942,34 +1230,58 @@ function IngresosPage() {
               <button
                 onClick={abrirNuevo}
                 className="
-                  h-12
+                group
 
-                  min-w-[170px]
+                relative
+                overflow-hidden
 
-                  px-6
+                h-12
 
-                  rounded-2xl
+                min-w-[190px]
 
-                  bg-gradient-to-r
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+                px-6
 
-                  text-white
+                rounded-2xl
 
-                  font-black
+                bg-gradient-to-r
+                from-indigo-500
+                via-purple-500
+                to-violet-500
 
-                  shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+                text-white
 
-                  hover:scale-[1.02]
+                font-black
 
-                  active:scale-95
+                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+
+                hover:-translate-y-[2px]
+
+                active:scale-95
+
+                transition-all
+                duration-300
+
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
+              >
+
+                <Plus
+                  size={18}
+                  className="
+                  group-hover:rotate-90
 
                   transition-all
                   duration-300
                 "
-              >
-                + Nueva factura
+                />
+
+                Nueva factura
+
               </button>
 
             </div>
@@ -977,19 +1289,33 @@ function IngresosPage() {
             {/* FILTERS */}
 
             <div className="
-              flex
-              flex-col
-              lg:flex-row
+            flex
+            flex-col
+            lg:flex-row
 
-              gap-3
-            ">
+            gap-3
+          ">
 
               {/* SEARCH */}
 
               <div className="
-                w-full
-                lg:flex-1
-              ">
+              relative
+
+              w-full
+              lg:flex-1
+            ">
+
+                <Search
+                  size={18}
+                  className="
+                  absolute
+                  left-4
+                  top-1/2
+                  -translate-y-1/2
+
+                  text-slate-400
+                "
+                />
 
                 <input
                   placeholder="Buscar cliente..."
@@ -1004,26 +1330,29 @@ function IngresosPage() {
 
                   }}
                   className="
-                    w-full
+                  w-full
 
-                    h-12
+                  h-12
 
-                    px-5
+                  pl-12
+                  pr-5
 
-                    rounded-2xl
+                  rounded-2xl
 
-                    bg-white/80
+                  bg-slate-50/90
 
-                    border
-                    border-white/40
+                  border
+                  border-slate-200/70
 
-                    shadow-sm
+                  shadow-sm
 
-                    focus:outline-none
+                  placeholder:text-slate-400
 
-                    focus:ring-4
-                    focus:ring-indigo-500/10
-                  "
+                  focus:outline-none
+
+                  focus:ring-4
+                  focus:ring-indigo-500/10
+                "
                 />
 
               </div>
@@ -1038,24 +1367,24 @@ function IngresosPage() {
                   )
                 }
                 className="
-                  h-12
+                h-12
 
-                  px-4
+                px-4
 
-                  rounded-2xl
+                rounded-2xl
 
-                  bg-white/80
+                bg-slate-50/90
 
-                  border
-                  border-white/40
+                border
+                border-slate-200/70
 
-                  shadow-sm
+                shadow-sm
 
-                  focus:outline-none
+                focus:outline-none
 
-                  focus:ring-4
-                  focus:ring-indigo-500/10
-                "
+                focus:ring-4
+                focus:ring-indigo-500/10
+              "
               >
 
                 <option value="fecha">
@@ -1091,24 +1420,24 @@ function IngresosPage() {
 
                 }}
                 className="
-                  h-12
+                h-12
 
-                  px-4
+                px-4
 
-                  rounded-2xl
+                rounded-2xl
 
-                  bg-white/80
+                bg-slate-50/90
 
-                  border
-                  border-white/40
+                border
+                border-slate-200/70
 
-                  shadow-sm
+                shadow-sm
 
-                  focus:outline-none
+                focus:outline-none
 
-                  focus:ring-4
-                  focus:ring-indigo-500/10
-                "
+                focus:ring-4
+                focus:ring-indigo-500/10
+              "
               >
 
                 <option value={10}>
@@ -1132,71 +1461,92 @@ function IngresosPage() {
           {/* LIST */}
 
           <div className="
-            flex-1
-            min-h-0
+          flex-1
+          min-h-0
 
-            overflow-y-auto
-            overflow-x-hidden
+          overflow-y-auto
+          overflow-x-hidden
 
-            pr-1
-          ">
+          pr-2
+
+          scrollbar-thin
+          scrollbar-thumb-indigo-200/70
+          scrollbar-track-transparent
+        ">
 
             {filtrados.length === 0 ? (
 
               <div className="
-                h-full
+              h-full
+
+              flex
+              flex-col
+
+              items-center
+              justify-center
+
+              text-center
+            ">
+
+                <div className="
+                relative
+
+                w-28
+                h-28
+
+                rounded-[34px]
+
+                bg-gradient-to-br
+                from-indigo-500
+                via-purple-500
+                to-violet-500
 
                 flex
-                flex-col
-
                 items-center
                 justify-center
 
-                text-center
+                text-white
+
+                shadow-[0_25px_60px_rgba(99,102,241,0.35)]
               ">
 
-                <div className="
-                  w-24
-                  h-24
+                  <div className="
+                  absolute
+                  inset-0
 
-                  rounded-[30px]
+                  rounded-[34px]
 
-                  bg-gradient-to-br
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+                  bg-white/10
 
-                  flex
-                  items-center
-                  justify-center
+                  blur-xl
+                " />
 
-                  text-5xl
-                  text-white
+                  <Receipt
+                    size={42}
+                    className="relative z-10"
+                  />
 
-                  shadow-[0_20px_50px_rgba(99,102,241,0.35)]
-                ">
-                  🧾
                 </div>
 
                 <h3 className="
-                  mt-6
+                mt-6
 
-                  text-3xl
+                text-3xl
 
-                  font-black
+                font-black
 
-                  text-slate-800
-                ">
+                text-slate-800
+              ">
                   No hay facturas
                 </h3>
 
                 <p className="
-                  mt-3
+                mt-3
 
-                  text-gray-500
+                text-slate-500
 
-                  max-w-sm
-                ">
+                max-w-sm
+              ">
                   Las facturas creadas aparecerán aquí automáticamente
                 </p>
 
@@ -1224,36 +1574,22 @@ function IngresosPage() {
             totalPaginas > 1 && (
 
               <div className="
-                pt-4
+              pt-5
 
-                border-t
-                border-gray-100
+              border-t
+              border-slate-100
 
-                flex
-                justify-center
-              ">
+              flex
+              justify-center
 
-                <div className="
-                  bg-white/80
-                  backdrop-blur-xl
+              shrink-0
+            ">
 
-                  border
-                  border-white/40
-
-                  rounded-[24px]
-
-                  p-2
-
-                  shadow-sm
-                ">
-
-                  <Paginacion
-                    pagina={pagina}
-                    totalPaginas={totalPaginas}
-                    onChange={setPagina}
-                  />
-
-                </div>
+                <Paginacion
+                  pagina={pagina}
+                  totalPaginas={totalPaginas}
+                  onChange={setPagina}
+                />
 
               </div>
 
@@ -1263,9 +1599,7 @@ function IngresosPage() {
 
       </div>
 
-
-
-      {/* ✅ MODAL FORM */}
+      {/* MODAL FORM */}
 
       {modalAbierto && (
 
@@ -1274,60 +1608,59 @@ function IngresosPage() {
         >
 
           <IngresoForm
-          key={
-            editando?.id ||
-            citaPresetLocal?.id ||
-            "nuevo"
-          }
+            key={
+              editando?.id ||
+              citaPresetLocal?.id ||
+              "nuevo"
+            }
 
-          clientes={clientes}
+            clientes={clientes}
 
-          initialData={editando}
+            initialData={editando}
 
-          citaPreset={citaPresetLocal}
+            citaPreset={citaPresetLocal}
 
-          onClose={cerrarModal}
-        />
+            onClose={cerrarModal}
+          />
 
         </BaseModal>
 
       )}
 
+      {/* FACTURA MODAL */}
 
+      <div className={`
+      fixed
+      inset-0
+      z-50
 
-      {/* FACTURA MODAL */ }
+      flex
+      items-center
+      justify-center
 
-  <div className={`
-        fixed
-        inset-0
-        z-50
+      transition-all
+      duration-300
 
-        flex
-        items-center
-        justify-center
-
-        transition
-
-        ${facturaPreview
-      ? "bg-black/40 backdrop-blur-sm"
-      : "pointer-events-none"
-    }
-      `}>
-
-    {facturaPreview && (
-
-      <FacturaModal
-        ingreso={facturaPreview}
-        onClose={() =>
-          setFacturaPreview(null)
+      ${facturaPreview
+          ? "bg-slate-900/40 backdrop-blur-sm"
+          : "pointer-events-none opacity-0"
         }
-      />
+    `}>
 
-    )}
+        {facturaPreview && (
 
-  </div>
+          <FacturaModal
+            ingreso={facturaPreview}
+            onClose={() =>
+              setFacturaPreview(null)
+            }
+          />
 
-    </PageWrapper >
+        )}
+
+      </div>
+
+    </PageWrapper>
   );
 
 }

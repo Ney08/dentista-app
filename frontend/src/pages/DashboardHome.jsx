@@ -3,12 +3,37 @@ import { useIngresos } from "../hooks/useIngresos";
 import { useCitas } from "../hooks/useCitas";
 import { useEgresos } from "../hooks/useEgresos";
 import { useEffect, useState } from "react";
-
+import RevenueChart from "../components/charts/RevenueChart";
 import toast from "react-hot-toast";
+import AgendaCalendar from "../components/calendar/AgendaCalendar";
+import {
+  formatFecha,
+  formatHora,
+  parseFechaLocal
+} from "../utils/fecha";
 
-import { formatFecha, formatHora, parseFechaLocal } from "../utils/fecha";
-import { formatMoney } from "../utils/format";
+import {
+  formatMoney
+} from "../utils/format";
 
+import {
+  Wallet,
+  TrendingUp,
+  Receipt,
+  Users,
+  Clock3,
+  Activity,
+  ClipboardList,
+  Banknote,
+  CalendarDays,
+  BarChart3
+} from "lucide-react";
+
+import QuickActions from "../components/dashboard/QuickActions";
+import FinanceChart from "../components/charts/FinanceChart";
+
+import ServicesChart from "../components/charts/ServicesChart";
+import SmartInsights from "../components/dashboard/SmartInsights";
 import GraficoIngresos from "../components/graficos/GraficoIngresos";
 import GraficoClientes from "../components/graficos/GraficoClientes";
 import GraficoCitas from "../components/graficos/GraficoCitas";
@@ -18,29 +43,49 @@ import SkeletonLoader from "../components/SkeletonLoader";
 
 function DashboardHome() {
 
-  const { clientes, isLoading: clientesLoading } = useClientes();
+  const {
+    clientes,
+    isLoading: clientesLoading
+  } = useClientes();
 
-  const { ingresos, isLoading: ingresosLoading } = useIngresos();
+  const {
+    ingresos,
+    isLoading: ingresosLoading
+  } = useIngresos();
 
-  const { egresos, isLoading: egresosLoading } = useEgresos();
+  const {
+    egresos,
+    isLoading: egresosLoading
+  } = useEgresos();
 
-  const { citas = [], isLoading: citasLoading } = useCitas();
+  const {
+    citas = [],
+    isLoading: citasLoading
+  } = useCitas();
 
-  const [showCitas, setShowCitas] = useState(true);
+  const [showCitas, setShowCitas] =
+    useState(true);
 
-  const [showKpis, setShowKpis] = useState(true);
+  const [showKpis, setShowKpis] =
+    useState(true);
 
-  const [showCharts, setShowCharts] = useState(true);
-
-  const [kpiIndex, setKpiIndex] = useState(0);
+  const [showCharts, setShowCharts] =
+    useState(true);
 
   const ahora = new Date();
+
+  /*
+  ==========================================
+  HELPERS
+  ==========================================
+  */
 
   const esHoy = (fechaStr) => {
 
     if (!fechaStr) return false;
 
-    const fecha = parseFechaLocal(fechaStr);
+    const fecha =
+      parseFechaLocal(fechaStr);
 
     return (
       fecha.getDate() === ahora.getDate() &&
@@ -50,72 +95,190 @@ function DashboardHome() {
 
   };
 
-  const [pauseSlider, setPauseSlider] = useState(false);
-
   const getEstado = (c) => {
 
-    if (c.estado === "cancelada") return "cancelada";
+    if (c.estado === "cancelada") {
+      return "cancelada";
+    }
 
-    if (c.estado === "completada") return "completada";
+    if (c.estado === "completada") {
+      return "completada";
+    }
 
-    const fecha = parseFechaLocal(c.fecha);
+    const fecha =
+      parseFechaLocal(c.fecha);
 
-    if (fecha < ahora) return "atrasada";
+    if (fecha < ahora) {
+      return "atrasada";
+    }
 
     return "pendiente";
 
   };
 
+  /*
+  ==========================================
+  DATA
+  ==========================================
+  */
+  const revenueData = [
+
+    {
+      mes: "Ene",
+      ingresos: 12000
+    },
+
+    {
+      mes: "Feb",
+      ingresos: 18000
+    },
+
+    {
+      mes: "Mar",
+      ingresos: 14000
+    },
+
+    {
+      mes: "Abr",
+      ingresos: 24000
+    },
+
+    {
+      mes: "May",
+      ingresos: 32000
+    },
+
+    {
+      mes: "Jun",
+      ingresos: 38000
+    }
+
+  ];
+
+  const financeData = [
+
+    {
+      mes: "Ene",
+      ingresos: 12000,
+      egresos: 4000
+    },
+
+    {
+      mes: "Feb",
+      ingresos: 18000,
+      egresos: 6000
+    },
+
+    {
+      mes: "Mar",
+      ingresos: 24000,
+      egresos: 8000
+    },
+
+    {
+      mes: "Abr",
+      ingresos: 28000,
+      egresos: 7000
+    },
+
+    {
+      mes: "May",
+      ingresos: 35000,
+      egresos: 10000
+    },
+
+    {
+      mes: "Jun",
+      ingresos: 42000,
+      egresos: 12000
+    }
+
+  ];
+
+  const servicesData = [
+
+    {
+      name: "Limpieza",
+      value: 40
+    },
+
+    {
+      name: "Ortodoncia",
+      value: 25
+    },
+
+    {
+      name: "Extracción",
+      value: 18
+    },
+
+    {
+      name: "Blanqueamiento",
+      value: 12
+    },
+
+    {
+      name: "Implantes",
+      value: 5
+    }
+
+  ];
+
   const citasHoy = citas
     .filter(c => esHoy(c.fecha))
-    .sort((a, b) => parseFechaLocal(a.fecha) - parseFechaLocal(b.fecha));
+    .sort(
+      (a, b) =>
+        parseFechaLocal(a.fecha) -
+        parseFechaLocal(b.fecha)
+    );
 
-  const pendientes = citas.filter(c => getEstado(c) === "pendiente").length;
+  const clientesHoy =
+    clientes.filter(c =>
+      esHoy(c.created_at)
+    ).length;
 
-  const atrasadas = citas.filter(c => getEstado(c) === "atrasada").length;
-
-  const completadas = citas.filter(c => getEstado(c) === "completada").length;
-
-  const canceladas = citas.filter(c => getEstado(c) === "cancelada").length;
-
-  const clientesHoy = clientes.filter(c => esHoy(c.created_at)).length;
-
-  const cantidadCitasHoy = citasHoy.length;
+  const cantidadCitasHoy =
+    citasHoy.length;
 
   let pagadoHoy = 0;
   let pendienteHoy = 0;
-  let facturasHoy = 0;
 
   let totalMes = 0;
   let caja = 0;
   let gananciaBruta = 0;
   let gananciaNeta = 0;
   let totalCostos = 0;
-  let totalEgresos = 0;
 
-  const mesActual = ahora.getMonth();
+  const mesActual =
+    ahora.getMonth();
 
-  const anioActual = ahora.getFullYear();
+  const anioActual =
+    ahora.getFullYear();
 
   ingresos.forEach(i => {
 
-    const servicios = i.servicios || [];
+    const servicios =
+      i.servicios || [];
 
-    const subtotal = servicios.reduce(
-      (acc, s) => acc + s.monto,
-      0
-    );
+    const subtotal =
+      servicios.reduce(
+        (acc, s) => acc + s.monto,
+        0
+      );
 
-    const costos = servicios.reduce(
-      (acc, s) =>
-        acc + Number(s.costo_servicio || 0),
-      0
-    );
+    const costos =
+      servicios.reduce(
+        (acc, s) =>
+          acc + Number(s.costo_servicio || 0),
+        0
+      );
 
-    const itbis = subtotal * 0.18;
+    const itbis =
+      subtotal * 0.18;
 
     const descuento =
-      subtotal * ((i.descuento || 0) / 100);
+      subtotal *
+      ((i.descuento || 0) / 100);
 
     const total =
       subtotal + itbis - descuento;
@@ -133,8 +296,6 @@ function DashboardHome() {
     }
 
     if (esHoy(i.created_at)) {
-
-      facturasHoy++;
 
       if (i.pagado) {
         pagadoHoy += total;
@@ -162,264 +323,241 @@ function DashboardHome() {
 
   });
 
-  totalEgresos = egresos.reduce(
-    (acc, e) =>
-      acc + Number(e.monto || 0),
-    0
-  );
+  const totalEgresos =
+    egresos.reduce(
+      (acc, e) =>
+        acc + Number(e.monto || 0),
+      0
+    );
 
   gananciaNeta =
     gananciaBruta - totalEgresos;
 
+  /*
+  ==========================================
+  TOAST
+  ==========================================
+  */
+
   useEffect(() => {
 
-    const citasPendientesHoy =
+    const pendientes =
       citasHoy.filter(
         c => c.estado === "pendiente"
       );
 
-    if (citasPendientesHoy.length > 0) {
+    if (pendientes.length > 0) {
 
       toast.success(
-        `Tienes ${citasPendientesHoy.length} cita(s) pendiente(s) hoy 📅`,
-        { id: "toast-citas-hoy" }
+        `Tienes ${pendientes.length} cita(s) pendiente(s) hoy 📅`,
+        {
+          id: "toast-citas-hoy"
+        }
       );
 
     }
 
   }, [citasHoy.length]);
 
+  /*
+  ==========================================
+  FORMAT
+  ==========================================
+  */
+
   const formato = (n) =>
     `RD$ ${formatMoney(n)}`;
+
+  /*
+  ==========================================
+  KPIS
+  ==========================================
+  */
 
   const kpis = [
     {
       title: "Caja",
       value: formato(caja),
       color: "text-green-600",
-      icon: "💵",
-      tint: "from-emerald-500/15 via-emerald-500/5 to-white/30"
+      icon: Wallet
     },
     {
       title: "Ganancia Bruta",
       value: formato(gananciaBruta),
       color: "text-blue-600",
-      icon: "📈",
-
-      tint: "from-blue-500/15 via-blue-500/5 to-white/30"
-
+      icon: TrendingUp
     },
     {
       title: "Costos Servicios",
       value: formato(totalCostos),
-      color: "text-red-500",
-      icon: "🧾",
-      tint: "from-rose-500/15 via-rose-500/5 to-white/30"
+      color: "text-rose-500",
+      icon: Receipt
     },
     {
       title: "Egresos",
       value: formato(totalEgresos),
-      color: "text-rose-500",
-      icon: "💸",
-      tint: "from-pink-500/15 via-pink-500/5 to-white/30"
+      color: "text-red-500",
+      icon: Banknote
     },
     {
       title: "Clientes hoy",
       value: clientesHoy,
       color: "text-slate-700",
-      icon: "👤",
-      tint: "from-indigo-500/15 via-indigo-500/5 to-white/30"
+      icon: Users
     },
     {
       title: "Citas hoy",
       value: cantidadCitasHoy,
       color: "text-indigo-600",
-      icon: "📅",
-      tint: "from-indigo-500/10 to-white/40"
-    },
-    {
-      title: "Pagado hoy",
-      value: formato(pagadoHoy),
-      color: "text-green-600",
-      icon: "💰",
-      tint: "from-emerald-500/15 via-emerald-500/5 to-white/30"
-    },
-    {
-      title: "Pendiente",
-      value: formato(pendienteHoy),
-      color: "text-red-500",
-      icon: "⚠️",
-      tint: "from-rose-500/15 via-rose-500/5 to-white/30"
-    },
-    {
-      title: "Facturas",
-      value: facturasHoy,
-      color: "text-purple-600",
-      icon: "🧾",
-      tint: "from-indigo-500/15 via-indigo-500/5 to-white/30"
-    },
-    {
-      title: "Mes",
-      value: formato(totalMes),
-      color: "text-blue-600",
-      icon: "📊",
-      tint: "from-blue-500/15 via-blue-500/5 to-white/30"
+      icon: CalendarDays
     }
   ];
 
-  useEffect(() => {
+  /*
+  ==========================================
+  ACTIVIDAD
+  ==========================================
+  */
 
-    if (!showKpis || pauseSlider) return;
+  const actividades = [
 
-    const interval = setInterval(() => {
+    ...(citasHoy || [])
+      .slice(0, 2)
+      .map(c => ({
+        icon: CalendarDays,
+        title: "Cita programada",
+        desc: `${c.cliente?.nombre} ${c.cliente?.apellido}`,
+        time: formatHora(
+          parseFechaLocal(c.fecha)
+        )
+      })),
 
-      setKpiIndex(prev => {
+    ...(ingresos || [])
+      .slice(0, 2)
+      .map(i => ({
+        icon: Receipt,
+        title: "Factura registrada",
+        desc: `Factura #${i.id}`,
+        time: "Hoy"
+      })),
 
-        const totalSlides =
-          Math.ceil(kpis.length / 3);
+    ...(clientes || [])
+      .slice(0, 2)
+      .map(c => ({
+        icon: Users,
+        title: "Paciente agregado",
+        desc: `${c.nombre} ${c.apellido}`,
+        time: "Reciente"
+      }))
 
-        return (
-          prev + 1
-        ) % totalSlides;
+  ].slice(0, 6);
 
-      });
+  /*
+  ==========================================
+  COLLAPSE BUTTON
+  ==========================================
+  */
 
-    }, 6500);
-
-    return () =>
-      clearInterval(interval);
-
-  }, [showKpis, kpis.length]);
-
-  const cardKpi = (tint) => `
-  relative
-  overflow-hidden
-
-  bg-gradient-to-br
-  ${tint}
-
-  backdrop-blur-xl
-
-  border
-  border-white/40
-
-  rounded-[30px]
-
-  p-6
-
-  shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-
-  hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-
-  hover:-translate-y-[2px]
-  hover:scale-[1.015]
-
-  transition-all
-  duration-300
-
-  flex
-  justify-between
-  items-center
-
-  min-h-[130px]
-`;
-
-  const collapseButton = (show, action) => (
+  const collapseButton = (
+    show,
+    action
+  ) => (
 
     <button
       onClick={action}
       className="
-      group
+        group
 
-      relative
+        relative
 
-      overflow-hidden
+        overflow-hidden
 
-      h-11
+        w-9
+        h-9
 
-      px-4
+        rounded-xl
 
-      rounded-2xl
+        border
+        border-slate-200/80
 
-      border border-white/50
+        bg-white/90
+        backdrop-blur-md
 
-      bg-white/70
-      backdrop-blur-xl
+        shadow-[0_8px_20px_rgba(0,0,0,0.05)]
 
-      shadow-[0_8px_25px_rgba(0,0,0,0.06)]
+        hover:border-indigo-200
 
-      hover:shadow-[0_15px_35px_rgba(99,102,241,0.18)]
+        transition-all
+        duration-300
 
-      hover:border-indigo-200
-
-      transition-all duration-300
-
-      hover:scale-[1.03]
-
-      flex items-center gap-2
-    "
+        flex
+        items-center
+        justify-center
+      "
     >
 
       <div className="
-      absolute inset-0
+        w-7
+        h-7
 
-      opacity-0
+        rounded-lg
 
-      bg-gradient-to-r
-      from-indigo-500/10
-      via-purple-500/10
-      to-fuchsia-500/10
+        bg-gradient-to-br
+        from-indigo-500
+        to-purple-500
 
-      group-hover:opacity-100
-
-      transition-all duration-500
-    " />
-
-      <div className="
-      relative z-10
-
-      w-7 h-7
-
-      rounded-xl
-
-      bg-gradient-to-br
-      from-indigo-500
-      to-purple-500
-
-      shadow-lg shadow-indigo-200/50
-
-      flex items-center justify-center
-    ">
+        flex
+        items-center
+        justify-center
+      ">
 
         <span className={`
-        text-white text-xs font-black
+          text-white
+          text-xs
+          font-black
 
-        transition-transform duration-300
+          transition-transform
+          duration-300
 
-        ${show ? "rotate-0" : "-rotate-90"}
-      `}>
+          ${show
+            ? "rotate-0"
+            : "-rotate-90"}
+        `}>
           ⌄
         </span>
 
       </div>
 
-      <span className="
-      relative z-10
-
-      text-sm font-semibold
-
-      text-slate-600
-
-      group-hover:text-slate-800
-
-      transition-colors duration-300
-    ">
-        {show ? "" : ""}
-      </span>
-
     </button>
 
   );
+
+  const citasMock = [
+
+  {
+    paciente: "Pedro Díaz",
+    inicio: "2026-06-08T08:00:00",
+    fin: "2026-06-08T09:00:00"
+  },
+
+  {
+    paciente: "Ney Martinez",
+    inicio: "2026-06-08T10:00:00",
+    fin: "2026-06-08T11:00:00"
+  },
+
+  {
+    paciente: "Carlos Pérez",
+    inicio: "2026-06-09T13:00:00",
+    fin: "2026-06-09T14:00:00"
+  }
+
+];
+  /*
+  ==========================================
+  LOADING
+  ==========================================
+  */
 
   if (
     clientesLoading ||
@@ -436,7 +574,11 @@ function DashboardHome() {
 
           <SkeletonLoader alto="h-10" />
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="
+            grid
+            grid-cols-3
+            gap-4
+          ">
 
             <SkeletonLoader alto="h-28" />
             <SkeletonLoader alto="h-28" />
@@ -454,523 +596,1240 @@ function DashboardHome() {
 
   }
 
+  /*
+  ==========================================
+  RETURN
+  ==========================================
+  */
+
   return (
 
     <PageWrapper>
 
-      <div className="w-full space-y-10 px-2 sm:px-4">
+      <div className="
+        w-full
+
+        max-w-[1700px]
+
+        mx-auto
+
+        space-y-7
+
+        px-3
+        sm:px-5
+      ">
 
         {/* HEADER */}
-        <div className="text-center space-y-3 pt-2">
 
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+        <div className="
+          flex
+          flex-col
+          md:flex-row
 
-            <span className="bg-gradient-to-r from-slate-800 to-slate-500 bg-clip-text text-transparent">
-              Dashboard
-            </span>
+          md:items-center
+          md:justify-between
 
-            <span className="ml-2">
-              📊
-            </span>
+          gap-5
+        ">
 
-          </h1>
+          <div>
 
-          <div className="w-24 h-1 mx-auto rounded-full bg-gradient-to-r from-purple-500 to-indigo-500" />
+            <div className="
+              inline-flex
 
-          <p className="text-sm sm:text-base text-gray-500 font-medium">
-            Resumen financiero y operativo
-          </p>
+              items-center
+              gap-3
 
-          <p className="text-xs sm:text-sm text-gray-400">
-            {formatFecha(new Date())}
-          </p>
+              px-4
+              py-2
 
-        </div>
+              rounded-full
 
-        {/* ESTADOS */}
-        {/* <div className="flex flex-wrap justify-center gap-3 text-sm">
+              bg-indigo-500/10
 
-          <span className="
-  bg-yellow-500/10
-  backdrop-blur-xl
+              border
+              border-indigo-100
 
-  text-yellow-700
+              text-indigo-600
 
-  border
-  border-yellow-200/40
+              text-sm
+              font-semibold
 
-  px-4
-  py-2
+              mb-4
+            ">
 
-  rounded-full
+              <BarChart3 size={18} />
 
-  font-semibold
-
-  shadow-[0_8px_25px_rgba(0,0,0,0.05)]
-
-  transition-all
-  duration-300
-
-  hover:scale-[1.03]
-">
-            🟡 {pendientes}
-          </span>
-
-          <span className="bg-red-100 text-red-700 border border-red-200 px-4 py-1.5 rounded-full font-medium shadow-sm">
-            🔴 {atrasadas}
-          </span>
-
-          <span className="bg-green-100 text-green-700 border border-green-200 px-4 py-1.5 rounded-full font-medium shadow-sm">
-            ✅ {completadas}
-          </span>
-
-          <span className="bg-gray-100 text-gray-700 border border-gray-200 px-4 py-1.5 rounded-full font-medium shadow-sm">
-            ⛔ {canceladas}
-          </span>
-
-        </div> */}
-
-        {/* CITAS */}
-        <div className="bg-gradient-to-br from-white to-yellow-50/40 backdrop-blur-xl border border-white/40 shadow-[0_10px_30px_rgba(0,0,0,0.06)] rounded-[32px] p-6 space-y-5">
-
-          <div className="flex items-center justify-between gap-4">
-
-            <div>
-
-              <h3 className="font-bold text-lg text-slate-800">
-                📅 Citas de hoy
-              </h3>
-
-              <p className="text-sm text-gray-500 mt-1">
-                {cantidadCitasHoy} citas programadas
-              </p>
+              Panel principal
 
             </div>
 
-            {collapseButton(
-              showCitas,
-              () => setShowCitas(!showCitas)
-            )}
+            <h1 className="
+              text-3xl
+              md:text-4xl
+
+              font-black
+
+              tracking-tight
+
+              text-slate-800
+            ">
+
+              Dashboard clínico
+
+            </h1>
+
+            <p className="
+              mt-2
+
+              text-sm
+              sm:text-base
+
+              text-slate-500
+            ">
+              Resumen financiero y operativo de la clínica
+            </p>
 
           </div>
 
-          <div className={`
-            overflow-hidden transition-all duration-500
-            ${showCitas
-              ? "max-h-[1000px] opacity-100"
-              : "max-h-0 opacity-0"}
-          `}>
+          {/* DATE */}
 
-            {citasHoy.length === 0 ? (
+          <div className="
+            self-start
+            md:self-auto
 
-              <div className="
-  relative
-  overflow-hidden
+            bg-white/80
+            backdrop-blur-md
 
-  h-40
+            border
+            border-slate-200/80
 
-  flex
-  items-center
-  justify-center
+            rounded-[26px]
 
-  rounded-[30px]
+            px-5
+            py-4
 
-  bg-white/70
-  backdrop-blur-xl
+            shadow-[0_10px_30px_rgba(0,0,0,0.04)]
+          ">
 
-  border
-  border-white/40
+            <p className="
+              text-xs
 
-  shadow-[0_10px_30px_rgba(0,0,0,0.05)]
-">
+              uppercase
 
+              tracking-[0.14em]
 
-                <p className="text-gray-500">
-                  No hay citas hoy ✅
+              font-black
+
+              text-slate-400
+            ">
+              Fecha actual
+            </p>
+
+            <p className="
+              mt-2
+
+              text-sm
+
+              font-semibold
+
+              text-slate-700
+            ">
+              {formatFecha(new Date())}
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* TOP GRID */}
+
+        <div className="
+          grid
+          grid-cols-1
+          xl:grid-cols-3
+
+          gap-6
+        ">
+
+          {/* CITAS */}
+
+          <div className="
+            xl:col-span-2
+
+            bg-white/95
+            backdrop-blur-md
+
+            border
+            border-slate-200/80
+
+            rounded-[34px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+            space-y-6
+          ">
+
+            <div className="
+              flex
+              items-center
+              justify-between
+            ">
+
+              <div>
+
+                <div className="
+                  inline-flex
+
+                  items-center
+                  gap-2
+
+                  text-indigo-600
+
+                  text-sm
+                  font-bold
+                ">
+
+                  <CalendarDays size={18} />
+
+                  Citas de hoy
+
+                </div>
+
+                <p className="
+                  mt-2
+
+                  text-sm
+
+                  text-slate-500
+                ">
+                  {cantidadCitasHoy} citas programadas
                 </p>
 
               </div>
 
-            ) : (
+              {collapseButton(
+                showCitas,
+                () =>
+                  setShowCitas(!showCitas)
+              )}
 
-              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 max-h-[360px] overflow-y-auto pr-1">
+            </div>
 
-                {citasHoy.map(c => {
+            <div className={`
+              overflow-hidden
 
-                  const estado = getEstado(c);
+              transition-all
+              duration-500
 
-                  return (
+              ${showCitas
+                ? "max-h-[1000px] opacity-100"
+                : "max-h-0 opacity-0"}
+            `}>
 
-                    <div
-                      key={c.id}
-                      className="
-    relative
-    overflow-hidden
+              {citasHoy.length === 0 ? (
 
-    bg-white/90
-    backdrop-blur-xl
+                <div className="
+                  h-[220px]
 
-    border
-    border-white/40
+                  rounded-[30px]
 
-    rounded-[30px]
+                  bg-slate-50/70
 
-    p-5
+                  border
+                  border-slate-200/70
 
-    shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+                  flex
+                  items-center
+                  justify-center
+                ">
 
-    hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
+                  <p className="
+                    text-slate-500
 
-    hover:-translate-y-[2px]
-    hover:scale-[1.01]
+                    font-medium
+                  ">
+                    No hay citas programadas hoy ✅
+                  </p>
 
-    transition-all
-    duration-300
-  "
-                    >
-                      <div className="
-  absolute
-  -top-10
-  -right-10
+                </div>
 
-  w-32
-  h-32
+              ) : (
 
-  rounded-full
+                <div className="
+                  grid
+                  sm:grid-cols-2
+                  2xl:grid-cols-3
 
-  bg-indigo-500/10
+                  gap-4
+                ">
 
-  blur-3xl
-" />
-                      <div className="space-y-3">
+                  {citasHoy.map(c => {
 
-                        <div className="flex items-center justify-between">
+                    const estado =
+                      getEstado(c);
 
-                          <p className="font-bold text-slate-700">
-                            🕒 {formatHora(parseFechaLocal(c.fecha))}
-                          </p>
+                    return (
 
-                          <span className={`
-                            text-xs px-3 py-1 rounded-full font-medium shadow-sm
-                            ${estado === "completada" && "bg-green-100 text-green-700 border border-green-200"}
-                            ${estado === "atrasada" && "bg-red-100 text-red-700 border border-red-200"}
-                            ${estado === "cancelada" && "bg-gray-100 text-gray-700 border border-gray-200"}
-                            ${estado === "pendiente" && "bg-yellow-100 text-yellow-700 border border-yellow-200"}
-                          `}>
-                            {estado}
-                          </span>
+                      <div
+                        key={c.id}
+                        className="
+                          relative
+                          overflow-hidden
 
-                        </div>
+                          bg-white
 
-                        <div>
+                          border
+                          border-slate-200/70
 
-                          <p className="font-semibold text-slate-800">
-                            {c.cliente?.nombre} {c.cliente?.apellido}
-                          </p>
+                          rounded-[28px]
 
-                          <p className="text-sm text-gray-500 mt-1">
-                            {c.motivo}
-                          </p>
+                          p-5
+
+                          shadow-[0_10px_30px_rgba(0,0,0,0.04)]
+
+                          hover:-translate-y-[2px]
+
+                          hover:shadow-[0_18px_40px_rgba(0,0,0,0.06)]
+
+                          transition-all
+                          duration-300
+                        "
+                      >
+
+                        <div className="
+                          relative
+                          z-10
+
+                          space-y-4
+                        ">
+
+                          <div className="
+                            flex
+                            items-center
+                            justify-between
+                          ">
+
+                            <div className="
+                              flex
+                              items-center
+                              gap-2
+
+                              text-slate-700
+
+                              font-bold
+                            ">
+
+                              <Clock3 size={16} />
+
+                              {formatHora(
+                                parseFechaLocal(c.fecha)
+                              )}
+
+                            </div>
+
+                            <span className={`
+                              text-xs
+
+                              px-3
+                              py-1
+
+                              rounded-full
+
+                              font-semibold
+
+                              ${estado === "completada" &&
+                              "bg-emerald-100 text-emerald-700"}
+
+                              ${estado === "atrasada" &&
+                              "bg-rose-100 text-rose-700"}
+
+                              ${estado === "cancelada" &&
+                              "bg-slate-100 text-slate-700"}
+
+                              ${estado === "pendiente" &&
+                              "bg-yellow-100 text-yellow-700"}
+                            `}>
+
+                              {estado}
+
+                            </span>
+
+                          </div>
+
+                          <div>
+
+                            <h4 className="
+                              text-base
+
+                              font-bold
+
+                              text-slate-800
+                            ">
+                              {c.cliente?.nombre}{" "}
+                              {c.cliente?.apellido}
+                            </h4>
+
+                            <p className="
+                              mt-1
+
+                              text-sm
+
+                              text-slate-500
+                            ">
+                              {c.motivo}
+                            </p>
+
+                          </div>
 
                         </div>
 
                       </div>
 
-                    </div>
+                    );
 
-                  );
+                  })}
 
-                })}
+                </div>
+
+              )}
+
+            </div>
+
+          </div>
+
+          {/* ACTIVIDAD */}
+
+          <div className="
+            bg-white/95
+            backdrop-blur-md
+
+            border
+            border-slate-200/80
+
+            rounded-[34px]
+
+            p-6
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+            space-y-5
+          ">
+
+            <div>
+
+              <div className="
+                inline-flex
+
+                items-center
+                gap-2
+
+                text-violet-600
+
+                text-sm
+                font-bold
+              ">
+
+                <Activity size={18} />
+
+                Actividad reciente
 
               </div>
 
-            )}
+              <p className="
+                mt-2
+
+                text-sm
+
+                text-slate-500
+              ">
+                Últimos movimientos del sistema
+              </p>
+
+            </div>
+
+            <div className="
+              space-y-3
+
+              max-h-[420px]
+
+              overflow-y-auto
+
+              pr-1
+            ">
+
+              {actividades.map((item, idx) => (
+
+                <div
+                  key={idx}
+                  className="
+                    flex
+                    items-start
+
+                    gap-4
+
+                    p-4
+
+                    rounded-[24px]
+
+                    border
+                    border-transparent
+
+                    hover:border-slate-200
+
+                    hover:bg-slate-50/80
+
+                    transition-all
+                    duration-300
+                  "
+                >
+
+                  <div className="
+                    w-11
+                    h-11
+
+                    rounded-[18px]
+
+                    bg-gradient-to-br
+                    from-indigo-500/10
+                    to-purple-500/10
+
+                    text-indigo-600
+
+                    flex
+                    items-center
+                    justify-center
+
+                    shrink-0
+                  ">
+
+                    <item.icon size={18} />
+
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+
+                    <div className="
+                      flex
+                      items-center
+                      justify-between
+                    ">
+
+                      <p className="
+                        text-sm
+
+                        font-bold
+
+                        text-slate-700
+                      ">
+                        {item.title}
+                      </p>
+
+                      <span className="
+                        text-[11px]
+
+                        font-semibold
+
+                        text-slate-400
+                      ">
+                        {item.time}
+                      </span>
+
+                    </div>
+
+                    <p className="
+                      mt-1
+
+                      text-xs
+
+                      text-slate-500
+                    ">
+                      {item.desc}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
 
           </div>
 
         </div>
+              
+ {/* QUICK ACTIONS */}
+
+<QuickActions />
+
+{/* Calendar */}
+
+<AgendaCalendar
+  citas={citasMock}
+/>
+
+
 
         {/* KPIS */}
+
         <div className="space-y-5">
 
-          <div className="flex items-center justify-between">
+          <div className="
+            flex
+            items-center
+            justify-between
+          ">
 
             <div>
 
-              <h3 className="text-xl font-bold text-slate-800">
-                📈 Resumen financiero
-              </h3>
+              <div className="
+                inline-flex
 
-              <p className="text-sm text-gray-500 mt-1">
-                Métricas principales del negocio
+                items-center
+                gap-2
+
+                text-indigo-600
+
+                text-sm
+                font-bold
+              ">
+
+                <TrendingUp size={18} />
+
+                Resumen financiero
+
+              </div>
+
+              <p className="
+                mt-2
+
+                text-sm
+
+                text-slate-500
+              ">
+                Métricas principales de la clínica
               </p>
 
             </div>
 
             {collapseButton(
               showKpis,
-              () => setShowKpis(!showKpis)
+              () =>
+                setShowKpis(!showKpis)
             )}
 
           </div>
 
           <div className={`
-            overflow-hidden transition-all duration-500
+            overflow-hidden
+
+            transition-all
+            duration-500
+
             ${showKpis
               ? "max-h-[1200px] opacity-100"
               : "max-h-0 opacity-0"}
           `}>
 
             <div className="
-  grid
-  xl:grid-cols-[1.2fr_2fr]
-  gap-5
-">
+              grid
+              grid-cols-1
+              sm:grid-cols-2
+              xl:grid-cols-5
+
+              gap-5
+            ">
 
               {/* KPI PRINCIPAL */}
+
               <div className="
-    relative
+                xl:col-span-2
 
-    overflow-hidden
+                relative
+                overflow-hidden
 
-    bg-gradient-to-br
-    from-indigo-500
-    via-purple-500
-    to-violet-600
+                bg-gradient-to-br
+                from-indigo-500
+                via-purple-500
+                to-violet-600
 
-    rounded-[32px]
+                rounded-[34px]
 
-    p-7
+                p-7
 
-    shadow-[0_20px_50px_rgba(99,102,241,0.28)]
+                shadow-[0_20px_50px_rgba(99,102,241,0.25)]
 
-    min-h-[170px]
+                min-h-[180px]
 
-    flex flex-col justify-between
-  ">
-
-                <div className="
-  absolute
-
-  -top-10
-  -right-10
-
-  w-48
-  h-48
-
-  rounded-full
-
-  bg-white/10
-
-  blur-3xl
-" />
+                flex
+                flex-col
+                justify-between
+              ">
 
                 <div className="relative z-10">
 
                   <p className="
-        text-sm
-        font-medium
+                    text-sm
 
-        text-purple-100
-      ">
-                    Ganancia Neta
+                    text-purple-100
+                  ">
+                    Ganancia neta
                   </p>
 
                   <h2 className="
-        mt-3
+                    mt-4
 
-        text-4xl xl:text-5xl
+                    text-4xl
 
-        font-black
+                    font-black
 
-        text-white
+                    tracking-tight
 
-        tracking-tight
-      ">
+                    text-white
+                  ">
                     {formato(gananciaNeta)}
                   </h2>
 
                 </div>
 
                 <div className="
-      relative z-10
+                  relative
+                  z-10
 
-      flex items-center justify-between
-    ">
+                  flex
+                  items-center
+                  justify-between
+                ">
 
                   <div className="
-        px-3 py-1.5
+                    px-3
+                    py-1.5
 
-        rounded-full
+                    rounded-full
 
-        bg-white/15
+                    bg-white/15
 
-        border border-white/10
+                    text-xs
+                    font-semibold
 
-        text-xs font-semibold
-
-        text-white/90
-      ">
+                    text-white
+                  ">
                     KPI principal
                   </div>
 
-                  <span className="
-        text-5xl
-
-        opacity-90
-      ">
-                    🏦
-                  </span>
+                  <Banknote
+                    size={42}
+                    className="text-white/90"
+                  />
 
                 </div>
 
               </div>
 
-              {/* SLIDER */}
+              {/* KPIS SECUNDARIOS */}
 
-              <div
-                className="
-    overflow-hidden
-    relative
-  "
-
-                onMouseEnter={() =>
-                  setPauseSlider(true)
-                }
-
-                onMouseLeave={() =>
-                  setPauseSlider(false)
-                }
-              >
-
+              {kpis.map((kpi, idx) => (
 
                 <div
+                  key={idx}
                   className="
-        flex
+                    relative
+                    overflow-hidden
 
-        transition-transform
-        duration-700
-        ease-in-out
-      "
-                  style={{
-                    transform: `translateX(-${kpiIndex * 100}%)`
-                  }}
+                    bg-white/95
+                    backdrop-blur-md
+
+                    border
+                    border-slate-200/70
+
+                    rounded-[30px]
+
+                    p-5
+
+                    shadow-[0_10px_30px_rgba(0,0,0,0.04)]
+
+                    hover:-translate-y-[2px]
+
+                    hover:shadow-[0_18px_40px_rgba(0,0,0,0.06)]
+
+                    transition-all
+                    duration-300
+
+                    min-h-[135px]
+
+                    flex
+                    flex-col
+                    justify-between
+                  "
                 >
 
-                  {Array.from({
-                    length: Math.ceil(kpis.length / 3)
-                  }).map((_, slideIndex) => (
+                  <div className="
+                    w-12
+                    h-12
 
-                    <div
-                      key={slideIndex}
-                      className="
-            min-w-full
+                    rounded-[18px]
 
-            grid
-            grid-cols-1
-            md:grid-cols-3
+                    bg-gradient-to-br
+                    from-indigo-500/10
+                    to-purple-500/10
 
-            gap-4
-          "
-                    >
-
-                      {kpis
-                        .slice(
-                          slideIndex * 3,
-                          slideIndex * 3 + 3
-                        )
-                        .map((kpi, idx) => (
-
-                          <div
-                            key={idx}
-                            className={cardKpi()}
-                          >
-
-
-                            <div
-                              className={`
-    absolute
-    inset-0
-
-    opacity-80
-
-    bg-gradient-to-br
-
-    ${kpi.tint}
-  `}
-                            />
-
-
-                            <div className="relative z-10">
-
-                              <p className="
-                    text-xs
-                    text-gray-500
+                    flex
+                    items-center
+                    justify-center
                   ">
-                                {kpi.title}
-                              </p>
 
-                              <p className={`
-                    text-2xl md:text-3xl
-                    font-black
-                    mt-1
+                    <kpi.icon
+                      size={22}
+                      className={kpi.color}
+                    />
 
-                    ${kpi.color}
-                  `}>
-                                {kpi.value}
-                              </p>
+                  </div>
 
-                            </div>
+                  <div>
 
+                    <p className="
+                      text-sm
 
-                            <span className="
-  relative z-10
+                      text-slate-500
+                    ">
+                      {kpi.title}
+                    </p>
 
-  text-3xl
-  opacity-80
+                    <p className={`
+                      mt-2
+
+                      text-2xl
+
+                      font-black
+
+                      tracking-tight
+
+                      ${kpi.color}
+                    `}>
+
+                      {kpi.value}
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          </div>
+
+        </div>
+        <RevenueChart
+          data={revenueData}
+        />  <div className="
+  grid
+  grid-cols-1
+  xl:grid-cols-3
+
+  gap-6
 ">
 
-                              {kpi.icon}
-                            </span>
+          <div className="xl:col-span-2">
 
-                          </div>
+            <FinanceChart
+              data={financeData}
+            />
 
-                        ))}
+          </div>
+
+          <ServicesChart
+            data={servicesData}
+          />
+
+        </div>
+
+        <SmartInsights
+
+  ingresos={49442}
+  egresos={3500}
+  citasHoy={3}
+  topServicio="Limpieza"
+
+/>
+        {/* ANALYTICS */}
+
+        <div className="space-y-5">
+
+          <div className="
+            flex
+            items-center
+            justify-between
+          ">
+
+            <div>
+
+              <div className="
+                inline-flex
+
+                items-center
+                gap-2
+
+                text-indigo-600
+
+                text-sm
+                font-bold
+              ">
+
+                <BarChart3 size={18} />
+
+                Analíticas
+
+              </div>
+
+              <p className="
+                mt-2
+
+                text-sm
+
+                text-slate-500
+              ">
+                Tendencias y rendimiento general
+              </p>
+
+            </div>
+
+            {collapseButton(
+              showCharts,
+              () =>
+                setShowCharts(!showCharts)
+            )}
+
+          </div>
+
+          <div className={`
+            overflow-hidden
+
+            transition-all
+            duration-500
+
+            ${showCharts
+              ? "max-h-[3000px] opacity-100"
+              : "max-h-0 opacity-0"}
+          `}>
+
+            <div className="
+              grid
+              grid-cols-1
+              xl:grid-cols-3
+
+              gap-6
+            ">
+
+              {/* INGRESOS */}
+
+              <div className="
+                xl:col-span-2
+
+                bg-white/90
+                backdrop-blur-md
+
+                border
+                border-slate-200/70
+
+                rounded-[34px]
+
+                p-6
+
+                shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+                h-[520px]
+              ">
+
+                <div className="
+                  flex
+                  items-center
+                  justify-between
+
+                  mb-6
+                ">
+
+                  <div>
+
+                    <div className="
+                      inline-flex
+                      items-center
+                      gap-2
+
+                      text-indigo-600
+
+                      text-sm
+                      font-bold
+                    ">
+
+                      <TrendingUp size={18} />
+
+                      Ingresos y egresos
 
                     </div>
 
-                  ))}
+                    <p className="
+                      mt-2
+
+                      text-sm
+
+                      text-slate-500
+                    ">
+                      Rendimiento financiero mensual
+                    </p>
+
+                  </div>
+
+                  <div className="
+                    px-4
+                    py-3
+
+                    rounded-[22px]
+
+                    bg-indigo-500/10
+
+                    border
+                    border-indigo-100
+                  ">
+
+                    <p className="
+                      text-[11px]
+
+                      uppercase
+
+                      tracking-[0.12em]
+
+                      font-black
+
+                      text-indigo-400
+                    ">
+                      Ganancia neta
+                    </p>
+
+                    <p className="
+                      mt-1
+
+                      text-lg
+
+                      font-black
+
+                      text-indigo-700
+                    ">
+                      {formato(gananciaNeta)}
+                    </p>
+
+                  </div>
 
                 </div>
 
-                {/* INDICADORES */}
+                <div className="h-[420px]">
+
+                  <GraficoIngresos
+                    ingresos={ingresos}
+                    egresos={egresos}
+                  />
+
+                </div>
+
+              </div>
+
+              {/* RIGHT SIDE */}
+
+              <div className="
+                flex
+                flex-col
+
+                gap-6
+              ">
+
+                {/* CLIENTES */}
+
                 <div className="
-      flex justify-center gap-2 mt-5
-    ">
+                  bg-white/90
+                  backdrop-blur-md
 
-                  {Array.from({
-                    length: Math.ceil(kpis.length / 3)
-                  }).map((_, idx) => (
+                  border
+                  border-slate-200/70
 
-                    <button
-                      key={idx}
+                  rounded-[34px]
 
-                      onClick={() =>
-                        setKpiIndex(idx)
-                      }
+                  p-6
 
-                      className={`
-            h-2.5 rounded-full
+                  shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-            transition-all duration-300
+                  h-[250px]
+                ">
 
-            ${kpiIndex === idx
-                          ? "w-8 bg-gradient-to-r from-indigo-500 to-purple-500"
-                          : "w-2.5 bg-gray-300 hover:bg-gray-400"}
-          `}
+                  <div className="
+                    flex
+                    items-start
+                    justify-between
+
+                    mb-5
+                  ">
+
+                    <div>
+
+                      <div className="
+                        inline-flex
+                        items-center
+                        gap-2
+
+                        text-emerald-600
+
+                        text-sm
+                        font-bold
+                      ">
+
+                        <Users size={18} />
+
+                        Clientes
+
+                      </div>
+
+                      <p className="
+                        mt-2
+
+                        text-sm
+
+                        text-slate-500
+                      ">
+                        Distribución de pacientes
+                      </p>
+
+                    </div>
+
+                    <div className="text-right">
+
+                      <p className="
+                        text-2xl
+
+                        font-black
+
+                        text-slate-800
+                      ">
+                        {clientes.length}
+                      </p>
+
+                      <p className="
+                        text-xs
+
+                        text-emerald-500
+
+                        font-semibold
+                      ">
+                        +12% este mes
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <div className="h-[150px]">
+
+                    <GraficoClientes
+                      clientes={clientes}
                     />
 
-                  ))}
+                  </div>
+
+                </div>
+
+                {/* CITAS */}
+
+                <div className="
+                  bg-white/90
+                  backdrop-blur-md
+
+                  border
+                  border-slate-200/70
+
+                  rounded-[34px]
+
+                  p-6
+
+                  shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+                  h-[250px]
+                ">
+
+                  <div className="
+                    flex
+                    items-start
+                    justify-between
+
+                    mb-5
+                  ">
+
+                    <div>
+
+                      <div className="
+                        inline-flex
+                        items-center
+                        gap-2
+
+                        text-orange-500
+
+                        text-sm
+                        font-bold
+                      ">
+
+                        <CalendarDays size={18} />
+
+                        Citas
+
+                      </div>
+
+                      <p className="
+                        mt-2
+
+                        text-sm
+
+                        text-slate-500
+                      ">
+                        Rendimiento de consultas
+                      </p>
+
+                    </div>
+
+                    <div className="text-right">
+
+                      <p className="
+                        text-2xl
+
+                        font-black
+
+                        text-slate-800
+                      ">
+                        {citas.length}
+                      </p>
+
+                      <p className="
+                        text-xs
+
+                        text-orange-500
+
+                        font-semibold
+                      ">
+                        +8% mensual
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <div className="h-[150px]">
+
+                    <GraficoCitas
+                      citas={citas}
+                    />
+
+                  </div>
 
                 </div>
 
@@ -981,201 +1840,6 @@ function DashboardHome() {
           </div>
 
         </div>
-
-        {/* GRAFICOS */}
-       {/* GRAFICOS */}
-<div className="space-y-5">
-
-  <div className="flex items-center justify-between">
-
-    <div>
-
-      <h3 className="text-xl font-bold text-slate-800">
-        📊 Analíticas
-      </h3>
-
-      <p className="text-sm text-gray-500 mt-1">
-        Visualización de tendencias y rendimiento
-      </p>
-
-    </div>
-
-    {collapseButton(
-      showCharts,
-      () => setShowCharts(!showCharts)
-    )}
-
-  </div>
-
-  <div className={`
-    overflow-hidden transition-all duration-500
-    ${showCharts
-      ? "max-h-[3000px] opacity-100"
-      : "max-h-0 opacity-0"}
-  `}>
-
-    <div className="grid gap-6 xl:grid-cols-3 pt-1">
-
-      {[
-        {
-          title: "📈 Ingresos",
-          tint: `
-            from-indigo-500/10
-            via-indigo-500/5
-            to-transparent
-          `,
-          glow: "bg-indigo-500/5",
-          component: (
-            <GraficoIngresos
-              ingresos={ingresos}
-              egresos={egresos}
-            />
-          )
-        },
-        {
-          title: "👥 Clientes",
-          tint: `
-            from-emerald-500/10
-            via-emerald-500/5
-            to-transparent
-          `,
-          glow: "bg-emerald-500/5",
-          component: (
-            <GraficoClientes
-              clientes={clientes}
-            />
-          )
-        },
-        {
-          title: "📅 Citas",
-          tint: `
-            from-orange-500/10
-            via-orange-500/5
-            to-transparent
-          `,
-          glow: "bg-orange-500/5",
-          component: (
-            <GraficoCitas
-              citas={citas}
-            />
-          )
-        }
-      ].map((g, idx) => (
-
-        <div
-          key={idx}
-          className="
-            relative
-            overflow-hidden
-
-            bg-white/85
-            backdrop-blur-xl
-
-            border
-            border-white/40
-
-            rounded-[32px]
-
-            p-6
-
-            shadow-[0_10px_30px_rgba(0,0,0,0.06)]
-
-            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]
-
-            hover:-translate-y-[2px]
-            hover:scale-[1.01]
-
-            transition-all
-            duration-300
-
-            h-[500px]
-
-            flex
-            flex-col
-          "
-        >
-
-          {/* TINT */}
-          <div
-            className={`
-              absolute
-              inset-0
-
-              opacity-40
-
-              bg-gradient-to-br
-
-              ${g.tint}
-            `}
-          />
-
-          {/* GLOW */}
-          <div
-            className={`
-              absolute
-              -top-12
-              -right-12
-
-              w-44
-              h-44
-
-              rounded-full
-
-              blur-3xl
-
-              ${g.glow}
-            `}
-          />
-
-          {/* HEADER */}
-          <div className="
-            relative
-            z-10
-
-            mb-5
-
-            text-center
-          ">
-
-            <h3 className="
-              text-sm
-
-              font-black
-
-              tracking-wide
-
-              text-slate-700
-            ">
-              {g.title}
-            </h3>
-
-          </div>
-
-          {/* CHART */}
-          <div className="
-            relative
-            z-10
-
-            flex-1
-
-            min-h-0
-          ">
-
-            <div className="h-full w-full">
-              {g.component}
-            </div>
-
-          </div>
-
-        </div>
-
-      ))}
-
-    </div>
-
-  </div>
-
-</div>
 
       </div>
 

@@ -3,6 +3,17 @@ import { formatMoney } from "../../utils/format";
 
 import { useState } from "react";
 
+import {
+  CalendarDays,
+  Receipt,
+  BadgePercent,
+  Wallet,
+  CheckCircle2,
+  Pencil,
+  Eye,
+  Clock3
+} from "lucide-react";
+
 import ConfirmModal from "../ConfirmModal";
 
 function IngresoList({
@@ -29,13 +40,17 @@ function IngresoList({
     <div className="
       h-full
 
-      space-y-5
+      space-y-4
 
       overflow-y-auto
       overflow-x-hidden
 
-      pr-1
+      pr-2
       pb-2
+
+      scrollbar-thin
+      scrollbar-thumb-indigo-200/70
+      scrollbar-track-transparent
     ">
 
       {facturas.map((i) => {
@@ -82,14 +97,15 @@ function IngresoList({
             key={i.id}
             className={`
               group
+
               relative
               overflow-hidden
 
-              bg-white/90
-              backdrop-blur-xl
+              bg-white/95
+              backdrop-blur-md
 
               border
-              border-white/40
+              border-slate-200/80
 
               rounded-[34px]
 
@@ -99,11 +115,11 @@ function IngresoList({
               transition-all
               duration-500
 
-              hover:-translate-y-[4px]
+              hover:-translate-y-[2px]
 
-              hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
+              hover:shadow-[0_20px_45px_rgba(99,102,241,0.08)]
 
-              hover:border-indigo-100
+              hover:border-indigo-200
             `}
           >
 
@@ -115,7 +131,7 @@ function IngresoList({
                 top-0
                 left-0
 
-                h-1
+                h-[3px]
                 w-full
 
                 bg-gradient-to-r
@@ -160,12 +176,9 @@ function IngresoList({
               relative
               z-10
 
-              flex
-              flex-col
-              xl:flex-row
-
-              xl:items-center
-              xl:justify-between
+              grid
+              grid-cols-1
+              2xl:grid-cols-[1fr_auto]
 
               gap-6
             ">
@@ -175,16 +188,18 @@ function IngresoList({
               <div className="
                 flex
                 items-start
+
                 gap-5
 
                 min-w-0
-                flex-1
               ">
 
                 {/* AVATAR */}
 
                 <div
                   className={`
+                    relative
+
                     bg-gradient-to-br
                     ${colorAvatar}
 
@@ -204,6 +219,9 @@ function IngresoList({
 
                     shrink-0
 
+                    ring-4
+                    ring-white
+
                     shadow-[0_15px_35px_rgba(0,0,0,0.15)]
 
                     group-hover:scale-105
@@ -212,7 +230,28 @@ function IngresoList({
                     duration-300
                   `}
                 >
+
                   {letra}
+
+                  <div className={`
+                    absolute
+                    -bottom-1
+                    -right-1
+
+                    w-5
+                    h-5
+
+                    rounded-full
+
+                    border-4
+                    border-white
+
+                    ${i.pagado
+                      ? "bg-emerald-500"
+                      : "bg-yellow-400"
+                    }
+                  `} />
+
                 </div>
 
                 {/* INFO */}
@@ -221,119 +260,269 @@ function IngresoList({
                   min-w-0
                   flex-1
 
-                  space-y-4
+                  space-y-5
                 ">
 
                   {/* HEADER */}
 
                   <div className="
                     flex
-                    flex-wrap
+                    flex-col
+                    xl:flex-row
 
-                    items-center
+                    xl:items-start
+                    xl:justify-between
 
-                    gap-3
+                    gap-4
                   ">
 
-                    <h3 className="
-                      text-lg
-                      sm:text-xl
+                    {/* LEFT */}
 
-                      font-black
+                    <div className="min-w-0">
 
-                      text-slate-800
+                      <div className="
+                        flex
+                        flex-wrap
 
-                      truncate
-                    ">
+                        items-center
 
-                      {i.cliente?.nombre}
-                      {" "}
-                      {i.cliente?.apellido}
+                        gap-3
+                      ">
 
-                    </h3>
+                        <h3 className="
+                          text-lg
+                          sm:text-xl
 
-                    <span className={`
-                      px-3
-                      py-1.5
+                          font-black
 
-                      rounded-full
+                          text-slate-800
 
-                      text-[11px]
-                      font-bold
+                          truncate
+                        ">
+
+                          {i.cliente?.nombre}{" "}
+                          {i.cliente?.apellido}
+
+                        </h3>
+
+                        <span className={`
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          text-[11px]
+                          font-bold
+
+                          border
+
+                          shadow-sm
+
+                          ${i.pagado
+                            ? `
+                              bg-emerald-50
+                              text-emerald-600
+                              border-emerald-200
+                            `
+                            : `
+                              bg-yellow-50
+                              text-yellow-700
+                              border-yellow-200
+                            `
+                          }
+                        `}>
+
+                          {i.pagado
+                            ? "Pagado"
+                            : "Pendiente"}
+
+                        </span>
+
+                      </div>
+
+                      {/* MINI TAGS */}
+
+                      <div className="
+                        mt-3
+
+                        flex
+                        flex-wrap
+
+                        items-center
+                        gap-2
+                      ">
+
+                        <div className="
+                          inline-flex
+
+                          items-center
+                          gap-2
+
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          bg-indigo-50
+
+                          text-indigo-600
+
+                          text-xs
+                          font-semibold
+                        ">
+
+                          <Receipt size={12} />
+
+                          Facturación clínica
+
+                        </div>
+
+                        <div className="
+                          inline-flex
+
+                          items-center
+                          gap-2
+
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          bg-slate-100
+
+                          text-slate-600
+
+                          text-xs
+                          font-semibold
+                        ">
+
+                          <Clock3 size={12} />
+
+                          Control financiero
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    {/* STATUS CARD */}
+
+                    <div className={`
+                      shrink-0
+
+                      rounded-[24px]
 
                       border
 
-                      shadow-sm
+                      px-5
+                      py-4
+
+                      min-w-[230px]
 
                       ${i.pagado
-                        ? `
-                          bg-emerald-50
-                          text-emerald-600
-                          border-emerald-200
-                        `
-                        : `
-                          bg-yellow-50
-                          text-yellow-700
-                          border-yellow-200
-                        `
+                        ? "bg-emerald-50 border-emerald-100"
+                        : "bg-yellow-50 border-yellow-100"
                       }
                     `}>
 
-                      {i.pagado
-                        ? "Pagado"
-                        : "Pendiente"}
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
 
-                    </span>
+                        text-sm
+                        font-bold
+
+                        text-slate-700
+                      ">
+
+                        <Wallet size={15} />
+
+                        Estado financiero
+
+                      </div>
+
+                      <p className="
+                        mt-3
+
+                        text-base
+
+                        font-black
+
+                        text-slate-800
+                      ">
+
+                        {i.pagado
+                          ? "Factura pagada"
+                          : "Pago pendiente"}
+
+                      </p>
+
+                      <p className="
+                        mt-1
+
+                        text-xs
+
+                        text-slate-500
+                      ">
+
+                        Seguimiento administrativo
+
+                      </p>
+
+                    </div>
 
                   </div>
 
-                  {/* INFO GRID */}
+                  {/* GRID */}
 
                   <div className="
                     grid
-                    lg:grid-cols-4
-                    md:grid-cols-3
+                    grid-cols-1
+                    md:grid-cols-2
+                    xl:grid-cols-4
 
-                    gap-3
+                    gap-4
                   ">
 
                     {/* FECHA */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
+                        font-black
 
                         uppercase
 
                         tracking-[0.12em]
-
-                        text-gray-400
-
-                        font-black
                       ">
+
+                        <CalendarDays size={12} />
+
                         Fecha
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
 
                         text-sm
 
@@ -341,7 +530,9 @@ function IngresoList({
 
                         text-slate-700
                       ">
+
                         {formatFecha(i.created_at)}
+
                       </p>
 
                     </div>
@@ -349,40 +540,40 @@ function IngresoList({
                     {/* SERVICIOS */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
+                        font-black
 
                         uppercase
 
                         tracking-[0.12em]
-
-                        text-gray-400
-
-                        font-black
                       ">
-                        Servicios
-                      </p>
+
+                        <Receipt size={12} />
+
+                        Tratamientos
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
 
                         text-sm
 
@@ -390,7 +581,9 @@ function IngresoList({
 
                         text-slate-700
                       ">
+
                         {(i.servicios || []).length}
+
                       </p>
 
                     </div>
@@ -398,40 +591,40 @@ function IngresoList({
                     {/* DESCUENTO */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
+                        font-black
 
                         uppercase
 
                         tracking-[0.12em]
-
-                        text-gray-400
-
-                        font-black
                       ">
+
+                        <BadgePercent size={12} />
+
                         Descuento
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
 
                         text-sm
 
@@ -439,30 +632,95 @@ function IngresoList({
 
                         text-slate-700
                       ">
+
                         {descuento}%
+
+                      </p>
+
+                    </div>
+
+                    {/* SUBTOTAL */}
+
+                    <div className="
+                      bg-slate-50/80
+
+                      border
+                      border-slate-200/60
+
+                      rounded-[24px]
+
+                      px-5
+                      py-4
+                    ">
+
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
+                        text-[11px]
+                        font-black
+
+                        uppercase
+
+                        tracking-[0.12em]
+                      ">
+
+                        <Wallet size={12} />
+
+                        Subtotal
+
+                      </div>
+
+                      <p className="
+                        mt-3
+
+                        text-sm
+
+                        font-bold
+
+                        text-slate-700
+                      ">
+
+                        RD$
+                        {" "}
+                        {formatMoney(subtotal)}
+
                       </p>
 
                     </div>
 
                     {/* TOTAL */}
 
-                    <div className="
-                      lg:col-span-2
-
-                      bg-gradient-to-r
-
-                      from-emerald-500
-                      to-green-500
+                    <div className={`
+                      md:col-span-2
+                      xl:col-span-4
 
                       rounded-[28px]
 
                       px-6
-                      py-5
+                      py-4
 
                       text-white
 
-                      shadow-[0_15px_35px_rgba(16,185,129,0.25)]
-                    ">
+                      shadow-[0_15px_35px_rgba(99,102,241,0.18)]
+
+                      ${i.pagado
+                        ? `
+                          bg-gradient-to-r
+                          from-emerald-500
+                          to-green-500
+                        `
+                        : `
+                          bg-gradient-to-r
+                          from-indigo-500
+                          via-purple-500
+                          to-violet-500
+                        `
+                      }
+                    `}>
 
                       <p className="
                         text-[11px]
@@ -478,19 +736,45 @@ function IngresoList({
                         Total factura
                       </p>
 
-                      <p className="
-                        mt-2
+                      <div className="
+                        mt-3
 
-                        text-3xl
+                        flex
+                        items-center
+                        justify-between
 
-                        font-black
+                        gap-4
                       ">
 
-                        RD$
-                        {" "}
-                        {formatMoney(total)}
+                        <h2 className="
+                          text-2xl
 
-                      </p>
+                          font-black
+                        ">
+
+                          RD$
+                          {" "}
+                          {formatMoney(total)}
+
+                        </h2>
+
+                        <div className="
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          bg-white/15
+
+                          text-xs
+                          font-bold
+                        ">
+
+                          ITBIS incluido
+
+                        </div>
+
+                      </div>
 
                     </div>
 
@@ -499,7 +783,6 @@ function IngresoList({
                 </div>
 
               </div>
-
               {/* RIGHT PANEL */}
 
               <div
@@ -507,16 +790,27 @@ function IngresoList({
                   e.stopPropagation()
                 }
                 className="
-                  xl:min-w-[180px]
+    self-center
 
-                  flex
-                  flex-row
-                  xl:flex-col
+    2xl:w-[200px]
 
-                  items-stretch
+    bg-slate-50/80
 
-                  gap-3
-                "
+    border
+    border-slate-200/70
+
+    rounded-[28px]
+
+    p-4
+
+    flex
+    flex-row
+    2xl:flex-col
+
+    items-stretch
+
+    gap-3
+  "
               >
 
                 {/* PAGADA */}
@@ -528,47 +822,42 @@ function IngresoList({
                       onVerFactura(i)
                     }
                     className="
-    group
+        h-12
 
-    relative
-    overflow-hidden
+        px-5
 
-    h-11
+        rounded-2xl
 
-    px-5
+        bg-gradient-to-r
+        from-indigo-500
+        via-purple-500
+        to-violet-500
 
-    rounded-[22px]
+        text-white
 
-    bg-gradient-to-r
-   from-indigo-500
-                      via-purple-500
-                      to-violet-500
+        text-sm
+        font-black
 
-    text-white
+        shadow-[0_12px_30px_rgba(99,102,241,0.25)]
 
-    text-sm
-    font-black
+        hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
 
-    shadow-[0_12px_30px_rgba(16,185,129,0.22)]
+        hover:scale-[1.02]
 
-    hover:shadow-[0_18px_40px_rgba(16,185,129,0.30)]
+        transition-all
+        duration-300
 
-    hover:scale-[1.02]
-
-    active:scale-[0.97]
-
-    transition-all
-    duration-300
-
-    whitespace-nowrap
-
-    flex
-    items-center
-    justify-center
-    gap-2.5
-  "
+        flex
+        items-center
+        justify-center
+        gap-2
+      "
                   >
-                    📄 Ver factura
+
+                    <Eye size={15} />
+
+                    Ver factura
+
                   </button>
 
                 )}
@@ -586,141 +875,90 @@ function IngresoList({
                         setIngresoAPagar(i)
                       }
                       className="
-    group
+          h-12
 
-    relative
-    overflow-hidden
+          px-5
 
-    h-11
+          rounded-2xl
 
-    px-5
+          bg-gradient-to-r
+          from-emerald-500
+          via-green-500
+          to-emerald-600
 
-    rounded-[22px]
+          text-white
 
-    bg-gradient-to-r
-    from-emerald-500
-    via-green-500
-    to-emerald-600
+          text-sm
+          font-black
 
-    text-white
+          shadow-[0_12px_30px_rgba(16,185,129,0.22)]
 
-    text-sm
-    font-black
+          hover:shadow-[0_18px_40px_rgba(16,185,129,0.30)]
 
-    shadow-[0_12px_30px_rgba(16,185,129,0.22)]
+          hover:scale-[1.02]
 
-    hover:shadow-[0_18px_40px_rgba(16,185,129,0.30)]
+          transition-all
+          duration-300
 
-    hover:scale-[1.02]
-
-    active:scale-[0.97]
-
-    transition-all
-    duration-300
-
-    whitespace-nowrap
-
-    flex
-    items-center
-    justify-center
-    gap-2.5
-  "
+          flex
+          items-center
+          justify-center
+          gap-2
+        "
                     >
 
-                      {/* GLOW */}
+                      <CheckCircle2 size={15} />
 
-                      <div className="
-    absolute
-    inset-0
-
-    opacity-0
-
-    bg-white/10
-
-    group-hover:opacity-100
-
-    transition-all
-    duration-300
-  " />
-
-                      {/* ICON */}
-
-                      <span className="
-    relative
-    z-10
-
-    text-sm
-  ">
-                        💳
-                      </span>
-
-                      {/* TEXT */}
-
-                      <span className="relative z-10">
-                        Marcar pagado
-                      </span>
+                      Marcar pagado
 
                     </button>
 
                     {/* ACTIONS */}
 
-                    <div className="
-                      flex
-                      items-center
-                      justify-center
+                    <button
+                      onClick={() =>
+                        onEditar(i)
+                      }
+                      className="
+          h-12
 
-                      gap-3
-                    ">
+          px-5
 
-                      {/* EDITAR */}
+          rounded-2xl
 
-                      <button
-                        onClick={() =>
-                          onEditar(i)
-                        }
-                        className="
-                      w-12
-                      h-12
+          bg-slate-100
 
-                      rounded-[20px]
+          border
+          border-slate-200
 
-                      bg-gradient-to-br
-                      from-slate-100
-                      to-slate-200/70
+          text-slate-700
 
-                      text-slate-500
+          text-sm
+          font-bold
 
-                      hover:text-slate-700
+          hover:bg-slate-200
 
-                      border
-                      border-white
+          transition-all
+          duration-300
 
-                      flex
-                      items-center
-                      justify-center
+          flex
+          items-center
+          justify-center
+          gap-2
+        "
+                    >
 
-                      hover:scale-110
+                      <Pencil size={15} />
 
-                      active:scale-95
+                      Editar
 
-                      hover:shadow-lg
-
-                      transition-all
-                      duration-300
-                    "
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
-
-                    </div>
+                    </button>
 
                   </>
 
                 )}
 
               </div>
-
             </div>
 
           </div>

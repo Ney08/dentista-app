@@ -8,6 +8,18 @@ import { useClientes } from "../../hooks/useClientes";
 import provincias from "../../data/provincias.json";
 import municipios from "../../data/municipios.json";
 
+import {
+  User2,
+  IdCard,
+  MapPin,
+  Phone,
+  Building2,
+  MapPinned,
+  Home,
+  Save,
+  X
+} from "lucide-react";
+
 function ClienteForm({
   cliente,
   onClose
@@ -322,18 +334,13 @@ function ClienteForm({
       md:h-auto
       md:max-h-[92vh]
 
-      bg-white/95
-      backdrop-blur-2xl
-
+      
       rounded-t-[36px]
       md:rounded-[36px]
 
-      border-0
-      md:border
-      border-white/40
+      
 
-      shadow-[0_25px_80px_rgba(0,0,0,0.15)]
-
+      
       p-5
       sm:p-6
 
@@ -366,52 +373,78 @@ function ClienteForm({
       {/* HEADER */}
 
       <div className="
-        relative
-        z-10
+  relative
+  z-10
 
-        text-center
+  text-center
 
-        space-y-3
+  space-y-3
 
-        shrink-0
-      ">
+  shrink-0
+">
+
+        <div className="
+    mx-auto
+
+    w-20
+    h-20
+
+    rounded-[28px]
+
+    bg-gradient-to-br
+    from-indigo-500
+    via-purple-500
+    to-violet-500
+
+    text-white
+
+    flex
+    items-center
+    justify-center
+
+    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+  ">
+
+          <User2 size={34} />
+
+        </div>
 
         <h2 className="
-          text-3xl
-          sm:text-4xl
+    text-3xl
+    sm:text-4xl
 
-          font-black
+    font-black
 
-          tracking-tight
+    tracking-tight
 
-          text-slate-800
-        ">
+    text-slate-800
+  ">
 
           {isEdit
-            ? "Editar cliente ✏️"
-            : "Nuevo cliente 👤"}
+            ? "Editar cliente"
+            : "Nuevo cliente"}
 
         </h2>
 
         <div className="
-          w-20
-          h-1
+    w-20
+    h-1
 
-          mx-auto
+    mx-auto
 
-          rounded-full
+    rounded-full
 
-          bg-gradient-to-r
-          from-indigo-500
-          to-purple-500
-        " />
+    bg-gradient-to-r
+    from-indigo-500
+    to-purple-500
+  " />
 
         <p className="
-          text-sm
-          sm:text-base
+    text-sm
+    sm:text-base
 
-          text-gray-500
-        ">
+    text-slate-500
+  ">
           Completa la información básica
         </p>
 
@@ -438,75 +471,75 @@ function ClienteForm({
         {/* INFO BASICA */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          space-y-4
-        ">
+  space-y-4
+">
 
           <div className="
-            flex
-            items-center
-            gap-3
-          ">
+    flex
+    items-center
+    gap-3
+  ">
 
             <div className="
-              w-12
-              h-12
+      w-12
+      h-12
 
-              rounded-[18px]
+      rounded-[18px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              to-purple-500
+      bg-gradient-to-br
+      from-indigo-500
+      via-purple-500
+      to-violet-500
 
-              text-white
+      text-white
 
-              flex
-              items-center
-              justify-center
+      flex
+      items-center
+      justify-center
+    ">
 
-              text-xl
-            ">
-              👤
+              <User2 size={20} />
+
             </div>
 
             <div>
 
               <h3 className="
-                text-sm
+        text-sm
 
-                font-black
+        font-black
 
-                uppercase
+        uppercase
 
-                tracking-[0.12em]
+        tracking-[0.12em]
 
-                text-slate-700
-              ">
+        text-slate-700
+      ">
                 Información básica
               </h3>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
+        text-xs
+        text-slate-400
+      ">
                 Datos personales del cliente
               </p>
 
             </div>
 
           </div>
+
 
           <div className="
             grid
@@ -520,15 +553,23 @@ function ClienteForm({
 
             <div className="space-y-2">
 
-              <label className="
-                text-xs
+              {/* <label className="
+    text-xs
 
-                font-bold
+    font-bold
 
-                text-gray-500
-              ">
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+                <User2 size={13} />
+
                 Nombre
-              </label>
+
+              </label> */}
 
               <input
                 {...register(
@@ -572,15 +613,23 @@ function ClienteForm({
 
             <div className="space-y-2">
 
-              <label className="
-                text-xs
+              {/* <label className="
+    text-xs
 
-                font-bold
+    font-bold
 
-                text-gray-500
-              ">
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+                <User2 size={13} />
+
                 Apellido
-              </label>
+
+              </label> */}
 
               <input
                 {...register(
@@ -627,69 +676,67 @@ function ClienteForm({
         {/* IDENTIDAD */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          space-y-4
-        ">
+  space-y-4
+">
 
           <div className="
-            flex
-            items-center
-            gap-3
-          ">
+    flex
+    items-center
+    gap-3
+  ">
 
             <div className="
-              w-12
-              h-12
+      w-12
+      h-12
 
-              rounded-[18px]
+      rounded-[18px]
 
-              bg-gradient-to-br
-              from-emerald-500
-              to-green-500
+      bg-gradient-to-br
+      from-emerald-500
+      to-green-500
 
-              text-white
+      text-white
 
-              flex
-              items-center
-              justify-center
+      flex
+      items-center
+      justify-center
+    ">
 
-              text-xl
-            ">
-              🪪
+              <IdCard size={20} />
+
             </div>
 
             <div>
 
               <h3 className="
-                text-sm
+        text-sm
 
-                font-black
+        font-black
 
-                uppercase
+        uppercase
 
-                tracking-[0.12em]
+        tracking-[0.12em]
 
-                text-slate-700
-              ">
+        text-slate-700
+      ">
                 Identidad
               </h3>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
+        text-xs
+        text-slate-400
+      ">
                 Documento y contacto
               </p>
 
@@ -708,18 +755,26 @@ function ClienteForm({
             {/* CEDULA */}
 
             <div className="
-              space-y-2
-            ">
+  space-y-2
+">
 
-              <label className="
-                text-xs
+              {/* <label className="
+    text-xs
 
-                font-bold
+    font-bold
 
-                text-gray-500
-              ">
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+                <IdCard size={13} />
+
                 Cédula
-              </label>
+
+              </label> */}
 
               <input
                 {...register("cedula")}
@@ -784,18 +839,26 @@ function ClienteForm({
             {/* TELEFONO */}
 
             <div className="
-              space-y-2
-            ">
+  space-y-2
+">
 
-              <label className="
-                text-xs
+              {/* <label className="
+    text-xs
 
-                font-bold
+    font-bold
 
-                text-gray-500
-              ">
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+                <Phone size={13} />
+
                 Teléfono
-              </label>
+
+              </label> */}
 
               <input
                 {...register("telefono")}
@@ -839,69 +902,67 @@ function ClienteForm({
         {/* UBICACION */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          space-y-4
-        ">
+  space-y-4
+">
 
           <div className="
-            flex
-            items-center
-            gap-3
-          ">
+    flex
+    items-center
+    gap-3
+  ">
 
             <div className="
-              w-12
-              h-12
+      w-12
+      h-12
 
-              rounded-[18px]
+      rounded-[18px]
 
-              bg-gradient-to-br
-              from-rose-500
-              to-pink-500
+      bg-gradient-to-br
+      from-rose-500
+      to-pink-500
 
-              text-white
+      text-white
 
-              flex
-              items-center
-              justify-center
+      flex
+      items-center
+      justify-center
+    ">
 
-              text-xl
-            ">
-              📍
+              <MapPin size={20} />
+
             </div>
 
             <div>
 
               <h3 className="
-                text-sm
+        text-sm
 
-                font-black
+        font-black
 
-                uppercase
+        uppercase
 
-                tracking-[0.12em]
+        tracking-[0.12em]
 
-                text-slate-700
-              ">
+        text-slate-700
+      ">
                 Ubicación
               </h3>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
+        text-xs
+        text-slate-400
+      ">
                 Provincia y dirección
               </p>
 
@@ -920,18 +981,26 @@ function ClienteForm({
             {/* PROVINCIA */}
 
             <div className="
-              space-y-2
-            ">
+  space-y-2
+">
 
-              <label className="
-                text-xs
+              {/* <label className="
+    text-xs
 
-                font-bold
+    font-bold
 
-                text-gray-500
-              ">
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+                <Building2 size={13} />
+
                 Provincia
-              </label>
+
+              </label> */}
 
               <select
                 value={provincia ?? ""}
@@ -998,18 +1067,27 @@ function ClienteForm({
             {/* MUNICIPIO */}
 
             <div className="
-              space-y-2
-            ">
+  space-y-2
+">
 
-              <label className="
-                text-xs
+              {/* <label className="
+    text-xs
 
-                font-bold
-                
-                text-gray-500
-              ">
+    font-bold
+
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+                <MapPinned size={13} />
+
                 Municipio
-              </label>
+
+              </label> */}
+
 
               <select
                 value={municipio ?? ""}
@@ -1054,7 +1132,7 @@ function ClienteForm({
 
                 {municipiosFiltrados.map((m) => (
 
-                  <option 
+                  <option
                     key={m.nombre}
                     value={m.nombre}
                   >
@@ -1072,18 +1150,26 @@ function ClienteForm({
           {/* CALLE */}
 
           <div className="
-            space-y-2
-          ">
+  space-y-2
+">
 
-            <label className="
-              text-xs
+            {/* <label className="
+    text-xs
 
-              font-bold
+    font-bold
 
-              text-gray-500
-            ">
+    text-slate-500
+
+    flex
+    items-center
+    gap-2
+  ">
+
+              <Home size={13} />
+
               Dirección / Calle
-            </label>
+
+            </label> */}
 
             <input
               {...register("calle")}
@@ -1122,108 +1208,125 @@ function ClienteForm({
 
         </div>
 
-        {/* ACTIONS */}
+       {/* ACTIONS */}
 
-        <div className="
-          sticky
-          bottom-0
+<div className="
+  sticky
+  bottom-0
 
-          bg-white/90
-          backdrop-blur-xl
+  bg-white/90
+  backdrop-blur-xl
 
-          pt-2
+  pt-2
 
-          flex
-          flex-col
-          sm:flex-row
+  flex
+  flex-col
+  sm:flex-row
 
-          gap-3
+  gap-3
 
-          shrink-0
-        ">
+  shrink-0
+">
 
-          {/* PRIMARY */}
-          <button
-            type="button"
-            onClick={onClose}
-            className="
-              flex-1
+  {/* CANCEL */}
 
-              h-14
+  <button
+    type="button"
+    onClick={onClose}
+    className="
+      flex-1
 
-              rounded-[24px]
+      h-14
 
-              bg-slate-100
+      rounded-[24px]
 
-              hover:bg-slate-200
+      bg-slate-100
 
-              text-slate-700
+      hover:bg-slate-200
 
-              font-semibold
+      text-slate-700
 
-              transition-all
-              duration-300
+      font-semibold
 
-              active:scale-[0.98]
-            "
-          >
-            Cancelar
-          </button>
+      transition-all
+      duration-300
 
-          <button
-            type="submit"
-            disabled={
-              loading ||
-              cedulaError
-            }
-            className={`
-              flex-1
+      active:scale-[0.98]
 
-              h-14
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
+  >
 
-              rounded-[24px]
+    <X size={18} />
 
-              text-white
+    Cancelar
 
-              text-sm
-              sm:text-base
+  </button>
 
-              font-black
+  {/* SUBMIT */}
 
-              transition-all
-              duration-300
+  <button
+    type="submit"
+    disabled={
+      loading ||
+      cedulaError
+    }
+    className={`
+      flex-1
 
-              active:scale-[0.98]
+      h-14
 
-              ${loading || cedulaError
-                ? "bg-gray-400 cursor-not-allowed"
-                : `
-                  bg-gradient-to-r
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+      rounded-[24px]
 
-                  shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+      text-white
 
-                  hover:scale-[1.01]
+      text-sm
+      sm:text-base
 
-                  hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
-                `
-              }
-            `}
-          >
+      font-black
 
-            {loading
-              ? "Guardando..."
-              : isEdit
-                ? "Actualizar cliente"
-                : "Crear cliente"}
+      transition-all
+      duration-300
 
-          </button>
+      active:scale-[0.98]
 
+      flex
+      items-center
+      justify-center
+      gap-2
 
+      ${loading || cedulaError
+        ? "bg-gray-400 cursor-not-allowed"
+        : `
+          bg-gradient-to-r
+          from-indigo-500
+          via-purple-500
+          to-violet-500
 
-        </div>
+          shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+          hover:scale-[1.01]
+
+          hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+        `
+      }
+    `}
+  >
+
+    <Save size={18} />
+
+    {loading
+      ? "Guardando..."
+      : isEdit
+        ? "Actualizar cliente"
+        : "Crear cliente"}
+
+  </button>
+
+</div>
 
       </form>
 

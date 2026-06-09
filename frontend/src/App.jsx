@@ -5,6 +5,7 @@ import {
   Navigate
 } from "react-router-dom";
 
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Toaster } from "react-hot-toast";
 
 // ✅ AUTH GLOBAL

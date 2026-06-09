@@ -1,32 +1,88 @@
 import { useState } from "react";
+
+import {
+  BarChart3,
+  Wallet,
+  BadgeDollarSign,
+  TrendingUp,
+  TrendingDown,
+  Users,
+  Receipt,
+  CalendarDays,
+  FileSpreadsheet,
+  FileText,
+  Activity,
+  Crown,
+  Stethoscope,
+  X,
+  ArrowUpRight,
+  CircleDollarSign,
+  ClipboardList
+} from "lucide-react";
+
 import { useIngresos } from "../hooks/useIngresos";
 import { useEgresos } from "../hooks/useEgresos";
+import { useServicios } from "../hooks/useServicios";
+
 import PageWrapper from "../components/PageWrapper";
 import SkeletonLoader from "../components/SkeletonLoader";
+
 import { generarReporte } from "../utils/pdfReporte";
-import { parseFechaLocal } from "../utils/fecha";
 import { exportToExcel } from "../utils/exportExcel";
-import { formatMoney } from "../utils/format";
-import { useServicios } from "../hooks/useServicios";
+
+import {
+  parseFechaLocal
+} from "../utils/fecha";
+
+import {
+  formatMoney
+} from "../utils/format";
+
 function ReportesPage() {
 
-  const { ingresos, isLoading } = useIngresos();
+  const {
+    ingresos,
+    isLoading
+  } = useIngresos();
 
-  const { egresos } = useEgresos();
-  const { servicios } = useServicios();
-  const [tipo, setTipo] = useState("mensual");
+  const {
+    egresos
+  } = useEgresos();
 
-  const [desde, setDesde] = useState("");
+  const {
+    servicios
+  } = useServicios();
 
-  const [hasta, setHasta] = useState("");
+  const [tipo, setTipo] =
+    useState("mensual");
 
-  const ahora = new Date();
+  const [desde, setDesde] =
+    useState("");
+
+  const [hasta, setHasta] =
+    useState("");
+
+  const ahora =
+    new Date();
 
   const labelMap = {
-    semanal: "Últimos 7 días",
-    mensual: "Este mes",
-    anual: "Este año",
+
+    semanal:
+      "Últimos 7 días",
+
+    mensual:
+      "Este mes",
+
+    anual:
+      "Este año"
+
   };
+
+  /*
+  ==========================================
+  HELPERS
+  ==========================================
+  */
 
   const serviciosMap = {};
 
@@ -41,19 +97,29 @@ function ReportesPage() {
 
     if (desde) {
 
-      const fDesde = new Date(desde);
+      const fDesde =
+        new Date(desde);
 
-      if (fecha < fDesde) return false;
+      if (fecha < fDesde) {
+        return false;
+      }
 
     }
 
     if (hasta) {
 
-      const fHasta = new Date(hasta);
+      const fHasta =
+        new Date(hasta);
 
-      fHasta.setHours(23, 59, 59);
+      fHasta.setHours(
+        23,
+        59,
+        59
+      );
 
-      if (fecha > fHasta) return false;
+      if (fecha > fHasta) {
+        return false;
+      }
 
     }
 
@@ -61,9 +127,12 @@ function ReportesPage() {
 
       if (tipo === "semanal") {
 
-        const hace7 = new Date();
+        const hace7 =
+          new Date();
 
-        hace7.setDate(ahora.getDate() - 7);
+        hace7.setDate(
+          ahora.getDate() - 7
+        );
 
         return fecha >= hace7;
 
@@ -80,7 +149,9 @@ function ReportesPage() {
 
       if (tipo === "anual") {
 
-        return fecha.getFullYear() === ahora.getFullYear();
+        return (
+          fecha.getFullYear() === ahora.getFullYear()
+        );
 
       }
 
@@ -90,155 +161,235 @@ function ReportesPage() {
 
   };
 
-  const ingresosFiltrados = ingresos.filter((ingreso) => {
+  /*
+  ==========================================
+  FILTROS
+  ==========================================
+  */
 
-    if (!ingreso.created_at || !ingreso.pagado) return false;
+  const ingresosFiltrados =
+    ingresos.filter((ingreso) => {
 
-    const fecha = parseFechaLocal(ingreso.created_at);
+      if (
+        !ingreso.created_at ||
+        !ingreso.pagado
+      ) {
+        return false;
+      }
 
-    return filtrarFecha(fecha);
+      const fecha =
+        parseFechaLocal(
+          ingreso.created_at
+        );
 
-  });
+      return filtrarFecha(
+        fecha
+      );
 
-  const egresosFiltrados = egresos.filter((egreso) => {
+    });
 
-    const fecha = parseFechaLocal(
-      egreso.fecha || egreso.created_at
+  const egresosFiltrados =
+    egresos.filter((egreso) => {
+
+      const fecha =
+        parseFechaLocal(
+          egreso.fecha ||
+          egreso.created_at
+        );
+
+      return filtrarFecha(
+        fecha
+      );
+
+    });
+
+  /*
+  ==========================================
+  TABLA
+  ==========================================
+  */
+
+  const datosTabla =
+    ingresosFiltrados.map((ingreso) => {
+
+      const fecha =
+        parseFechaLocal(
+          ingreso.created_at
+        );
+
+      const tratamientos =
+        ingreso.servicios || [];
+
+      const subtotal =
+        tratamientos.reduce(
+          (s, x) =>
+            s + (x.monto || 0),
+          0
+        );
+
+      const costos =
+        tratamientos.reduce(
+          (s, x) =>
+            s + Number(
+              x.costo_servicio || 0
+            ),
+          0
+        );
+
+      const itbis =
+        subtotal * 0.18;
+
+      const descuento =
+        subtotal *
+        (
+          (ingreso.descuento || 0) / 100
+        );
+
+      const total =
+        subtotal +
+        itbis -
+        descuento;
+
+      const utilidad =
+        total - costos;
+
+      return {
+
+        Fecha:
+          fecha,
+
+        FechaStr:
+          fecha.toLocaleDateString("es-DO"),
+
+        Paciente:
+          `${ingreso.cliente?.nombre || ""} ${ingreso.cliente?.apellido || ""}`.trim(),
+
+        Tratamientos:
+          tratamientos
+            .map((s) => {
+
+              const nombreServicio =
+                serviciosMap[s.servicio_id] ||
+                serviciosMap[s.catalogo_servicio_id] ||
+                serviciosMap[s.servicio_catalogo_id] ||
+                s.nombre_servicio ||
+                s.nombre ||
+                s.servicio;
+
+              return nombreServicio || "Procedimiento";
+
+            })
+            .filter(Boolean)
+            .join(", "),
+
+        Subtotal:
+          subtotal,
+
+        ITBIS:
+          itbis,
+
+        Descuento:
+          descuento,
+
+        Costos:
+          costos,
+
+        Total:
+          total,
+
+        Utilidad:
+          utilidad
+
+      };
+
+    });
+
+  const datosOrdenados =
+    [...datosTabla].sort(
+      (a, b) =>
+        b.Fecha - a.Fecha
     );
 
-    return filtrarFecha(fecha);
+  /*
+  ==========================================
+  KPIS
+  ==========================================
+  */
 
-  });
-
-  const datosTabla = ingresosFiltrados.map((ingreso) => {
-
-    const fecha = parseFechaLocal(ingreso.created_at);
-
-    const tratamientos = ingreso.servicios || [];
-
-    const subtotal = tratamientos.reduce(
-      (s, x) => s + (x.monto || 0),
+  const ingresosClinicos =
+    datosOrdenados.reduce(
+      (acc, d) =>
+        acc + d.Total,
       0
     );
 
-    const costos = tratamientos.reduce(
-      (s, x) =>
-        s + Number(x.costo_servicio || 0),
+  const costosClinicos =
+    datosOrdenados.reduce(
+      (acc, d) =>
+        acc + d.Costos,
       0
     );
 
-    const itbis = subtotal * 0.18;
+  const produccionOperativa =
+    datosOrdenados.reduce(
+      (acc, d) =>
+        acc + d.Utilidad,
+      0
+    );
 
-    const descuento =
-      subtotal * ((ingreso.descuento || 0) / 100);
+  const descuentosTotales =
+    datosOrdenados.reduce(
+      (acc, d) =>
+        acc + d.Descuento,
+      0
+    );
 
-    const total =
-      subtotal + itbis - descuento;
+  const totalEgresos =
+    egresosFiltrados.reduce(
+      (acc, e) =>
+        acc + Number(
+          e.monto || 0
+        ),
+      0
+    );
 
-    const utilidad =
-      total - costos;
-
-    return {
-
-      Fecha: fecha,
-
-      FechaStr:
-        fecha.toLocaleDateString("es-DO"),
-
-      Paciente:
-        `${ingreso.cliente?.nombre || ""} ${ingreso.cliente?.apellido || ""}`.trim(),
-
-      Tratamientos:
-  tratamientos
-    .map((s) => {
-
-      const nombreServicio =
-        serviciosMap[s.servicio_id] ||
-        serviciosMap[s.catalogo_servicio_id] ||
-        serviciosMap[s.servicio_catalogo_id] ||
-        s.nombre_servicio ||
-        s.nombre ||
-        s.servicio;
-
-      return nombreServicio || "Procedimiento";
-
-    })
-    .filter(Boolean)
-    .join(", "),
-      Subtotal: subtotal,
-
-      ITBIS: itbis,
-
-      Descuento: descuento,
-
-      Costos: costos,
-
-      Total: total,
-
-      Utilidad: utilidad
-
-    };
-
-  });
-
-  const datosOrdenados = [...datosTabla].sort(
-    (a, b) => b.Fecha - a.Fecha
-  );
-
-  const ingresosClinicos = datosOrdenados.reduce(
-    (acc, d) => acc + d.Total,
-    0
-  );
-
-  const costosClinicos = datosOrdenados.reduce(
-    (acc, d) => acc + d.Costos,
-    0
-  );
-
-  const produccionOperativa = datosOrdenados.reduce(
-    (acc, d) => acc + d.Utilidad,
-    0
-  );
-
-  const descuentosTotales = datosOrdenados.reduce(
-    (acc, d) => acc + d.Descuento,
-    0
-  );
-
-  const totalEgresos = egresosFiltrados.reduce(
-    (acc, e) =>
-      acc + Number(e.monto || 0),
-    0
-  );
-
-  const cajaDisponible = ingresosClinicos - totalEgresos
+  const cajaDisponible =
+    ingresosClinicos -
+    totalEgresos;
 
   const utilidadNeta =
-    produccionOperativa - totalEgresos;
+    produccionOperativa -
+    totalEgresos;
 
   const margenRentabilidad =
     ingresosClinicos > 0
-      ? (utilidadNeta / ingresosClinicos) * 100
+      ? (
+        utilidadNeta /
+        ingresosClinicos
+      ) * 100
       : 0;
 
   const rentabilidadColor =
     margenRentabilidad >= 40
-      ? "text-green-300"
+      ? "text-emerald-500"
       : margenRentabilidad >= 20
-        ? "text-yellow-300"
-        : "text-red-300";
+        ? "text-yellow-500"
+        : "text-rose-500";
 
   const totalFacturas =
     datosOrdenados.length;
 
   const promedioFactura =
     totalFacturas
-      ? ingresosClinicos / totalFacturas
+      ? ingresosClinicos /
+      totalFacturas
       : 0;
 
   const pacientesUnicos =
     new Set(
-      datosOrdenados.map(d => d.Paciente)
+      datosOrdenados.map(
+        d => d.Paciente
+      )
     ).size;
 
   const tratamientosRealizados =
@@ -249,27 +400,36 @@ function ReportesPage() {
       0
     );
 
-  const topPacientes = Object.entries(
+  /*
+  ==========================================
+  TOPS
+  ==========================================
+  */
 
-    datosOrdenados.reduce((acc, d) => {
+  const topPacientes =
+    Object.entries(
 
-      acc[d.Paciente] =
-        (acc[d.Paciente] || 0) + d.Total;
+      datosOrdenados.reduce((acc, d) => {
 
-      return acc;
+        acc[d.Paciente] =
+          (acc[d.Paciente] || 0) +
+          d.Total;
 
-    }, {})
+        return acc;
 
-  )
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
+      }, {})
+
+    )
+      .sort((a, b) =>
+        b[1] - a[1]
+      )
+      .slice(0, 5);
 
   const tratamientosMap = {};
 
   ingresosFiltrados.forEach(i => {
 
     (i.servicios || []).forEach(s => {
-
 
       const nombre =
         serviciosMap[s.servicio_id] ||
@@ -279,12 +439,14 @@ function ReportesPage() {
         s.nombre ||
         "Procedimiento";
 
-
       if (!tratamientosMap[nombre]) {
 
         tratamientosMap[nombre] = {
+
           cantidad: 0,
+
           total: 0
+
         };
 
       }
@@ -299,14 +461,28 @@ function ReportesPage() {
   });
 
   const tratamientosFrecuentes =
-    Object.entries(tratamientosMap)
-      .sort((a, b) => b[1].cantidad - a[1].cantidad)
+    Object.entries(
+      tratamientosMap
+    )
+      .sort(
+        (a, b) =>
+          b[1].cantidad -
+          a[1].cantidad
+      )
       .slice(0, 5);
+
+  /*
+  ==========================================
+  EXPORT
+  ==========================================
+  */
 
   const getFileName = (ext) => {
 
     const fecha =
-      new Date().toISOString().split("T")[0];
+      new Date()
+        .toISOString()
+        .split("T")[0];
 
     return `reporte_clinico_${tipo}_${fecha}.${ext}`;
 
@@ -315,9 +491,15 @@ function ReportesPage() {
   const handlePDF = () => {
 
     generarReporte({
-      ingresos: ingresosFiltrados,
+
+      ingresos:
+        ingresosFiltrados,
+
       tipo,
-      fileName: getFileName("pdf"),
+
+      fileName:
+        getFileName("pdf")
+
     });
 
   };
@@ -331,7 +513,39 @@ function ReportesPage() {
 
   };
 
-  const cardKpi = "relative overflow-hidden bg-white/90 backdrop-blur-xl border border-white/40 rounded-[30px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:-translate-y-[2px] hover:scale-[1.015] transition-all duration-300";
+  /*
+  ==========================================
+  CARD
+  ==========================================
+  */
+
+  const cardKpi = `
+    relative
+    overflow-hidden
+
+    bg-white/95
+    backdrop-blur-md
+
+    border
+    border-slate-200/80
+
+    rounded-[30px]
+
+    p-5
+
+    shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+    hover:-translate-y-[2px]
+
+    transition-all
+    duration-300
+  `;
+
+  /*
+  ==========================================
+  LOADING
+  ==========================================
+  */
 
   if (isLoading) {
 
@@ -339,11 +553,21 @@ function ReportesPage() {
 
       <PageWrapper>
 
-        <div className="h-full max-w-7xl mx-auto space-y-6">
+        <div className="
+          w-full
 
-          <SkeletonLoader alto="h-10" />
+          space-y-6
+        ">
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <SkeletonLoader alto="h-12" />
+
+          <div className="
+            grid
+            grid-cols-1
+            md:grid-cols-4
+
+            gap-4
+          ">
 
             <SkeletonLoader alto="h-32" />
             <SkeletonLoader alto="h-32" />
@@ -352,7 +576,7 @@ function ReportesPage() {
 
           </div>
 
-          <SkeletonLoader alto="h-[500px]" />
+          <SkeletonLoader alto="h-[600px]" />
 
         </div>
 
@@ -366,355 +590,1862 @@ function ReportesPage() {
 
     <PageWrapper>
 
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="
+      h-full
+
+      w-full
+
+      flex
+      flex-col
+
+      gap-7
+
+      pb-4
+
+      overflow-hidden
+
+      px-3
+      sm:px-5
+    ">
 
         {/* HEADER */}
-        <div className="text-center space-y-3 pt-2">
 
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+        <div className="
+        flex
+        flex-col
+        xl:flex-row
 
-            <span className="bg-gradient-to-r from-slate-800 to-slate-500 bg-clip-text text-transparent">
-              Reportes Clínicos
-            </span>
+        xl:items-center
+        xl:justify-between
 
-            <span className="ml-2">
-              🦷
-            </span>
+        gap-5
+      ">
 
-          </h1>
+          {/* LEFT */}
 
-          <div className="w-24 h-1 mx-auto rounded-full bg-gradient-to-r from-purple-500 to-indigo-500" />
+          <div>
 
-          <p className="text-sm text-gray-500">
-            {(desde || hasta)
-              ? "Filtro personalizado activo"
-              : labelMap[tipo]
-            } • control financiero odontológico
-          </p>
+            <div className="
+            inline-flex
+
+            items-center
+            gap-2
+
+            px-4
+            py-2
+
+            rounded-full
+
+            bg-indigo-500/10
+
+            border
+            border-indigo-100
+
+            text-indigo-600
+
+            text-sm
+            font-semibold
+
+            mb-4
+          ">
+
+              <BarChart3 size={14} />
+
+              Inteligencia financiera
+
+            </div>
+
+            <h1 className="
+            text-3xl
+            md:text-4xl
+
+            font-black
+
+            tracking-tight
+
+            text-slate-800
+          ">
+
+              Reportes clínicos
+
+            </h1>
+
+            <p className="
+            mt-2
+
+            text-sm
+            sm:text-base
+
+            text-slate-500
+          ">
+
+              {(desde || hasta)
+                ? "Filtro personalizado activo"
+                : labelMap[tipo]
+              }
+              {" • "}
+              análisis financiero odontológico
+
+            </p>
+
+          </div>
+
+          {/* RIGHT */}
+
+          <div className="
+          bg-white/95
+          backdrop-blur-md
+
+          border
+          border-slate-200/80
+
+          rounded-[30px]
+
+          px-6
+          py-5
+
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+          min-w-[260px]
+        ">
+
+            <p className="
+            text-xs
+
+            uppercase
+
+            tracking-[0.14em]
+
+            font-black
+
+            text-slate-400
+          ">
+              Utilidad neta
+            </p>
+
+            <div className="
+            mt-3
+
+            flex
+            items-center
+            justify-between
+          ">
+
+              <div>
+
+                <h3 className="
+                text-3xl
+
+                font-black
+
+                text-indigo-600
+              ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(utilidadNeta)}
+
+                </h3>
+
+                <p className={`
+                mt-1
+
+                text-xs
+
+                font-semibold
+
+                ${rentabilidadColor}
+              `}>
+
+                  Rentabilidad
+                  {" "}
+                  {margenRentabilidad.toFixed(1)}%
+
+                </p>
+
+              </div>
+
+              <div className="
+              w-14
+              h-14
+
+              rounded-[20px]
+
+              bg-gradient-to-br
+              from-indigo-500
+              via-purple-500
+              to-violet-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+            ">
+
+                <TrendingUp size={22} />
+
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
         {/* FILTROS */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-[32px] p-5 shadow-[0_10px_30px_rgba(0,0,0,0.06)] space-y-5">
 
-          <div className="flex flex-wrap justify-center gap-2">
+        <div className="
+        bg-white/95
+        backdrop-blur-md
 
-            {["semanal", "mensual", "anual"].map((t) => (
+        border
+        border-slate-200/80
+
+        rounded-[34px]
+
+        p-5
+
+        shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+        space-y-5
+      ">
+
+          {/* TOP */}
+
+          <div className="
+          flex
+          flex-col
+          xl:flex-row
+
+          xl:items-center
+          xl:justify-between
+
+          gap-4
+        ">
+
+            {/* LEFT */}
+
+            <div className="
+            flex
+            items-center
+            gap-3
+            flex-wrap
+          ">
+
+              <div className="
+              px-4
+              h-11
+
+              rounded-2xl
+
+              bg-indigo-50
+
+              border
+              border-indigo-100
+
+              flex
+              items-center
+              gap-2
+
+              text-sm
+              font-semibold
+
+              text-indigo-600
+            ">
+
+                <Activity size={14} />
+
+                {totalFacturas}
+                {" "}
+                facturas analizadas
+
+              </div>
+
+              <div className="
+              px-4
+              h-11
+
+              rounded-2xl
+
+              bg-emerald-50
+
+              border
+              border-emerald-100
+
+              flex
+              items-center
+              gap-2
+
+              text-sm
+              font-semibold
+
+              text-emerald-600
+            ">
+
+                <Users size={14} />
+
+                {pacientesUnicos}
+                {" "}
+                pacientes
+
+              </div>
+
+            </div>
+
+            {/* EXPORT */}
+
+            <div className="
+            flex
+            flex-col
+            sm:flex-row
+
+            gap-3
+          ">
 
               <button
-                key={t}
-                onClick={() => setTipo(t)}
-                disabled={desde || hasta}
-                className={`px-5 h-11 rounded-2xl text-sm font-semibold transition-all duration-300 active:scale-[0.98] ${tipo === t ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-200/50" : "bg-gray-100 hover:bg-gray-200 text-slate-600"} ${desde || hasta ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={handlePDF}
+                className="
+                h-12
+
+                px-5
+
+                rounded-2xl
+
+                bg-rose-500
+
+                text-white
+
+                text-sm
+                font-bold
+
+                hover:bg-rose-600
+
+                transition-all
+                duration-300
+
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
               >
-                {t}
+
+                <FileText size={16} />
+
+                Exportar PDF
+
               </button>
 
-            ))}
+              <button
+                onClick={handleExcel}
+                className="
+                h-12
+
+                px-5
+
+                rounded-2xl
+
+                bg-emerald-500
+
+                text-white
+
+                text-sm
+                font-bold
+
+                hover:bg-emerald-600
+
+                transition-all
+                duration-300
+
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
+              >
+
+                <FileSpreadsheet size={16} />
+
+                Exportar Excel
+
+              </button>
+
+            </div>
 
           </div>
 
-          <div className="flex flex-col md:flex-row justify-center gap-3">
+          {/* FILTERS */}
 
-            <input
-              type="date"
-              value={desde}
-              onChange={(e) => setDesde(e.target.value)}
-              className="h-12 px-4 rounded-2xl border border-gray-100 bg-white shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all duration-300"
-            />
+          <div className="
+          flex
+          flex-col
+          xl:flex-row
 
-            <input
-              type="date"
-              value={hasta}
-              onChange={(e) => setHasta(e.target.value)}
-              className="h-12 px-4 rounded-2xl border border-gray-100 bg-white shadow-sm focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all duration-300"
-            />
+          gap-3
+        ">
 
-            <button
-              onClick={() => {
-                setDesde("");
-                setHasta("");
-              }}
-              className="h-12 px-5 rounded-2xl bg-gray-100 hover:bg-gray-200 text-slate-700 font-semibold transition-all duration-300 active:scale-[0.98]"
-            >
-              Limpiar
-            </button>
+            {/* PERIODOS */}
+
+            <div className="
+            bg-slate-50/90
+
+            rounded-[26px]
+
+            border
+            border-slate-200/70
+
+            p-2
+
+            shadow-sm
+
+            overflow-x-auto
+
+            no-scrollbar
+          ">
+
+              <div className="
+              flex
+              gap-2
+
+              min-w-max
+            ">
+
+                {["semanal", "mensual", "anual"].map((t) => (
+
+                  <button
+                    key={t}
+                    onClick={() =>
+                      setTipo(t)
+                    }
+                    disabled={desde || hasta}
+                    className={`
+                    flex
+                    items-center
+                    gap-2
+
+                    px-5
+                    h-11
+
+                    rounded-2xl
+
+                    whitespace-nowrap
+
+                    text-sm
+                    font-semibold
+
+                    border
+
+                    transition-all
+                    duration-300
+
+                    ${tipo === t
+                        ? `
+                        bg-gradient-to-r
+                        from-indigo-500
+                        to-purple-500
+
+                        text-white
+
+                        border-transparent
+                      `
+                        : `
+                        bg-white
+
+                        text-slate-700
+
+                        border-slate-200/70
+                      `
+                      }
+                  `}
+                  >
+
+                    <CalendarDays size={14} />
+
+                    {t}
+
+                  </button>
+
+                ))}
+
+              </div>
+
+            </div>
+
+            {/* DATES */}
+
+            <div className="
+            flex
+            flex-col
+            sm:flex-row
+
+            gap-3
+
+            flex-1
+          ">
+
+              <input
+                type="date"
+                value={desde}
+                onChange={(e) =>
+                  setDesde(
+                    e.target.value
+                  )
+                }
+                className="
+                flex-1
+
+                h-12
+
+                px-4
+
+                rounded-2xl
+
+                bg-slate-50/90
+
+                border
+                border-slate-200/70
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+              "
+              />
+
+              <input
+                type="date"
+                value={hasta}
+                onChange={(e) =>
+                  setHasta(
+                    e.target.value
+                  )
+                }
+                className="
+                flex-1
+
+                h-12
+
+                px-4
+
+                rounded-2xl
+
+                bg-slate-50/90
+
+                border
+                border-slate-200/70
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+              "
+              />
+
+              <button
+                onClick={() => {
+
+                  setDesde("");
+
+                  setHasta("");
+
+                }}
+                className="
+                h-12
+
+                px-5
+
+                rounded-2xl
+
+                bg-slate-100
+
+                border
+                border-slate-200
+
+                text-slate-700
+
+                font-semibold
+
+                hover:bg-slate-200
+
+                transition-all
+                duration-300
+
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
+              >
+
+                <X size={15} />
+
+                Limpiar
+
+              </button>
+
+            </div>
 
           </div>
 
         </div>
 
         {/* KPIS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-5">
+
+        <div className="
+        grid
+        grid-cols-1
+        sm:grid-cols-2
+        xl:grid-cols-3
+        2xl:grid-cols-6
+
+        gap-5
+      ">
+
+          {/* INGRESOS */}
 
           <div className={cardKpi}>
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-green-500/10 blur-3xl" />
-            <p className="text-sm text-gray-500">💰 Ingresos clínicos</p>
-            <h2 className="mt-2 text-3xl font-black text-green-600">RD$ {formatMoney(ingresosClinicos)}</h2>
+
+            <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-emerald-500/10
+
+            blur-3xl
+          " />
+
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+              <div>
+
+                <p className="
+                text-sm
+
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <TrendingUp size={14} />
+
+                  Ingresos clínicos
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-emerald-600
+              ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(ingresosClinicos)}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-emerald-50
+
+              text-emerald-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+                <ArrowUpRight size={20} />
+
+              </div>
+
+            </div>
+
           </div>
+
+          {/* CAJA */}
+
           <div className={cardKpi}>
 
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-emerald-500/10 blur-3xl" />
+            <div className="
+            absolute
+            -top-10
+            -right-10
 
-            <p className="text-sm text-gray-500">
-              💵 Caja disponible
-            </p>
+            w-40
+            h-40
 
-            <h2 className="mt-2 text-3xl font-black text-emerald-600">
-              RD$ {formatMoney(cajaDisponible)}
-            </h2>
+            rounded-full
 
-            <p className="mt-2 text-xs text-gray-400">
-              Ingresos - egresos
-            </p>
+            bg-indigo-500/10
+
+            blur-3xl
+          " />
+
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+              <div>
+
+                <p className="
+                text-sm
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <Wallet size={14} />
+
+                  Caja disponible
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-indigo-600
+              ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(cajaDisponible)}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-indigo-50
+
+              text-indigo-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+                <CircleDollarSign size={20} />
+
+              </div>
+
+            </div>
 
           </div>
+
+          {/* EGRESOS */}
+
           <div className={cardKpi}>
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-orange-500/10 blur-3xl" />
-            <p className="text-sm text-gray-500">🧾 Costos clínicos</p>
-            <h2 className="mt-2 text-3xl font-black text-orange-500">RD$ {formatMoney(costosClinicos)}</h2>
+
+            <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-40
+            h-40
+
+            rounded-full
+
+            bg-rose-500/10
+
+            blur-3xl
+          " />
+
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+              <div>
+
+                <p className="
+                text-sm
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <TrendingDown size={14} />
+
+                  Egresos
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-rose-500
+              ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(totalEgresos)}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-rose-50
+
+              text-rose-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+                <TrendingDown size={20} />
+
+              </div>
+
+            </div>
+
           </div>
+
+          {/* FACTURAS */}
 
           <div className={cardKpi}>
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-rose-500/10 blur-3xl" />
-            <p className="text-sm text-gray-500">💸 Egresos operativos</p>
-            <h2 className="mt-2 text-3xl font-black text-rose-500">RD$ {formatMoney(totalEgresos)}</h2>
+
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+              <div>
+
+                <p className="
+                text-sm
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <Receipt size={14} />
+
+                  Facturas
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-slate-800
+              ">
+
+                  {totalFacturas}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-slate-100
+
+              text-slate-600
+
+              flex
+              items-center
+              justify-center
+            ">
+
+                <Receipt size={20} />
+
+              </div>
+
+            </div>
+
           </div>
+
+          {/* PACIENTES */}
 
           <div className={cardKpi}>
-            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-pink-500/10 blur-3xl" />
-            <p className="text-sm text-gray-500">🏷️ Descuentos aplicados</p>
-            <h2 className="mt-2 text-3xl font-black text-pink-500">RD$ {formatMoney(descuentosTotales)}</h2>
+
+            <div className="
+            flex
+            items-start
+            justify-between
+          ">
+
+              <div>
+
+                <p className="
+                text-sm
+                text-slate-500
+
+                flex
+                items-center
+                gap-2
+              ">
+
+                  <Users size={14} />
+
+                  Pacientes
+
+                </p>
+
+                <h2 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-indigo-600
+              ">
+
+                  {pacientesUnicos}
+
+                </h2>
+
+              </div>
+
+              <div className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-indigo-50
+
+              text-indigo-500
+
+              flex
+              items-center
+              justify-center
+            ">
+
+                <Users size={20} />
+
+              </div>
+
+            </div>
+
           </div>
 
-          <div className="relative overflow-hidden bg-gradient-to-br from-indigo-500 via-purple-500 to-violet-600 rounded-[30px] p-6 shadow-[0_20px_50px_rgba(99,102,241,0.28)]">
-            <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/10 blur-3xl" />
-            <p className="text-sm text-purple-100">🏦 Utilidad neta</p>
-            <h2 className="mt-2 text-4xl font-black text-white">RD$ {formatMoney(utilidadNeta)}</h2>
+          {/* PROMEDIO */}
 
-            <p className={`mt-2 text-sm font-semibold ${rentabilidadColor}`}>
-              Rentabilidad {margenRentabilidad.toFixed(1)}%
-            </p>
+          <div className="
+          relative
+          overflow-hidden
+
+          bg-gradient-to-br
+          from-indigo-500
+          via-purple-500
+          to-violet-500
+
+          rounded-[30px]
+
+          p-5
+
+          text-white
+
+          shadow-[0_20px_50px_rgba(99,102,241,0.28)]
+        ">
+
+            <div className="
+            absolute
+            -top-10
+            -right-10
+
+            w-48
+            h-48
+
+            rounded-full
+
+            bg-white/10
+
+            blur-3xl
+          " />
+
+            <div className="relative z-10">
+
+              <p className="
+              text-sm
+
+              text-white/70
+
+              flex
+              items-center
+              gap-2
+            ">
+
+                <BadgeDollarSign size={14} />
+
+                Promedio factura
+
+              </p>
+
+              <h2 className="
+              mt-2
+
+              text-3xl
+
+              font-black
+            ">
+
+                RD$
+                {" "}
+                {formatMoney(promedioFactura)}
+
+              </h2>
+
+            </div>
 
           </div>
 
         </div>
+        {/* RESUMEN + ANALISIS */}
 
-        {/* KPIS SECUNDARIOS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+        <div className="
+  grid
+  grid-cols-1
+  xl:grid-cols-3
 
-          <div className={cardKpi}>
-            <p className="text-sm text-gray-500">📄 Facturas pagadas</p>
-            <h2 className="mt-2 text-3xl font-black text-slate-800">{totalFacturas}</h2>
-          </div>
+  gap-6
+">
 
-          <div className={cardKpi}>
-            <p className="text-sm text-gray-500">👥 Pacientes atendidos</p>
-            <h2 className="mt-2 text-3xl font-black text-indigo-600">{pacientesUnicos}</h2>
-          </div>
+          {/* RESUMEN */}
 
-          <div className={cardKpi}>
-            <p className="text-sm text-gray-500">⭐ Promedio por factura</p>
-            <h2 className="mt-2 text-3xl font-black text-purple-600">RD$ {formatMoney(promedioFactura)}</h2>
-          </div>
+          <div className="
+    xl:col-span-2
 
-          <div className={cardKpi}>
-            <p className="text-sm text-gray-500">🦷 Procedimientos realizados</p>
-            <h2 className="mt-2 text-3xl font-black text-blue-600">{tratamientosRealizados}</h2>
-          </div>
+    bg-white/95
+    backdrop-blur-md
 
-        </div>
+    border
+    border-slate-200/80
 
-        {/* ALERTAS
-        <div className="bg-amber-50 border border-amber-200 rounded-[32px] p-6">
+    rounded-[34px]
 
-          <h3 className="font-bold text-amber-700 mb-4">
-            ⚠️ Alertas financieras
-          </h3>
+    p-6
 
-          <div className="space-y-2 text-sm">
+    shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+  ">
 
-            {margenRentabilidad < 20 && (
-              <p className="text-red-500">
-                • Rentabilidad baja en este período
-              </p>
-            )}
+            <div className="
+      flex
+      items-center
+      gap-3
 
-            {totalEgresos > ingresosClinicos * 0.4 && (
-              <p className="text-amber-600">
-                • Egresos operativos elevados
-              </p>
-            )}
+      mb-6
+    ">
 
-            {descuentosTotales > ingresosClinicos * 0.15 && (
-              <p className="text-orange-500">
-                • Muchos descuentos aplicados
-              </p>
-            )}
+              <div className="
+        w-12
+        h-12
 
-            {totalFacturas === 0 && (
-              <p className="text-slate-500">
-                • No hay facturas registradas
-              </p>
-            )}
+        rounded-[18px]
 
-          </div>
+        bg-gradient-to-br
+        from-indigo-500
+        via-purple-500
+        to-violet-500
 
-        </div> */}
+        text-white
 
-        {/* RESUMEN */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-[32px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
+        flex
+        items-center
+        justify-center
+      ">
 
-          <h3 className="text-xl font-bold text-slate-800 mb-6">
-            📊 Resumen financiero
-          </h3>
+                <ClipboardList size={20} />
 
-          <div className="space-y-4">
+              </div>
 
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <p className="text-slate-600">Ingresos clínicos</p>
-              <p className="font-black text-green-600">RD$ {formatMoney(ingresosClinicos)}</p>
-            </div>
+              <div>
 
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <p className="text-slate-600">Costos clínicos</p>
-              <p className="font-black text-orange-500">- RD$ {formatMoney(costosClinicos)}</p>
-            </div>
+                <h3 className="
+          text-2xl
 
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <p className="text-slate-600">Egresos operativos</p>
-              <p className="font-black text-rose-500">- RD$ {formatMoney(totalEgresos)}</p>
-            </div>
+          font-black
 
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <p className="text-slate-600">Descuentos aplicados</p>
-              <p className="font-black text-pink-500">- RD$ {formatMoney(descuentosTotales)}</p>
-            </div>
+          text-slate-800
+        ">
 
-            <div className="flex items-center justify-between pt-2">
-              <p className="text-lg font-bold text-slate-800">Utilidad neta final</p>
-              <p className="text-3xl font-black text-indigo-600">RD$ {formatMoney(utilidadNeta)}</p>
-            </div>
+                  Resumen financiero
 
-          </div>
+                </h3>
 
-        </div>
+                <p className="
+          text-sm
 
-        {/* EXPORTAR */}
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          text-slate-500
+        ">
 
-          <button
-            onClick={handlePDF}
-            className="group relative overflow-hidden h-12 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold shadow-lg shadow-rose-200/50 hover:scale-[1.03] transition-all duration-300"
-          >
-            <span className="relative z-10">
-              📄 Exportar PDF
-            </span>
-          </button>
+                  Estado financiero de la clínica
 
-          <button
-            onClick={handleExcel}
-            className="group relative overflow-hidden h-12 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 text-white font-semibold shadow-lg shadow-emerald-200/50 hover:scale-[1.03] transition-all duration-300"
-          >
-            <span className="relative z-10">
-              📥 Exportar Excel
-            </span>
-          </button>
+                </p>
 
-        </div>
-
-        {/* ANALISIS */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-          <div className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-[32px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-
-            <div className="mb-5">
-
-              <h3 className="text-lg font-bold text-slate-800">
-                👑 Pacientes principales
-              </h3>
-
-              <p className="text-sm text-gray-500">
-                Mayor facturación
-              </p>
+              </div>
 
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-5">
 
-              {topPacientes.map(([paciente, total], i) => (
+              {/* INGRESOS */}
 
-                <div
-                  key={i}
-                  className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3"
-                >
+              <div className="
+        flex
+        items-center
+        justify-between
 
-                  <div className="flex items-center gap-3">
+        border-b
+        border-slate-100
 
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold flex items-center justify-center">
-                      {i + 1}
-                    </div>
+        pb-4
+      ">
 
-                    <p className="font-semibold text-slate-700">
-                      {paciente}
-                    </p>
+                <div className="
+          flex
+          items-center
+          gap-3
+        ">
+
+                  <div className="
+            w-11
+            h-11
+
+            rounded-2xl
+
+            bg-emerald-50
+
+            text-emerald-500
+
+            flex
+            items-center
+            justify-center
+          ">
+
+                    <TrendingUp size={18} />
 
                   </div>
-
-                  <p className="font-black text-green-600">
-                    RD$ {formatMoney(total)}
-                  </p>
-
-                </div>
-
-              ))}
-
-            </div>
-
-          </div>
-
-          <div className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-[32px] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.06)]">
-
-            <div className="mb-5">
-
-              <h3 className="text-lg font-bold text-slate-800">
-                🔥 Procedimientos frecuentes
-              </h3>
-
-              <p className="text-sm text-gray-500">
-                Más realizados
-              </p>
-
-            </div>
-
-            <div className="space-y-3">
-
-              {tratamientosFrecuentes.map(([nombre, data], i) => (
-
-                <div
-                  key={i}
-                  className="flex items-center justify-between bg-gray-50 rounded-2xl px-4 py-3"
-                >
 
                   <div>
 
-                    <p className="font-semibold text-slate-700">
-                      {nombre}
+                    <p className="
+              font-semibold
+
+              text-slate-700
+            ">
+                      Ingresos clínicos
                     </p>
 
-                    <p className="text-sm text-gray-500">
-                      {data.cantidad} procedimientos
+                    <p className="
+              text-sm
+
+              text-slate-400
+            ">
+                      Facturación total registrada
                     </p>
 
                   </div>
 
-                  <p className="font-black text-indigo-600">
-                    RD$ {formatMoney(data.total)}
+                </div>
+
+                <h3 className="
+          text-2xl
+
+          font-black
+
+          text-emerald-600
+        ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(ingresosClinicos)}
+
+                </h3>
+
+              </div>
+
+              {/* COSTOS */}
+
+              <div className="
+        flex
+        items-center
+        justify-between
+
+        border-b
+        border-slate-100
+
+        pb-4
+      ">
+
+                <div className="
+          flex
+          items-center
+          gap-3
+        ">
+
+                  <div className="
+            w-11
+            h-11
+
+            rounded-2xl
+
+            bg-orange-50
+
+            text-orange-500
+
+            flex
+            items-center
+            justify-center
+          ">
+
+                    <BadgeDollarSign size={18} />
+
+                  </div>
+
+                  <div>
+
+                    <p className="
+              font-semibold
+
+              text-slate-700
+            ">
+                      Costos clínicos
+                    </p>
+
+                    <p className="
+              text-sm
+
+              text-slate-400
+            ">
+                      Materiales y procedimientos
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <h3 className="
+          text-2xl
+
+          font-black
+
+          text-orange-500
+        ">
+
+                  - RD$
+                  {" "}
+                  {formatMoney(costosClinicos)}
+
+                </h3>
+
+              </div>
+
+              {/* EGRESOS */}
+
+              <div className="
+        flex
+        items-center
+        justify-between
+
+        border-b
+        border-slate-100
+
+        pb-4
+      ">
+
+                <div className="
+          flex
+          items-center
+          gap-3
+        ">
+
+                  <div className="
+            w-11
+            h-11
+
+            rounded-2xl
+
+            bg-rose-50
+
+            text-rose-500
+
+            flex
+            items-center
+            justify-center
+          ">
+
+                    <TrendingDown size={18} />
+
+                  </div>
+
+                  <div>
+
+                    <p className="
+              font-semibold
+
+              text-slate-700
+            ">
+                      Egresos operativos
+                    </p>
+
+                    <p className="
+              text-sm
+
+              text-slate-400
+            ">
+                      Gastos administrativos
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <h3 className="
+          text-2xl
+
+          font-black
+
+          text-rose-500
+        ">
+
+                  - RD$
+                  {" "}
+                  {formatMoney(totalEgresos)}
+
+                </h3>
+
+              </div>
+
+              {/* DESCUENTOS */}
+
+              <div className="
+        flex
+        items-center
+        justify-between
+
+        border-b
+        border-slate-100
+
+        pb-4
+      ">
+
+                <div className="
+          flex
+          items-center
+          gap-3
+        ">
+
+                  <div className="
+            w-11
+            h-11
+
+            rounded-2xl
+
+            bg-pink-50
+
+            text-pink-500
+
+            flex
+            items-center
+            justify-center
+          ">
+
+                    <Receipt size={18} />
+
+                  </div>
+
+                  <div>
+
+                    <p className="
+              font-semibold
+
+              text-slate-700
+            ">
+                      Descuentos aplicados
+                    </p>
+
+                    <p className="
+              text-sm
+
+              text-slate-400
+            ">
+                      Promociones y ajustes
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <h3 className="
+          text-2xl
+
+          font-black
+
+          text-pink-500
+        ">
+
+                  - RD$
+                  {" "}
+                  {formatMoney(descuentosTotales)}
+
+                </h3>
+
+              </div>
+
+              {/* UTILIDAD */}
+
+              <div className="
+        pt-2
+
+        flex
+        flex-col
+        sm:flex-row
+
+        sm:items-center
+        sm:justify-between
+
+        gap-4
+      ">
+
+                <div>
+
+                  <p className="
+            text-lg
+
+            font-black
+
+            text-slate-800
+          ">
+                    Utilidad neta final
+                  </p>
+
+                  <p className="
+            text-sm
+
+            text-slate-500
+          ">
+                    Resultado operativo actual
                   </p>
 
                 </div>
 
-              ))}
+                <div className="
+          text-right
+        ">
+
+                  <h2 className="
+            text-4xl
+
+            font-black
+
+            text-indigo-600
+          ">
+
+                    RD$
+                    {" "}
+                    {formatMoney(utilidadNeta)}
+
+                  </h2>
+
+                  <p className={`
+            mt-1
+
+            text-sm
+
+            font-semibold
+
+            ${rentabilidadColor}
+          `}>
+
+                    Rentabilidad
+                    {" "}
+                    {margenRentabilidad.toFixed(1)}%
+
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* SIDE ANALYTICS */}
+
+          <div className="
+    space-y-6
+  ">
+
+            {/* PACIENTES */}
+
+            <div className="
+      bg-white/95
+      backdrop-blur-md
+
+      border
+      border-slate-200/80
+
+      rounded-[34px]
+
+      p-6
+
+      shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+    ">
+
+              <div className="
+        flex
+        items-center
+        gap-3
+
+        mb-5
+      ">
+
+                <div className="
+          w-12
+          h-12
+
+          rounded-[18px]
+
+          bg-yellow-50
+
+          text-yellow-500
+
+          flex
+          items-center
+          justify-center
+        ">
+
+                  <Crown size={20} />
+
+                </div>
+
+                <div>
+
+                  <h3 className="
+            text-xl
+
+            font-black
+
+            text-slate-800
+          ">
+
+                    Pacientes top
+
+                  </h3>
+
+                  <p className="
+            text-sm
+
+            text-slate-500
+          ">
+                    Mayor facturación
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="
+        space-y-3
+      ">
+
+                {topPacientes.map(([paciente, total], i) => (
+
+                  <div
+                    key={i}
+                    className="
+              bg-slate-50/80
+
+              border
+              border-slate-200/60
+
+              rounded-[24px]
+
+              p-4
+
+              flex
+              items-center
+              justify-between
+
+              gap-3
+            "
+                  >
+
+                    <div className="
+              flex
+              items-center
+              gap-3
+            ">
+
+                      <div className="
+                w-10
+                h-10
+
+                rounded-2xl
+
+                bg-gradient-to-br
+                from-indigo-500
+                via-purple-500
+                to-violet-500
+
+                text-white
+
+                font-black
+
+                flex
+                items-center
+                justify-center
+              ">
+
+                        {i + 1}
+
+                      </div>
+
+                      <div>
+
+                        <p className="
+                  font-semibold
+
+                  text-slate-700
+                ">
+
+                          {paciente}
+
+                        </p>
+
+                        <p className="
+                  text-xs
+
+                  text-slate-400
+                ">
+
+                          Paciente recurrente
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    <p className="
+              font-black
+
+              text-emerald-600
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(total)}
+
+                    </p>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+            </div>
+
+            {/* PROCEDIMIENTOS */}
+
+            <div className="
+      bg-white/95
+      backdrop-blur-md
+
+      border
+      border-slate-200/80
+
+      rounded-[34px]
+
+      p-6
+
+      shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+    ">
+
+              <div className="
+        flex
+        items-center
+        gap-3
+
+        mb-5
+      ">
+
+                <div className="
+          w-12
+          h-12
+
+          rounded-[18px]
+
+          bg-indigo-50
+
+          text-indigo-500
+
+          flex
+          items-center
+          justify-center
+        ">
+
+                  <Stethoscope size={20} />
+
+                </div>
+
+                <div>
+
+                  <h3 className="
+            text-xl
+
+            font-black
+
+            text-slate-800
+          ">
+
+                    Procedimientos
+
+                  </h3>
+
+                  <p className="
+            text-sm
+
+            text-slate-500
+          ">
+                    Más realizados
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div className="
+        space-y-3
+      ">
+
+                {tratamientosFrecuentes.map(([nombre, data], i) => (
+
+                  <div
+                    key={i}
+                    className="
+              bg-slate-50/80
+
+              border
+              border-slate-200/60
+
+              rounded-[24px]
+
+              p-4
+
+              flex
+              items-center
+              justify-between
+
+              gap-3
+            "
+                  >
+
+                    <div>
+
+                      <p className="
+                font-semibold
+
+                text-slate-700
+              ">
+
+                        {nombre}
+
+                      </p>
+
+                      <p className="
+                text-xs
+
+                text-slate-400
+              ">
+
+                        {data.cantidad}
+                        {" "}
+                        procedimientos
+
+                      </p>
+
+                    </div>
+
+                    <p className="
+              font-black
+
+              text-indigo-600
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(data.total)}
+
+                    </p>
+
+                  </div>
+
+                ))}
+
+              </div>
 
             </div>
 
@@ -722,42 +2453,200 @@ function ReportesPage() {
 
         </div>
 
-        {/* TABLA INGRESOS */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-[32px] shadow-[0_10px_30px_rgba(0,0,0,0.06)] overflow-hidden">
+        {/* TABLA */}
 
-          <div className="px-6 py-5 border-b border-gray-100">
+        <div className="
+  bg-white/95
+  backdrop-blur-md
 
-            <h3 className="text-xl font-bold text-slate-800">
-              💰 Detalle financiero clínico
-            </h3>
+  border
+  border-slate-200/80
+
+  rounded-[34px]
+
+  shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+  overflow-hidden
+">
+
+          {/* HEADER */}
+
+          <div className="
+    px-6
+    py-5
+
+    border-b
+    border-slate-100
+
+    flex
+    items-center
+    gap-3
+  ">
+
+            <div className="
+      w-12
+      h-12
+
+      rounded-[18px]
+
+      bg-gradient-to-br
+      from-emerald-500
+      to-green-500
+
+      text-white
+
+      flex
+      items-center
+      justify-center
+    ">
+
+              <BadgeDollarSign size={20} />
+
+            </div>
+
+            <div>
+
+              <h3 className="
+        text-2xl
+
+        font-black
+
+        text-slate-800
+      ">
+
+                Detalle financiero clínico
+
+              </h3>
+
+              <p className="
+        text-sm
+
+        text-slate-500
+      ">
+
+                Facturación y producción odontológica
+
+              </p>
+
+            </div>
 
           </div>
 
-          <div className="max-h-[70vh] overflow-auto">
+          {/* TABLE */}
 
-            <table className="w-full text-sm">
+          <div className="
+    max-h-[70vh]
 
-              <thead className="sticky top-0 bg-white/90 backdrop-blur-xl border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-500">
+    overflow-auto
+  ">
+
+            <table className="
+      w-full
+
+      text-sm
+    ">
+
+              <thead className="
+        sticky
+        top-0
+
+        bg-white/95
+        backdrop-blur-xl
+
+        border-b
+        border-slate-100
+
+        text-[11px]
+
+        uppercase
+
+        tracking-[0.12em]
+
+        text-slate-400
+      ">
 
                 <tr>
 
-                  <th className="px-5 py-4 text-left">Fecha</th>
+                  <th className="
+            px-5
+            py-4
 
-                  <th className="px-5 py-4 text-left">Paciente</th>
+            text-left
+          ">
+                    Fecha
+                  </th>
 
-                  <th className="px-5 py-4 text-left">Procedimientos</th>
+                  <th className="
+            px-5
+            py-4
 
-                  <th className="px-5 py-4 text-right">Subtotal</th>
+            text-left
+          ">
+                    Paciente
+                  </th>
 
-                  <th className="px-5 py-4 text-right">ITBIS</th>
+                  <th className="
+            px-5
+            py-4
 
-                  <th className="px-5 py-4 text-right">Desc.</th>
+            text-left
+          ">
+                    Procedimientos
+                  </th>
 
-                  <th className="px-5 py-4 text-right">Costos</th>
+                  <th className="
+            px-5
+            py-4
 
-                  <th className="px-5 py-4 text-right">Producción</th>
+            text-right
+          ">
+                    Subtotal
+                  </th>
 
-                  <th className="px-5 py-4 text-right">Total</th>
+                  <th className="
+            px-5
+            py-4
+
+            text-right
+          ">
+                    ITBIS
+                  </th>
+
+                  <th className="
+            px-5
+            py-4
+
+            text-right
+          ">
+                    Desc.
+                  </th>
+
+                  <th className="
+            px-5
+            py-4
+
+            text-right
+          ">
+                    Costos
+                  </th>
+
+                  <th className="
+            px-5
+            py-4
+
+            text-right
+          ">
+                    Producción
+                  </th>
+
+                  <th className="
+            px-5
+            py-4
+
+            text-right
+          ">
+                    Total
+                  </th>
 
                 </tr>
 
@@ -769,43 +2658,150 @@ function ReportesPage() {
 
                   <tr
                     key={i}
-                    className="border-b border-gray-100 hover:bg-indigo-50/40 transition-all duration-200"
+                    className="
+              border-b
+              border-slate-100
+
+              hover:bg-indigo-50/40
+
+              transition-all
+              duration-200
+            "
                   >
 
-                    <td className="px-5 py-4 text-slate-600">
+                    <td className="
+              px-5
+              py-4
+
+              text-slate-600
+            ">
+
                       {d.FechaStr}
+
                     </td>
 
-                    <td className="px-5 py-4 font-medium text-slate-700">
+                    <td className="
+              px-5
+              py-4
+
+              font-semibold
+
+              text-slate-700
+            ">
+
                       {d.Paciente}
+
                     </td>
 
-                    <td className="px-5 py-4 text-slate-600 max-w-[300px]">
+                    <td className="
+              px-5
+              py-4
+
+              text-slate-600
+
+              max-w-[280px]
+            ">
+
                       {d.Tratamientos}
+
                     </td>
 
-                    <td className="px-5 py-4 text-right">
-                      RD$ {formatMoney(d.Subtotal)}
+                    <td className="
+              px-5
+              py-4
+
+              text-right
+
+              text-slate-700
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(d.Subtotal)}
+
                     </td>
 
-                    <td className="px-5 py-4 text-right">
-                      RD$ {formatMoney(d.ITBIS)}
+                    <td className="
+              px-5
+              py-4
+
+              text-right
+
+              text-slate-700
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(d.ITBIS)}
+
                     </td>
 
-                    <td className="px-5 py-4 text-right text-rose-500">
-                      RD$ {formatMoney(d.Descuento)}
+                    <td className="
+              px-5
+              py-4
+
+              text-right
+
+              text-pink-500
+
+              font-semibold
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(d.Descuento)}
+
                     </td>
 
-                    <td className="px-5 py-4 text-right text-orange-500 font-semibold">
-                      RD$ {formatMoney(d.Costos)}
+                    <td className="
+              px-5
+              py-4
+
+              text-right
+
+              text-orange-500
+
+              font-bold
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(d.Costos)}
+
                     </td>
 
-                    <td className="px-5 py-4 text-right text-indigo-600 font-bold">
-                      RD$ {formatMoney(d.Utilidad)}
+                    <td className="
+              px-5
+              py-4
+
+              text-right
+
+              text-indigo-600
+
+              font-bold
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(d.Utilidad)}
+
                     </td>
 
-                    <td className="px-5 py-4 text-right font-black text-green-600">
-                      RD$ {formatMoney(d.Total)}
+                    <td className="
+              px-5
+              py-4
+
+              text-right
+
+              font-black
+
+              text-emerald-600
+            ">
+
+                      RD$
+                      {" "}
+                      {formatMoney(d.Total)}
+
                     </td>
 
                   </tr>
@@ -814,31 +2810,53 @@ function ReportesPage() {
 
               </tbody>
 
-              <tfoot className="sticky bottom-0 bg-white border-t border-gray-100">
+              <tfoot className="
+        sticky
+        bottom-0
+
+        bg-white
+
+        border-t
+        border-slate-100
+      ">
 
                 <tr>
 
                   <td
                     colSpan="8"
-                    className="px-5 py-4 text-right font-bold text-slate-700"
+                    className="
+              px-5
+              py-5
+
+              text-right
+
+              font-bold
+
+              text-slate-700
+            "
                   >
+
                     Total General
+
                   </td>
 
-                  <td className="px-5 py-4 text-right font-black text-green-600">
-                    RD$ {formatMoney(ingresosClinicos)}
+                  <td className="
+            px-5
+            py-5
+
+            text-right
+
+            font-black
+
+            text-emerald-600
+          ">
+
+                    RD$
+                    {" "}
+                    {formatMoney(ingresosClinicos)}
+
                   </td>
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-3">
 
-                    <p className="text-slate-600">
-                      Caja disponible
-                    </p>
-
-                    <p className="font-black text-emerald-600">
-                      RD$ {formatMoney(cajaDisponible)}
-                    </p>
-
-                  </div>
                 </tr>
 
               </tfoot>
@@ -848,96 +2866,9 @@ function ReportesPage() {
           </div>
 
         </div>
-
-        {/* TABLA EGRESOS */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/40 rounded-[32px] shadow-[0_10px_30px_rgba(0,0,0,0.06)] overflow-hidden">
-
-          <div className="px-6 py-5 border-b border-gray-100">
-
-            <h3 className="text-xl font-bold text-slate-800">
-              💸 Egresos operativos
-            </h3>
-
-          </div>
-
-          <div className="max-h-[50vh] overflow-auto">
-
-            <table className="w-full text-sm">
-
-              <thead className="sticky top-0 bg-white/90 backdrop-blur-xl border-b border-gray-100 text-[11px] uppercase tracking-wider text-gray-500">
-
-                <tr>
-
-                  <th className="px-5 py-4 text-left">
-                    Fecha
-                  </th>
-
-                  <th className="px-5 py-4 text-left">
-                    Concepto
-                  </th>
-
-                  <th className="px-5 py-4 text-right">
-                    Monto
-                  </th>
-
-                </tr>
-
-              </thead>
-
-              <tbody>
-
-                {egresosFiltrados.length === 0 && (
-
-                  <tr>
-
-                    <td
-                      colSpan="3"
-                      className="text-center py-10 text-gray-400"
-                    >
-                      No hay egresos registrados
-                    </td>
-
-                  </tr>
-
-                )}
-
-                {egresosFiltrados.map((e, i) => (
-
-                  <tr
-                    key={i}
-                    className="border-b border-gray-100 hover:bg-rose-50/40 transition-all duration-200"
-                  >
-
-                    <td className="px-5 py-4 text-slate-600">
-                      {parseFechaLocal(
-                        e.fecha || e.created_at
-                      ).toLocaleDateString("es-DO")}
-                    </td>
-
-                    <td className="px-5 py-4 font-medium text-slate-700">
-                      {e.descripcion || e.concepto || "Egreso"}
-                    </td>
-
-                    <td className="px-5 py-4 text-right font-black text-rose-500">
-                      RD$ {formatMoney(e.monto)}
-                    </td>
-
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
-
-        </div>
-
       </div>
 
     </PageWrapper>
-
   );
 
 }

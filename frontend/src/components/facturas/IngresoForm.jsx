@@ -8,6 +8,21 @@ import { useIngresos } from "../../hooks/useIngresos";
 import { useCitas } from "../../hooks/useCitas";
 
 import {
+  User2,
+  Receipt,
+  BadgeDollarSign,
+  Wallet,
+  Plus,
+  Trash2,
+  Save,
+  X,
+  CalendarDays,
+  Clock3,
+  Sparkles,
+  FileText
+} from "lucide-react";
+
+import {
   formatFecha,
   formatHora
 } from "../../utils/fecha";
@@ -595,37 +610,7 @@ function IngresoForm({
   return (
 
     <div className="
-      relative
-      overflow-hidden
-
-      w-full
-      h-full
-
-      md:h-auto
-      md:max-h-[92vh]
-
-      bg-white/95
-      backdrop-blur-2xl
-
-      rounded-t-[36px]
-      md:rounded-[36px]
-
-      border-0
-      md:border
-      border-white/40
-
-      shadow-[0_25px_80px_rgba(0,0,0,0.15)]
-
-      p-5
-      sm:p-6
-
-      flex
-      flex-col
-
-      gap-6
-
-      overflow-y-auto
-      overflow-x-hidden
+      
     ">
 
       {/* GLOW */}
@@ -648,52 +633,78 @@ function IngresoForm({
       {/* HEADER */}
 
       <div className="
-        relative
-        z-10
+  relative
+  z-10
 
-        text-center
+  text-center
 
-        space-y-3
+  space-y-3
 
-        shrink-0
-      ">
+  shrink-0
+">
+
+        <div className="
+    mx-auto
+
+    w-20
+    h-20
+
+    rounded-[28px]
+
+    bg-gradient-to-br
+    from-indigo-500
+    via-purple-500
+    to-violet-500
+
+    text-white
+
+    flex
+    items-center
+    justify-center
+
+    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+  ">
+
+          <Receipt size={34} />
+
+        </div>
 
         <h2 className="
-          text-3xl
-          sm:text-4xl
+    text-3xl
+    sm:text-4xl
 
-          font-black
+    font-black
 
-          tracking-tight
+    tracking-tight
 
-          text-slate-800
-        ">
+    text-slate-800
+  ">
 
           {initialData
-            ? "Editar factura ✏️"
-            : "Registrar factura 🧾"}
+            ? "Editar factura"
+            : "Registrar factura"}
 
         </h2>
 
         <div className="
-          w-20
-          h-1
+    w-20
+    h-1
 
-          mx-auto
+    mx-auto
 
-          rounded-full
+    rounded-full
 
-          bg-gradient-to-r
-          from-indigo-500
-          to-purple-500
-        " />
+    bg-gradient-to-r
+    from-indigo-500
+    to-purple-500
+  " />
 
         <p className="
-          text-sm
-          sm:text-base
+    text-sm
+    sm:text-base
 
-          text-gray-500
-        ">
+    text-slate-500
+  ">
 
           {initialData
             ? "Modifica los detalles de la factura"
@@ -724,75 +735,75 @@ function IngresoForm({
         {/* CLIENTE */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          space-y-4
-        ">
+  space-y-4
+">
 
           <div className="
-            flex
-            items-center
-            gap-3
-          ">
+    flex
+    items-center
+    gap-3
+  ">
 
             <div className="
-              w-12
-              h-12
+      w-12
+      h-12
 
-              rounded-[18px]
+      rounded-[18px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              to-purple-500
+      bg-gradient-to-br
+      from-indigo-500
+      via-purple-500
+      to-violet-500
 
-              text-white
+      text-white
 
-              flex
-              items-center
-              justify-center
+      flex
+      items-center
+      justify-center
+    ">
 
-              text-xl
-            ">
-              👤
+              <User2 size={20} />
+
             </div>
 
             <div>
 
               <h3 className="
-                text-sm
+        text-sm
 
-                font-black
+        font-black
 
-                uppercase
+        uppercase
 
-                tracking-[0.12em]
+        tracking-[0.12em]
 
-                text-slate-700
-              ">
+        text-slate-700
+      ">
                 Cliente
               </h3>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
+        text-xs
+        text-slate-400
+      ">
                 Selecciona el paciente
               </p>
 
             </div>
 
           </div>
+
 
           <select
             value={clienteId}
@@ -871,52 +882,58 @@ function IngresoForm({
           {citaSeleccionada && (
 
             <div className="
-              bg-gradient-to-r
-              from-emerald-50
-              to-green-50
+    bg-emerald-50
 
-              border
-              border-emerald-100
+    border
+    border-emerald-100
 
-              rounded-[24px]
+    rounded-[24px]
 
-              p-4
+    p-4
 
-              flex
-              flex-col
-              sm:flex-row
+    flex
+    flex-col
+    sm:flex-row
 
-              sm:items-center
-              sm:justify-between
+    sm:items-center
+    sm:justify-between
 
-              gap-3
-            ">
+    gap-3
+  ">
 
               <div>
 
-                <p className="
-                  text-xs
+                <div className="
+        flex
+        items-center
+        gap-2
 
-                  uppercase
+        text-emerald-500
 
-                  tracking-[0.12em]
+        text-xs
+        font-black
 
-                  font-black
+        uppercase
 
-                  text-emerald-500
-                ">
+        tracking-[0.12em]
+      ">
+
+                  <CalendarDays size={12} />
+
                   Cita vinculada
-                </p>
+
+                </div>
 
                 <p className="
-                  mt-1
+        mt-2
 
-                  text-sm
+        text-sm
 
-                  font-bold
+        font-bold
 
-                  text-slate-700
-                ">
+        text-slate-700
+      ">
+
                   {formatFecha(
                     citaSeleccionada.fecha
                   )}
@@ -924,26 +941,36 @@ function IngresoForm({
                   {formatHora(
                     citaSeleccionada.fecha
                   )}
+
                 </p>
 
               </div>
 
               <div className="
-                px-4
-                py-2
+      inline-flex
 
-                rounded-2xl
+      items-center
+      gap-2
 
-                bg-white
+      px-4
+      py-2
 
-                text-sm
-                font-semibold
+      rounded-2xl
 
-                text-emerald-600
+      bg-white
 
-                shadow-sm
-              ">
+      text-sm
+      font-semibold
+
+      text-emerald-600
+
+      shadow-sm
+    ">
+
+                <Sparkles size={14} />
+
                 {citaSeleccionada.motivo}
+
               </div>
 
             </div>
@@ -955,84 +982,82 @@ function IngresoForm({
         {/* SERVICIOS */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          flex
-          flex-col
+  flex
+  flex-col
 
-          gap-5
+  gap-5
 
-          min-h-0
-        ">
+  min-h-0
+">
 
           {/* HEADER */}
 
           <div className="
-            flex
-            items-center
-            justify-between
+    flex
+    items-center
+    justify-between
 
-            gap-3
-          ">
+    gap-3
+  ">
 
             <div className="
-              flex
-              items-center
-              gap-3
-            ">
+      flex
+      items-center
+      gap-3
+    ">
 
               <div className="
-                w-12
-                h-12
+        w-12
+        h-12
 
-                rounded-[18px]
+        rounded-[18px]
 
-                bg-gradient-to-br
-                from-emerald-500
-                to-green-500
+        bg-gradient-to-br
+        from-emerald-500
+        to-green-500
 
-                text-white
+        text-white
 
-                flex
-                items-center
-                justify-center
+        flex
+        items-center
+        justify-center
+      ">
 
-                text-xl
-              ">
-                🦷
+                <Receipt size={20} />
+
               </div>
 
               <div>
 
                 <h3 className="
-                  text-sm
+          text-sm
 
-                  font-black
+          font-black
 
-                  uppercase
+          uppercase
 
-                  tracking-[0.12em]
+          tracking-[0.12em]
 
-                  text-slate-700
-                ">
+          text-slate-700
+        ">
                   Servicios
                 </h3>
 
                 <p className="
-                  text-xs
-                  text-gray-400
-                ">
+          text-xs
+          text-slate-400
+        ">
                   Procedimientos incluidos
                 </p>
 
@@ -1044,32 +1069,42 @@ function IngresoForm({
               type="button"
               onClick={agregarServicio}
               className="
-                h-11
+        h-11
 
-                px-5
+        px-5
 
-                rounded-2xl
+        rounded-2xl
 
-                bg-gradient-to-r
-                from-indigo-500
-                to-purple-500
+        bg-gradient-to-r
+        from-indigo-500
+        via-purple-500
+        to-violet-500
 
-                text-white
+        text-white
 
-                text-sm
-                font-bold
+        text-sm
+        font-bold
 
-                shadow-[0_10px_30px_rgba(99,102,241,0.25)]
+        shadow-[0_10px_30px_rgba(99,102,241,0.25)]
 
-                hover:scale-[1.03]
+        hover:scale-[1.03]
 
-                active:scale-95
+        active:scale-95
 
-                transition-all
-                duration-300
-              "
+        transition-all
+        duration-300
+
+        flex
+        items-center
+        justify-center
+        gap-2
+      "
             >
-              + Agregar
+
+              <Plus size={15} />
+
+              Agregar
+
             </button>
 
           </div>
@@ -1119,26 +1154,35 @@ function IngresoForm({
                       eliminarServicio(index)
                     }
                     className="
-                      absolute
-                      top-4
-                      right-4
+      absolute
+      top-4
+      right-4
 
-                      w-9
-                      h-9
+      w-10
+      h-10
 
-                      rounded-xl
+      rounded-xl
 
-                      bg-red-50
+      bg-rose-50
 
-                      text-red-500
+      border
+      border-rose-100
 
-                      hover:bg-red-100
+      text-rose-500
 
-                      transition-all
-                      duration-300
-                    "
+      hover:bg-rose-100
+
+      transition-all
+      duration-300
+
+      flex
+      items-center
+      justify-center
+    "
                   >
-                    ✕
+
+                    <Trash2 size={16} />
+
                   </button>
 
                 )}
@@ -1287,40 +1331,50 @@ function IngresoForm({
                 {/* COSTO */}
 
                 <div className="
-                  flex
-                  items-center
-                  justify-between
+  flex
+  items-center
+  justify-between
 
-                  bg-slate-50
+  bg-slate-50
 
-                  border
-                  border-slate-100
+  border
+  border-slate-100
 
-                  rounded-[20px]
+  rounded-[20px]
 
-                  px-4
-                  py-3
-                ">
+  px-4
+  py-3
+">
 
-                  <span className="
-                    text-sm
-                    text-gray-500
-                  ">
+                  <div className="
+    flex
+    items-center
+    gap-2
+
+    text-sm
+    text-slate-500
+  ">
+
+                    <Wallet size={14} />
+
                     Costo interno
-                  </span>
+
+                  </div>
 
                   <span className="
-                    text-sm
+    text-sm
 
-                    font-bold
+    font-bold
 
-                    text-slate-700
-                  ">
+    text-slate-700
+  ">
+
                     RD$
                     {" "}
                     {formatMoney(
                       s.costo_servicio || 0
                     )}
+
                   </span>
 
                 </div>
@@ -1336,77 +1390,76 @@ function IngresoForm({
         {/* RESUMEN */}
 
         <div className="
-          bg-gradient-to-br
-          from-white
-          to-slate-50
+  bg-slate-50/70
 
-          border
-          border-white
+  border
+  border-slate-200/70
 
-          rounded-[30px]
+  rounded-[30px]
 
-          p-5
+  p-5
 
-          shadow-sm
+  shadow-sm
 
-          space-y-5
-        ">
+  space-y-5
+">
 
           {/* HEADER */}
 
           <div className="
-            flex
-            items-center
-            gap-3
-          ">
+    flex
+    items-center
+    gap-3
+  ">
 
             <div className="
-              w-12
-              h-12
+      w-12
+      h-12
 
-              rounded-[18px]
+      rounded-[18px]
 
-              bg-gradient-to-br
-              from-yellow-500
-              to-orange-500
+      bg-gradient-to-br
+      from-yellow-500
+      to-orange-500
 
-              text-white
+      text-white
 
-              flex
-              items-center
-              justify-center
+      flex
+      items-center
+      justify-center
+    ">
 
-              text-xl
-            ">
-              💰
+              <BadgeDollarSign size={20} />
+
             </div>
 
             <div>
 
               <h3 className="
-                text-sm
+        text-sm
 
-                font-black
+        font-black
 
-                uppercase
+        uppercase
 
-                tracking-[0.12em]
+        tracking-[0.12em]
 
-                text-slate-700
-              ">
+        text-slate-700
+      ">
                 Resumen factura
               </h3>
 
               <p className="
-                text-xs
-                text-gray-400
-              ">
+        text-xs
+        text-slate-400
+      ">
                 Totales e impuestos
               </p>
 
             </div>
 
           </div>
+          
 
           {/* DESCUENTO */}
 
@@ -1414,14 +1467,24 @@ function IngresoForm({
             space-y-2
           ">
 
+            {/* DESCUENTO LABEL */}
+
             <label className="
-              text-xs
+  text-xs
 
-              font-bold
+  font-bold
 
-              text-gray-500
-            ">
+  text-slate-500
+
+  flex
+  items-center
+  gap-2
+">
+
+              <BadgeDollarSign size={13} />
+
               Descuento (%)
+
             </label>
 
             <input
@@ -1614,145 +1677,179 @@ function IngresoForm({
           {/* TOTAL FINAL */}
 
           <div className="
-            bg-gradient-to-r
-            from-emerald-500
-            to-green-500
+  bg-gradient-to-r
+  from-emerald-500
+  to-green-500
 
-            rounded-[30px]
+  rounded-[30px]
 
-            p-6
+  p-6
 
-            text-white
+  text-white
 
-            shadow-[0_20px_45px_rgba(16,185,129,0.28)]
+  shadow-[0_20px_45px_rgba(16,185,129,0.28)]
 
-            text-center
-          ">
+  text-center
+">
+
+            <div className="
+    flex
+    items-center
+    justify-center
+    gap-2
+  ">
+
+              <Receipt
+                size={16}
+                className="text-white/80"
+              />
+
+              <p className="
+      text-xs
+
+      uppercase
+
+      tracking-[0.14em]
+
+      font-black
+
+      text-white/70
+    ">
+                Total factura
+              </p>
+
+            </div>
 
             <p className="
-              text-xs
+    mt-3
 
-              uppercase
+    text-4xl
 
-              tracking-[0.14em]
+    font-black
+  ">
 
-              font-black
-
-              text-white/70
-            ">
-              Total factura
-            </p>
-
-            <p className="
-              mt-3
-
-              text-4xl
-
-              font-black
-            ">
               RD$
               {" "}
               {formatMoney(total)}
+
             </p>
 
           </div>
-
         </div>
 
         {/* ACTIONS */}
 
         <div className="
-          sticky
-          bottom-0
+  sticky
+  bottom-0
 
-          bg-white/90
-          backdrop-blur-xl
+  bg-white/90
+  backdrop-blur-xl
 
-          pt-2
+  pt-2
 
-          flex
-          flex-col
-          sm:flex-row
+  flex
+  flex-col
+  sm:flex-row
 
-          gap-3
+  gap-3
 
-          shrink-0
-        ">
+  shrink-0
+">
 
-
+          {/* CANCEL */}
 
           <button
             type="button"
             onClick={onClose}
             className="
-              flex-1
+      flex-1
 
-              h-14
+      h-14
 
-              rounded-[24px]
+      rounded-[24px]
 
-              bg-slate-100
+      bg-slate-100
 
-              hover:bg-slate-200
+      hover:bg-slate-200
 
-              text-slate-700
+      text-slate-700
 
-              font-semibold
+      font-semibold
 
-              transition-all
-              duration-300
+      transition-all
+      duration-300
 
-              active:scale-[0.98]
-            "
+      active:scale-[0.98]
+
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
           >
+
+            <X size={18} />
+
             Cancelar
+
           </button>
+
+          {/* SAVE */}
 
           <button
             type="submit"
             disabled={loading}
             className={`
-              flex-1
+      flex-1
 
-              h-14
+      h-14
 
-              rounded-[24px]
+      rounded-[24px]
 
-              text-white
+      text-white
 
-              text-sm
-              sm:text-base
+      text-sm
+      sm:text-base
 
-              font-black
+      font-black
 
-              transition-all
-              duration-300
+      transition-all
+      duration-300
 
-              active:scale-[0.98]
+      active:scale-[0.98]
 
-              ${loading
+      flex
+      items-center
+      justify-center
+      gap-2
+
+      ${loading
                 ? "bg-gray-400"
                 : `
-                  bg-gradient-to-r
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+          bg-gradient-to-r
+          from-indigo-500
+          via-purple-500
+          to-violet-500
 
-                  shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+          shadow-[0_15px_35px_rgba(99,102,241,0.28)]
 
-                  hover:scale-[1.01]
+          hover:scale-[1.01]
 
-                  hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
-                `
+          hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+        `
               }
-            `}
+    `}
           >
+
+            <Save size={18} />
 
             {loading
               ? "Guardando..."
               : "Guardar factura"}
 
           </button>
+
         </div>
 
       </form>

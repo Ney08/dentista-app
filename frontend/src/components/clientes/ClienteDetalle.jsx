@@ -6,7 +6,13 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
-  X
+  X,
+  CalendarDays,
+  Sparkles,
+  ClipboardList,
+  Clock3,
+  Activity,
+  AlertCircle
 } from "lucide-react";
 
 import HistorialForm from "./HistorialForm";
@@ -51,7 +57,7 @@ function ClienteDetalle({ cliente }) {
 
   const cortarTexto = (
     texto,
-    limite = 90
+    limite = 120
   ) => {
 
     if (!texto) return "";
@@ -190,9 +196,42 @@ function ClienteDetalle({ cliente }) {
   if (isLoading) {
 
     return (
-      <p>
-        Cargando historial...
-      </p>
+
+      <div className="
+        flex
+        items-center
+        justify-center
+
+        py-20
+      ">
+
+        <div className="
+          flex
+          items-center
+          gap-3
+
+          text-slate-500
+        ">
+
+          <div className="
+            w-5
+            h-5
+
+            border-2
+            border-indigo-500
+            border-t-transparent
+
+            rounded-full
+
+            animate-spin
+          " />
+
+          Cargando historial...
+
+        </div>
+
+      </div>
+
     );
 
   }
@@ -202,6 +241,242 @@ function ClienteDetalle({ cliente }) {
     <div className="
       space-y-6
     ">
+
+      {/* STATS */}
+
+      <div className="
+        grid
+        grid-cols-1
+        sm:grid-cols-3
+
+        gap-4
+      ">
+
+        {/* TOTAL */}
+
+        <div className="
+          rounded-[28px]
+
+          bg-gradient-to-br
+          from-indigo-50
+          to-purple-50
+
+          border
+          border-indigo-100
+
+          p-5
+        ">
+
+          <div className="
+            flex
+            items-center
+            justify-between
+          ">
+
+            <div>
+
+              <p className="
+                text-xs
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-indigo-500
+
+                font-black
+              ">
+                Notas clínicas
+              </p>
+
+              <h3 className="
+                mt-2
+
+                text-3xl
+
+                font-black
+
+                text-slate-800
+              ">
+                {historial.length}
+              </h3>
+
+            </div>
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-indigo-500/10
+
+              text-indigo-600
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <ClipboardList size={20} />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* ESTADO */}
+
+        <div className="
+          rounded-[28px]
+
+          bg-gradient-to-br
+          from-emerald-50
+          to-green-50
+
+          border
+          border-emerald-100
+
+          p-5
+        ">
+
+          <div className="
+            flex
+            items-center
+            justify-between
+          ">
+
+            <div>
+
+              <p className="
+                text-xs
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-emerald-500
+
+                font-black
+              ">
+                Seguimiento
+              </p>
+
+              <h3 className="
+                mt-2
+
+                text-lg
+
+                font-black
+
+                text-slate-800
+              ">
+                Activo
+              </h3>
+
+            </div>
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-emerald-500/10
+
+              text-emerald-600
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <Activity size={20} />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* ULTIMA */}
+
+        <div className="
+          rounded-[28px]
+
+          bg-gradient-to-br
+          from-slate-50
+          to-slate-100/70
+
+          border
+          border-slate-200
+
+          p-5
+        ">
+
+          <div className="
+            flex
+            items-center
+            justify-between
+          ">
+
+            <div>
+
+              <p className="
+                text-xs
+
+                uppercase
+
+                tracking-[0.12em]
+
+                text-slate-400
+
+                font-black
+              ">
+                Última nota
+              </p>
+
+              <h3 className="
+                mt-2
+
+                text-sm
+
+                font-black
+
+                text-slate-700
+              ">
+                {historial[0]
+                  ? formatFecha(historial[0].fecha)
+                  : "Sin registros"}
+              </h3>
+
+            </div>
+
+            <div className="
+              w-12
+              h-12
+
+              rounded-[18px]
+
+              bg-slate-200/70
+
+              text-slate-600
+
+              flex
+              items-center
+              justify-center
+            ">
+
+              <Clock3 size={20} />
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
 
       {/* FORM */}
 
@@ -219,13 +494,40 @@ function ClienteDetalle({ cliente }) {
         items-center
         justify-between
 
-        gap-3
+        gap-4
       ">
 
         <div>
 
+          <div className="
+            inline-flex
+
+            items-center
+            gap-2
+
+            px-3
+            py-1.5
+
+            rounded-full
+
+            bg-indigo-500/10
+
+            text-indigo-600
+
+            text-xs
+            font-black
+
+            mb-3
+          ">
+
+            <Sparkles size={13} />
+
+            Historial clínico
+
+          </div>
+
           <h4 className="
-            text-lg
+            text-xl
 
             font-black
 
@@ -233,22 +535,24 @@ function ClienteDetalle({ cliente }) {
 
             text-slate-800
           ">
-            📚 Historial clínico
+            Seguimiento del paciente
           </h4>
 
           <p className="
+            mt-1
+
             text-sm
 
             text-slate-400
           ">
-            Observaciones y seguimiento del paciente
+            Observaciones, evolución y notas clínicas
           </p>
 
         </div>
 
         <div className="
-          px-3
-          py-1.5
+          px-4
+          py-2
 
           rounded-full
 
@@ -257,9 +561,11 @@ function ClienteDetalle({ cliente }) {
           text-indigo-600
 
           text-xs
-          font-bold
+          font-black
         ">
-          {historial.length} notas
+
+          {historial.length} registros
+
         </div>
 
       </div>
@@ -271,35 +577,81 @@ function ClienteDetalle({ cliente }) {
 
         min-h-0
 
-        max-h-[420px]
+        max-h-[500px]
 
         overflow-y-auto
         overflow-x-hidden
 
-        pr-1
+        pr-2
 
-        space-y-3
+        space-y-4
+
+        scrollbar-thin
+        scrollbar-thumb-indigo-200/70
+        scrollbar-track-transparent
       ">
 
         {(!historial || historial.length === 0) ? (
 
           <div className="
+            relative
+            overflow-hidden
+
             bg-white
 
             border
             border-slate-200
 
-            rounded-[28px]
+            rounded-[30px]
 
-            p-8
+            p-10
 
             text-center
           ">
 
+            <div className="
+              w-20
+              h-20
+
+              mx-auto
+
+              rounded-[26px]
+
+              bg-gradient-to-br
+              from-indigo-500
+              to-purple-500
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              shadow-[0_20px_50px_rgba(99,102,241,0.25)]
+            ">
+
+              <ClipboardList size={36} />
+
+            </div>
+
+            <h3 className="
+              mt-6
+
+              text-2xl
+
+              font-black
+
+              text-slate-800
+            ">
+              Sin historial clínico
+            </h3>
+
             <p className="
+              mt-2
+
               text-slate-500
             ">
-              No hay historial clínico registrado
+              Comienza agregando observaciones del paciente
             </p>
 
           </div>
@@ -320,26 +672,50 @@ function ClienteDetalle({ cliente }) {
               "
             >
 
-              {/* LEFT BORDER */}
+              {/* TIMELINE */}
 
-              <div className={`
-                w-[4px]
+              <div className="
+                relative
 
-                rounded-full
+                flex
+                flex-col
 
-                shrink-0
+                items-center
+              ">
 
-                ${index === 0
-                  ? `
-                    bg-gradient-to-b
-                    from-indigo-500
-                    to-purple-500
-                  `
-                  : `
+                <div className={`
+                  w-4
+                  h-4
+
+                  rounded-full
+
+                  border-4
+                  border-white
+
+                  shadow-md
+
+                  z-10
+
+                  ${index === 0
+                    ? "bg-indigo-500"
+                    : "bg-slate-300"}
+                `} />
+
+                {index !== historial.length - 1 && (
+
+                  <div className="
+                    w-[3px]
+
+                    flex-1
+
                     bg-slate-200
-                  `
-                }
-              `} />
+
+                    min-h-[80px]
+                  " />
+
+                )}
+
+              </div>
 
               {/* CARD */}
 
@@ -359,7 +735,7 @@ function ClienteDetalle({ cliente }) {
                   border
                   border-slate-200/80
 
-                  rounded-[28px]
+                  rounded-[30px]
 
                   p-5
 
@@ -367,16 +743,16 @@ function ClienteDetalle({ cliente }) {
 
                   hover:-translate-y-[2px]
 
-                  hover:shadow-[0_18px_40px_rgba(0,0,0,0.06)]
-
                   hover:border-indigo-200
+
+                  hover:shadow-[0_18px_40px_rgba(99,102,241,0.08)]
 
                   transition-all
                   duration-300
                 "
               >
 
-                {/* TOP ACTIONS */}
+                {/* ACTIONS */}
 
                 <div className="
                   absolute
@@ -406,7 +782,7 @@ function ClienteDetalle({ cliente }) {
 
                       rounded-[14px]
 
-                      bg-white/90
+                      bg-white
 
                       border
                       border-slate-200
@@ -438,6 +814,7 @@ function ClienteDetalle({ cliente }) {
                       absolute
                       top-11
                       right-0
+
                       z-20
 
                       w-44
@@ -447,14 +824,12 @@ function ClienteDetalle({ cliente }) {
                       border
                       border-slate-200
 
-                      rounded-[20px]
-
-                      shadow-[0_15px_40px_rgba(0,0,0,0.10)]
+                      rounded-[22px]
 
                       overflow-hidden
-                    ">
 
-                      {/* EDIT */}
+                      shadow-[0_20px_50px_rgba(0,0,0,0.12)]
+                    ">
 
                       <button
                         onClick={(e) => {
@@ -497,8 +872,6 @@ function ClienteDetalle({ cliente }) {
                         Editar nota
 
                       </button>
-
-                      {/* DELETE */}
 
                       <button
                         onClick={(e) => {
@@ -544,7 +917,7 @@ function ClienteDetalle({ cliente }) {
 
                 </div>
 
-                {/* RECENT BADGE */}
+                {/* RECENT */}
 
                 {index === 0 && (
 
@@ -577,7 +950,7 @@ function ClienteDetalle({ cliente }) {
 
                 )}
 
-                {/* TEXT */}
+                {/* CONTENT */}
 
                 <p className="
                   text-sm
@@ -594,7 +967,7 @@ function ClienteDetalle({ cliente }) {
 
                   {cortarTexto(h.descripcion)}
 
-                  {h.descripcion?.length > 90 && (
+                  {h.descripcion?.length > 120 && (
 
                     <span className="
                       ml-2
@@ -603,10 +976,10 @@ function ClienteDetalle({ cliente }) {
 
                       text-sm
                       font-semibold
-
-                      hover:text-indigo-600
                     ">
+
                       ver más
+
                     </span>
 
                   )}
@@ -616,7 +989,7 @@ function ClienteDetalle({ cliente }) {
                 {/* FOOTER */}
 
                 <div className="
-                  mt-4
+                  mt-5
 
                   flex
                   items-center
@@ -625,15 +998,49 @@ function ClienteDetalle({ cliente }) {
                   gap-3
                 ">
 
-                  <p className="
+                  <div className="
+                    inline-flex
+
+                    items-center
+                    gap-2
+
                     text-sm
 
                     text-slate-400
 
                     font-medium
                   ">
+
+                    <CalendarDays size={14} />
+
                     {formatFecha(h.fecha)}
-                  </p>
+
+                  </div>
+
+                  <div className="
+                    inline-flex
+
+                    items-center
+                    gap-2
+
+                    px-3
+                    py-1.5
+
+                    rounded-full
+
+                    bg-emerald-50
+
+                    text-emerald-600
+
+                    text-[11px]
+                    font-bold
+                  ">
+
+                    <AlertCircle size={12} />
+
+                    Seguimiento
+
+                  </div>
 
                 </div>
 
@@ -727,8 +1134,6 @@ function ClienteDetalle({ cliente }) {
                 </p>
 
               </div>
-
-              {/* CLOSE */}
 
               <button
                 onClick={() =>

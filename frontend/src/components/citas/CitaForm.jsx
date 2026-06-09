@@ -11,6 +11,18 @@ import { useCitas } from "../../hooks/useCitas";
 import { useServicios } from "../../hooks/useServicios";
 
 import {
+  CalendarDays,
+  User2,
+  ClipboardList,
+  FileText,
+  Clock3,
+  CalendarClock,
+  Save,
+  X,
+  CheckCircle2
+} from "lucide-react";
+
+import {
   formatFecha,
   parseFechaLocal,
   crearFechaLocal
@@ -663,37 +675,9 @@ function CitaForm({
   return (
 
     <div className="
-      relative
-      overflow-hidden
+     
 
-      w-full
-      h-full
-
-      md:h-auto
-      md:max-h-[92vh]
-
-      bg-white/95
-      backdrop-blur-2xl
-
-      rounded-t-[36px]
-      md:rounded-[36px]
-
-      border-0
-      md:border
-      border-white/40
-
-      shadow-[0_25px_80px_rgba(0,0,0,0.15)]
-
-      p-5
-      sm:p-6
-
-      flex
-      flex-col
-
-      gap-6
-
-      overflow-y-auto
-      overflow-x-hidden
+     
     ">
 
       {/* GLOW */}
@@ -716,52 +700,78 @@ function CitaForm({
       {/* HEADER */}
 
       <div className="
-        relative
-        z-10
+  relative
+  z-10
 
-        text-center
+  text-center
 
-        space-y-3
+  space-y-3
 
-        shrink-0
-      ">
+  shrink-0
+">
+
+        <div className="
+    mx-auto
+
+    w-20
+    h-20
+
+    rounded-[28px]
+
+    bg-gradient-to-br
+    from-indigo-500
+    via-purple-500
+    to-violet-500
+
+    text-white
+
+    flex
+    items-center
+    justify-center
+
+    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+  ">
+
+          <CalendarDays size={34} />
+
+        </div>
 
         <h2 className="
-          text-3xl
-          sm:text-4xl
+    text-3xl
+    sm:text-4xl
 
-          font-black
+    font-black
 
-          tracking-tight
+    tracking-tight
 
-          text-slate-800
-        ">
+    text-slate-800
+  ">
 
           {isEdit
-            ? "Editar cita ✏️"
-            : "Nueva cita 📅"}
+            ? "Editar cita"
+            : "Nueva cita"}
 
         </h2>
 
         <div className="
-          w-20
-          h-1
+    w-20
+    h-1
 
-          mx-auto
+    mx-auto
 
-          rounded-full
+    rounded-full
 
-          bg-gradient-to-r
-          from-indigo-500
-          to-purple-500
-        " />
+    bg-gradient-to-r
+    from-indigo-500
+    to-purple-500
+  " />
 
         <p className="
-          text-sm
-          sm:text-base
+    text-sm
+    sm:text-base
 
-          text-gray-500
-        ">
+    text-slate-500
+  ">
 
           {isEdit
             ? "Modifica la información de la cita"
@@ -798,59 +808,58 @@ function CitaForm({
           {clientePreset && (
 
             <div className="
-              flex
-              items-center
-              gap-3
+    flex
+    items-center
+    gap-3
 
-              bg-gradient-to-r
-              from-indigo-50
-              to-purple-50
+    bg-indigo-50
 
-              border
-              border-indigo-100
+    border
+    border-indigo-100
 
-              rounded-[24px]
+    rounded-[24px]
 
-              px-4
-              py-4
+    px-4
+    py-4
 
-              text-sm
-            ">
+    text-sm
+  ">
 
               <div className="
-                w-12
-                h-12
+      w-12
+      h-12
 
-                rounded-[18px]
+      rounded-[18px]
 
-                bg-gradient-to-br
-                from-indigo-500
-                to-purple-500
+      bg-gradient-to-br
+      from-indigo-500
+      via-purple-500
+      to-violet-500
 
-                text-white
+      text-white
 
-                flex
-                items-center
-                justify-center
+      flex
+      items-center
+      justify-center
+    ">
 
-                font-black
-              ">
-                {clientePreset.nombre?.charAt(0)}
+                <User2 size={20} />
+
               </div>
 
               <div>
 
                 <p className="
-                  text-gray-500
-                  text-xs
-                ">
+        text-slate-400
+        text-xs
+      ">
                   Cliente seleccionado
                 </p>
 
                 <p className="
-                  font-black
-                  text-slate-700
-                ">
+        font-black
+        text-slate-700
+      ">
                   {clientePreset.nombre}
                   {" "}
                   {clientePreset.apellido}
@@ -862,158 +871,228 @@ function CitaForm({
 
           )}
 
-          {/* SELECTS */}
+          {/* CLIENTE */}
 
-          <select
-            value={clienteId}
-            onChange={(e) =>
-              setClienteId(
-                e.target.value
-              )
-            }
-            disabled={!!clientePreset}
-            className="
-              w-full
+          <div className="space-y-2">
 
-              h-14
+            {/* <label className="
+    text-xs
 
-              px-5
+    font-bold
 
-              rounded-[24px]
+    text-slate-500
 
-              bg-white/80
+    flex
+    items-center
+    gap-2
+  ">
 
-              border
-              border-slate-200
+              <User2 size={13} />
 
-              text-slate-700
-
-              shadow-sm
-
-              focus:outline-none
-
-              focus:ring-4
-              focus:ring-indigo-500/10
-
-              focus:border-indigo-300
-
-              transition-all
-              duration-300
-            "
-          >
-
-            <option value="">
               Cliente
-            </option>
 
-            {clientes.map((c) => (
+            </label> */}
 
-              <option
-                key={c.id}
-                value={c.id}
-              >
-                {c.nombre}
-                {" "}
-                {c.apellido}
+            <select
+              value={clienteId}
+              onChange={(e) =>
+                setClienteId(
+                  e.target.value
+                )
+              }
+              disabled={!!clientePreset}
+              className="
+      w-full
+
+      h-14
+
+      px-5
+
+      rounded-[24px]
+
+      bg-white/80
+
+      border
+      border-slate-200
+
+      text-slate-700
+
+      shadow-sm
+
+      focus:outline-none
+
+      focus:ring-4
+      focus:ring-indigo-500/10
+
+      focus:border-indigo-300
+
+      transition-all
+      duration-300
+    "
+            >
+
+              <option value="">
+                Cliente
               </option>
 
-            ))}
+              {clientes.map((c) => (
 
-          </select>
+                <option
+                  key={c.id}
+                  value={c.id}
+                >
+                  {c.nombre}
+                  {" "}
+                  {c.apellido}
+                </option>
 
-          <select
-            value={motivo}
-            onChange={(e) =>
-              setMotivo(
-                e.target.value
-              )
-            }
-            className="
-              w-full
+              ))}
 
-              h-14
+            </select>
 
-              px-5
+          </div>
 
-              rounded-[24px]
+          {/* SERVICIO */}
 
-              bg-white/80
+          <div className="space-y-2">
 
-              border
-              border-slate-200
+            {/* <label className="
+    text-xs
 
-              text-slate-700
+    font-bold
 
-              shadow-sm
+    text-slate-500
 
-              focus:outline-none
+    flex
+    items-center
+    gap-2
+  ">
 
-              focus:ring-4
-              focus:ring-indigo-500/10
+              <ClipboardList size={13} />
 
-              focus:border-indigo-300
-
-              transition-all
-              duration-300
-            "
-          >
-
-            <option value="">
               Servicio / Motivo
-            </option>
 
-            {catalogoServicios.map((serv) => (
+            </label> */}
 
-              <option
-                key={serv.id}
-                value={serv.nombre}
-              >
-                {serv.nombre}
+            <select
+              value={motivo}
+              onChange={(e) =>
+                setMotivo(
+                  e.target.value
+                )
+              }
+              className="
+      w-full
+
+      h-14
+
+      px-5
+
+      rounded-[24px]
+
+      bg-white/80
+
+      border
+      border-slate-200
+
+      text-slate-700
+
+      shadow-sm
+
+      focus:outline-none
+
+      focus:ring-4
+      focus:ring-indigo-500/10
+
+      focus:border-indigo-300
+
+      transition-all
+      duration-300
+    "
+            >
+
+              <option value="">
+                Servicio / Motivo
               </option>
 
-            ))}
+              {catalogoServicios.map((serv) => (
 
-          </select>
+                <option
+                  key={serv.id}
+                  value={serv.nombre}
+                >
+                  {serv.nombre}
+                </option>
 
-          <textarea
-            placeholder="Detalle adicional (opcional)"
-            value={detalle}
-            onChange={(e) =>
-              setDetalle(
-                e.target.value
-              )
-            }
-            rows={5}
-            className="
-              w-full
+              ))}
 
-              px-5
-              py-4
+            </select>
 
-              rounded-[24px]
+          </div>
 
-              bg-white/80
+          {/* DETALLE */}
 
-              border
-              border-slate-200
+          <div className="space-y-2">
 
-              text-slate-700
+            {/* <label className="
+    text-xs
 
-              shadow-sm
+    font-bold
 
-              resize-none
+    text-slate-500
 
-              focus:outline-none
+    flex
+    items-center
+    gap-2
+  ">
 
-              focus:ring-4
-              focus:ring-indigo-500/10
+              <FileText size={13} />
 
-              focus:border-indigo-300
+              Detalle adicional
 
-              transition-all
-              duration-300
-            "
-          />
+            </label> */}
+
+            <textarea
+              placeholder="Detalle adicional (opcional)"
+              value={detalle}
+              onChange={(e) =>
+                setDetalle(
+                  e.target.value
+                )
+              }
+              rows={5}
+              className="
+      w-full
+
+      px-5
+      py-4
+
+      rounded-[24px]
+
+      bg-white/80
+
+      border
+      border-slate-200
+
+      text-slate-700
+
+      shadow-sm
+
+      resize-none
+
+      focus:outline-none
+
+      focus:ring-4
+      focus:ring-indigo-500/10
+
+      focus:border-indigo-300
+
+      transition-all
+      duration-300
+    "
+            />
+
+          </div>
 
           <select
             value={duracion}
@@ -1084,21 +1163,20 @@ function CitaForm({
           {/* CALENDAR */}
 
           <div className="
-            bg-gradient-to-br
-            from-white
-            to-slate-50
+  bg-slate-50/70
 
-            border
-            border-white
+  border
+  border-slate-200/70
 
-            rounded-[30px]
+  rounded-[30px]
 
-            p-3
+  p-3
 
-            shadow-sm
+  shadow-sm
 
-            overflow-hidden
-          ">
+  overflow-hidden
+">
+
 
             <Calendar
               className="
@@ -1167,32 +1245,46 @@ function CitaForm({
           {/* HORARIOS */}
 
           <div className="
-            flex
-            items-center
-            justify-between
-          ">
+  flex
+  items-center
+  justify-between
+">
 
-            <p className="
-              text-sm
+            <div className="
+    flex
+    items-center
+    gap-2
+  ">
 
-              font-bold
+              <CalendarClock
+                size={16}
+                className="text-indigo-500"
+              />
 
-              text-slate-700
-            ">
-              Horarios disponibles
-            </p>
+              <p className="
+      text-sm
+
+      font-bold
+
+      text-slate-700
+    ">
+                Horarios disponibles
+              </p>
+
+            </div>
 
             <span className="
-              text-xs
+    text-xs
 
-              text-indigo-500
+    text-indigo-500
 
-              font-semibold
-            ">
+    font-semibold
+  ">
               {duracion} min
             </span>
 
           </div>
+
 
           {/* HORAS */}
 
@@ -1318,62 +1410,80 @@ function CitaForm({
       {/* RESUMEN */}
 
       <div className={`
-        relative
-        z-10
+  relative
+  z-10
 
-        border
+  border
 
-        rounded-[28px]
+  rounded-[28px]
 
-        p-5
+  p-5
 
-        backdrop-blur-xl
+  backdrop-blur-xl
 
-        transition-all
-        duration-300
+  transition-all
+  duration-300
 
-        ${hora && clienteId
+  ${hora && clienteId
           ? `
-            bg-gradient-to-r
-            from-indigo-50
-            to-purple-50
+      bg-gradient-to-r
+      from-indigo-50
+      to-purple-50
 
-            border-indigo-100
-          `
+      border-indigo-100
+    `
           : `
-            bg-slate-50
+      bg-slate-50
 
-            border-slate-200
+      border-slate-200
 
-            opacity-80
-          `
+      opacity-80
+    `
         }
-      `}>
+`}>
 
-        <p className="
-          font-black
+        <div className="
+    flex
+    items-center
+    gap-2
+  ">
 
-          text-slate-700
-        ">
+          <CheckCircle2
+            size={18}
+            className={`
+        ${hora && clienteId
+                ? "text-emerald-500"
+                : "text-slate-400"
+              }
+      `}
+          />
 
-          {hora && clienteId
-            ? "✅ Cita seleccionada"
-            : "Selecciona una hora"}
+          <p className="
+      font-black
 
-        </p>
+      text-slate-700
+    ">
+
+            {hora && clienteId
+              ? "Cita seleccionada"
+              : "Selecciona una hora"}
+
+          </p>
+
+        </div>
 
         {hora && clienteId && (
 
           <div className="
-            mt-2
-            space-y-1
-          ">
+      mt-3
+      space-y-1
+    ">
 
             <p className="
-              text-indigo-600
+        text-indigo-600
 
-              font-semibold
-            ">
+        font-semibold
+      ">
 
               {formatFecha(fechaBase)}
               {" — "}
@@ -1382,9 +1492,9 @@ function CitaForm({
             </p>
 
             <p className="
-              text-sm
-              text-gray-500
-            ">
+        text-sm
+        text-slate-500
+      ">
 
               {motivo || "Sin servicio"}
               {" • "}
@@ -1401,89 +1511,110 @@ function CitaForm({
       {/* ACTIONS */}
 
       <div className="
-        sticky
-        bottom-0
+  sticky
+  bottom-0
 
-        bg-white/90
-        backdrop-blur-xl
+  bg-white/90
+  backdrop-blur-xl
 
-        pt-2
+  pt-2
 
-        flex
-        flex-col
-        sm:flex-row
+  flex
+  flex-col
+  sm:flex-row
 
-        gap-3
+  gap-3
 
-        shrink-0
-      ">
-         <button
+  shrink-0
+">
+
+        {/* CANCEL */}
+
+        <button
           type="button"
           onClick={onClose}
           className="
-            flex-1
+      flex-1
 
-            h-14
+      h-14
 
-            rounded-[24px]
+      rounded-[24px]
 
-            bg-slate-100
+      bg-slate-100
 
-            hover:bg-slate-200
+      hover:bg-slate-200
 
-            text-slate-700
+      text-slate-700
 
-            font-semibold
+      font-semibold
 
-            transition-all
-            duration-300
+      transition-all
+      duration-300
 
-            active:scale-[0.98]
-          "
+      active:scale-[0.98]
+
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
         >
+
+          <X size={18} />
+
           Cancelar
+
         </button>
-        
+
+        {/* SAVE */}
+
         <button
           type="button"
           onClick={guardar}
           disabled={loading}
           className={`
-            flex-1
+      flex-1
 
-            h-14
+      h-14
 
-            rounded-[24px]
+      rounded-[24px]
 
-            text-white
+      text-white
 
-            text-sm
-            sm:text-base
+      text-sm
+      sm:text-base
 
-            font-black
+      font-black
 
-            transition-all
-            duration-300
+      transition-all
+      duration-300
 
-            active:scale-[0.98]
+      active:scale-[0.98]
 
-            ${loading
+      flex
+      items-center
+      justify-center
+      gap-2
+
+      ${loading
               ? "bg-gray-400"
               : `
-                bg-gradient-to-r
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+          bg-gradient-to-r
+          from-indigo-500
+          via-purple-500
+          to-violet-500
 
-                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+          shadow-[0_15px_35px_rgba(99,102,241,0.28)]
 
-                hover:scale-[1.01]
+          hover:scale-[1.01]
 
-                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
-              `
+          hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+        `
             }
-          `}
+    `}
         >
+
+          <Save size={18} />
 
           {loading
             ? "Guardando..."
@@ -1492,8 +1623,6 @@ function CitaForm({
               : "Crear cita"}
 
         </button>
-
-       
 
       </div>
 

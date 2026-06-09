@@ -1,5 +1,16 @@
 import { useState, useEffect } from "react";
 
+import {
+  FolderCog,
+  BadgeDollarSign,
+  Receipt,
+  Sparkles,
+  Save,
+  X
+} from "lucide-react";
+
+import BaseModal from "./BaseModal";
+
 import { formatMoney } from "../utils/format";
 
 function ServicioModal({
@@ -66,8 +77,8 @@ function ServicioModal({
   */
 
   const ganancia =
-    (parseFloat(precio || 0)) -
-    (parseFloat(costoServicio || 0));
+    parseFloat(precio || 0) -
+    parseFloat(costoServicio || 0);
 
   /*
   ==========================================
@@ -103,254 +114,386 @@ function ServicioModal({
 
   return (
 
-    <div
-      onClick={onClose}
-      className="
-        fixed
-        inset-0
-        z-50
-
-        flex
-        items-end
-
-        justify-center
-
-        bg-black/50
-        backdrop-blur-md
-
-        transition-all
-        duration-300
-      "
+    <BaseModal
+      isOpen={true}
+      onClose={onClose}
+      maxWidth="max-w-3xl"
     >
 
-      {/* ✅ MODAL */}
+      <div className="
+        
+      ">
 
-      <div
-        onClick={(e) =>
-          e.stopPropagation()
-        }
+        {/* GLOW */}
 
-        className="
-          w-full
+        <div className="
+          absolute
+          -top-20
+          -right-20
 
-          md:max-w-3xl
+          w-72
+          h-72
 
-          p-0
-          md:p-4
+          rounded-full
 
-          animate-in
-          slide-in-from-bottom
+          bg-indigo-500/10
 
-          duration-500
-        "
-      >
+          blur-3xl
+        " />
+
+        {/* HEADER */}
 
         <div className="
           relative
-          overflow-hidden
+          z-10
 
-          w-full
-          h-full
+          text-center
 
-          md:h-auto
-          md:max-h-[92vh]
+          space-y-3
+        ">
 
-          bg-white/95
-          backdrop-blur-2xl
+          <div className="
+            mx-auto
 
-          rounded-t-[36px]
-          md:rounded-[36px]
+            w-20
+            h-20
 
-          border-0
-          md:border
+            rounded-[28px]
 
-          border-white/40
+            bg-gradient-to-br
+            from-indigo-500
+            via-purple-500
+            to-violet-500
 
-          shadow-[0_25px_80px_rgba(0,0,0,0.15)]
+            text-white
 
-          p-5
-          sm:p-6
+            flex
+            items-center
+            justify-center
+
+            shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+          ">
+
+            <FolderCog size={34} />
+
+          </div>
+
+          <h2 className="
+            text-3xl
+            sm:text-4xl
+
+            font-black
+
+            tracking-tight
+
+            text-slate-800
+          ">
+
+            {isEdit
+              ? "Editar servicio"
+              : "Nuevo servicio"}
+
+          </h2>
+
+          <div className="
+            w-20
+            h-1
+
+            mx-auto
+
+            rounded-full
+
+            bg-gradient-to-r
+            from-indigo-500
+            to-violet-500
+          " />
+
+          <p className="
+            text-sm
+            sm:text-base
+
+            text-slate-500
+          ">
+
+            Configura servicios, costos y rentabilidad
+
+          </p>
+
+        </div>
+
+        {/* FORM */}
+
+        <div className="
+          relative
+          z-10
 
           flex
           flex-col
 
           gap-6
-
-          overflow-y-auto
-          overflow-x-hidden
-
-          will-change-transform
         ">
 
-          {/* ✅ GLOW */}
+          {/* INFO */}
 
           <div className="
-            absolute
-            -top-20
-            -right-20
+            bg-slate-50/70
 
-            w-72
-            h-72
+            border
+            border-slate-200/70
 
-            rounded-full
+            rounded-[30px]
 
-            bg-indigo-500/10
+            p-5
 
-            blur-3xl
-          " />
+            shadow-sm
 
-          {/* ✅ HEADER */}
-
-          <div className="
-            relative
-            z-10
-
-            text-center
-
-            space-y-3
+            space-y-5
           ">
 
-            <h2 className="
-              text-3xl
-              sm:text-4xl
-
-              font-black
-
-              tracking-tight
-
-              text-slate-800
-            ">
-
-              {isEdit
-                ? "Editar servicio 🦷"
-                : "Nuevo servicio 🦷"}
-
-            </h2>
+            {/* HEADER */}
 
             <div className="
-              w-20
-              h-1
+              flex
+              items-center
 
-              mx-auto
-
-              rounded-full
-
-              bg-gradient-to-r
-              from-indigo-500
-              to-violet-500
-            " />
-
-            <p className="
-              text-sm
-              sm:text-base
-
-              text-gray-500
+              gap-3
             ">
-              Configura servicios y costos
-            </p>
-
-          </div>
-
-          {/* ✅ FORM */}
-
-          <div className="
-            relative
-            z-10
-
-            flex
-            flex-col
-
-            gap-6
-          ">
-
-            {/* ✅ INFO */}
-
-            <div className="
-              bg-gradient-to-br
-              from-white
-              to-slate-50
-
-              border
-              border-white
-
-              rounded-[30px]
-
-              p-5
-
-              shadow-sm
-
-              space-y-5
-            ">
-
-              {/* HEADER */}
 
               <div className="
+                w-12
+                h-12
+
+                rounded-[18px]
+
+                bg-gradient-to-br
+                from-indigo-500
+                to-violet-500
+
                 flex
                 items-center
+                justify-center
 
-                gap-3
+                text-white
               ">
 
-                <div className="
-                  w-12
-                  h-12
-
-                  rounded-[18px]
-
-                  bg-gradient-to-br
-                  from-indigo-500
-                  to-violet-500
-
-                  flex
-                  items-center
-                  justify-center
-
-                  text-white
-                  text-xl
-                ">
-                  🧾
-                </div>
-
-                <div>
-
-                  <h3 className="
-                    text-sm
-
-                    font-black
-
-                    uppercase
-
-                    tracking-[0.12em]
-
-                    text-slate-700
-                  ">
-                    Información
-                  </h3>
-
-                  <p className="
-                    text-xs
-                    text-gray-400
-                  ">
-                    Datos principales del servicio
-                  </p>
-
-                </div>
+                <FolderCog size={20} />
 
               </div>
 
-              {/* NOMBRE */}
+              <div>
+
+                <h3 className="
+                  text-sm
+
+                  font-black
+
+                  uppercase
+
+                  tracking-[0.12em]
+
+                  text-slate-700
+                ">
+
+                  Información
+
+                </h3>
+
+                <p className="
+                  text-xs
+                  text-slate-400
+                ">
+
+                  Datos principales del servicio
+
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* NOMBRE */}
+
+            <input
+              placeholder="Nombre"
+              value={nombre}
+              onChange={(e) =>
+                setNombre(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+
+                h-14
+
+                px-5
+
+                rounded-[22px]
+
+                bg-white
+
+                border
+                border-slate-200
+
+                text-slate-700
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+
+                focus:border-indigo-300
+
+                transition-all
+                duration-300
+              "
+            />
+
+            {/* DESCRIPCION */}
+
+            <textarea
+              rows={5}
+              placeholder="Descripción"
+              value={descripcion}
+              onChange={(e) =>
+                setDescripcion(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+
+                rounded-[24px]
+
+                bg-white
+
+                border
+                border-slate-200
+
+                px-5
+                py-4
+
+                text-slate-700
+
+                resize-none
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+
+                focus:border-indigo-300
+
+                transition-all
+                duration-300
+              "
+            />
+
+          </div>
+
+          {/* PRECIOS */}
+
+          <div className="
+            bg-slate-50/70
+
+            border
+            border-slate-200/70
+
+            rounded-[30px]
+
+            p-5
+
+            shadow-sm
+
+            space-y-5
+          ">
+
+            {/* HEADER */}
+
+            <div className="
+              flex
+              items-center
+
+              gap-3
+            ">
+
+              <div className="
+                w-12
+                h-12
+
+                rounded-[18px]
+
+                bg-gradient-to-br
+                from-emerald-500
+                to-green-500
+
+                flex
+                items-center
+                justify-center
+
+                text-white
+              ">
+
+                <BadgeDollarSign size={20} />
+
+              </div>
+
+              <div>
+
+                <h3 className="
+                  text-sm
+
+                  font-black
+
+                  uppercase
+
+                  tracking-[0.12em]
+
+                  text-slate-700
+                ">
+
+                  Finanzas
+
+                </h3>
+
+                <p className="
+                  text-xs
+                  text-slate-400
+                ">
+
+                  Precio y rentabilidad
+
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* INPUTS */}
+
+            <div className="
+              grid
+              grid-cols-1
+              sm:grid-cols-2
+
+              gap-4
+            ">
+
+              {/* PRECIO */}
 
               <input
-                placeholder="Nombre"
-
-                value={nombre}
-
+                type="number"
+                placeholder="Precio"
+                value={precio}
                 onChange={(e) =>
-                  setNombre(
+                  setPrecio(
                     e.target.value
                   )
                 }
-
                 className="
                   w-full
 
@@ -365,8 +508,6 @@ function ServicioModal({
                   border
                   border-slate-200
 
-                  hover:border-indigo-300
-
                   text-slate-700
 
                   shadow-sm
@@ -374,57 +515,50 @@ function ServicioModal({
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  focus:ring-emerald-500/10
 
-                  focus:border-indigo-300
+                  focus:border-emerald-300
 
                   transition-all
                   duration-300
                 "
               />
 
-              {/* DESCRIPCION */}
+              {/* COSTO */}
 
-              <textarea
-                rows={5}
-
-                placeholder="Descripción"
-
-                value={descripcion}
-
+              <input
+                type="number"
+                placeholder="Costo del servicio"
+                value={costoServicio}
                 onChange={(e) =>
-                  setDescripcion(
+                  setCostoServicio(
                     e.target.value
                   )
                 }
-
                 className="
                   w-full
 
-                  rounded-[24px]
+                  h-14
+
+                  px-5
+
+                  rounded-[22px]
 
                   bg-white
 
                   border
                   border-slate-200
 
-                  hover:border-indigo-300
-
-                  px-5
-                  py-4
-
                   text-slate-700
-
-                  resize-none
 
                   shadow-sm
 
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  focus:ring-rose-500/10
 
-                  focus:border-indigo-300
+                  focus:border-rose-300
 
                   transition-all
                   duration-300
@@ -433,213 +567,41 @@ function ServicioModal({
 
             </div>
 
-            {/* ✅ PRECIOS */}
+            {/* KPIS */}
 
             <div className="
-              bg-gradient-to-br
-              from-white
-              to-slate-50
+              grid
+              grid-cols-1
+              sm:grid-cols-3
 
-              border
-              border-white
-
-              rounded-[30px]
-
-              p-5
-
-              shadow-sm
-
-              space-y-5
+              gap-4
             ">
 
-              {/* HEADER */}
+              {/* PRECIO */}
 
               <div className="
-                flex
-                items-center
+                bg-gradient-to-r
+                from-emerald-500
+                to-green-500
 
-                gap-3
+                rounded-[24px]
+
+                px-5
+                py-5
+
+                text-white
               ">
 
                 <div className="
-                  w-12
-                  h-12
-
-                  rounded-[18px]
-
-                  bg-gradient-to-br
-                  from-emerald-500
-                  to-green-500
-
                   flex
                   items-center
-                  justify-center
-
-                  text-white
-                  text-xl
+                  gap-2
                 ">
-                  💰
-                </div>
 
-                <div>
-
-                  <h3 className="
-                    text-sm
-
-                    font-black
-
-                    uppercase
-
-                    tracking-[0.12em]
-
-                    text-slate-700
-                  ">
-                    Finanzas
-                  </h3>
-
-                  <p className="
-                    text-xs
-                    text-gray-400
-                  ">
-                    Precio y rentabilidad
-                  </p>
-
-                </div>
-
-              </div>
-
-              {/* INPUTS */}
-
-              <div className="
-                grid
-                grid-cols-1
-                sm:grid-cols-2
-
-                gap-4
-              ">
-
-                {/* PRECIO */}
-
-                <input
-                  type="number"
-
-                  placeholder="Precio"
-
-                  value={precio}
-
-                  onChange={(e) =>
-                    setPrecio(
-                      e.target.value
-                    )
-                  }
-
-                  className="
-                    w-full
-
-                    h-14
-
-                    px-5
-
-                    rounded-[22px]
-
-                    bg-white
-
-                    border
-                    border-slate-200
-
-                    hover:border-emerald-300
-
-                    text-slate-700
-
-                    shadow-sm
-
-                    focus:outline-none
-
-                    focus:ring-4
-                    focus:ring-emerald-500/10
-
-                    focus:border-emerald-300
-
-                    transition-all
-                    duration-300
-                  "
-                />
-
-                {/* COSTO */}
-
-                <input
-                  type="number"
-
-                  placeholder="Costo del servicio"
-
-                  value={costoServicio}
-
-                  onChange={(e) =>
-                    setCostoServicio(
-                      e.target.value
-                    )
-                  }
-
-                  className="
-                    w-full
-
-                    h-14
-
-                    px-5
-
-                    rounded-[22px]
-
-                    bg-white
-
-                    border
-                    border-slate-200
-
-                    hover:border-rose-300
-
-                    text-slate-700
-
-                    shadow-sm
-
-                    focus:outline-none
-
-                    focus:ring-4
-                    focus:ring-rose-500/10
-
-                    focus:border-rose-300
-
-                    transition-all
-                    duration-300
-                  "
-                />
-
-              </div>
-
-              {/* KPI */}
-
-              <div className="
-                grid
-                grid-cols-1
-                sm:grid-cols-3
-
-                gap-4
-              ">
-
-                {/* PRECIO */}
-
-                <div className="
-                  bg-gradient-to-r
-                  from-emerald-500
-                  to-green-500
-
-                  rounded-[24px]
-
-                  px-5
-                  py-5
-
-                  text-white
-
-                  shadow-[0_15px_35px_rgba(16,185,129,0.25)]
-                ">
+                  <BadgeDollarSign
+                    size={14}
+                    className="text-white/70"
+                  />
 
                   <p className="
                     text-[11px]
@@ -652,219 +614,265 @@ function ServicioModal({
 
                     text-white/70
                   ">
+
                     Precio
-                  </p>
 
-                  <p className="
-                    mt-2
-
-                    text-2xl
-
-                    tracking-tight
-
-                    font-black
-                  ">
-                    RD$
-                    {" "}
-                    {formatMoney(precio || 0)}
                   </p>
 
                 </div>
 
-                {/* COSTO */}
+                <p className="
+                  mt-2
 
-                <div className="
-                  bg-gradient-to-r
-                  from-rose-500
-                  to-pink-500
+                  text-2xl
 
-                  rounded-[24px]
-
-                  px-5
-                  py-5
-
-                  text-white
-
-                  shadow-[0_15px_35px_rgba(244,63,94,0.25)]
-                ">
-
-                  <p className="
-                    text-[11px]
-
-                    uppercase
-
-                    tracking-[0.12em]
-
-                    font-black
-
-                    text-white/70
-                  ">
-                    Costo
-                  </p>
-
-                  <p className="
-                    mt-2
-
-                    text-2xl
-
-                    tracking-tight
-
-                    font-black
-                  ">
-                    RD$
-                    {" "}
-                    {formatMoney(
-                      costoServicio || 0
-                    )}
-                  </p>
-
-                </div>
-
-                {/* GANANCIA */}
-
-                <div className="
-                  bg-gradient-to-r
-                  from-indigo-500
-                  to-violet-500
-
-                  rounded-[24px]
-
-                  px-5
-                  py-5
-
-                  text-white
-
-                  shadow-[0_15px_35px_rgba(99,102,241,0.25)]
-                ">
-
-                  <p className="
-                    text-[11px]
-
-                    uppercase
-
-                    tracking-[0.12em]
-
-                    font-black
-
-                    text-white/70
-                  ">
-                    Ganancia
-                  </p>
-
-                  <p className="
-                    mt-2
-
-                    text-2xl
-
-                    tracking-tight
-
-                    font-black
-                  ">
-                    RD$
-                    {" "}
-                    {formatMoney(
-                      ganancia || 0
-                    )}
-                  </p>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* ✅ ACTIONS */}
-
-            <div className="
-              sticky
-              bottom-0
-
-              bg-white/90
-              backdrop-blur-xl
-
-              pt-2
-
-              flex
-              flex-col
-              sm:flex-row
-
-              gap-3
-            ">
-              {/* CANCEL */}
-
-              <button
-                onClick={onClose}
-
-                className="
-                  flex-1
-
-                  h-14
-
-                  rounded-[24px]
-
-                  bg-slate-100/80
-                  backdrop-blur-xl
-
-                  hover:bg-slate-200
-
-                  text-slate-700
-
-                  font-semibold
-
-                  transition-all
-                  duration-300
-
-                  active:scale-[0.98]
-                "
-              >
-                Cancelar
-              </button>
-              
-              {/* SAVE */}
-
-              <button
-                onClick={guardar}
-
-                className="
-                  flex-1
-
-                  h-14
-
-                  rounded-[24px]
-
-                  bg-gradient-to-r
-                  from-emerald-500
-                  to-green-500
-
-                  text-white
-
-                  text-sm
-                  sm:text-base
+                  tracking-tight
 
                   font-black
+                ">
 
-                  shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+                  RD$
+                  {" "}
+                  {formatMoney(precio || 0)}
 
-                  hover:scale-[1.01]
+                </p>
 
-                  hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+              </div>
 
-                  active:scale-[0.98]
+              {/* COSTO */}
 
-                  transition-all
-                  duration-300
-                "
-              >
+              <div className="
+                bg-gradient-to-r
+                from-rose-500
+                to-pink-500
 
-                {isEdit
-                  ? "Guardar cambios"
-                  : "Crear servicio"}
+                rounded-[24px]
 
-              </button>
+                px-5
+                py-5
 
-              
+                text-white
+              ">
+
+                <div className="
+                  flex
+                  items-center
+                  gap-2
+                ">
+
+                  <Receipt
+                    size={14}
+                    className="text-white/70"
+                  />
+
+                  <p className="
+                    text-[11px]
+
+                    uppercase
+
+                    tracking-[0.12em]
+
+                    font-black
+
+                    text-white/70
+                  ">
+
+                    Costo
+
+                  </p>
+
+                </div>
+
+                <p className="
+                  mt-2
+
+                  text-2xl
+
+                  tracking-tight
+
+                  font-black
+                ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(
+                    costoServicio || 0
+                  )}
+
+                </p>
+
+              </div>
+
+              {/* GANANCIA */}
+
+              <div className="
+                bg-gradient-to-r
+                from-indigo-500
+                to-violet-500
+
+                rounded-[24px]
+
+                px-5
+                py-5
+
+                text-white
+              ">
+
+                <div className="
+                  flex
+                  items-center
+                  gap-2
+                ">
+
+                  <Sparkles
+                    size={14}
+                    className="text-white/70"
+                  />
+
+                  <p className="
+                    text-[11px]
+
+                    uppercase
+
+                    tracking-[0.12em]
+
+                    font-black
+
+                    text-white/70
+                  ">
+
+                    Ganancia
+
+                  </p>
+
+                </div>
+
+                <p className="
+                  mt-2
+
+                  text-2xl
+
+                  tracking-tight
+
+                  font-black
+                ">
+
+                  RD$
+                  {" "}
+                  {formatMoney(
+                    ganancia || 0
+                  )}
+
+                </p>
+
+              </div>
 
             </div>
+
+          </div>
+
+          {/* ACTIONS */}
+
+          <div className="
+            sticky
+            bottom-0
+
+            bg-white/90
+            backdrop-blur-xl
+
+            pt-2
+
+            flex
+            flex-col
+            sm:flex-row
+
+            gap-3
+          ">
+
+            {/* CANCEL */}
+
+            <button
+              onClick={onClose}
+              className="
+                flex-1
+
+                h-14
+
+                rounded-[24px]
+
+                bg-slate-100
+
+                hover:bg-slate-200
+
+                text-slate-700
+
+                font-semibold
+
+                transition-all
+                duration-300
+
+                active:scale-[0.98]
+
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
+            >
+
+              <X size={18} />
+
+              Cancelar
+
+            </button>
+
+            {/* SAVE */}
+
+            <button
+              onClick={guardar}
+              className="
+                flex-1
+
+                h-14
+
+                rounded-[24px]
+
+                bg-gradient-to-r
+                from-emerald-500
+                to-green-500
+
+                text-white
+
+                text-sm
+                sm:text-base
+
+                font-black
+
+                shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+
+                hover:scale-[1.01]
+
+                hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+
+                active:scale-[0.98]
+
+                transition-all
+                duration-300
+
+                flex
+                items-center
+                justify-center
+                gap-2
+              "
+            >
+
+              <Save size={18} />
+
+              {isEdit
+                ? "Guardar cambios"
+                : "Crear servicio"}
+
+            </button>
 
           </div>
 
@@ -872,7 +880,7 @@ function ServicioModal({
 
       </div>
 
-    </div>
+    </BaseModal>
 
   );
 

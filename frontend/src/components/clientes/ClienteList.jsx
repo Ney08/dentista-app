@@ -1,8 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+import {
+  CalendarDays,
+  Pencil,
+  Ban,
+  Check,
+  Phone,
+  FileText,
+  MapPin,
+  Activity,
+  Clock3,
+  UserCheck
+} from "lucide-react";
+
+
 function ClienteList({
   clientes,
+  citas = [],
   onEditarClick,
   onSeleccionar,
   onToggleActivo
@@ -20,10 +35,84 @@ function ClienteList({
     "from-pink-500 to-rose-500",
     "from-indigo-500 to-blue-500"
   ];
-  
+
+  const obtenerProximaCita = (clienteId) => {
+
+    const ahora = new Date();
+
+    const citasCliente = citas
+      .filter(c => {
+
+        const idCliente =
+          c?.cliente_id ||
+          c?.cliente?.id;
+
+        if (idCliente !== clienteId) {
+          return false;
+        }
+
+        if (!c.fecha) {
+          return false;
+        }
+
+        const fecha =
+          new Date(c.fecha);
+
+        return fecha >= ahora;
+
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.fecha) -
+          new Date(b.fecha)
+      );
+
+    return citasCliente[0] || null;
+
+  };
+
+  const formatFechaCita = (fecha) => {
+
+    if (!fecha) return "";
+
+    return new Date(fecha)
+      .toLocaleDateString(
+        "es-DO",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }
+      );
+
+  };
+
+  const formatHoraCita = (fecha) => {
+
+    if (!fecha) return "";
+
+    return new Date(fecha)
+      .toLocaleTimeString(
+        "es-DO",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+  };
+
   return (
 
-    <div className="h-full space-y-6 overflow-y-auto overflow-x-hidden pr-1 pb-2">
+    <div className="
+      h-full
+
+      space-y-4
+
+      overflow-x-hidden
+
+      pb-2
+    ">
 
       {clientes.map((cliente) => {
 
@@ -40,6 +129,9 @@ function ClienteList({
             ? cliente.direccion
             : `${cliente.direccion?.municipio_nombre || ""}, ${cliente.direccion?.provincia_nombre || ""}`;
 
+        const proximaCita =
+          obtenerProximaCita(cliente.id);
+
         return (
 
           <div
@@ -53,83 +145,75 @@ function ClienteList({
             }}
             className={`
               group
+
               relative
               overflow-hidden
 
-              bg-white/90
-              backdrop-blur-xl
+              bg-white/95
+              backdrop-blur-md
 
               border
-              border-white/40
+              border-slate-200/80
 
               rounded-[34px]
 
-              p-5 sm:p-6
+              p-5
+              sm:p-6
+
+              cursor-pointer
 
               transition-all
               duration-500
 
-              cursor-pointer
-
-              hover:-translate-y-[4px]
+              hover:-translate-y-[2px]
 
               hover:border-indigo-200
 
-              hover:bg-white
-
-              hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
+              hover:shadow-[0_20px_40px_rgba(99,102,241,0.08)]
 
               ${isSelected
-                ? "ring-2 ring-indigo-400 shadow-[0_25px_60px_rgba(99,102,241,0.18)]"
+                ? "ring-2 ring-indigo-400 shadow-[0_25px_60px_rgba(99,102,241,0.14)]"
                 : ""
               }
             `}
           >
 
-            {/* TOP LINE */}
+            {/* TOP BORDER */}
 
             <div
               className={`
                 absolute
                 top-0
                 left-0
-                h-1
+
+                h-[3px]
                 w-full
+
                 bg-gradient-to-r
                 ${color}
               `}
             />
 
-            {/* GLOW TOP */}
+            {/* GLOW */}
 
             <div className="
               absolute
-              -top-16
-              -right-16
+              -top-20
+              -right-20
+
               w-56
               h-56
+
               rounded-full
+
               bg-indigo-500/10
-              blur-3xl
-              opacity-0
-              group-hover:opacity-100
-              transition-all
-              duration-700
-            " />
 
-            {/* GLOW BOTTOM */}
-
-            <div className="
-              absolute
-              -bottom-16
-              -left-16
-              w-56
-              h-56
-              rounded-full
-              bg-purple-500/10
               blur-3xl
+
               opacity-0
+
               group-hover:opacity-100
+
               transition-all
               duration-700
             " />
@@ -140,12 +224,9 @@ function ClienteList({
               relative
               z-10
 
-              flex
-              flex-col
-              xl:flex-row
-
-              xl:items-center
-              xl:justify-between
+              grid
+              grid-cols-1
+              2xl:grid-cols-[1fr_auto]
 
               gap-6
             ">
@@ -155,16 +236,18 @@ function ClienteList({
               <div className="
                 flex
                 items-start
+
                 gap-5
 
                 min-w-0
-                flex-1
               ">
 
                 {/* AVATAR */}
 
                 <div
                   className={`
+                    relative
+
                     bg-gradient-to-br
                     ${color}
 
@@ -182,6 +265,9 @@ function ClienteList({
                     font-black
                     text-xl
 
+                    ring-4
+                    ring-white
+
                     shadow-[0_15px_35px_rgba(0,0,0,0.15)]
 
                     shrink-0
@@ -192,65 +278,325 @@ function ClienteList({
                     duration-300
                   `}
                 >
+
                   {cliente.nombre?.charAt(0)?.toUpperCase()}
+
+                  {/* STATUS DOT */}
+
+                  <div className={`
+                    absolute
+                    -bottom-1
+                    -right-1
+
+                    w-5
+                    h-5
+
+                    rounded-full
+
+                    border-4
+                    border-white
+
+                    ${cliente.activo
+                      ? "bg-emerald-500"
+                      : "bg-rose-500"}
+                  `} />
+
                 </div>
 
                 {/* INFO */}
 
                 <div className="
-                  min-w-0
                   flex-1
-                  space-y-4
+                  min-w-0
+
+                  space-y-5
                 ">
 
-                  {/* HEADER */}
+                  {/* TOP */}
 
                   <div className="
                     flex
-                    flex-wrap
-                    items-center
-                    gap-3
+                    flex-col
+                    xl:flex-row
+
+                    xl:items-start
+                    xl:justify-between
+
+                    gap-4
                   ">
 
-                    <h3 className="
-                      text-lg
-                      sm:text-xl
+                    {/* NAME */}
 
-                      font-black
+                    <div className="min-w-0">
 
-                      text-slate-800
+                      <div className="
+                        flex
+                        flex-wrap
 
-                      truncate
-                    ">
+                        items-center
 
-                      {cliente.nombre} {cliente.apellido}
+                        gap-3
+                      ">
 
-                    </h3>
+                        <h3 className="
+                          text-lg
+                          sm:text-xl
 
-                    <span
-                      className={`
-                        px-3
-                        py-1.5
+                          font-black
 
-                        rounded-full
+                          text-slate-800
 
-                        text-[11px]
-                        font-bold
+                          truncate
+                        ">
 
-                        border
+                          {cliente.nombre}{" "}
+                          {cliente.apellido}
 
-                        shadow-sm
+                        </h3>
 
-                        ${cliente.activo
-                          ? "bg-emerald-50 text-emerald-600 border-emerald-200"
-                          : "bg-rose-50 text-rose-500 border-rose-200"
-                        }
-                      `}
-                    >
-                      {cliente.activo
-                        ? "Activo"
-                        : "Inactivo"}
-                    </span>
+                        <span
+                          className={`
+                            px-3
+                            py-1.5
+
+                            rounded-full
+
+                            text-[11px]
+                            font-bold
+
+                            border
+
+                            ${cliente.activo
+                              ? "bg-emerald-50 text-emerald-600 border-emerald-200"
+                              : "bg-rose-50 text-rose-500 border-rose-200"
+                            }
+                          `}
+                        >
+
+                          {cliente.activo
+                            ? "Paciente activo"
+                            : "Paciente inactivo"}
+
+                        </span>
+
+                      </div>
+
+                      {/* SUBTEXT */}
+
+                      <div className="
+                        mt-3
+
+                        flex
+                        flex-wrap
+
+                        items-center
+                        gap-2
+                      ">
+
+                        <div className="
+                          inline-flex
+
+                          items-center
+                          gap-2
+
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          bg-indigo-50
+
+                          text-indigo-600
+
+                          text-xs
+                          font-semibold
+                        ">
+
+                          <Activity size={12} />
+
+                          Paciente frecuente
+
+                        </div>
+
+                        <div className="
+                          inline-flex
+
+                          items-center
+                          gap-2
+
+                          px-3
+                          py-1.5
+
+                          rounded-full
+
+                          bg-slate-100
+
+                          text-slate-600
+
+                          text-xs
+                          font-semibold
+                        ">
+
+                          <Clock3 size={12} />
+
+                          Última visita reciente
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    {/* NEXT APPOINTMENT */}
+
+
+                    <div className="
+  shrink-0
+
+  rounded-[24px]
+
+  bg-gradient-to-br
+  from-indigo-50
+  to-purple-50
+
+  border
+  border-indigo-100
+
+  px-5
+  py-4
+
+  min-w-[240px]
+">
+
+                      <div className="
+    flex
+    items-center
+    gap-2
+
+    text-indigo-600
+
+    text-sm
+    font-bold
+  ">
+
+                        <CalendarDays size={16} />
+
+                        Próxima cita
+
+                      </div>
+
+                      {proximaCita ? (
+
+                        <>
+
+                          <p className="
+        mt-3
+
+        text-sm
+
+        font-black
+
+        text-slate-800
+      ">
+
+                            {formatFechaCita(
+                              proximaCita.fecha
+                            )}
+
+                          </p>
+
+                          <div className="
+        mt-2
+
+        flex
+        items-center
+        gap-2
+      ">
+
+                            <div className="
+          px-2.5
+          py-1
+
+          rounded-full
+
+          bg-indigo-100
+
+          text-indigo-700
+
+          text-[11px]
+          font-bold
+        ">
+
+                              {formatHoraCita(
+                                proximaCita.fecha
+                              )}
+
+                            </div>
+
+                            {proximaCita.motivo && (
+
+                              <span className="
+            text-xs
+
+            text-slate-500
+
+            truncate
+          ">
+
+                                {proximaCita.motivo}
+
+                              </span>
+
+                            )}
+
+                          </div>
+
+                          <p className="
+        mt-3
+
+        text-xs
+
+        text-emerald-600
+
+        font-semibold
+      ">
+                            Cita programada
+                          </p>
+
+                        </>
+
+                      ) : (
+
+                        <>
+
+                          <p className="
+        mt-3
+
+        text-sm
+
+        font-black
+
+        text-slate-700
+      ">
+                            Pendiente programación
+                          </p>
+
+                          <p className="
+        mt-2
+
+        text-xs
+
+        text-slate-500
+      ">
+                            Sin citas registradas
+                          </p>
+
+                        </>
+
+                      )}
+
+                    </div>
+
 
                   </div>
 
@@ -260,46 +606,48 @@ function ClienteList({
                     grid
                     grid-cols-1
                     md:grid-cols-2
-                    gap-3
+                    xl:grid-cols-3
+
+                    gap-4
                   ">
 
                     {/* DOCUMENTO */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
+                        font-black
 
                         uppercase
 
                         tracking-[0.12em]
-
-                        text-gray-400
-
-                        font-black
                       ">
+
+                        <FileText size={12} />
+
                         Documento
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
 
                         text-sm
 
@@ -309,7 +657,9 @@ function ClienteList({
 
                         break-all
                       ">
+
                         {cliente.cedula || "No registrado"}
+
                       </p>
 
                     </div>
@@ -317,40 +667,40 @@ function ClienteList({
                     {/* TELEFONO */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
+                        font-black
 
                         uppercase
 
                         tracking-[0.12em]
-
-                        text-gray-400
-
-                        font-black
                       ">
+
+                        <Phone size={12} />
+
                         Teléfono
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
 
                         text-sm
 
@@ -358,7 +708,9 @@ function ClienteList({
 
                         text-slate-700
                       ">
+
                         {cliente.telefono || "No registrado"}
+
                       </p>
 
                     </div>
@@ -366,42 +718,40 @@ function ClienteList({
                     {/* DIRECCION */}
 
                     <div className="
-                      bg-gradient-to-br
-                      from-white
-                      to-slate-100/90
+                      bg-slate-50/80
 
                       border
-                      border-white
+                      border-slate-200/60
 
                       rounded-[24px]
 
                       px-5
                       py-4
-
-                      md:col-span-2
-
-                      transition-all
-                      duration-300
-
-                      group-hover:shadow-sm
                     ">
 
-                      <p className="
+                      <div className="
+                        flex
+                        items-center
+                        gap-2
+
+                        text-slate-400
+
                         text-[11px]
+                        font-black
 
                         uppercase
 
                         tracking-[0.12em]
-
-                        text-gray-400
-
-                        font-black
                       ">
+
+                        <MapPin size={12} />
+
                         Dirección
-                      </p>
+
+                      </div>
 
                       <p className="
-                        mt-2
+                        mt-3
 
                         text-sm
 
@@ -411,7 +761,9 @@ function ClienteList({
 
                         truncate
                       ">
+
                         {direccionTexto || "No registrada"}
+
                       </p>
 
                     </div>
@@ -422,29 +774,69 @@ function ClienteList({
 
               </div>
 
-              {/* RIGHT PANEL */}
+              {/* RIGHT */}
 
               <div
                 onClick={(e) =>
                   e.stopPropagation()
                 }
                 className="
-                  xl:min-w-[180px]
+                  2xl:w-[190px]
 
                   flex
                   flex-row
-                  xl:flex-col
+                  2xl:flex-col
 
                   items-stretch
 
                   gap-3
-
-                  opacity-100
-
-                  transition-all
-                  duration-300
                 "
               >
+
+                {/* PERFIL */}
+
+                <button
+                  onClick={() =>
+                    onSeleccionar?.(cliente)
+                  }
+                  className="
+                    h-12
+
+                    px-5
+
+                    rounded-2xl
+
+                    bg-gradient-to-r
+                    from-indigo-500
+                    via-purple-500
+                    to-violet-500
+
+                    text-white
+
+                    text-sm
+                    font-bold
+
+                    shadow-[0_12px_30px_rgba(99,102,241,0.25)]
+
+                    hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+
+                    hover:scale-[1.02]
+
+                    transition-all
+                    duration-300
+
+                    flex
+                    items-center
+                    justify-center
+                    gap-2
+                  "
+                >
+
+                  <UserCheck size={15} />
+
+                  Ver perfil
+
+                </button>
 
                 {/* NUEVA CITA */}
 
@@ -467,65 +859,41 @@ function ClienteList({
 
                   }}
                   className="
-    group
+                    h-12
 
-    relative
-    overflow-hidden
+                    px-5
 
-    h-11
+                    rounded-2xl
 
-    px-4
+                    bg-white
 
-    rounded-2xl
+                    border
+                    border-slate-200
 
-    bg-gradient-to-r
-    from-indigo-500
-    via-purple-500
-    to-violet-500
+                    text-slate-700
 
-    text-white
+                    text-sm
+                    font-bold
 
-    text-sm
-    font-bold
+                    hover:border-indigo-200
 
-    shadow-[0_12px_30px_rgba(99,102,241,0.25)]
+                    hover:text-indigo-600
 
-    hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+                    hover:shadow-md
 
-    hover:scale-[1.03]
+                    transition-all
+                    duration-300
 
-    active:scale-[0.97]
-
-    transition-all
-    duration-300
-
-    flex
-    items-center
-    gap-2
-  "
+                    flex
+                    items-center
+                    justify-center
+                    gap-2
+                  "
                 >
 
-                  <div className="
-    absolute
-    inset-0
+                  <CalendarDays size={15} />
 
-    opacity-0
-
-    bg-white/10
-
-    group-hover:opacity-100
-
-    transition-all
-    duration-300
-  " />
-
-                  <span className="relative z-10 text-base">
-                    📅
-                  </span>
-
-                  <span className="relative z-10">
-                    Cita
-                  </span>
+                  Nueva cita
 
                 </button>
 
@@ -535,48 +903,43 @@ function ClienteList({
                   flex
                   items-center
                   justify-center
+
                   gap-3
+
+                  pt-1
                 ">
 
-                  {/* EDITAR */}
+                  {/* EDIT */}
 
                   <button
                     onClick={() =>
                       onEditarClick(cliente)
                     }
                     className="
-                      w-12
-                      h-12
+                      w-11
+                      h-11
 
-                      rounded-[20px]
+                      rounded-[18px]
 
-                      bg-gradient-to-br
-                      from-slate-100
-                      to-slate-200/70
+                      bg-slate-100
 
                       text-slate-500
 
+                      hover:bg-slate-200
                       hover:text-slate-700
 
-                      border
-                      border-white
+                      transition-all
+                      duration-300
 
                       flex
                       items-center
                       justify-center
-
-                      hover:scale-110
-
-                      active:scale-95
-
-                      hover:shadow-lg
-
-                      transition-all
-                      duration-300
                     "
                     title="Editar"
                   >
-                    ✏️
+
+                    <Pencil size={16} />
+
                   </button>
 
                   {/* TOGGLE */}
@@ -586,30 +949,21 @@ function ClienteList({
                       onToggleActivo(cliente)
                     }
                     className={`
-                      w-12
-                      h-12
+                      w-11
+                      h-11
 
-                      rounded-[20px]
+                      rounded-[18px]
 
-                      border
-                      border-white
+                      transition-all
+                      duration-300
 
                       flex
                       items-center
                       justify-center
 
-                      hover:scale-110
-
-                      active:scale-95
-
-                      hover:shadow-lg
-
-                      transition-all
-                      duration-300
-
                       ${cliente.activo
-                        ? "bg-gradient-to-br from-rose-50 to-rose-100 text-rose-500"
-                        : "bg-gradient-to-br from-emerald-50 to-emerald-100 text-emerald-500"
+                        ? "bg-rose-50 text-rose-500 hover:bg-rose-100"
+                        : "bg-emerald-50 text-emerald-500 hover:bg-emerald-100"
                       }
                     `}
                     title={
@@ -618,9 +972,11 @@ function ClienteList({
                         : "Activar"
                     }
                   >
+
                     {cliente.activo
-                      ? "🚫"
-                      : "✅"}
+                      ? <Ban size={16} />
+                      : <Check size={16} />}
+
                   </button>
 
                 </div>
@@ -629,7 +985,7 @@ function ClienteList({
 
             </div>
 
-            {/* SELECTED INDICATOR */}
+            {/* SELECTED */}
 
             {isSelected && (
 
@@ -668,11 +1024,11 @@ function ClienteList({
           relative
           overflow-hidden
 
-          bg-white/90
-          backdrop-blur-xl
+          bg-white/95
+          backdrop-blur-md
 
           border
-          border-white/40
+          border-slate-200/80
 
           rounded-[36px]
 
@@ -718,12 +1074,13 @@ function ClienteList({
             items-center
             justify-center
 
-            text-5xl
             text-white
 
             shadow-[0_20px_50px_rgba(99,102,241,0.35)]
           ">
-            👥
+
+            <UserCheck size={42} />
+
           </div>
 
           <h3 className="
@@ -735,19 +1092,19 @@ function ClienteList({
 
             text-slate-800
           ">
-            No hay clientes
+            No hay pacientes
           </h3>
 
           <p className="
             mt-3
 
-            text-gray-500
+            text-slate-500
 
             max-w-sm
 
             mx-auto
           ">
-            Los clientes registrados aparecerán aquí automáticamente
+            Los pacientes registrados aparecerán aquí automáticamente
           </p>
 
         </div>
