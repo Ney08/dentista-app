@@ -29,7 +29,8 @@ function CitaList({
 
   const [citaCancelar, setCitaCancelar] =
     useState(null);
-
+  const [undoCancel, setUndoCancel] =
+    useState(null);
   const coloresAvatar = [
     "from-blue-500 to-cyan-500",
     "from-green-500 to-emerald-500",
@@ -1077,9 +1078,74 @@ function CitaList({
 `}
           onConfirm={() => {
 
+            /*
+            ==========================================
+            GUARDAR CITA
+            ==========================================
+            */
+
+            const cita =
+              citaCancelar;
+
+            /*
+            ==========================================
+            OPTIMISTIC
+            ==========================================
+            */
+
             onCancelar(
-              citaCancelar.id
+              cita.id,
+              true
             );
+
+            /*
+            ==========================================
+            UNDO
+            ==========================================
+            */
+
+            setUndoCancel(cita);
+
+            /*
+            ==========================================
+            TIMER
+            ==========================================
+            */
+
+            setTimeout(() => {
+
+              setUndoCancel((current) => {
+
+                /*
+                ==========================================
+                YA DESHIZO
+                ==========================================
+                */
+
+                if (
+                  !current
+                ) {
+
+                  return null;
+
+                }
+
+                /*
+                ==========================================
+                CONFIRMAR CANCELACIÓN
+                ==========================================
+                */
+
+                onCancelar(
+                  cita.id,
+                  false
+                );
+
+                return null;
+
+              });
+
+            }, 5000);
 
             setCitaCancelar(null);
 
@@ -1090,7 +1156,108 @@ function CitaList({
         />
 
       )}
+      {/* UNDO CANCEL */}
 
+      {undoCancel && (
+
+        <div className="
+    fixed
+
+    bottom-6
+    right-6
+
+    z-[99999]
+
+    flex
+    items-center
+    gap-4
+
+    rounded-[28px]
+
+    border
+    border-slate-200/70
+
+    bg-white/95
+
+    backdrop-blur-xl
+
+    px-5
+    py-4
+
+    shadow-[0_20px_50px_rgba(15,23,42,0.18)]
+
+    animate-modalUp
+  ">
+
+          <div>
+
+            <p className="
+        text-sm
+
+        font-black
+
+        text-slate-800
+      ">
+
+              Cita cancelada
+
+            </p>
+
+            <p className="
+        text-xs
+
+        text-slate-500
+      ">
+
+              Puedes deshacer esta acción
+
+            </p>
+
+          </div>
+
+          <button
+            onClick={() => {
+
+              /*
+              ==========================================
+              RESTORE
+              ==========================================
+              */
+
+              onCancelar(
+                undoCancel.id,
+                "restore"
+              );
+
+              setUndoCancel(null);
+
+            }}
+            className="
+        h-11
+
+        rounded-full
+
+        bg-indigo-500
+
+        px-5
+
+        text-sm
+
+        font-black
+
+        text-white
+
+        shadow-[0_10px_30px_rgba(99,102,241,0.25)]
+      "
+          >
+
+            Deshacer
+
+          </button>
+
+        </div>
+
+      )}
     </div>
 
   );

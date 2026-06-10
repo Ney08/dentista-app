@@ -13,10 +13,23 @@ import IngresoList from "../components/facturas/IngresoList";
 import FacturaModal from "../components/facturas/FacturaModal";
 import IngresoForm from "../components/facturas/IngresoForm";
 
+
+import {
+  useLocation,
+  useNavigate
+} from "react-router-dom";
+
+
 import BaseModal from "../components/BaseModal";
 import PageWrapper from "../components/PageWrapper";
 import Paginacion from "../components/Paginacion";
 import SkeletonLoader from "../components/SkeletonLoader";
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../components/ui/ToastStyles";
 
 import {
   Search,
@@ -87,6 +100,17 @@ function IngresosPage() {
 
   const [citaPresetLocal, setCitaPresetLocal] =
     useState(null);
+  const modalCitaAbierto =
+    useRef(false);
+
+  const location =
+    useLocation();
+
+  const navigate =
+    useNavigate();
+
+  const citaPreset =
+    location.state?.citaPreset;
 
   /*
   ==========================================
@@ -136,6 +160,9 @@ function IngresosPage() {
 
   const cerrarModal = () => {
 
+    modalCitaAbierto.current =
+      false;
+
     setModalAbierto(false);
 
     setEditando(null);
@@ -156,7 +183,7 @@ function IngresosPage() {
 
     if (ingreso.pagado) {
 
-      toast(
+      showWarning(
         "Ya está pagada ⚠️"
       );
 
@@ -170,13 +197,13 @@ function IngresosPage() {
         ingreso.id
       );
 
-      toast.success(
+      showSuccess(
         "Pagado ✅"
       );
 
     } catch {
 
-      toast.error(
+      showError(
         "Error ❌"
       );
 
@@ -273,7 +300,7 @@ function IngresosPage() {
       !toastMostrado.current
     ) {
 
-      toast(
+      showWarning(
         `⚠️ Tienes ${pendientesCount} factura(s) pendiente(s) 💸`
       );
 
@@ -292,38 +319,39 @@ function IngresosPage() {
 
   useEffect(() => {
 
-    const citaStorage =
-      sessionStorage.getItem(
-        "citaPreset"
-      );
+    const cita =
+      location.state
+        ?.citaPreset;
 
-    if (!citaStorage) {
+    if (!cita) {
       return;
     }
 
-    try {
+    setEditando(null);
 
-      const cita =
-        JSON.parse(
-          citaStorage
-        );
+    setCitaPresetLocal(
+      cita
+    );
 
-      setCitaDesdeCitas(
-        cita
+    setModalAbierto(true);
+
+    /*
+    =========================
+    LIMPIAR STATE
+    =========================
+    */
+
+    setTimeout(() => {
+
+      navigate(
+        location.pathname,
+        {
+          replace: true,
+          state: {}
+        }
       );
 
-      sessionStorage.removeItem(
-        "citaPreset"
-      );
-
-    } catch (err) {
-
-      console.error(
-        "ERROR STORAGE:",
-        err
-      );
-
-    }
+    }, 100);
 
   }, []);
 
@@ -333,30 +361,29 @@ function IngresosPage() {
   ==========================================
   */
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (!citaDesdeCitas) {
-      return;
-    }
+  //   if (
+  //     !citaDesdeCitas ||
+  //     modalCitaAbierto.current
+  //   ) {
 
-    setEditando(null);
+  //     return;
 
-    setCitaPresetLocal(
-      citaDesdeCitas
-    );
+  //   }
 
-    requestAnimationFrame(() => {
+  //   modalCitaAbierto.current =
+  //     true;
 
-      setModalAbierto(true);
+  //   setEditando(null);
 
-    });
+  //   setCitaPresetLocal(
+  //     citaDesdeCitas
+  //   );
 
-    window.history.replaceState(
-      {},
-      document.title
-    );
+  //   setModalAbierto(true);
 
-  }, [citaDesdeCitas]);
+  // }, [citaDesdeCitas]);
 
   /*
   ==========================================
@@ -448,43 +475,7 @@ function IngresosPage() {
   ==========================================
   */
 
-  if (isLoading) {
-
-    return (
-
-      <PageWrapper>
-
-        <div className="
-          max-w-[1600px]
-          mx-auto
-          space-y-6
-        ">
-
-          <SkeletonLoader alto="h-12" />
-
-          <div className="
-            grid
-            grid-cols-1
-            md:grid-cols-4
-            gap-4
-          ">
-
-            <SkeletonLoader alto="h-32" />
-            <SkeletonLoader alto="h-32" />
-            <SkeletonLoader alto="h-32" />
-            <SkeletonLoader alto="h-32" />
-
-          </div>
-
-          <SkeletonLoader alto="h-[500px]" />
-
-        </div>
-
-      </PageWrapper>
-
-    );
-
-  }
+  
 
   return (
 

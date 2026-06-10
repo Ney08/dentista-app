@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import RevenueChart from "../components/charts/RevenueChart";
 import toast from "react-hot-toast";
 import AgendaCalendar from "../components/calendar/AgendaCalendar";
+import { motion } from "framer-motion";
 import {
   formatFecha,
   formatHora,
@@ -28,6 +29,14 @@ import {
   CalendarDays,
   BarChart3
 } from "lucide-react";
+
+
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../components/ui/ToastStyles";
 
 import QuickActions from "../components/dashboard/QuickActions";
 import FinanceChart from "../components/charts/FinanceChart";
@@ -348,7 +357,7 @@ function DashboardHome() {
 
     if (pendientes.length > 0) {
 
-      toast.success(
+      showSuccess(
         `Tienes ${pendientes.length} cita(s) pendiente(s) hoy 📅`,
         {
           id: "toast-citas-hoy"
@@ -534,25 +543,25 @@ function DashboardHome() {
 
   const citasMock = [
 
-  {
-    paciente: "Pedro Díaz",
-    inicio: "2026-06-08T08:00:00",
-    fin: "2026-06-08T09:00:00"
-  },
+    {
+      paciente: "Pedro Díaz",
+      inicio: "2026-06-08T08:00:00",
+      fin: "2026-06-08T09:00:00"
+    },
 
-  {
-    paciente: "Ney Martinez",
-    inicio: "2026-06-08T10:00:00",
-    fin: "2026-06-08T11:00:00"
-  },
+    {
+      paciente: "Ney Martinez",
+      inicio: "2026-06-08T10:00:00",
+      fin: "2026-06-08T11:00:00"
+    },
 
-  {
-    paciente: "Carlos Pérez",
-    inicio: "2026-06-09T13:00:00",
-    fin: "2026-06-09T14:00:00"
-  }
+    {
+      paciente: "Carlos Pérez",
+      inicio: "2026-06-09T13:00:00",
+      fin: "2026-06-09T14:00:00"
+    }
 
-];
+  ];
   /*
   ==========================================
   LOADING
@@ -605,8 +614,30 @@ function DashboardHome() {
   return (
 
     <PageWrapper>
+      <motion.div
+        key="/"
 
-      <div className="
+        initial={{
+          opacity: 0,
+          y: 10
+        }}
+
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+
+        exit={{
+          opacity: 0,
+          y: -10
+        }}
+
+        transition={{
+          duration: 0.25
+        }}
+      >
+
+        <div className="
         w-full
 
         max-w-[1700px]
@@ -619,9 +650,9 @@ function DashboardHome() {
         sm:px-5
       ">
 
-        {/* HEADER */}
+          {/* HEADER */}
 
-        <div className="
+          <div className="
           flex
           flex-col
           md:flex-row
@@ -632,9 +663,9 @@ function DashboardHome() {
           gap-5
         ">
 
-          <div>
+            <div>
 
-            <div className="
+              <div className="
               inline-flex
 
               items-center
@@ -658,13 +689,13 @@ function DashboardHome() {
               mb-4
             ">
 
-              <BarChart3 size={18} />
+                <BarChart3 size={18} />
 
-              Panel principal
+                Panel principal
 
-            </div>
+              </div>
 
-            <h1 className="
+              <h1 className="
               text-3xl
               md:text-4xl
 
@@ -675,11 +706,11 @@ function DashboardHome() {
               text-slate-800
             ">
 
-              Dashboard clínico
+                Dashboard clínico
 
-            </h1>
+              </h1>
 
-            <p className="
+              <p className="
               mt-2
 
               text-sm
@@ -687,22 +718,27 @@ function DashboardHome() {
 
               text-slate-500
             ">
-              Resumen financiero y operativo de la clínica
-            </p>
+                Resumen financiero y operativo de la clínica
+              </p>
 
-          </div>
+            </div>
 
-          {/* DATE */}
+            {/* DATE */}
 
-          <div className="
+            <div className="
             self-start
             md:self-auto
 
-            bg-white/80
-            backdrop-blur-md
+            
+bg-white
+dark:bg-slate-900
 
-            border
-            border-slate-200/80
+text-slate-800
+dark:text-slate-100
+
+border-slate-200
+dark:border-slate-800
+
 
             rounded-[26px]
 
@@ -712,7 +748,7 @@ function DashboardHome() {
             shadow-[0_10px_30px_rgba(0,0,0,0.04)]
           ">
 
-            <p className="
+              <p className="
               text-xs
 
               uppercase
@@ -723,10 +759,10 @@ function DashboardHome() {
 
               text-slate-400
             ">
-              Fecha actual
-            </p>
+                Fecha actual
+              </p>
 
-            <p className="
+              <p className="
               mt-2
 
               text-sm
@@ -735,16 +771,16 @@ function DashboardHome() {
 
               text-slate-700
             ">
-              {formatFecha(new Date())}
-            </p>
+                {formatFecha(new Date())}
+              </p>
+
+            </div>
 
           </div>
 
-        </div>
+          {/* TOP GRID */}
 
-        {/* TOP GRID */}
-
-        <div className="
+          <div className="
           grid
           grid-cols-1
           xl:grid-cols-3
@@ -752,16 +788,21 @@ function DashboardHome() {
           gap-6
         ">
 
-          {/* CITAS */}
+            {/* CITAS */}
 
-          <div className="
+            <div className="
             xl:col-span-2
 
-            bg-white/95
-            backdrop-blur-md
+            
+bg-white
+dark:bg-slate-900
 
-            border
-            border-slate-200/80
+text-slate-800
+dark:text-slate-100
+
+border-slate-200
+dark:border-slate-800
+
 
             rounded-[34px]
 
@@ -772,15 +813,15 @@ function DashboardHome() {
             space-y-6
           ">
 
-            <div className="
+              <div className="
               flex
               items-center
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <div className="
+                  <div className="
                   inline-flex
 
                   items-center
@@ -792,46 +833,46 @@ function DashboardHome() {
                   font-bold
                 ">
 
-                  <CalendarDays size={18} />
+                    <CalendarDays size={18} />
 
-                  Citas de hoy
+                    Citas de hoy
 
-                </div>
+                  </div>
 
-                <p className="
+                  <p className="
                   mt-2
 
                   text-sm
 
                   text-slate-500
                 ">
-                  {cantidadCitasHoy} citas programadas
-                </p>
+                    {cantidadCitasHoy} citas programadas
+                  </p>
+
+                </div>
+
+                {collapseButton(
+                  showCitas,
+                  () =>
+                    setShowCitas(!showCitas)
+                )}
 
               </div>
 
-              {collapseButton(
-                showCitas,
-                () =>
-                  setShowCitas(!showCitas)
-              )}
-
-            </div>
-
-            <div className={`
+              <div className={`
               overflow-hidden
 
               transition-all
               duration-500
 
               ${showCitas
-                ? "max-h-[1000px] opacity-100"
-                : "max-h-0 opacity-0"}
+                  ? "max-h-[1000px] opacity-100"
+                  : "max-h-0 opacity-0"}
             `}>
 
-              {citasHoy.length === 0 ? (
+                {citasHoy.length === 0 ? (
 
-                <div className="
+                  <div className="
                   h-[220px]
 
                   rounded-[30px]
@@ -846,19 +887,19 @@ function DashboardHome() {
                   justify-center
                 ">
 
-                  <p className="
+                    <p className="
                     text-slate-500
 
                     font-medium
                   ">
-                    No hay citas programadas hoy ✅
-                  </p>
+                      No hay citas programadas hoy ✅
+                    </p>
 
-                </div>
+                  </div>
 
-              ) : (
+                ) : (
 
-                <div className="
+                  <div className="
                   grid
                   sm:grid-cols-2
                   2xl:grid-cols-3
@@ -866,16 +907,16 @@ function DashboardHome() {
                   gap-4
                 ">
 
-                  {citasHoy.map(c => {
+                    {citasHoy.map(c => {
 
-                    const estado =
-                      getEstado(c);
+                      const estado =
+                        getEstado(c);
 
-                    return (
+                      return (
 
-                      <div
-                        key={c.id}
-                        className="
+                        <div
+                          key={c.id}
+                          className="
                           relative
                           overflow-hidden
 
@@ -897,22 +938,22 @@ function DashboardHome() {
                           transition-all
                           duration-300
                         "
-                      >
+                        >
 
-                        <div className="
+                          <div className="
                           relative
                           z-10
 
                           space-y-4
                         ">
 
-                          <div className="
+                            <div className="
                             flex
                             items-center
                             justify-between
                           ">
 
-                            <div className="
+                              <div className="
                               flex
                               items-center
                               gap-2
@@ -922,15 +963,15 @@ function DashboardHome() {
                               font-bold
                             ">
 
-                              <Clock3 size={16} />
+                                <Clock3 size={16} />
 
-                              {formatHora(
-                                parseFechaLocal(c.fecha)
-                              )}
+                                {formatHora(
+                                  parseFechaLocal(c.fecha)
+                                )}
 
-                            </div>
+                              </div>
 
-                            <span className={`
+                              <span className={`
                               text-xs
 
                               px-3
@@ -941,68 +982,68 @@ function DashboardHome() {
                               font-semibold
 
                               ${estado === "completada" &&
-                              "bg-emerald-100 text-emerald-700"}
+                                "bg-emerald-100 text-emerald-700"}
 
                               ${estado === "atrasada" &&
-                              "bg-rose-100 text-rose-700"}
+                                "bg-rose-100 text-rose-700"}
 
                               ${estado === "cancelada" &&
-                              "bg-slate-100 text-slate-700"}
+                                "bg-slate-100 text-slate-700"}
 
                               ${estado === "pendiente" &&
-                              "bg-yellow-100 text-yellow-700"}
+                                "bg-yellow-100 text-yellow-700"}
                             `}>
 
-                              {estado}
+                                {estado}
 
-                            </span>
+                              </span>
 
-                          </div>
+                            </div>
 
-                          <div>
+                            <div>
 
-                            <h4 className="
+                              <h4 className="
                               text-base
 
                               font-bold
 
                               text-slate-800
                             ">
-                              {c.cliente?.nombre}{" "}
-                              {c.cliente?.apellido}
-                            </h4>
+                                {c.cliente?.nombre}{" "}
+                                {c.cliente?.apellido}
+                              </h4>
 
-                            <p className="
+                              <p className="
                               mt-1
 
                               text-sm
 
                               text-slate-500
                             ">
-                              {c.motivo}
-                            </p>
+                                {c.motivo}
+                              </p>
+
+                            </div>
 
                           </div>
 
                         </div>
 
-                      </div>
+                      );
 
-                    );
+                    })}
 
-                  })}
+                  </div>
 
-                </div>
+                )}
 
-              )}
+              </div>
 
             </div>
 
-          </div>
+            {/* ACTIVIDAD */}
 
-          {/* ACTIVIDAD */}
-
-          <div className="
+            <div className="
             bg-white/95
             backdrop-blur-md
 
@@ -1018,9 +1059,9 @@ function DashboardHome() {
             space-y-5
           ">
 
-            <div>
+              <div>
 
-              <div className="
+                <div className="
                 inline-flex
 
                 items-center
@@ -1032,25 +1073,25 @@ function DashboardHome() {
                 font-bold
               ">
 
-                <Activity size={18} />
+                  <Activity size={18} />
 
-                Actividad reciente
+                  Actividad reciente
 
-              </div>
+                </div>
 
-              <p className="
+                <p className="
                 mt-2
 
                 text-sm
 
                 text-slate-500
               ">
-                Últimos movimientos del sistema
-              </p>
+                  Últimos movimientos del sistema
+                </p>
 
-            </div>
+              </div>
 
-            <div className="
+              <div className="
               space-y-3
 
               max-h-[420px]
@@ -1060,11 +1101,11 @@ function DashboardHome() {
               pr-1
             ">
 
-              {actividades.map((item, idx) => (
+                {actividades.map((item, idx) => (
 
-                <div
-                  key={idx}
-                  className="
+                  <div
+                    key={idx}
+                    className="
                     flex
                     items-start
 
@@ -1084,9 +1125,9 @@ function DashboardHome() {
                     transition-all
                     duration-300
                   "
-                >
+                  >
 
-                  <div className="
+                    <div className="
                     w-11
                     h-11
 
@@ -1105,87 +1146,88 @@ function DashboardHome() {
                     shrink-0
                   ">
 
-                    <item.icon size={18} />
+                      <item.icon size={18} />
 
-                  </div>
+                    </div>
 
-                  <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0">
 
-                    <div className="
+                      <div className="
                       flex
                       items-center
                       justify-between
                     ">
 
-                      <p className="
+                        <p className="
                         text-sm
 
                         font-bold
 
                         text-slate-700
                       ">
-                        {item.title}
-                      </p>
+                          {item.title}
+                        </p>
 
-                      <span className="
+                        <span className="
                         text-[11px]
 
                         font-semibold
 
                         text-slate-400
                       ">
-                        {item.time}
-                      </span>
+                          {item.time}
+                        </span>
 
-                    </div>
+                      </div>
 
-                    <p className="
+                      <p className="
                       mt-1
 
                       text-xs
 
                       text-slate-500
                     ">
-                      {item.desc}
-                    </p>
+                        {item.desc}
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
+                ))}
 
-              ))}
+              </div>
 
             </div>
 
           </div>
 
-        </div>
-              
- {/* QUICK ACTIONS */}
+          {/* QUICK ACTIONS */}
 
-<QuickActions />
+          <QuickActions />
 
-{/* Calendar */}
+          {/* Calendar */}
 
-<AgendaCalendar
-  citas={citasMock}
-/>
+          <AgendaCalendar
+            citas={citasMock}
+          />
 
 
 
-        {/* KPIS */}
+          {/* KPIS */}
 
-        <div className="space-y-5">
+          <div className="space-y-5">
 
-          <div className="
+            <div className="
             flex
             items-center
             justify-between
+            
           ">
 
-            <div>
+              <div>
 
-              <div className="
+                <div className="
                 inline-flex
 
                 items-center
@@ -1197,44 +1239,44 @@ function DashboardHome() {
                 font-bold
               ">
 
-                <TrendingUp size={18} />
+                  <TrendingUp size={18} />
 
-                Resumen financiero
+                  Resumen financiero
 
-              </div>
+                </div>
 
-              <p className="
+                <p className="
                 mt-2
 
                 text-sm
 
                 text-slate-500
               ">
-                Métricas principales de la clínica
-              </p>
+                  Métricas principales de la clínica
+                </p>
+
+              </div>
+
+              {collapseButton(
+                showKpis,
+                () =>
+                  setShowKpis(!showKpis)
+              )}
 
             </div>
 
-            {collapseButton(
-              showKpis,
-              () =>
-                setShowKpis(!showKpis)
-            )}
-
-          </div>
-
-          <div className={`
+            <div className={`
             overflow-hidden
 
             transition-all
             duration-500
 
             ${showKpis
-              ? "max-h-[1200px] opacity-100"
-              : "max-h-0 opacity-0"}
+                ? "max-h-[1200px] opacity-100"
+                : "max-h-0 opacity-0"}
           `}>
 
-            <div className="
+              <div className="
               grid
               grid-cols-1
               sm:grid-cols-2
@@ -1243,9 +1285,9 @@ function DashboardHome() {
               gap-5
             ">
 
-              {/* KPI PRINCIPAL */}
+                {/* KPI PRINCIPAL */}
 
-              <div className="
+                <div className="
                 xl:col-span-2
 
                 relative
@@ -1260,7 +1302,7 @@ function DashboardHome() {
 
                 p-7
 
-                shadow-[0_20px_50px_rgba(99,102,241,0.25)]
+                shadow-[0_20px_50px_rgba(99,102,241,0.20)]
 
                 min-h-[180px]
 
@@ -1269,17 +1311,17 @@ function DashboardHome() {
                 justify-between
               ">
 
-                <div className="relative z-10">
+                  <div className="relative z-10">
 
-                  <p className="
+                    <p className="
                     text-sm
 
                     text-purple-100
                   ">
-                    Ganancia neta
-                  </p>
+                      Ganancia neta
+                    </p>
 
-                  <h2 className="
+                    <h2 className="
                     mt-4
 
                     text-4xl
@@ -1290,12 +1332,12 @@ function DashboardHome() {
 
                     text-white
                   ">
-                    {formato(gananciaNeta)}
-                  </h2>
+                      {formato(gananciaNeta)}
+                    </h2>
 
-                </div>
+                  </div>
 
-                <div className="
+                  <div className="
                   relative
                   z-10
 
@@ -1304,7 +1346,7 @@ function DashboardHome() {
                   justify-between
                 ">
 
-                  <div className="
+                    <div className="
                     px-3
                     py-1.5
 
@@ -1317,25 +1359,25 @@ function DashboardHome() {
 
                     text-white
                   ">
-                    KPI principal
-                  </div>
+                      KPI principal
+                    </div>
 
-                  <Banknote
-                    size={42}
-                    className="text-white/90"
-                  />
+                    <Banknote
+                      size={42}
+                      className="text-white/90"
+                    />
+
+                  </div>
 
                 </div>
 
-              </div>
+                {/* KPIS SECUNDARIOS */}
 
-              {/* KPIS SECUNDARIOS */}
+                {kpis.map((kpi, idx) => (
 
-              {kpis.map((kpi, idx) => (
-
-                <div
-                  key={idx}
-                  className="
+                  <div
+                    key={idx}
+                    className="
                     relative
                     overflow-hidden
 
@@ -1364,9 +1406,9 @@ function DashboardHome() {
                     flex-col
                     justify-between
                   "
-                >
+                  >
 
-                  <div className="
+                    <div className="
                     w-12
                     h-12
 
@@ -1381,24 +1423,24 @@ function DashboardHome() {
                     justify-center
                   ">
 
-                    <kpi.icon
-                      size={22}
-                      className={kpi.color}
-                    />
+                      <kpi.icon
+                        size={22}
+                        className={kpi.color}
+                      />
 
-                  </div>
+                    </div>
 
-                  <div>
+                    <div>
 
-                    <p className="
+                      <p className="
                       text-sm
 
                       text-slate-500
                     ">
-                      {kpi.title}
-                    </p>
+                        {kpi.title}
+                      </p>
 
-                    <p className={`
+                      <p className={`
                       mt-2
 
                       text-2xl
@@ -1410,24 +1452,24 @@ function DashboardHome() {
                       ${kpi.color}
                     `}>
 
-                      {kpi.value}
+                        {kpi.value}
 
-                    </p>
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
+                ))}
 
-              ))}
+              </div>
 
             </div>
 
           </div>
-
-        </div>
-        <RevenueChart
-          data={revenueData}
-        />  <div className="
+          <RevenueChart
+            data={revenueData}
+          />  <div className="
   grid
   grid-cols-1
   xl:grid-cols-3
@@ -1435,41 +1477,41 @@ function DashboardHome() {
   gap-6
 ">
 
-          <div className="xl:col-span-2">
+            <div className="xl:col-span-2">
 
-            <FinanceChart
-              data={financeData}
+              <FinanceChart
+                data={financeData}
+              />
+
+            </div>
+
+            <ServicesChart
+              data={servicesData}
             />
 
           </div>
 
-          <ServicesChart
-            data={servicesData}
+          <SmartInsights
+
+            ingresos={49442}
+            egresos={3500}
+            citasHoy={3}
+            topServicio="Limpieza"
+
           />
+          {/* ANALYTICS */}
 
-        </div>
+          <div className="space-y-5">
 
-        <SmartInsights
-
-  ingresos={49442}
-  egresos={3500}
-  citasHoy={3}
-  topServicio="Limpieza"
-
-/>
-        {/* ANALYTICS */}
-
-        <div className="space-y-5">
-
-          <div className="
+            <div className="
             flex
             items-center
             justify-between
           ">
 
-            <div>
+              <div>
 
-              <div className="
+                <div className="
                 inline-flex
 
                 items-center
@@ -1481,44 +1523,44 @@ function DashboardHome() {
                 font-bold
               ">
 
-                <BarChart3 size={18} />
+                  <BarChart3 size={18} />
 
-                Analíticas
+                  Analíticas
 
-              </div>
+                </div>
 
-              <p className="
+                <p className="
                 mt-2
 
                 text-sm
 
                 text-slate-500
               ">
-                Tendencias y rendimiento general
-              </p>
+                  Tendencias y rendimiento general
+                </p>
+
+              </div>
+
+              {collapseButton(
+                showCharts,
+                () =>
+                  setShowCharts(!showCharts)
+              )}
 
             </div>
 
-            {collapseButton(
-              showCharts,
-              () =>
-                setShowCharts(!showCharts)
-            )}
-
-          </div>
-
-          <div className={`
+            <div className={`
             overflow-hidden
 
             transition-all
             duration-500
 
             ${showCharts
-              ? "max-h-[3000px] opacity-100"
-              : "max-h-0 opacity-0"}
+                ? "max-h-[3000px] opacity-100"
+                : "max-h-0 opacity-0"}
           `}>
 
-            <div className="
+              <div className="
               grid
               grid-cols-1
               xl:grid-cols-3
@@ -1526,9 +1568,9 @@ function DashboardHome() {
               gap-6
             ">
 
-              {/* INGRESOS */}
+                {/* INGRESOS */}
 
-              <div className="
+                <div className="
                 xl:col-span-2
 
                 bg-white/90
@@ -1546,7 +1588,7 @@ function DashboardHome() {
                 h-[520px]
               ">
 
-                <div className="
+                  <div className="
                   flex
                   items-center
                   justify-between
@@ -1554,9 +1596,9 @@ function DashboardHome() {
                   mb-6
                 ">
 
-                  <div>
+                    <div>
 
-                    <div className="
+                      <div className="
                       inline-flex
                       items-center
                       gap-2
@@ -1567,25 +1609,25 @@ function DashboardHome() {
                       font-bold
                     ">
 
-                      <TrendingUp size={18} />
+                        <TrendingUp size={18} />
 
-                      Ingresos y egresos
+                        Ingresos y egresos
 
-                    </div>
+                      </div>
 
-                    <p className="
+                      <p className="
                       mt-2
 
                       text-sm
 
                       text-slate-500
                     ">
-                      Rendimiento financiero mensual
-                    </p>
+                        Rendimiento financiero mensual
+                      </p>
 
-                  </div>
+                    </div>
 
-                  <div className="
+                    <div className="
                     px-4
                     py-3
 
@@ -1597,7 +1639,7 @@ function DashboardHome() {
                     border-indigo-100
                   ">
 
-                    <p className="
+                      <p className="
                       text-[11px]
 
                       uppercase
@@ -1608,10 +1650,10 @@ function DashboardHome() {
 
                       text-indigo-400
                     ">
-                      Ganancia neta
-                    </p>
+                        Ganancia neta
+                      </p>
 
-                    <p className="
+                      <p className="
                       mt-1
 
                       text-lg
@@ -1620,36 +1662,36 @@ function DashboardHome() {
 
                       text-indigo-700
                     ">
-                      {formato(gananciaNeta)}
-                    </p>
+                        {formato(gananciaNeta)}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <div className="h-[420px]">
+
+                    <GraficoIngresos
+                      ingresos={ingresos}
+                      egresos={egresos}
+                    />
 
                   </div>
 
                 </div>
 
-                <div className="h-[420px]">
+                {/* RIGHT SIDE */}
 
-                  <GraficoIngresos
-                    ingresos={ingresos}
-                    egresos={egresos}
-                  />
-
-                </div>
-
-              </div>
-
-              {/* RIGHT SIDE */}
-
-              <div className="
+                <div className="
                 flex
                 flex-col
 
                 gap-6
               ">
 
-                {/* CLIENTES */}
+                  {/* CLIENTES */}
 
-                <div className="
+                  <div className="
                   bg-white/90
                   backdrop-blur-md
 
@@ -1665,7 +1707,7 @@ function DashboardHome() {
                   h-[250px]
                 ">
 
-                  <div className="
+                    <div className="
                     flex
                     items-start
                     justify-between
@@ -1673,9 +1715,9 @@ function DashboardHome() {
                     mb-5
                   ">
 
-                    <div>
+                      <div>
 
-                      <div className="
+                        <div className="
                         inline-flex
                         items-center
                         gap-2
@@ -1686,63 +1728,63 @@ function DashboardHome() {
                         font-bold
                       ">
 
-                        <Users size={18} />
+                          <Users size={18} />
 
-                        Clientes
+                          Clientes
 
-                      </div>
+                        </div>
 
-                      <p className="
+                        <p className="
                         mt-2
 
                         text-sm
 
                         text-slate-500
                       ">
-                        Distribución de pacientes
-                      </p>
+                          Distribución de pacientes
+                        </p>
 
-                    </div>
+                      </div>
 
-                    <div className="text-right">
+                      <div className="text-right">
 
-                      <p className="
+                        <p className="
                         text-2xl
 
                         font-black
 
                         text-slate-800
                       ">
-                        {clientes.length}
-                      </p>
+                          {clientes.length}
+                        </p>
 
-                      <p className="
+                        <p className="
                         text-xs
 
                         text-emerald-500
 
                         font-semibold
                       ">
-                        +12% este mes
-                      </p>
+                          +12% este mes
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                    <div className="h-[150px]">
+
+                      <GraficoClientes
+                        clientes={clientes}
+                      />
 
                     </div>
 
                   </div>
 
-                  <div className="h-[150px]">
+                  {/* CITAS */}
 
-                    <GraficoClientes
-                      clientes={clientes}
-                    />
-
-                  </div>
-
-                </div>
-
-                {/* CITAS */}
-
-                <div className="
+                  <div className="
                   bg-white/90
                   backdrop-blur-md
 
@@ -1758,7 +1800,7 @@ function DashboardHome() {
                   h-[250px]
                 ">
 
-                  <div className="
+                    <div className="
                     flex
                     items-start
                     justify-between
@@ -1766,9 +1808,9 @@ function DashboardHome() {
                     mb-5
                   ">
 
-                    <div>
+                      <div>
 
-                      <div className="
+                        <div className="
                         inline-flex
                         items-center
                         gap-2
@@ -1779,55 +1821,57 @@ function DashboardHome() {
                         font-bold
                       ">
 
-                        <CalendarDays size={18} />
+                          <CalendarDays size={18} />
 
-                        Citas
+                          Citas
 
-                      </div>
+                        </div>
 
-                      <p className="
+                        <p className="
                         mt-2
 
                         text-sm
 
                         text-slate-500
                       ">
-                        Rendimiento de consultas
-                      </p>
+                          Rendimiento de consultas
+                        </p>
 
-                    </div>
+                      </div>
 
-                    <div className="text-right">
+                      <div className="text-right">
 
-                      <p className="
+                        <p className="
                         text-2xl
 
                         font-black
 
                         text-slate-800
                       ">
-                        {citas.length}
-                      </p>
+                          {citas.length}
+                        </p>
 
-                      <p className="
+                        <p className="
                         text-xs
 
                         text-orange-500
 
                         font-semibold
                       ">
-                        +8% mensual
-                      </p>
+                          +8% mensual
+                        </p>
+
+                      </div>
 
                     </div>
 
-                  </div>
+                    <div className="h-[150px]">
 
-                  <div className="h-[150px]">
+                      <GraficoCitas
+                        citas={citas}
+                      />
 
-                    <GraficoCitas
-                      citas={citas}
-                    />
+                    </div>
 
                   </div>
 
@@ -1840,9 +1884,7 @@ function DashboardHome() {
           </div>
 
         </div>
-
-      </div>
-
+      </motion.div>
     </PageWrapper>
 
   );

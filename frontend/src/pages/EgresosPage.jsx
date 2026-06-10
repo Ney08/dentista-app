@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 
 import toast from "react-hot-toast";
 
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../components/ui/ToastStyles";
+
 import PageWrapper from "../components/PageWrapper";
 import SkeletonLoader from "../components/SkeletonLoader";
 import Paginacion from "../components/Paginacion";
@@ -146,7 +153,7 @@ function EgresosPage() {
 
         });
 
-        toast.success(
+        showSuccess(
           "Egreso actualizado ✅"
         );
 
@@ -156,7 +163,7 @@ function EgresosPage() {
           data
         );
 
-        toast.success(
+        showSuccess(
           "Egreso creado ✅"
         );
 
@@ -166,7 +173,7 @@ function EgresosPage() {
 
     } catch {
 
-      toast.error(
+      showError(
         "Error ❌"
       );
 
@@ -1330,7 +1337,7 @@ function EgresosPage() {
 
           setEgresoEliminar(null);
 
-          toast.success(
+          showSuccess(
             "Egreso eliminado ✅"
           );
 

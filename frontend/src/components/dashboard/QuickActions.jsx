@@ -91,7 +91,8 @@ function QuickActions() {
       grid-cols-1
       sm:grid-cols-2
       xl:grid-cols-4
-
+      shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+      
       gap-5
     ">
 

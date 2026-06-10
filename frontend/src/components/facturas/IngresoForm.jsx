@@ -23,6 +23,13 @@ import {
 } from "lucide-react";
 
 import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../ui/ToastStyles";
+
+import {
   formatFecha,
   formatHora
 } from "../../utils/fecha";
@@ -182,7 +189,7 @@ function IngresoForm({
         }
       ]);
 
-      toast(
+      showWarning(
         "No hay citas relacionadas ⚠️"
       );
 
@@ -232,7 +239,7 @@ function IngresoForm({
         }
       ]);
 
-      toast(
+      showInfo(
         "No hay citas relacionadas ⚠️"
       );
 
@@ -273,7 +280,7 @@ function IngresoForm({
 
     if (!servicioEncontrado) {
 
-      toast(
+      showInfo(
         "No hay servicio relacionado ⚠️"
       );
 
@@ -313,7 +320,7 @@ function IngresoForm({
 
     });
 
-    toast.success(
+    showSuccess(
       `Servicio sugerido ✨ ${formatFecha(citaElegida.fechaObj)}`
     );
 
@@ -501,7 +508,7 @@ function IngresoForm({
         !s.monto
       ) {
 
-        toast.error(
+        showError(
           "Completa todos los servicios ⚠️"
         );
 
@@ -562,7 +569,7 @@ function IngresoForm({
           data: payload
         });
 
-        toast.success(
+        showSuccess(
           "Factura actualizada ✅",
           { id: toastId }
         );
@@ -573,7 +580,7 @@ function IngresoForm({
           payload
         );
 
-        toast.success(
+        showSuccess(
           "Factura creada ✅",
           { id: toastId }
         );
@@ -596,7 +603,7 @@ function IngresoForm({
 
     } catch {
 
-      toast.error(
+      showError(
         "Error ❌",
         { id: toastId }
       );
@@ -808,7 +815,12 @@ function IngresoForm({
           <select
             value={clienteId}
 
-            disabled={!!initialData}
+
+            disabled={
+              !!initialData ||
+              !!citaPreset
+            }
+
 
             onChange={(e) => {
 
@@ -851,7 +863,7 @@ function IngresoForm({
               transition-all
               duration-300
 
-              ${initialData
+              ${initialData || citaPreset
                 ? "bg-slate-100 text-slate-400"
                 : ""
               }
@@ -1459,7 +1471,7 @@ function IngresoForm({
             </div>
 
           </div>
-          
+
 
           {/* DESCUENTO */}
 

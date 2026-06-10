@@ -25,6 +25,13 @@ import SkeletonLoader from "../components/SkeletonLoader";
 import { useCitas } from "../hooks/useCitas";
 import { useClientes } from "../hooks/useClientes";
 
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../components/ui/ToastStyles";
+
 function ClientesPage() {
 
   /*
@@ -224,7 +231,7 @@ function ClientesPage() {
 
       toggleCliente.mutate(cliente);
 
-      toast.success(
+      showSuccess(
         "Cliente activado ✅"
       );
 
@@ -749,7 +756,7 @@ function ClientesPage() {
 
               setPagina(1);
 
-              toast.success(
+              showSuccess(
                 "Mostrando pacientes recientes ✨"
               );
 
@@ -1556,7 +1563,7 @@ function ClientesPage() {
 
             setClienteADesactivar(null);
 
-            toast.success(
+            showSuccess(
               "Cliente actualizado ✅"
             );
 

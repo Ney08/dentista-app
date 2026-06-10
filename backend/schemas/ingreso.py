@@ -2,6 +2,16 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 
+class ClienteOut(BaseModel):
+
+    id: int
+    nombre: str
+    apellido: str
+    telefono: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
 
 class Servicio(BaseModel):
     descripcion: str
@@ -20,10 +30,17 @@ class IngresoCreate(BaseModel):
     servicios: List[Servicio]
 
 class Ingreso(BaseModel):
+
     id: int
+
     cliente_id: int
+
+    cliente: ClienteOut
+
     descuento: float
+
     pagado: bool = False
+
     servicios: List[Servicio]
 
     class Config:

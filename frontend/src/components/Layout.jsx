@@ -8,7 +8,7 @@ import {
   useLocation
 } from "react-router-dom";
 
-
+import CommandPalette from "./ui/CommandPalette";
 import {
   LayoutDashboard,
   Users,
@@ -19,11 +19,16 @@ import {
   Settings,
   LogOut,
   Menu,
+  Stethoscope,
   X,
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
-
+import ThemeToggle from "./ui/ThemeToggle";
+import {
+  motion,
+  AnimatePresence
+} from "framer-motion";
 
 import ConfirmModal from "./ConfirmModal";
 
@@ -212,10 +217,10 @@ function Layout({ children }) {
               bg-white/10
             " />
 
-            
-<span className="text-white text-xl">
-  🦷
-</span>
+
+            <span className="text-white text-xl">
+              <Stethoscope size={22} />
+            </span>
 
 
           </div>
@@ -245,7 +250,7 @@ function Layout({ children }) {
           </div>
 
         </div>
-
+        <ThemeToggle />
         <button
           onClick={() =>
             setAbierto(true)
@@ -319,7 +324,7 @@ function Layout({ children }) {
             inset-0
             z-40
 
-            bg-black/40
+           bg-slate-950/40
             backdrop-blur-sm
 
             md:hidden
@@ -437,10 +442,10 @@ function Layout({ children }) {
                   bg-white/10
                 " />
 
-                
-<span className="text-white text-xl">
-  🦷
-</span>
+
+                <span className="text-white text-xl">
+                  <Stethoscope size={22} />
+                </span>
 
 
               </div>
@@ -875,10 +880,10 @@ function Layout({ children }) {
               shadow-[0_18px_40px_rgba(99,102,241,0.35)]
             ">
 
-              
-<span className="text-white text-xl">
-  🦷
-</span>
+
+              <span className="text-white text-xl">
+                <Stethoscope size={22} />
+              </span>
 
 
             </div>
@@ -1058,7 +1063,16 @@ function Layout({ children }) {
           max-w-[1700px]
           mx-auto
         ">
-          {children}
+          <AnimatePresence mode="wait">
+
+
+
+            {children}
+
+
+
+          </AnimatePresence>
+
         </div>
 
       </main>
@@ -1067,46 +1081,48 @@ function Layout({ children }) {
 
       <div
         className={`
-          fixed
-          bottom-3
-          left-3
-          right-3
-          z-40
+    fixed
+    bottom-3
+    left-3
+    right-3
+    z-40
 
-          md:hidden
+    md:hidden
 
-          bg-white/70
-          backdrop-blur-2xl
+    bg-white/70
+    backdrop-blur-2xl
 
-          border
-          border-white/50
+    border
+    border-white/50
 
-          rounded-[30px]
+    rounded-[30px]
 
-          shadow-[0_10px_40px_rgba(0,0,0,0.10)]
+    shadow-[0_10px_40px_rgba(0,0,0,0.10)]
 
-          px-2
-          py-2
+    px-2
+    py-2
 
-          flex
-          items-center
-          justify-around
+    pb-[env(safe-area-inset-bottom)]
 
-          transition-all
-          duration-300
+    flex
+    items-center
+    justify-around
 
-          ${showMobileNav
+    transition-all
+    duration-300
+
+    ${showMobileNav
             ? `
-              translate-y-0
-              opacity-100
-            `
+        translate-y-0
+        opacity-100
+      `
             : `
-              translate-y-24
-              opacity-0
-              pointer-events-none
-            `
+        translate-y-24
+        opacity-0
+        pointer-events-none
+      `
           }
-        `}
+  `}
       >
 
         {menu.map((item) => {
@@ -1178,7 +1194,7 @@ function Layout({ children }) {
         })}
 
       </div>
-
+      <CommandPalette />
       {/* LOGOUT MODAL */}
 
       {mostrarLogout && (

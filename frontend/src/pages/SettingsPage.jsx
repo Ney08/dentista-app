@@ -16,6 +16,13 @@ import ServicioModal from "../components/ServicioModal";
 
 import toast from "react-hot-toast";
 
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../components/ui/ToastStyles";
+
 import { useUser } from "../hooks/useUser";
 import { useServicios } from "../hooks/useServicios";
 import { useClientes } from "../hooks/useClientes";
@@ -89,7 +96,7 @@ function SettingsPage() {
 
     if (!username.trim()) {
 
-      return toast.error(
+      return showError(
         "Usuario vacío ❌"
       );
 
@@ -105,7 +112,7 @@ function SettingsPage() {
         password || "temp1234"
       );
 
-      toast.success(
+      showSuccess(
         "Usuario actualizado ✅"
       );
 
@@ -113,7 +120,7 @@ function SettingsPage() {
 
     } catch (error) {
 
-      toast.error(error.message);
+      showError(error.message);
 
     } finally {
 
@@ -136,7 +143,7 @@ function SettingsPage() {
       !nuevoPassword
     ) {
 
-      return toast.error(
+      return showError(
         "Completa los campos ❌"
       );
 
@@ -146,7 +153,7 @@ function SettingsPage() {
       nuevoPassword.length < 6
     ) {
 
-      return toast.error(
+      return showError(
         "Mínimo 6 caracteres ⚠️"
       );
 
@@ -169,7 +176,7 @@ function SettingsPage() {
           nuevoPassword
         );
 
-        toast.success(
+        showSuccess(
           "Contraseña actualizada 🔒"
         );
 
@@ -181,7 +188,7 @@ function SettingsPage() {
 
       } catch (error) {
 
-        toast.error(error.message);
+        showError(error.message);
 
       } finally {
 
@@ -202,7 +209,7 @@ function SettingsPage() {
 
       if (!data.nombre.trim()) {
 
-        return toast.error(
+        return showError(
           "Nombre requerido ❌"
         );
 
@@ -210,7 +217,7 @@ function SettingsPage() {
 
       if (!data.precio) {
 
-        return toast.error(
+        return showError(
           "Precio requerido ⚠️"
         );
 
@@ -243,7 +250,7 @@ function SettingsPage() {
 
           });
 
-          toast.success(
+          showSuccess(
             "Servicio actualizado ✏️"
           );
 
@@ -269,7 +276,7 @@ function SettingsPage() {
 
           });
 
-          toast.success(
+          showSuccess(
             "Servicio agregado ✅"
           );
 
@@ -281,7 +288,7 @@ function SettingsPage() {
 
       } catch {
 
-        toast.error(
+        showError(
           "Error ❌"
         );
 
@@ -1395,7 +1402,7 @@ function SettingsPage() {
               servicioAEliminar.id
             );
 
-            toast.success(
+            showSuccess(
               "Eliminado 🗑️"
             );
 

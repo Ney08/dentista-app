@@ -270,6 +270,96 @@ CALENDAR
 }
 
 /*
+==========================================
+CURRENT TIME INDICATOR
+==========================================
+*/
+
+.rbc-current-time-indicator {
+
+  background-color:
+    #ef4444 !important;
+
+  height:
+    3px !important;
+
+  z-index:
+    50 !important;
+
+}
+
+.rbc-current-time-indicator::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: -6px;
+  top: -5px;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 9999px;
+
+  background:
+    #ef4444;
+
+  box-shadow:
+    0 0 14px rgba(239,68,68,0.8);
+
+}
+/*
+==========================================
+RBC TOOLTIP FIX
+==========================================
+*/
+
+.agenda-calendar .rbc-event{
+
+  overflow: visible !important;
+
+}
+
+.rbc-day-slot .rbc-event {
+
+  overflow: visible !important;
+
+}
+.rbc-toolbar {
+  position: relative !important;
+  z-index: 999 !important;
+}
+
+.rbc-header {
+  position: relative;
+  z-index: 5;
+}
+
+.rbc-time-view,
+.rbc-time-content,
+.rbc-row-content,
+.rbc-events-container {
+  z-index: 1 !important;
+}
+
+
+.rbc-toolbar button {
+  pointer-events: auto !important;
+}
+
+/* .rbc-events-container {
+
+  overflow: visible !important;
+
+}
+
+.rbc-row-content {
+
+  overflow: visible !important;
+
+} */
+/*
 ==================================================
 ANIMATIONS
 ==================================================
@@ -440,3 +530,4 @@ PRINT
   }
 
 }
+

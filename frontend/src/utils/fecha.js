@@ -46,6 +46,28 @@ export const formatHora = (fecha) => {
   });
 };
 
+export const formatFechaHora = (
+  fecha
+) => {
+
+  const f =
+    parseFechaLocal(fecha);
+
+  if (!f) return "";
+
+  return f.toLocaleString(
+    "es-DO",
+    {
+
+      dateStyle: "medium",
+
+      timeStyle: "short"
+
+    }
+  );
+
+};
+
 export const formatFechaCompleta = (fecha) => {
   const f = parseFechaLocal(fecha);
   if (!f) return "";

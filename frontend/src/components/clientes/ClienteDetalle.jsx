@@ -15,6 +15,14 @@ import {
   AlertCircle
 } from "lucide-react";
 
+
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../ui/ToastStyles";
+
 import HistorialForm from "./HistorialForm";
 
 import BaseModal from "../BaseModal";
@@ -98,7 +106,7 @@ function ClienteDetalle({ cliente }) {
 
       }
 
-      toast.success(
+      showSuccess(
         "Nota eliminada ✅"
       );
 
@@ -106,7 +114,7 @@ function ClienteDetalle({ cliente }) {
 
     } catch {
 
-      toast.error(
+      showError(
         "Error al eliminar ❌"
       );
 
@@ -124,7 +132,7 @@ function ClienteDetalle({ cliente }) {
 
     if (!textoEditado.trim()) {
 
-      toast.error(
+      showError(
         "La nota no puede estar vacía ⚠️"
       );
 
@@ -157,7 +165,7 @@ function ClienteDetalle({ cliente }) {
 
       }
 
-      toast.success(
+      showSuccess(
         "Nota actualizada ✅"
       );
 
@@ -169,7 +177,7 @@ function ClienteDetalle({ cliente }) {
 
     } catch {
 
-      toast.error(
+      showError(
         "Error al actualizar ❌"
       );
 

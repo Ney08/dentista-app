@@ -900,35 +900,48 @@ function CitaForm({
                   e.target.value
                 )
               }
-              disabled={!!clientePreset}
-              className="
-      w-full
 
-      h-14
+              disabled={
+                !!clientePreset ||
+                isEdit
+              }
 
-      px-5
+              className={`
+  w-full
 
-      rounded-[24px]
+  h-14
 
-      bg-white/80
+  px-5
 
-      border
-      border-slate-200
+  rounded-[24px]
 
-      text-slate-700
+  border
+  border-slate-200
 
-      shadow-sm
+  shadow-sm
 
-      focus:outline-none
+  focus:outline-none
 
-      focus:ring-4
-      focus:ring-indigo-500/10
+  focus:ring-4
+  focus:ring-indigo-500/10
 
-      focus:border-indigo-300
+  focus:border-indigo-300
 
-      transition-all
-      duration-300
-    "
+  transition-all
+  duration-300
+
+  ${clientePreset || isEdit
+                  ? `
+        bg-slate-100
+        text-slate-400
+        cursor-not-allowed
+      `
+                  : `
+        bg-white/80
+        text-slate-700
+      `
+                }
+`}
             >
 
               <option value="">

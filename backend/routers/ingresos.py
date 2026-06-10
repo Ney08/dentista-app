@@ -74,7 +74,8 @@ def listar_ingresos(db: Session = Depends(get_db)):
 
                 "cliente": {
                     "nombre": i.cliente.nombre,
-                    "apellido": i.cliente.apellido
+                    "apellido": i.cliente.apellido,
+                    "telefono": i.cliente.telefono
                 } if i.cliente else None,
 
                 "servicios": [
@@ -139,7 +140,8 @@ def actualizar_ingreso(id: int, data: IngresoUpdateSchema, db: Session = Depends
         "cliente_id": ingreso.cliente_id,
         "cliente": {
             "nombre": ingreso.cliente.nombre,
-            "apellido": ingreso.cliente.apellido
+            "apellido": ingreso.cliente.apellido,
+            "telefono": i.cliente.telefono
         } if ingreso.cliente else None,
         "servicios": [
             {
@@ -186,7 +188,8 @@ def marcar_pagado(id: int, db: Session = Depends(get_db)):
 
         "cliente": {
             "nombre": ingreso.cliente.nombre,
-            "apellido": ingreso.cliente.apellido
+            "apellido": ingreso.cliente.apellido,
+            "telefono": i.cliente.telefono
         } if ingreso.cliente else None,
 
         "servicios": [

@@ -20,6 +20,13 @@ import {
   X
 } from "lucide-react";
 
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../ui/ToastStyles";
+
 function ClienteForm({
   cliente,
   onClose
@@ -235,7 +242,7 @@ function ClienteForm({
 
     if (cedulaError) {
 
-      return toast.error(
+      return showError(
         "Cédula duplicada ❌"
       );
 
@@ -246,7 +253,7 @@ function ClienteForm({
       !municipio
     ) {
 
-      return toast.error(
+      return showError(
         "Ubicación requerida ⚠️"
       );
 
@@ -286,7 +293,7 @@ function ClienteForm({
           data: payload
         });
 
-        toast.success(
+        showSuccess(
           "Cliente actualizado ✅"
         );
 
@@ -296,7 +303,7 @@ function ClienteForm({
           payload
         );
 
-        toast.success(
+        showSuccess(
           "Cliente creado ✅"
         );
 
@@ -312,7 +319,7 @@ function ClienteForm({
 
     } catch {
 
-      toast.error(
+      showError(
         "Error ❌"
       );
 

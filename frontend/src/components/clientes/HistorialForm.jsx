@@ -2,6 +2,12 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { API_URL } from "../../config";
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../ui/ToastStyles";
 
 function HistorialForm({
   clienteId,
@@ -24,7 +30,7 @@ function HistorialForm({
 
     if (!texto.trim()) {
 
-      toast.error(
+      showError(
         "Escribe una nota clínica ⚠️"
       );
 
@@ -59,7 +65,7 @@ function HistorialForm({
         throw new Error();
       }
 
-      toast.success(
+      showSuccess(
         "Historial guardado ✅",
         { id: toastId }
       );
@@ -70,7 +76,7 @@ function HistorialForm({
 
     } catch {
 
-      toast.error(
+      showError(
         "Error al guardar ❌",
         { id: toastId }
       );

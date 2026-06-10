@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
 import { useAuth } from "../hooks/useAuth";
-
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../components/ui/ToastStyles";
 function Login() {
 
   const {
@@ -133,7 +138,7 @@ function Login() {
 
       }, 500);
 
-      toast.error(
+      showError(
         "Completa los campos ❌"
       );
 
@@ -172,7 +177,7 @@ function Login() {
         username
       );
 
-      toast.success(
+      showSuccess(
         `Bienvenido ${username} ✅`
       );
 
@@ -188,7 +193,7 @@ function Login() {
 
       }, 500);
 
-      toast.error(
+     showError(
         error.message
       );
 
@@ -213,7 +218,7 @@ function Login() {
 
       if (!username.trim()) {
 
-        toast.error(
+        showError(
           "Escribe el usuario ⚠️"
         );
 
@@ -223,7 +228,7 @@ function Login() {
 
       if (!claveValida) {
 
-        toast.error(
+        showError(
           "Clave inválida ❌"
         );
 
@@ -235,7 +240,7 @@ function Login() {
         nuevaPassword.length < 4
       ) {
 
-        toast.error(
+        showError(
           "Mínimo 4 caracteres ⚠️"
         );
 
@@ -252,7 +257,7 @@ function Login() {
           nuevaPassword
         );
 
-        toast.success(
+        showSuccess(
           "Contraseña cambiada ✅"
         );
 
@@ -266,7 +271,7 @@ function Login() {
 
         console.error(error);
 
-        toast.error(
+        showError(
           error.message
         );
 
@@ -726,7 +731,7 @@ function Login() {
 
                   setMostrarRecovery(true);
 
-                  toast(
+                  showInfo(
                     "Ingresa tu clave 🔐"
                   );
 

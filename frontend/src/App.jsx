@@ -34,22 +34,21 @@ function App() {
   return (
     <>
       {/* ✅ TOAST SIEMPRE ACTIVO */}
+
+
       <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 2500,
-          style: {
-            background: "#1f2937",
-            color: "#fff",
-            borderRadius: "12px",
-            padding: "14px",
-            boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
-          }
+        position="top-right"
+        gutter={16}
+        containerStyle={{
+          top: 24,
+          right: 24
         }}
       />
 
+
+
       {!token ? (
-        <Login />  
+        <Login />
       ) : (
         <QueryClientProvider client={queryClient}>
           <Router>
@@ -62,8 +61,8 @@ function App() {
                 <Route path="/citas" element={<CitasPage />} />
                 <Route path="/reportes" element={<ReportesPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
-                
-                <Route path="/egresos"element={<EgresosPage />}/>
+
+                <Route path="/egresos" element={<EgresosPage />} />
 
                 <Route path="*" element={<Navigate to="/" />} />
 
