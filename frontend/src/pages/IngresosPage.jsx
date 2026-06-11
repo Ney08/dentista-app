@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 import toast from "react-hot-toast";
-
+import useModalStore from "../stores/useModalStore";
 import { formatFecha } from "../utils/fecha";
 import { formatMoney } from "../utils/format";
 
@@ -13,7 +13,7 @@ import IngresoList from "../components/facturas/IngresoList";
 import FacturaModal from "../components/facturas/FacturaModal";
 import IngresoForm from "../components/facturas/IngresoForm";
 
-
+import { motion } from "framer-motion";
 import {
   useLocation,
   useNavigate
@@ -73,7 +73,15 @@ function IngresosPage() {
 
   const [modalAbierto, setModalAbierto] =
     useState(false);
+  const {
 
+    createFacturaOpen,
+
+    openFactura,
+
+    closeFactura
+
+  } = useModalStore();
   const [editando, setEditando] =
     useState(null);
 
@@ -136,19 +144,32 @@ function IngresosPage() {
 
   }, [modalAbierto]);
 
+  useEffect(() => {
+
+    if (createFacturaOpen) {
+
+      setEditando(null);
+
+      setModalAbierto(true);
+
+    }
+
+  }, [createFacturaOpen]);
   /*
   ==========================================
   ACTIONS
   ==========================================
   */
 
+
   const abrirNuevo = () => {
 
     setEditando(null);
 
-    setModalAbierto(true);
+    openFactura();
 
   };
+
 
   const abrirEditar = (ingreso) => {
 
@@ -170,6 +191,8 @@ function IngresosPage() {
     setCitaPresetLocal(null);
 
     setCitaDesdeCitas(null);
+
+    closeFactura();
 
   };
 
@@ -475,13 +498,34 @@ function IngresosPage() {
   ==========================================
   */
 
-  
+
 
   return (
 
     <PageWrapper>
+      <motion.div
+        key="facturaciones"
 
-      <div className="
+        initial={{
+          opacity: 0,
+          y: 10
+        }}
+
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+
+        exit={{
+          opacity: 0,
+          y: -10
+        }}
+
+        transition={{
+          duration: 0.25
+        }}
+      >
+        <div className="
       h-full
 
       w-full
@@ -499,9 +543,9 @@ function IngresosPage() {
       sm:px-5
     ">
 
-        {/* HEADER */}
+          {/* HEADER */}
 
-        <div className="
+          <div className="
         flex
         flex-col
         xl:flex-row
@@ -512,11 +556,11 @@ function IngresosPage() {
         gap-5
       ">
 
-          {/* LEFT */}
+            {/* LEFT */}
 
-          <div>
+            <div>
 
-            <div className="
+              <div className="
             inline-flex
 
             items-center
@@ -540,13 +584,13 @@ function IngresosPage() {
             mb-4
           ">
 
-              <Wallet size={14} />
+                <Wallet size={14} />
 
-              CRM financiero
+                CRM financiero
 
-            </div>
+              </div>
 
-            <h1 className="
+              <h1 className="
             text-3xl
             md:text-4xl
 
@@ -557,11 +601,11 @@ function IngresosPage() {
             text-slate-800
           ">
 
-              Facturación clínica
+                Facturación clínica
 
-            </h1>
+              </h1>
 
-            <p className="
+              <p className="
             mt-2
 
             text-sm
@@ -569,14 +613,14 @@ function IngresosPage() {
 
             text-slate-500
           ">
-              Control clínico de ingresos y facturas
-            </p>
+                Control clínico de ingresos y facturas
+              </p>
 
-          </div>
+            </div>
 
-          {/* RIGHT */}
+            {/* RIGHT */}
 
-          <div className="
+            <div className="
           bg-white/95
           backdrop-blur-md
 
@@ -593,7 +637,7 @@ function IngresosPage() {
           min-w-[260px]
         ">
 
-            <p className="
+              <p className="
             text-xs
 
             uppercase
@@ -604,10 +648,10 @@ function IngresosPage() {
 
             text-slate-400
           ">
-              Facturación total
-            </p>
+                Facturación total
+              </p>
 
-            <div className="
+              <div className="
             mt-3
 
             flex
@@ -615,21 +659,21 @@ function IngresosPage() {
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <h3 className="
+                  <h3 className="
                 text-3xl
 
                 font-black
 
                 text-indigo-600
               ">
-                  RD$
-                  {" "}
-                  {formatMoney(totalPagado)}
-                </h3>
+                    RD$
+                    {" "}
+                    {formatMoney(totalPagado)}
+                  </h3>
 
-                <p className="
+                  <p className="
                 mt-1
 
                 text-xs
@@ -638,12 +682,12 @@ function IngresosPage() {
 
                 text-slate-500
               ">
-                  Ingresos registrados
-                </p>
+                    Ingresos registrados
+                  </p>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-14
               h-14
 
@@ -663,7 +707,9 @@ function IngresosPage() {
               shadow-[0_15px_35px_rgba(99,102,241,0.25)]
             ">
 
-                <Receipt size={22} />
+                  <Receipt size={22} />
+
+                </div>
 
               </div>
 
@@ -671,11 +717,9 @@ function IngresosPage() {
 
           </div>
 
-        </div>
+          {/* KPIS */}
 
-        {/* KPIS */}
-
-        <div className="
+          <div className="
         grid
         grid-cols-1
         sm:grid-cols-2
@@ -684,9 +728,9 @@ function IngresosPage() {
         gap-5
       ">
 
-          {/* PENDIENTE */}
+            {/* PENDIENTE */}
 
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -708,7 +752,7 @@ function IngresosPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -723,15 +767,15 @@ function IngresosPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -741,13 +785,13 @@ function IngresosPage() {
                 gap-2
               ">
 
-                  <BadgeDollarSign size={14} />
+                    <BadgeDollarSign size={14} />
 
-                  Pendiente
+                    Pendiente
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -757,15 +801,15 @@ function IngresosPage() {
                 text-rose-500
               ">
 
-                  RD$
-                  {" "}
-                  {formatMoney(totalPendiente)}
+                    RD$
+                    {" "}
+                    {formatMoney(totalPendiente)}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -780,17 +824,17 @@ function IngresosPage() {
               justify-center
             ">
 
-                <Wallet size={20} />
+                  <Wallet size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* PAGADO */}
 
-          {/* PAGADO */}
-
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -812,7 +856,7 @@ function IngresosPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -827,15 +871,15 @@ function IngresosPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -845,13 +889,13 @@ function IngresosPage() {
                 gap-2
               ">
 
-                  <BadgeDollarSign size={14} />
+                    <BadgeDollarSign size={14} />
 
-                  Pagado
+                    Pagado
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -861,15 +905,15 @@ function IngresosPage() {
                 text-emerald-600
               ">
 
-                  RD$
-                  {" "}
-                  {formatMoney(totalPagado)}
+                    RD$
+                    {" "}
+                    {formatMoney(totalPagado)}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -884,17 +928,17 @@ function IngresosPage() {
               justify-center
             ">
 
-                <Wallet size={20} />
+                  <Wallet size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* FACTURAS */}
 
-          {/* FACTURAS */}
-
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -916,7 +960,7 @@ function IngresosPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -931,15 +975,15 @@ function IngresosPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -949,13 +993,13 @@ function IngresosPage() {
                 gap-2
               ">
 
-                  <FileText size={14} />
+                    <FileText size={14} />
 
-                  Facturas
+                    Facturas
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -965,13 +1009,13 @@ function IngresosPage() {
                 text-indigo-600
               ">
 
-                  {ingresos.length}
+                    {ingresos.length}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -986,17 +1030,17 @@ function IngresosPage() {
               justify-center
             ">
 
-                <Receipt size={20} />
+                  <Receipt size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* PENDIENTES */}
 
-          {/* PENDIENTES */}
-
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -1018,7 +1062,7 @@ function IngresosPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -1033,15 +1077,15 @@ function IngresosPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -1051,13 +1095,13 @@ function IngresosPage() {
                 gap-2
               ">
 
-                  <AlertTriangle size={14} />
+                    <AlertTriangle size={14} />
 
-                  Pendientes
+                    Pendientes
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -1067,13 +1111,13 @@ function IngresosPage() {
                 text-yellow-500
               ">
 
-                  {pendientesCount}
+                    {pendientesCount}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -1088,7 +1132,9 @@ function IngresosPage() {
               justify-center
             ">
 
-                <CalendarDays size={20} />
+                  <CalendarDays size={20} />
+
+                </div>
 
               </div>
 
@@ -1096,11 +1142,9 @@ function IngresosPage() {
 
           </div>
 
-        </div>
+          {/* MAIN CARD */}
 
-        {/* MAIN CARD */}
-
-        <div className="
+          <div className="
         bg-white/95
         backdrop-blur-md
 
@@ -1124,18 +1168,18 @@ function IngresosPage() {
         overflow-hidden
       ">
 
-          {/* TOOLBAR */}
+            {/* TOOLBAR */}
 
-          <div className="
+            <div className="
           flex
           flex-col
 
           gap-4
         ">
 
-            {/* TOP */}
+              {/* TOP */}
 
-            <div className="
+              <div className="
             flex
             flex-col
             xl:flex-row
@@ -1146,9 +1190,9 @@ function IngresosPage() {
             gap-4
           ">
 
-              {/* INFO */}
+                {/* INFO */}
 
-              <div className="
+                <div className="
               flex
               items-center
               gap-3
@@ -1156,7 +1200,7 @@ function IngresosPage() {
               flex-wrap
             ">
 
-                <div className="
+                  <div className="
                 px-4
                 h-11
 
@@ -1177,15 +1221,15 @@ function IngresosPage() {
                 text-indigo-600
               ">
 
-                  <Receipt size={14} />
+                    <Receipt size={14} />
 
-                  {filtrados.length}
-                  {" "}
-                  facturas
+                    {filtrados.length}
+                    {" "}
+                    facturas
 
-                </div>
+                  </div>
 
-                <div className="
+                  <div className="
                 px-4
                 h-11
 
@@ -1206,21 +1250,21 @@ function IngresosPage() {
                 text-rose-500
               ">
 
-                  <AlertTriangle size={14} />
+                    <AlertTriangle size={14} />
 
-                  {pendientesCount}
-                  {" "}
-                  pendientes
+                    {pendientesCount}
+                    {" "}
+                    pendientes
+
+                  </div>
 
                 </div>
 
-              </div>
+                {/* BUTTON */}
 
-              {/* BUTTON */}
-
-              <button
-                onClick={abrirNuevo}
-                className="
+                <button
+                  onClick={abrirNuevo}
+                  className="
                 group
 
                 relative
@@ -1259,27 +1303,27 @@ function IngresosPage() {
                 justify-center
                 gap-2
               "
-              >
+                >
 
-                <Plus
-                  size={18}
-                  className="
+                  <Plus
+                    size={18}
+                    className="
                   group-hover:rotate-90
 
                   transition-all
                   duration-300
                 "
-                />
+                  />
 
-                Nueva factura
+                  Nueva factura
 
-              </button>
+                </button>
 
-            </div>
+              </div>
 
-            {/* FILTERS */}
+              {/* FILTERS */}
 
-            <div className="
+              <div className="
             flex
             flex-col
             lg:flex-row
@@ -1287,18 +1331,18 @@ function IngresosPage() {
             gap-3
           ">
 
-              {/* SEARCH */}
+                {/* SEARCH */}
 
-              <div className="
+                <div className="
               relative
 
               w-full
               lg:flex-1
             ">
 
-                <Search
-                  size={18}
-                  className="
+                  <Search
+                    size={18}
+                    className="
                   absolute
                   left-4
                   top-1/2
@@ -1306,21 +1350,21 @@ function IngresosPage() {
 
                   text-slate-400
                 "
-                />
+                  />
 
-                <input
-                  placeholder="Buscar cliente..."
-                  value={busqueda}
-                  onChange={(e) => {
+                  <input
+                    placeholder="Buscar cliente..."
+                    value={busqueda}
+                    onChange={(e) => {
 
-                    setBusqueda(
-                      e.target.value
-                    );
+                      setBusqueda(
+                        e.target.value
+                      );
 
-                    setPagina(1);
+                      setPagina(1);
 
-                  }}
-                  className="
+                    }}
+                    className="
                   w-full
 
                   h-12
@@ -1344,114 +1388,114 @@ function IngresosPage() {
                   focus:ring-4
                   focus:ring-indigo-500/10
                 "
-                />
+                  />
+
+                </div>
+
+                {/* ORDER */}
+
+                <select
+                  value={orden}
+                  onChange={(e) =>
+                    setOrden(
+                      e.target.value
+                    )
+                  }
+                  className="
+                h-12
+
+                px-4
+
+                rounded-2xl
+
+                bg-slate-50/90
+
+                border
+                border-slate-200/70
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+              "
+                >
+
+                  <option value="fecha">
+                    Más recientes
+                  </option>
+
+                  <option value="az">
+                    A-Z
+                  </option>
+
+                  <option value="za">
+                    Z-A
+                  </option>
+
+                </select>
+
+                {/* LIMIT */}
+
+                <select
+                  value={porPagina}
+                  onChange={(e) => {
+
+                    const val =
+                      e.target.value === "all"
+                        ? filtrados.length || 1
+                        : parseInt(
+                          e.target.value
+                        );
+
+                    setPorPagina(val);
+
+                    setPagina(1);
+
+                  }}
+                  className="
+                h-12
+
+                px-4
+
+                rounded-2xl
+
+                bg-slate-50/90
+
+                border
+                border-slate-200/70
+
+                shadow-sm
+
+                focus:outline-none
+
+                focus:ring-4
+                focus:ring-indigo-500/10
+              "
+                >
+
+                  <option value={10}>
+                    10
+                  </option>
+
+                  <option value={20}>
+                    20
+                  </option>
+
+                  <option value="all">
+                    Todos
+                  </option>
+
+                </select>
 
               </div>
 
-              {/* ORDER */}
-
-              <select
-                value={orden}
-                onChange={(e) =>
-                  setOrden(
-                    e.target.value
-                  )
-                }
-                className="
-                h-12
-
-                px-4
-
-                rounded-2xl
-
-                bg-slate-50/90
-
-                border
-                border-slate-200/70
-
-                shadow-sm
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-              "
-              >
-
-                <option value="fecha">
-                  Más recientes
-                </option>
-
-                <option value="az">
-                  A-Z
-                </option>
-
-                <option value="za">
-                  Z-A
-                </option>
-
-              </select>
-
-              {/* LIMIT */}
-
-              <select
-                value={porPagina}
-                onChange={(e) => {
-
-                  const val =
-                    e.target.value === "all"
-                      ? filtrados.length || 1
-                      : parseInt(
-                        e.target.value
-                      );
-
-                  setPorPagina(val);
-
-                  setPagina(1);
-
-                }}
-                className="
-                h-12
-
-                px-4
-
-                rounded-2xl
-
-                bg-slate-50/90
-
-                border
-                border-slate-200/70
-
-                shadow-sm
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-              "
-              >
-
-                <option value={10}>
-                  10
-                </option>
-
-                <option value={20}>
-                  20
-                </option>
-
-                <option value="all">
-                  Todos
-                </option>
-
-              </select>
-
             </div>
 
-          </div>
+            {/* LIST */}
 
-          {/* LIST */}
-
-          <div className="
+            <div className="
           flex-1
           min-h-0
 
@@ -1465,9 +1509,9 @@ function IngresosPage() {
           scrollbar-track-transparent
         ">
 
-            {filtrados.length === 0 ? (
+              {filtrados.length === 0 ? (
 
-              <div className="
+                <div className="
               h-full
 
               flex
@@ -1479,7 +1523,7 @@ function IngresosPage() {
               text-center
             ">
 
-                <div className="
+                  <div className="
                 relative
 
                 w-28
@@ -1501,7 +1545,7 @@ function IngresosPage() {
                 shadow-[0_25px_60px_rgba(99,102,241,0.35)]
               ">
 
-                  <div className="
+                    <div className="
                   absolute
                   inset-0
 
@@ -1512,14 +1556,14 @@ function IngresosPage() {
                   blur-xl
                 " />
 
-                  <Receipt
-                    size={42}
-                    className="relative z-10"
-                  />
+                    <Receipt
+                      size={42}
+                      className="relative z-10"
+                    />
 
-                </div>
+                  </div>
 
-                <h3 className="
+                  <h3 className="
                 mt-6
 
                 text-3xl
@@ -1528,43 +1572,43 @@ function IngresosPage() {
 
                 text-slate-800
               ">
-                  No hay facturas
-                </h3>
+                    No hay facturas
+                  </h3>
 
-                <p className="
+                  <p className="
                 mt-3
 
                 text-slate-500
 
                 max-w-sm
               ">
-                  Las facturas creadas aparecerán aquí automáticamente
-                </p>
+                    Las facturas creadas aparecerán aquí automáticamente
+                  </p>
 
-              </div>
+                </div>
 
-            ) : (
+              ) : (
 
-              <IngresoList
-                facturas={facturasPaginadas}
-                porPagina={porPagina}
-                onVerFactura={(i) =>
-                  setFacturaPreview(i)
-                }
-                onEditar={abrirEditar}
-                onPagar={marcarPagado}
-              />
+                <IngresoList
+                  facturas={facturasPaginadas}
+                  porPagina={porPagina}
+                  onVerFactura={(i) =>
+                    setFacturaPreview(i)
+                  }
+                  onEditar={abrirEditar}
+                  onPagar={marcarPagado}
+                />
 
-            )}
+              )}
 
-          </div>
+            </div>
 
-          {/* PAGINACION */}
+            {/* PAGINACION */}
 
-          {porPagina !== "all" &&
-            totalPaginas > 1 && (
+            {porPagina !== "all" &&
+              totalPaginas > 1 && (
 
-              <div className="
+                <div className="
               pt-5
 
               border-t
@@ -1576,51 +1620,51 @@ function IngresosPage() {
               shrink-0
             ">
 
-                <Paginacion
-                  pagina={pagina}
-                  totalPaginas={totalPaginas}
-                  onChange={setPagina}
-                />
+                  <Paginacion
+                    pagina={pagina}
+                    totalPaginas={totalPaginas}
+                    onChange={setPagina}
+                  />
 
-              </div>
+                </div>
 
-            )}
+              )}
+
+          </div>
 
         </div>
 
-      </div>
+        {/* MODAL FORM */}
 
-      {/* MODAL FORM */}
+        {modalAbierto && (
 
-      {modalAbierto && (
-
-        <BaseModal
-          onClose={cerrarModal}
-        >
-
-          <IngresoForm
-            key={
-              editando?.id ||
-              citaPresetLocal?.id ||
-              "nuevo"
-            }
-
-            clientes={clientes}
-
-            initialData={editando}
-
-            citaPreset={citaPresetLocal}
-
+          <BaseModal
             onClose={cerrarModal}
-          />
+          >
 
-        </BaseModal>
+            <IngresoForm
+              key={
+                editando?.id ||
+                citaPresetLocal?.id ||
+                "nuevo"
+              }
 
-      )}
+              clientes={clientes}
 
-      {/* FACTURA MODAL */}
+              initialData={editando}
 
-      <div className={`
+              citaPreset={citaPresetLocal}
+
+              onClose={cerrarModal}
+            />
+
+          </BaseModal>
+
+        )}
+
+        {/* FACTURA MODAL */}
+
+        <div className={`
       fixed
       inset-0
       z-50
@@ -1633,24 +1677,24 @@ function IngresosPage() {
       duration-300
 
       ${facturaPreview
-          ? "bg-slate-900/40 backdrop-blur-sm"
-          : "pointer-events-none opacity-0"
-        }
+            ? "bg-slate-900/40 backdrop-blur-sm"
+            : "pointer-events-none opacity-0"
+          }
     `}>
 
-        {facturaPreview && (
+          {facturaPreview && (
 
-          <FacturaModal
-            ingreso={facturaPreview}
-            onClose={() =>
-              setFacturaPreview(null)
-            }
-          />
+            <FacturaModal
+              ingreso={facturaPreview}
+              onClose={() =>
+                setFacturaPreview(null)
+              }
+            />
 
-        )}
+          )}
 
-      </div>
-
+        </div>
+      </motion.div>
     </PageWrapper>
   );
 

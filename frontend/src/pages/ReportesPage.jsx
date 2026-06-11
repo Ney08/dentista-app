@@ -19,7 +19,7 @@ import {
   CircleDollarSign,
   ClipboardList
 } from "lucide-react";
-
+import { motion } from "framer-motion";
 import { useIngresos } from "../hooks/useIngresos";
 import { useEgresos } from "../hooks/useEgresos";
 import { useServicios } from "../hooks/useServicios";
@@ -601,7 +601,28 @@ function ReportesPage() {
   return (
 
     <PageWrapper>
+      <motion.div
+        key="reportes"
 
+        initial={{
+          opacity: 0,
+          y: 10
+        }}
+
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+
+        exit={{
+          opacity: 0,
+          y: -10
+        }}
+
+        transition={{
+          duration: 0.25
+        }}
+      >
       <div className="
       h-full
 
@@ -2879,7 +2900,7 @@ function ReportesPage() {
 
         </div>
       </div>
-
+      </motion.div>
     </PageWrapper>
   );
 

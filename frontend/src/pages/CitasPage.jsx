@@ -12,11 +12,11 @@ import CitaList from "../components/citas/CitaList";
 import Paginacion from "../components/Paginacion";
 import SkeletonLoader from "../components/SkeletonLoader";
 import BaseModal from "../components/BaseModal";
-
+import useModalStore from "../stores/useModalStore";
 import {
   useQueryClient
 } from "@tanstack/react-query";
-
+import { motion } from "framer-motion";
 import {
   showSuccess,
   showError,
@@ -71,6 +71,15 @@ function CitasPage() {
 
   const [modalAbierto, setModalAbierto] =
     useState(false);
+  const {
+
+    createCitaOpen,
+
+    openCita,
+
+    closeCita
+
+  } = useModalStore();
 
   const [animar, setAnimar] =
     useState(false);
@@ -172,6 +181,17 @@ function CitasPage() {
 
   }, [clienteDesdeClientes]);
 
+  useEffect(() => {
+
+    if (createCitaOpen) {
+
+      setCitaEditar(null);
+
+      setModalAbierto(true);
+
+    }
+
+  }, [createCitaOpen]);
   /*
   ==========================================
   ESTADO CITA
@@ -364,7 +384,7 @@ function CitasPage() {
 
     setCitaEditar(null);
 
-    setModalAbierto(true);
+    openCita();
 
   };
 
@@ -383,6 +403,8 @@ function CitasPage() {
     setCitaEditar(null);
 
     setClientePresetLocal(null);
+
+    closeCita();
 
   };
 
@@ -434,8 +456,29 @@ function CitasPage() {
   return (
 
     <PageWrapper>
+      <motion.div
+        key="citas"
 
-      <div className="
+        initial={{
+          opacity: 0,
+          y: 10
+        }}
+
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+
+        exit={{
+          opacity: 0,
+          y: -10
+        }}
+
+        transition={{
+          duration: 0.25
+        }}
+      >
+        <div className="
       h-full
 
       w-full
@@ -453,9 +496,9 @@ function CitasPage() {
       sm:px-5
     ">
 
-        {/* HEADER */}
+          {/* HEADER */}
 
-        <div className="
+          <div className="
         flex
         flex-col
         xl:flex-row
@@ -466,11 +509,11 @@ function CitasPage() {
         gap-5
       ">
 
-          {/* LEFT */}
+            {/* LEFT */}
 
-          <div>
+            <div>
 
-            <div className="
+              <div className="
             inline-flex
 
             items-center
@@ -494,13 +537,13 @@ function CitasPage() {
             mb-4
           ">
 
-              <CalendarDays size={14} />
+                <CalendarDays size={14} />
 
-              Agenda clínica
+                Agenda clínica
 
-            </div>
+              </div>
 
-            <h1 className="
+              <h1 className="
             text-3xl
             md:text-4xl
 
@@ -511,11 +554,11 @@ function CitasPage() {
             text-slate-800
           ">
 
-              Gestión de citas
+                Gestión de citas
 
-            </h1>
+              </h1>
 
-            <p className="
+              <p className="
             mt-2
 
             text-sm
@@ -523,14 +566,14 @@ function CitasPage() {
 
             text-slate-500
           ">
-              Control y seguimiento de citas odontologicas
-            </p>
+                Control y seguimiento de citas odontologicas
+              </p>
 
-          </div>
+            </div>
 
-          {/* RIGHT */}
+            {/* RIGHT */}
 
-          <div className="
+            <div className="
           bg-white/95
           backdrop-blur-md
 
@@ -547,7 +590,7 @@ function CitasPage() {
           min-w-[250px]
         ">
 
-            <p className="
+              <p className="
             text-xs
 
             uppercase
@@ -558,10 +601,10 @@ function CitasPage() {
 
             text-slate-400
           ">
-              Próxima jornada
-            </p>
+                Próxima jornada
+              </p>
 
-            <div className="
+              <div className="
             mt-3
 
             flex
@@ -569,19 +612,19 @@ function CitasPage() {
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <h3 className="
+                  <h3 className="
                 text-3xl
 
                 font-black
 
                 text-indigo-600
               ">
-                  {pendientes}
-                </h3>
+                    {pendientes}
+                  </h3>
 
-                <p className="
+                  <p className="
                 mt-1
 
                 text-xs
@@ -590,12 +633,12 @@ function CitasPage() {
 
                 text-slate-500
               ">
-                  Citas pendientes
-                </p>
+                    Citas pendientes
+                  </p>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-14
               h-14
 
@@ -615,7 +658,9 @@ function CitasPage() {
               shadow-[0_15px_35px_rgba(99,102,241,0.25)]
             ">
 
-                <CalendarClock size={22} />
+                  <CalendarClock size={22} />
+
+                </div>
 
               </div>
 
@@ -623,11 +668,9 @@ function CitasPage() {
 
           </div>
 
-        </div>
+          {/* KPIS */}
 
-        {/* KPIS */}
-
-        <div className="
+          <div className="
         grid
         grid-cols-1
         sm:grid-cols-2
@@ -636,9 +679,9 @@ function CitasPage() {
         gap-5
       ">
 
-          {/* HOY */}
+            {/* HOY */}
 
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -660,7 +703,7 @@ function CitasPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -675,15 +718,15 @@ function CitasPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -693,13 +736,13 @@ function CitasPage() {
                 gap-2
               ">
 
-                  <CalendarDays size={14} />
+                    <CalendarDays size={14} />
 
-                  Citas hoy
+                    Citas hoy
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -708,12 +751,12 @@ function CitasPage() {
 
                 text-blue-600
               ">
-                  {hoyCount}
-                </h2>
+                    {hoyCount}
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -728,17 +771,17 @@ function CitasPage() {
               justify-center
             ">
 
-                <CalendarCheck size={20} />
+                  <CalendarCheck size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* PENDIENTES */}
 
-          {/* PENDIENTES */}
-
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -760,7 +803,7 @@ function CitasPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -775,15 +818,15 @@ function CitasPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -793,13 +836,13 @@ function CitasPage() {
                 gap-2
               ">
 
-                  <Clock3 size={14} />
+                    <Clock3 size={14} />
 
-                  Pendientes
+                    Pendientes
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -808,12 +851,12 @@ function CitasPage() {
 
                 text-yellow-500
               ">
-                  {pendientes}
-                </h2>
+                    {pendientes}
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -828,17 +871,17 @@ function CitasPage() {
               justify-center
             ">
 
-                <TimerReset size={20} />
+                  <TimerReset size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* COMPLETADAS */}
 
-          {/* COMPLETADAS */}
-
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -860,7 +903,7 @@ function CitasPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -875,15 +918,15 @@ function CitasPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -893,13 +936,13 @@ function CitasPage() {
                 gap-2
               ">
 
-                  <CheckCircle2 size={14} />
+                    <CheckCircle2 size={14} />
 
-                  Completadas
+                    Completadas
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -908,12 +951,12 @@ function CitasPage() {
 
                 text-emerald-600
               ">
-                  {completadas}
-                </h2>
+                    {completadas}
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -928,17 +971,17 @@ function CitasPage() {
               justify-center
             ">
 
-                <BadgeCheck size={20} />
+                  <BadgeCheck size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* ATRASADAS */}
 
-          {/* ATRASADAS */}
-
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -960,7 +1003,7 @@ function CitasPage() {
           duration-300
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -975,15 +1018,15 @@ function CitasPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -993,13 +1036,13 @@ function CitasPage() {
                 gap-2
               ">
 
-                  <AlertTriangle size={14} />
+                    <AlertTriangle size={14} />
 
-                  Atrasadas
+                    Atrasadas
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -1008,12 +1051,12 @@ function CitasPage() {
 
                 text-rose-500
               ">
-                  {atrasadas}
-                </h2>
+                    {atrasadas}
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -1028,7 +1071,9 @@ function CitasPage() {
               justify-center
             ">
 
-                <Siren size={20} />
+                  <Siren size={20} />
+
+                </div>
 
               </div>
 
@@ -1036,11 +1081,9 @@ function CitasPage() {
 
           </div>
 
-        </div>
+          {/* MAIN CARD */}
 
-        {/* MAIN CARD */}
-
-        <div className="
+          <div className="
         bg-white/95
         backdrop-blur-md
 
@@ -1064,9 +1107,9 @@ function CitasPage() {
         overflow-hidden
       ">
 
-          {/* TOP */}
+            {/* TOP */}
 
-          <div className="
+            <div className="
           flex
           flex-col
           xl:flex-row
@@ -1077,9 +1120,9 @@ function CitasPage() {
           gap-4
         ">
 
-            {/* FILTROS */}
+              {/* FILTROS */}
 
-            <div className="
+              <div className="
             bg-slate-50/90
 
             rounded-[26px]
@@ -1096,56 +1139,56 @@ function CitasPage() {
             no-scrollbar
           ">
 
-              <div className="
+                <div className="
               flex
               gap-2
 
               min-w-max
             ">
 
-                {[
-                  {
-                    key: "hoy",
-                    label: "Hoy",
-                    count: hoyCount
-                  },
-                  {
-                    key: "pendientes",
-                    label: "Pendientes",
-                    count: pendientes
-                  },
-                  {
-                    key: "atrasadas",
-                    label: "Atrasadas",
-                    count: atrasadas
-                  },
-                  {
-                    key: "completadas",
-                    label: "Completadas",
-                    count: completadas
-                  },
-                  {
-                    key: "canceladas",
-                    label: "Canceladas",
-                    count: canceladas
-                  },
-                  {
-                    key: "all",
-                    label: "Todas",
-                    count: citas.length
-                  }
-                ].map(item => (
+                  {[
+                    {
+                      key: "hoy",
+                      label: "Hoy",
+                      count: hoyCount
+                    },
+                    {
+                      key: "pendientes",
+                      label: "Pendientes",
+                      count: pendientes
+                    },
+                    {
+                      key: "atrasadas",
+                      label: "Atrasadas",
+                      count: atrasadas
+                    },
+                    {
+                      key: "completadas",
+                      label: "Completadas",
+                      count: completadas
+                    },
+                    {
+                      key: "canceladas",
+                      label: "Canceladas",
+                      count: canceladas
+                    },
+                    {
+                      key: "all",
+                      label: "Todas",
+                      count: citas.length
+                    }
+                  ].map(item => (
 
-                  <button
-                    key={item.key}
-                    onClick={() => {
+                    <button
+                      key={item.key}
+                      onClick={() => {
 
-                      setFiltro(item.key);
+                        setFiltro(item.key);
 
-                      setPagina(1);
+                        setPagina(1);
 
-                    }}
-                    className={`
+                      }}
+                      className={`
                     flex
                     items-center
                     gap-2
@@ -1168,17 +1211,17 @@ function CitasPage() {
                     active:scale-[0.98]
 
                     ${filtro === item.key
-                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-transparent shadow-lg shadow-indigo-200/40"
-                        : "bg-white hover:bg-slate-100 text-slate-700 border-slate-200/70"
-                      }
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-transparent shadow-lg shadow-indigo-200/40"
+                          : "bg-white hover:bg-slate-100 text-slate-700 border-slate-200/70"
+                        }
                   `}
-                  >
+                    >
 
-                    <span>
-                      {item.label}
-                    </span>
+                      <span>
+                        {item.label}
+                      </span>
 
-                    <span className={`
+                      <span className={`
                     px-2
                     py-0.5
 
@@ -1188,26 +1231,26 @@ function CitasPage() {
                     font-bold
 
                     ${filtro === item.key
-                        ? "bg-white/20 text-white"
-                        : "bg-slate-100 text-slate-700"
-                      }
+                          ? "bg-white/20 text-white"
+                          : "bg-slate-100 text-slate-700"
+                        }
                   `}>
 
-                      {item.count}
+                        {item.count}
 
-                    </span>
+                      </span>
 
-                  </button>
+                    </button>
 
-                ))}
+                  ))}
+
+                </div>
 
               </div>
 
-            </div>
+              {/* RIGHT */}
 
-            {/* RIGHT */}
-
-            <div className="
+              <div className="
             flex
             flex-col
             sm:flex-row
@@ -1215,33 +1258,33 @@ function CitasPage() {
             gap-3
           ">
 
-              <select
-                value={porPagina}
-                onChange={(e) => {
+                <select
+                  value={porPagina}
+                  onChange={(e) => {
 
-                  const val =
-                    e.target.value === "all"
-                      ? "all"
-                      : parseInt(
-                        e.target.value
-                      );
+                    const val =
+                      e.target.value === "all"
+                        ? "all"
+                        : parseInt(
+                          e.target.value
+                        );
 
-                  setPorPagina(val);
+                    setPorPagina(val);
 
-                  if (val === "all") {
+                    if (val === "all") {
 
-                    setFiltro("all");
+                      setFiltro("all");
 
-                  } else {
+                    } else {
 
-                    setFiltro("hoy");
+                      setFiltro("hoy");
 
-                  }
+                    }
 
-                  setPagina(1);
+                    setPagina(1);
 
-                }}
-                className="
+                  }}
+                  className="
                 h-12
 
                 px-4
@@ -1260,29 +1303,29 @@ function CitasPage() {
                 focus:ring-4
                 focus:ring-indigo-500/10
               "
-              >
+                >
 
-                <option value={7}>
-                  7
-                </option>
+                  <option value={7}>
+                    7
+                  </option>
 
-                <option value={14}>
-                  14
-                </option>
+                  <option value={14}>
+                    14
+                  </option>
 
-                <option value={28}>
-                  28
-                </option>
+                  <option value={28}>
+                    28
+                  </option>
 
-                <option value="all">
-                  Todos
-                </option>
+                  <option value="all">
+                    Todos
+                  </option>
 
-              </select>
+                </select>
 
-              <button
-                onClick={abrirCrear}
-                className="
+                <button
+                  onClick={abrirCrear}
+                  className="
                 group
 
                 relative
@@ -1321,29 +1364,29 @@ function CitasPage() {
                 justify-center
                 gap-2
               "
-              >
+                >
 
-                <Plus
-                  size={18}
-                  className="
+                  <Plus
+                    size={18}
+                    className="
                   group-hover:rotate-90
 
                   transition-all
                   duration-300
                 "
-                />
+                  />
 
-                Nueva cita
+                  Nueva cita
 
-              </button>
+                </button>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* LIST */}
 
-          {/* LIST */}
-
-          <div className="
+            <div className="
           flex-1
           min-h-0
 
@@ -1357,9 +1400,9 @@ function CitasPage() {
           scrollbar-track-transparent
         ">
 
-            {citasPaginadas.length === 0 ? (
+              {citasPaginadas.length === 0 ? (
 
-              <div className="
+                <div className="
               h-full
 
               flex
@@ -1371,7 +1414,7 @@ function CitasPage() {
               text-center
             ">
 
-                <div className="
+                  <div className="
                 relative
 
                 w-28
@@ -1393,7 +1436,7 @@ function CitasPage() {
                 shadow-[0_25px_60px_rgba(99,102,241,0.35)]
               ">
 
-                  <div className="
+                    <div className="
                   absolute
                   inset-0
 
@@ -1404,14 +1447,14 @@ function CitasPage() {
                   blur-xl
                 " />
 
-                  <CalendarDays
-                    size={42}
-                    className="relative z-10"
-                  />
+                    <CalendarDays
+                      size={42}
+                      className="relative z-10"
+                    />
 
-                </div>
+                  </div>
 
-                <h3 className="
+                  <h3 className="
                 mt-6
 
                 text-3xl
@@ -1420,151 +1463,151 @@ function CitasPage() {
 
                 text-slate-800
               ">
-                  No hay citas
-                </h3>
+                    No hay citas
+                  </h3>
 
-                <p className="
+                  <p className="
                 mt-3
 
                 text-slate-500
 
                 max-w-sm
               ">
-                  Las citas agendadas aparecerán aquí automáticamente
-                </p>
+                    Las citas agendadas aparecerán aquí automáticamente
+                  </p>
 
-              </div>
+                </div>
 
-            ) : (
+              ) : (
 
-              <CitaList
-                citas={citasPaginadas}
-                getEstado={getEstado}
-                porPagina={porPagina}
-                onEditar={abrirEditar}
-                onCompletar={(cita) => {
-
-                  
+                <CitaList
+                  citas={citasPaginadas}
+                  getEstado={getEstado}
+                  porPagina={porPagina}
+                  onEditar={abrirEditar}
+                  onCompletar={(cita) => {
 
 
-                  navigate(
-                    "/facturaciones",
-                    {
-                      state: {
-                        citaPreset: cita
+
+
+                    navigate(
+                      "/facturaciones",
+                      {
+                        state: {
+                          citaPreset: cita
+                        }
                       }
+                    );
+
+                  }}
+                  onCancelar={async (
+                    id,
+                    mode
+                  ) => {
+
+                    /*
+                    ==========================================
+                    OPTIMISTIC
+                    ==========================================
+                    */
+
+                    if (mode === true) {
+
+                      queryClient.setQueryData(
+                        ["citas"],
+                        (old = []) =>
+
+                          old.map((c) =>
+
+                            c.id === id
+
+                              ? {
+                                ...c,
+                                estado:
+                                  "cancelada"
+                              }
+
+                              : c
+
+                          )
+
+                      );
+
+                      return;
+
                     }
-                  );
 
-                }}
-                onCancelar={async (
-                  id,
-                  mode
-                ) => {
+                    /*
+                    ==========================================
+                    RESTORE
+                    ==========================================
+                    */
 
-                  /*
-                  ==========================================
-                  OPTIMISTIC
-                  ==========================================
-                  */
+                    if (
+                      mode === "restore"
+                    ) {
 
-                  if (mode === true) {
+                      queryClient.setQueryData(
+                        ["citas"],
+                        (old = []) =>
 
-                    queryClient.setQueryData(
-                      ["citas"],
-                      (old = []) =>
+                          old.map((c) =>
 
-                        old.map((c) =>
+                            c.id === id
 
-                          c.id === id
+                              ? {
+                                ...c,
+                                estado:
+                                  "pendiente"
+                              }
 
-                            ? {
-                              ...c,
-                              estado:
-                                "cancelada"
-                            }
+                              : c
 
-                            : c
+                          )
 
-                        )
+                      );
 
+                      return;
+
+                    }
+
+                    /*
+                    ==========================================
+                    BACKEND
+                    ==========================================
+                    */
+
+                    await actualizarCita
+                      .mutateAsync({
+
+                        id,
+
+                        data: {
+
+                          estado:
+                            "cancelada"
+
+                        }
+
+                      });
+
+                    showSuccess(
+                      "Cancelada ✅"
                     );
 
-                    return;
+                  }}
+                />
 
-                  }
+              )}
 
-                  /*
-                  ==========================================
-                  RESTORE
-                  ==========================================
-                  */
+            </div>
 
-                  if (
-                    mode === "restore"
-                  ) {
+            {/* PAGINACION */}
 
-                    queryClient.setQueryData(
-                      ["citas"],
-                      (old = []) =>
+            {porPagina !== "all" &&
+              totalPaginas > 1 && (
 
-                        old.map((c) =>
-
-                          c.id === id
-
-                            ? {
-                              ...c,
-                              estado:
-                                "pendiente"
-                            }
-
-                            : c
-
-                        )
-
-                    );
-
-                    return;
-
-                  }
-
-                  /*
-                  ==========================================
-                  BACKEND
-                  ==========================================
-                  */
-
-                  await actualizarCita
-                    .mutateAsync({
-
-                      id,
-
-                      data: {
-
-                        estado:
-                          "cancelada"
-
-                      }
-
-                    });
-
-                  showSuccess(
-                    "Cancelada ✅"
-                  );
-
-                }}
-              />
-
-            )}
-
-          </div>
-
-          {/* PAGINACION */}
-
-          {porPagina !== "all" &&
-            totalPaginas > 1 && (
-
-              <div className="
+                <div className="
               pt-5
 
               border-t
@@ -1576,45 +1619,45 @@ function CitasPage() {
               shrink-0
             ">
 
-                <Paginacion
-                  pagina={pagina}
-                  totalPaginas={totalPaginas}
-                  onChange={setPagina}
-                />
+                  <Paginacion
+                    pagina={pagina}
+                    totalPaginas={totalPaginas}
+                    onChange={setPagina}
+                  />
 
-              </div>
+                </div>
 
-            )}
+              )}
+
+          </div>
 
         </div>
 
-      </div>
+        {/* MODAL */}
 
-      {/* MODAL */}
+        {modalAbierto && (
 
-      {modalAbierto && (
-
-        <BaseModal
-          onClose={cerrarModal}
-        >
-
-          <CitaForm
-            key={
-              citaEditar?.id ||
-              clientePresetLocal?.id ||
-              "nuevo"
-            }
-            clientes={clientes}
-            cita={citaEditar}
-            clientePreset={clientePresetLocal}
-            onCrear={cerrarModal}
+          <BaseModal
             onClose={cerrarModal}
-          />
+          >
 
-        </BaseModal>
+            <CitaForm
+              key={
+                citaEditar?.id ||
+                clientePresetLocal?.id ||
+                "nuevo"
+              }
+              clientes={clientes}
+              cita={citaEditar}
+              clientePreset={clientePresetLocal}
+              onCrear={cerrarModal}
+              onClose={cerrarModal}
+            />
 
-      )}
+          </BaseModal>
 
+        )}
+      </motion.div>
     </PageWrapper>
   );
 

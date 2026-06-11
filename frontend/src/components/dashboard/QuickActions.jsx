@@ -6,83 +6,131 @@ import {
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
+import useModalStore from "../../stores/useModalStore";
 
 function QuickActions() {
 
-  const navigate =
-    useNavigate();
+  /*
+  ==========================================
+  MODALS
+  ==========================================
+  */
+  const navigate = useNavigate();
+  const {
+
+    openCita,
+
+    openCliente,
+
+    openFactura,
+
+    openEgreso
+
+  } = useModalStore();
+
+  /*
+  ==========================================
+  ACTIONS
+  ==========================================
+  */
 
   const actions = [
 
-    {
-      title:
-        "Nueva cita",
+  {
+    title:
+      "Nueva cita",
 
-      description:
-        "Agendar paciente",
+    description:
+      "Agendar paciente",
 
-      icon:
-        <CalendarPlus size={22} />,
+    icon:
+      <CalendarPlus size={22} />,
 
-      color:
-        "from-indigo-500 to-violet-500",
+    color:
+      "from-indigo-500 to-violet-500",
 
-      onClick:
-        () => navigate("/citas")
-    },
+    onClick: () => {
 
-    {
-      title:
-        "Nuevo cliente",
+      openCita();
 
-      description:
-        "Registrar paciente",
+      navigate("/citas");
 
-      icon:
-        <UserPlus size={22} />,
-
-      color:
-        "from-emerald-500 to-green-500",
-
-      onClick:
-        () => navigate("/clientes")
-    },
-
-    {
-      title:
-        "Facturar",
-
-      description:
-        "Crear factura",
-
-      icon:
-        <Receipt size={22} />,
-
-      color:
-        "from-orange-400 to-amber-500",
-
-      onClick:
-        () => navigate("/facturaciones")
-    },
-
-    {
-      title:
-        "Registrar egreso",
-
-      description:
-        "Nuevo gasto",
-
-      icon:
-        <Wallet size={22} />,
-
-      color:
-        "from-rose-500 to-pink-500",
-
-      onClick:
-        () => navigate("/egresos")
     }
+  },
 
-  ];
+  {
+    title:
+      "Nuevo cliente",
+
+    description:
+      "Registrar paciente",
+
+    icon:
+      <UserPlus size={22} />,
+
+    color:
+      "from-emerald-500 to-green-500",
+
+    onClick: () => {
+
+      openCliente();
+
+      navigate("/clientes");
+
+    }
+  },
+
+  {
+    title:
+      "Facturar",
+
+    description:
+      "Crear factura",
+
+    icon:
+      <Receipt size={22} />,
+
+    color:
+      "from-orange-400 to-amber-500",
+
+    onClick: () => {
+
+      openFactura();
+
+      navigate("/facturaciones");
+
+    }
+  },
+
+  {
+    title:
+      "Registrar egreso",
+
+    description:
+      "Nuevo gasto",
+
+    icon:
+      <Wallet size={22} />,
+
+    color:
+      "from-rose-500 to-pink-500",
+
+    onClick: () => {
+
+      openEgreso();
+
+      navigate("/egresos");
+
+    }
+  }
+
+];
+
+  /*
+  ==========================================
+  RETURN
+  ==========================================
+  */
 
   return (
 
@@ -91,9 +139,10 @@ function QuickActions() {
       grid-cols-1
       sm:grid-cols-2
       xl:grid-cols-4
-      shadow-[0_10px_30px_rgba(0,0,0,0.05)]
-      
+
       gap-5
+
+      shadow-[0_10px_30px_rgba(0,0,0,0.05)]
     ">
 
       {actions.map((action, i) => (

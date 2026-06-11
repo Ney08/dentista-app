@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-
+import useModalStore from "../stores/useModalStore";
 import {
   Users,
   UserCheck,
@@ -24,6 +24,7 @@ import BaseModal from "../components/BaseModal";
 import SkeletonLoader from "../components/SkeletonLoader";
 import { useCitas } from "../hooks/useCitas";
 import { useClientes } from "../hooks/useClientes";
+import { motion } from "framer-motion";
 
 import {
   showSuccess,
@@ -57,6 +58,15 @@ function ClientesPage() {
 
   const [modalAbierto, setModalAbierto] =
     useState(false);
+  const {
+
+    createClienteOpen,
+
+    openCliente,
+
+    closeCliente
+
+  } = useModalStore();
 
   const [clienteEditar, setClienteEditar] =
     useState(null);
@@ -135,8 +145,20 @@ function ClientesPage() {
 
     setClienteEditar(null);
 
-  };
+    closeCliente();
 
+  };
+  useEffect(() => {
+
+    if (createClienteOpen) {
+
+      setClienteEditar(null);
+
+      setModalAbierto(true);
+
+    }
+
+  }, [createClienteOpen]);
   /*
   ==========================================
   FILTRO
@@ -308,8 +330,29 @@ function ClientesPage() {
   return (
 
     <PageWrapper>
+      <motion.div
+        key="clientes"
 
-      <div className="
+        initial={{
+          opacity: 0,
+          y: 10
+        }}
+
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+
+        exit={{
+          opacity: 0,
+          y: -10
+        }}
+
+        transition={{
+          duration: 0.25
+        }}
+      >
+        <div className="
         w-full
 
         max-w-[1700px]
@@ -322,9 +365,9 @@ function ClientesPage() {
         sm:px-5
       ">
 
-        {/* HEADER */}
+          {/* HEADER */}
 
-        <div className="
+          <div className="
           flex
           flex-col
           md:flex-row
@@ -335,11 +378,11 @@ function ClientesPage() {
           gap-5
         ">
 
-          {/* LEFT */}
+            {/* LEFT */}
 
-          <div>
+            <div>
 
-            <div className="
+              <div className="
               inline-flex
 
               items-center
@@ -363,13 +406,13 @@ function ClientesPage() {
               mb-4
             ">
 
-              <Users size={18} />
+                <Users size={18} />
 
-              CRM clínico
+                CRM clínico
 
-            </div>
+              </div>
 
-            <h1 className="
+              <h1 className="
               text-3xl
               md:text-4xl
 
@@ -380,11 +423,11 @@ function ClientesPage() {
               text-slate-800
             ">
 
-              Pacientes registrados
+                Pacientes registrados
 
-            </h1>
+              </h1>
 
-            <p className="
+              <p className="
               mt-2
 
               text-sm
@@ -392,14 +435,14 @@ function ClientesPage() {
 
               text-slate-500
             ">
-              Gestión clínica y seguimiento de pacientes
-            </p>
+                Gestión clínica y seguimiento de pacientes
+              </p>
 
-          </div>
+            </div>
 
-          {/* RIGHT */}
+            {/* RIGHT */}
 
-          <div className="
+            <div className="
             self-start
             md:self-auto
 
@@ -419,7 +462,7 @@ function ClientesPage() {
             min-w-[230px]
           ">
 
-            <p className="
+              <p className="
               text-xs
 
               uppercase
@@ -430,10 +473,10 @@ function ClientesPage() {
 
               text-slate-400
             ">
-              Nuevos este mes
-            </p>
+                Nuevos este mes
+              </p>
 
-            <div className="
+              <div className="
               mt-2
 
               flex
@@ -441,17 +484,17 @@ function ClientesPage() {
               justify-between
             ">
 
-              <h3 className="
+                <h3 className="
                 text-3xl
 
                 font-black
 
                 text-indigo-600
               ">
-                {nuevosEsteMes}
-              </h3>
+                  {nuevosEsteMes}
+                </h3>
 
-              <div className="
+                <div className="
                 w-12
                 h-12
 
@@ -468,7 +511,9 @@ function ClientesPage() {
                 justify-center
               ">
 
-                <BarChart3 size={20} />
+                  <BarChart3 size={20} />
+
+                </div>
 
               </div>
 
@@ -476,11 +521,9 @@ function ClientesPage() {
 
           </div>
 
-        </div>
+          {/* KPIS */}
 
-        {/* KPIS */}
-
-        <div className="
+          <div className="
           grid
           grid-cols-1
           sm:grid-cols-2
@@ -489,9 +532,9 @@ function ClientesPage() {
           gap-5
         ">
 
-          {/* TOTAL */}
+            {/* TOTAL */}
 
-          <div className="
+            <div className="
             bg-white/95
             backdrop-blur-md
 
@@ -510,23 +553,23 @@ function ClientesPage() {
             duration-300
           ">
 
-            <div className="
+              <div className="
               flex
               items-start
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                   text-sm
 
                   text-slate-500
                 ">
-                  Pacientes totales
-                </p>
+                    Pacientes totales
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                   mt-2
 
                   text-3xl
@@ -535,10 +578,10 @@ function ClientesPage() {
 
                   text-slate-800
                 ">
-                  {clientesTotales}
-                </h2>
+                    {clientesTotales}
+                  </h2>
 
-                <p className="
+                  <p className="
                   mt-2
 
                   text-xs
@@ -547,12 +590,12 @@ function ClientesPage() {
 
                   text-indigo-500
                 ">
-                  CRM clínico
-                </p>
+                    CRM clínico
+                  </p>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
                 w-12
                 h-12
 
@@ -567,17 +610,17 @@ function ClientesPage() {
                 justify-center
               ">
 
-                <Users size={20} />
+                  <Users size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* ACTIVOS */}
 
-          {/* ACTIVOS */}
-
-          <div className="
+            <div className="
             bg-white/95
             backdrop-blur-md
 
@@ -596,23 +639,23 @@ function ClientesPage() {
             duration-300
           ">
 
-            <div className="
+              <div className="
               flex
               items-start
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                   text-sm
 
                   text-slate-500
                 ">
-                  Pacientes activos
-                </p>
+                    Pacientes activos
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                   mt-2
 
                   text-3xl
@@ -621,10 +664,10 @@ function ClientesPage() {
 
                   text-emerald-600
                 ">
-                  {clientesActivos}
-                </h2>
+                    {clientesActivos}
+                  </h2>
 
-                <p className="
+                  <p className="
                   mt-2
 
                   text-xs
@@ -633,12 +676,12 @@ function ClientesPage() {
 
                   text-emerald-500
                 ">
-                  +12% este mes
-                </p>
+                    +12% este mes
+                  </p>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
                 w-12
                 h-12
 
@@ -653,17 +696,17 @@ function ClientesPage() {
                 justify-center
               ">
 
-                <UserCheck size={20} />
+                  <UserCheck size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* INACTIVOS */}
 
-          {/* INACTIVOS */}
-
-          <div className="
+            <div className="
             bg-white/95
             backdrop-blur-md
 
@@ -682,23 +725,23 @@ function ClientesPage() {
             duration-300
           ">
 
-            <div className="
+              <div className="
               flex
               items-start
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                   text-sm
 
                   text-slate-500
                 ">
-                  Pacientes inactivos
-                </p>
+                    Pacientes inactivos
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                   mt-2
 
                   text-3xl
@@ -707,10 +750,10 @@ function ClientesPage() {
 
                   text-rose-500
                 ">
-                  {clientesInactivos}
-                </h2>
+                    {clientesInactivos}
+                  </h2>
 
-                <p className="
+                  <p className="
                   mt-2
 
                   text-xs
@@ -719,12 +762,12 @@ function ClientesPage() {
 
                   text-rose-500
                 ">
-                  Requieren seguimiento
-                </p>
+                    Requieren seguimiento
+                  </p>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
                 w-12
                 h-12
 
@@ -739,29 +782,29 @@ function ClientesPage() {
                 justify-center
               ">
 
-                <UserX size={20} />
+                  <UserX size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* NUEVOS */}
 
-          {/* NUEVOS */}
+            <div
+              onClick={() => {
 
-          <div
-            onClick={() => {
+                setOrden("nuevo");
 
-              setOrden("nuevo");
+                setPagina(1);
 
-              setPagina(1);
+                showSuccess(
+                  "Mostrando pacientes recientes ✨"
+                );
 
-              showSuccess(
-                "Mostrando pacientes recientes ✨"
-              );
-
-            }}
-            className="
+              }}
+              className="
               relative
               overflow-hidden
 
@@ -786,9 +829,9 @@ function ClientesPage() {
               transition-all
               duration-300
             "
-          >
+            >
 
-            <div className="
+              <div className="
               absolute
               -top-10
               -right-10
@@ -803,7 +846,7 @@ function ClientesPage() {
               blur-3xl
             " />
 
-            <div className="
+              <div className="
               relative
               z-10
 
@@ -812,27 +855,27 @@ function ClientesPage() {
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                   text-sm
 
                   text-indigo-100
                 ">
-                  Nuevos pacientes
-                </p>
+                    Nuevos pacientes
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                   mt-2
 
                   text-3xl
 
                   font-black
                 ">
-                  {nuevosEsteMes}
-                </h2>
+                    {nuevosEsteMes}
+                  </h2>
 
-                <p className="
+                  <p className="
                   mt-2
 
                   text-xs
@@ -841,10 +884,10 @@ function ClientesPage() {
 
                   text-indigo-100
                 ">
-                  Últimos 30 días
-                </p>
+                    Últimos 30 días
+                  </p>
 
-                <div className="
+                  <div className="
                   mt-4
 
                   inline-flex
@@ -863,15 +906,15 @@ function ClientesPage() {
                   font-semibold
                 ">
 
-                  <CalendarDays size={12} />
+                    <CalendarDays size={12} />
 
-                  Ver recientes
+                    Ver recientes
+
+                  </div>
 
                 </div>
 
-              </div>
-
-              <div className="
+                <div className="
                 w-12
                 h-12
 
@@ -884,7 +927,9 @@ function ClientesPage() {
                 justify-center
               ">
 
-                <Plus size={20} />
+                  <Plus size={20} />
+
+                </div>
 
               </div>
 
@@ -892,11 +937,9 @@ function ClientesPage() {
 
           </div>
 
-        </div>
+          {/* MAIN CARD */}
 
-        {/* MAIN CARD */}
-
-        <div className="
+          <div className="
           bg-white/95
           backdrop-blur-md
 
@@ -920,9 +963,9 @@ function ClientesPage() {
           overflow-hidden
         ">
 
-          {/* TOOLBAR */}
+            {/* TOOLBAR */}
 
-          <div className="
+            <div className="
             flex
             flex-col
             xl:flex-row
@@ -933,9 +976,9 @@ function ClientesPage() {
             gap-4
           ">
 
-            {/* FILTERS */}
+              {/* FILTERS */}
 
-            <div className="
+              <div className="
               flex
               items-center
               gap-3
@@ -943,11 +986,11 @@ function ClientesPage() {
               flex-wrap
             ">
 
-              <button
-                onClick={() =>
-                  setMostrarActivos(true)
-                }
-                className={`
+                <button
+                  onClick={() =>
+                    setMostrarActivos(true)
+                  }
+                  className={`
                   h-11
                   px-5
 
@@ -960,18 +1003,18 @@ function ClientesPage() {
                   duration-300
 
                   ${mostrarActivos
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"}
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"}
                 `}
-              >
-                Activos
-              </button>
+                >
+                  Activos
+                </button>
 
-              <button
-                onClick={() =>
-                  setMostrarActivos(false)
-                }
-                className={`
+                <button
+                  onClick={() =>
+                    setMostrarActivos(false)
+                  }
+                  className={`
                   h-11
                   px-5
 
@@ -984,26 +1027,26 @@ function ClientesPage() {
                   duration-300
 
                   ${!mostrarActivos
-                    ? "bg-rose-100 text-rose-700"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"}
+                      ? "bg-rose-100 text-rose-700"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"}
                 `}
-              >
-                Inactivos
-              </button>
+                >
+                  Inactivos
+                </button>
 
-            </div>
+              </div>
 
-            {/* BUTTON */}
+              {/* BUTTON */}
 
-            <button
-              onClick={() => {
+              <button
+                onClick={() => {
 
-                setClienteEditar(null);
+                  setClienteEditar(null);
 
-                setModalAbierto(true);
+                  openCliente();
 
-              }}
-              className="
+                }}
+                className="
                 h-12
 
                 px-6
@@ -1031,19 +1074,19 @@ function ClientesPage() {
                 justify-center
                 gap-2
               "
-            >
+              >
 
-              <Plus size={18} />
+                <Plus size={18} />
 
-              Nuevo paciente
+                Nuevo paciente
 
-            </button>
+              </button>
 
-          </div>
+            </div>
 
-          {/* SEARCH */}
+            {/* SEARCH */}
 
-          <div className="
+            <div className="
             flex
             flex-col
             xl:flex-row
@@ -1051,14 +1094,14 @@ function ClientesPage() {
             gap-4
           ">
 
-            <div className="
+              <div className="
               relative
               flex-1
             ">
 
-              <Search
-                size={18}
-                className="
+                <Search
+                  size={18}
+                  className="
                   absolute
                   left-4
                   top-1/2
@@ -1066,22 +1109,22 @@ function ClientesPage() {
 
                   text-slate-400
                 "
-              />
+                />
 
-              <input
-                type="text"
-                placeholder="Buscar por nombre, teléfono o documento..."
-                value={busqueda}
-                onChange={(e) => {
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre, teléfono o documento..."
+                  value={busqueda}
+                  onChange={(e) => {
 
-                  setBusqueda(
-                    e.target.value
-                  );
+                    setBusqueda(
+                      e.target.value
+                    );
 
-                  setPagina(1);
+                    setPagina(1);
 
-                }}
-                className="
+                  }}
+                  className="
                   w-full
 
                   h-14
@@ -1108,23 +1151,23 @@ function ClientesPage() {
                   transition-all
                   duration-300
                 "
-              />
+                />
 
-            </div>
+              </div>
 
-            <div className="
+              <div className="
               flex
               gap-3
             ">
 
-              <select
-                value={orden}
-                onChange={(e) =>
-                  setOrden(
-                    e.target.value
-                  )
-                }
-                className="
+                <select
+                  value={orden}
+                  onChange={(e) =>
+                    setOrden(
+                      e.target.value
+                    )
+                  }
+                  className="
                   h-14
 
                   px-4
@@ -1143,35 +1186,35 @@ function ClientesPage() {
                   focus:ring-4
                   focus:ring-indigo-500/10
                 "
-              >
+                >
 
-                <option value="az">
-                  A-Z
-                </option>
+                  <option value="az">
+                    A-Z
+                  </option>
 
-                <option value="nuevo">
-                  Más recientes
-                </option>
+                  <option value="nuevo">
+                    Más recientes
+                  </option>
 
-              </select>
+                </select>
 
-              <select
-                value={limite}
-                onChange={(e) => {
+                <select
+                  value={limite}
+                  onChange={(e) => {
 
-                  const val =
-                    e.target.value === "all"
-                      ? "all"
-                      : parseInt(
-                        e.target.value
-                      );
+                    const val =
+                      e.target.value === "all"
+                        ? "all"
+                        : parseInt(
+                          e.target.value
+                        );
 
-                  setLimite(val);
+                    setLimite(val);
 
-                  setPagina(1);
+                    setPagina(1);
 
-                }}
-                className="
+                  }}
+                  className="
                   h-14
 
                   px-4
@@ -1190,33 +1233,33 @@ function ClientesPage() {
                   focus:ring-4
                   focus:ring-indigo-500/10
                 "
-              >
+                >
 
-                <option value={6}>
-                  6
-                </option>
+                  <option value={6}>
+                    6
+                  </option>
 
-                <option value={12}>
-                  12
-                </option>
+                  <option value={12}>
+                    12
+                  </option>
 
-                <option value={24}>
-                  24
-                </option>
+                  <option value={24}>
+                    24
+                  </option>
 
-                <option value="all">
-                  Todos
-                </option>
+                  <option value="all">
+                    Todos
+                  </option>
 
-              </select>
+                </select>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* LIST */}
 
-          {/* LIST */}
-
-          <div className={`
+            <div className={`
             flex-1
             min-h-0
 
@@ -1225,19 +1268,19 @@ function ClientesPage() {
             pr-1
 
             ${clientesFinal.length > 3
-              ? `
+                ? `
                 overflow-y-auto
 
                 scrollbar-thin
                 scrollbar-thumb-indigo-200
                 scrollbar-track-transparent
               `
-              : "overflow-y-hidden"}
+                : "overflow-y-hidden"}
           `}>
 
-            {clientesFinal.length === 0 ? (
+              {clientesFinal.length === 0 ? (
 
-              <div className="
+                <div className="
                 h-full
 
                 flex
@@ -1249,7 +1292,7 @@ function ClientesPage() {
                 text-center
               ">
 
-                <div className="
+                  <div className="
                   w-24
                   h-24
 
@@ -1268,11 +1311,11 @@ function ClientesPage() {
                   shadow-[0_20px_50px_rgba(99,102,241,0.35)]
                 ">
 
-                  <Users size={42} />
+                    <Users size={42} />
 
-                </div>
+                  </div>
 
-                <h3 className="
+                  <h3 className="
                   mt-6
 
                   text-2xl
@@ -1281,26 +1324,26 @@ function ClientesPage() {
 
                   text-slate-800
                 ">
-                  No hay pacientes
-                </h3>
+                    No hay pacientes
+                  </h3>
 
-                <p className="
+                  <p className="
                   mt-2
 
                   text-slate-500
                 ">
-                  Los pacientes registrados aparecerán aquí
-                </p>
+                    Los pacientes registrados aparecerán aquí
+                  </p>
 
-                <button
-                  onClick={() => {
+                  <button
+                    onClick={() => {
 
-                    setClienteEditar(null);
+                      setClienteEditar(null);
 
-                    setModalAbierto(true);
+                      openCliente();
 
-                  }}
-                  className="
+                    }}
+                    className="
                     mt-6
 
                     h-12
@@ -1319,42 +1362,42 @@ function ClientesPage() {
 
                     shadow-[0_15px_35px_rgba(99,102,241,0.25)]
                   "
-                >
-                  Crear primer paciente
-                </button>
+                  >
+                    Crear primer paciente
+                  </button>
 
-              </div>
+                </div>
 
-            ) : (
-
-
-              <ClienteList
-                clientes={clientesFinal}
-                citas={citas}
-                onToggleActivo={handleToggleActivo}
-                onEditarClick={(c) => {
+              ) : (
 
 
-                  setClienteEditar(c);
+                <ClienteList
+                  clientes={clientesFinal}
+                  citas={citas}
+                  onToggleActivo={handleToggleActivo}
+                  onEditarClick={(c) => {
 
-                  setModalAbierto(true);
 
-                }}
-                onSeleccionar={(c) =>
-                  setClienteSeleccionado(c)
-                }
-              />
+                    setClienteEditar(c);
 
-            )}
+                    openCliente();
 
-          </div>
+                  }}
+                  onSeleccionar={(c) =>
+                    setClienteSeleccionado(c)
+                  }
+                />
 
-          {/* PAGINACION */}
+              )}
 
-          {limite !== "all" &&
-            totalPaginas > 1 && (
+            </div>
 
-              <div className="
+            {/* PAGINACION */}
+
+            {limite !== "all" &&
+              totalPaginas > 1 && (
+
+                <div className="
                 pt-4
 
                 border-t
@@ -1366,7 +1409,7 @@ function ClientesPage() {
                 shrink-0
               ">
 
-                <div className="
+                  <div className="
                   bg-white
 
                   border
@@ -1379,33 +1422,33 @@ function ClientesPage() {
                   shadow-sm
                 ">
 
-                  <Paginacion
-                    pagina={pagina}
-                    totalPaginas={totalPaginas}
-                    onChange={setPagina}
-                  />
+                    <Paginacion
+                      pagina={pagina}
+                      totalPaginas={totalPaginas}
+                      onChange={setPagina}
+                    />
+
+                  </div>
 
                 </div>
 
-              </div>
+              )}
 
-            )}
+          </div>
 
-        </div>
+          {/* DETALLE */}
 
-        {/* DETALLE */}
+          {clienteSeleccionado && (
 
-        {clienteSeleccionado && (
+            <BaseModal
+              onClose={() =>
+                setClienteSeleccionado(null)
+              }
+            >
 
-          <BaseModal
-            onClose={() =>
-              setClienteSeleccionado(null)
-            }
-          >
+              <div className="space-y-5">
 
-            <div className="space-y-5">
-
-              <div className="
+                <div className="
                 flex
                 items-center
                 justify-between
@@ -1413,13 +1456,13 @@ function ClientesPage() {
                 gap-4
               ">
 
-                <div className="
+                  <div className="
                   flex
                   items-center
                   gap-4
                 ">
 
-                  <div className="
+                    <div className="
                     relative
 
                     w-16
@@ -1446,44 +1489,44 @@ function ClientesPage() {
                     shadow-[0_15px_35px_rgba(99,102,241,0.25)]
                   ">
 
-                    {clienteSeleccionado.nombre
-                      ?.charAt(0)
-                      ?.toUpperCase()}
+                      {clienteSeleccionado.nombre
+                        ?.charAt(0)
+                        ?.toUpperCase()}
 
-                  </div>
+                    </div>
 
-                  <div>
+                    <div>
 
-                    <h3 className="
+                      <h3 className="
                       text-2xl
 
                       font-black
 
                       text-slate-800
                     ">
-                      {clienteSeleccionado.nombre}{" "}
-                      {clienteSeleccionado.apellido}
-                    </h3>
+                        {clienteSeleccionado.nombre}{" "}
+                        {clienteSeleccionado.apellido}
+                      </h3>
 
-                    <p className="
+                      <p className="
                       mt-1
 
                       text-sm
 
                       text-slate-500
                     ">
-                      Perfil clínico del paciente
-                    </p>
+                        Perfil clínico del paciente
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
-
-                <button
-                  onClick={() =>
-                    setClienteSeleccionado(null)
-                  }
-                  className="
+                  <button
+                    onClick={() =>
+                      setClienteSeleccionado(null)
+                    }
+                    className="
                     w-10
                     h-10
 
@@ -1496,18 +1539,18 @@ function ClientesPage() {
                     transition-all
                     duration-300
                   "
-                >
-                  ✕
-                </button>
+                  >
+                    ✕
+                  </button>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
                 border-t
                 border-slate-100
               " />
 
-              <div className="
+                <div className="
                 max-h-[70vh]
 
                 overflow-y-auto
@@ -1515,63 +1558,63 @@ function ClientesPage() {
                 pr-1
               ">
 
-                <ClienteDetalle
-                  cliente={clienteSeleccionado}
-                />
+                  <ClienteDetalle
+                    cliente={clienteSeleccionado}
+                  />
+
+                </div>
 
               </div>
 
-            </div>
+            </BaseModal>
+
+          )}
+
+        </div>
+
+        {/* FORM MODAL */}
+
+        {modalAbierto && (
+
+          <BaseModal
+            onClose={cerrarModal}
+          >
+
+            <ClienteForm
+              cliente={clienteEditar}
+              onClose={cerrarModal}
+            />
 
           </BaseModal>
 
         )}
 
-      </div>
+        {/* CONFIRM */}
 
-      {/* FORM MODAL */}
+        {clienteADesactivar && (
 
-      {modalAbierto && (
+          <ConfirmModal
+            mensaje={`¿Desactivar a ${clienteADesactivar.nombre}?`}
+            onCancel={() =>
+              setClienteADesactivar(null)
+            }
+            onConfirm={() => {
 
-        <BaseModal
-          onClose={cerrarModal}
-        >
+              toggleCliente.mutate(
+                clienteADesactivar
+              );
 
-          <ClienteForm
-            cliente={clienteEditar}
-            onClose={cerrarModal}
+              setClienteADesactivar(null);
+
+              showSuccess(
+                "Cliente actualizado ✅"
+              );
+
+            }}
           />
 
-        </BaseModal>
-
-      )}
-
-      {/* CONFIRM */}
-
-      {clienteADesactivar && (
-
-        <ConfirmModal
-          mensaje={`¿Desactivar a ${clienteADesactivar.nombre}?`}
-          onCancel={() =>
-            setClienteADesactivar(null)
-          }
-          onConfirm={() => {
-
-            toggleCliente.mutate(
-              clienteADesactivar
-            );
-
-            setClienteADesactivar(null);
-
-            showSuccess(
-              "Cliente actualizado ✅"
-            );
-
-          }}
-        />
-
-      )}
-
+        )}
+      </motion.div>
     </PageWrapper>
 
   );

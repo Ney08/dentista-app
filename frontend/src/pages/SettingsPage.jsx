@@ -9,7 +9,7 @@ import {
   Users,
   Save
 } from "lucide-react";
-
+import { motion } from "framer-motion";
 import PageWrapper from "../components/PageWrapper";
 import ConfirmModal from "../components/ConfirmModal";
 import ServicioModal from "../components/ServicioModal";
@@ -379,7 +379,28 @@ function SettingsPage() {
   return (
 
     <PageWrapper>
+      <motion.div
+        key="settings"
 
+        initial={{
+          opacity: 0,
+          y: 10
+        }}
+
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+
+        exit={{
+          opacity: 0,
+          y: -10
+        }}
+
+        transition={{
+          duration: 0.25
+        }}
+      >
       <div className="
         max-w-[1600px]
 
@@ -1427,7 +1448,7 @@ function SettingsPage() {
         />
 
       )}
-
+      </motion.div>
     </PageWrapper>
 
   );

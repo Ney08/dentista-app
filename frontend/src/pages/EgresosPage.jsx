@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
 import toast from "react-hot-toast";
-
+import useModalStore from "../stores/useModalStore";
 import {
   showSuccess,
   showError,
   showWarning,
   showInfo
 } from "../components/ui/ToastStyles";
-
+import { motion } from "framer-motion";
 import PageWrapper from "../components/PageWrapper";
 import SkeletonLoader from "../components/SkeletonLoader";
 import Paginacion from "../components/Paginacion";
@@ -63,7 +63,15 @@ function EgresosPage() {
 
   const [modalAbierto, setModalAbierto] =
     useState(false);
+  const {
 
+    createEgresoOpen,
+
+    openEgreso,
+
+    closeEgreso
+
+  } = useModalStore();
   const [animar, setAnimar] =
     useState(false);
 
@@ -103,19 +111,32 @@ function EgresosPage() {
 
   }, [modalAbierto]);
 
+  useEffect(() => {
+
+    if (createEgresoOpen) {
+
+      setEgresoEditar(null);
+
+      setModalAbierto(true);
+
+    }
+
+  }, [createEgresoOpen]);
   /*
   ==========================================
   ACTIONS
   ==========================================
   */
 
+
   const abrirCrear = () => {
 
     setEgresoEditar(null);
 
-    setModalAbierto(true);
+    openEgreso();
 
   };
+
 
   const abrirEditar = (egreso) => {
 
@@ -125,13 +146,17 @@ function EgresosPage() {
 
   };
 
+
   const cerrarModal = () => {
 
     setModalAbierto(false);
 
     setEgresoEditar(null);
 
+    closeEgreso();
+
   };
+
 
   /*
   ==========================================
@@ -328,9 +353,30 @@ function EgresosPage() {
 
   return (
 
-  <PageWrapper>
+    <PageWrapper>
+      <motion.div
+        key="egresos"
 
-    <div className="
+        initial={{
+          opacity: 0,
+          y: 10
+        }}
+
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+
+        exit={{
+          opacity: 0,
+          y: -10
+        }}
+
+        transition={{
+          duration: 0.25
+        }}
+      >
+        <div className="
       h-full
 
       w-full
@@ -348,9 +394,9 @@ function EgresosPage() {
       sm:px-5
     ">
 
-      {/* HEADER */}
+          {/* HEADER */}
 
-      <div className="
+          <div className="
         flex
         flex-col
         xl:flex-row
@@ -361,11 +407,11 @@ function EgresosPage() {
         gap-5
       ">
 
-        {/* LEFT */}
+            {/* LEFT */}
 
-        <div>
+            <div>
 
-          <div className="
+              <div className="
             inline-flex
 
             items-center
@@ -389,13 +435,13 @@ function EgresosPage() {
             mb-4
           ">
 
-            <WalletCards size={14} />
+                <WalletCards size={14} />
 
-            Control financiero
+                Control financiero
 
-          </div>
+              </div>
 
-          <h1 className="
+              <h1 className="
             text-3xl
             md:text-4xl
 
@@ -406,11 +452,11 @@ function EgresosPage() {
             text-slate-800
           ">
 
-            Gestión de egresos
+                Gestión de egresos
 
-          </h1>
+              </h1>
 
-          <p className="
+              <p className="
             mt-2
 
             text-sm
@@ -418,14 +464,14 @@ function EgresosPage() {
 
             text-slate-500
           ">
-            Seguimiento y control de gastos clínicos
-          </p>
+                Seguimiento y control de gastos clínicos
+              </p>
 
-        </div>
+            </div>
 
-        {/* RIGHT */}
+            {/* RIGHT */}
 
-        <div className="
+            <div className="
           bg-white/95
           backdrop-blur-md
 
@@ -442,7 +488,7 @@ function EgresosPage() {
           min-w-[260px]
         ">
 
-          <p className="
+              <p className="
             text-xs
 
             uppercase
@@ -453,10 +499,10 @@ function EgresosPage() {
 
             text-slate-400
           ">
-            Balance de gastos
-          </p>
+                Balance de gastos
+              </p>
 
-          <div className="
+              <div className="
             mt-3
 
             flex
@@ -464,21 +510,21 @@ function EgresosPage() {
             justify-between
           ">
 
-            <div>
+                <div>
 
-              <h3 className="
+                  <h3 className="
                 text-3xl
 
                 font-black
 
                 text-indigo-600
               ">
-                RD$
-                {" "}
-                {formatMoney(totalEgresos)}
-              </h3>
+                    RD$
+                    {" "}
+                    {formatMoney(totalEgresos)}
+                  </h3>
 
-              <p className="
+                  <p className="
                 mt-1
 
                 text-xs
@@ -487,12 +533,12 @@ function EgresosPage() {
 
                 text-slate-500
               ">
-                Gastos registrados
-              </p>
+                    Gastos registrados
+                  </p>
 
-            </div>
+                </div>
 
-            <div className="
+                <div className="
               w-14
               h-14
 
@@ -512,19 +558,19 @@ function EgresosPage() {
               shadow-[0_15px_35px_rgba(99,102,241,0.25)]
             ">
 
-              <BadgeDollarSign size={22} />
+                  <BadgeDollarSign size={22} />
+
+                </div>
+
+              </div>
 
             </div>
 
           </div>
 
-        </div>
+          {/* KPIS */}
 
-      </div>
-
-      {/* KPIS */}
-
-      <div className="
+          <div className="
         grid
         grid-cols-1
         sm:grid-cols-2
@@ -533,9 +579,9 @@ function EgresosPage() {
         gap-5
       ">
 
-        {/* TOTAL */}
+            {/* TOTAL */}
 
-        <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -557,7 +603,7 @@ function EgresosPage() {
           duration-300
         ">
 
-          <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -572,15 +618,15 @@ function EgresosPage() {
             blur-3xl
           " />
 
-          <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-            <div>
+                <div>
 
-              <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -590,13 +636,13 @@ function EgresosPage() {
                 gap-2
               ">
 
-                <Wallet size={14} />
+                    <Wallet size={14} />
 
-                Total egresos
+                    Total egresos
 
-              </p>
+                  </p>
 
-              <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -606,15 +652,15 @@ function EgresosPage() {
                 text-rose-500
               ">
 
-                RD$
-                {" "}
-                {formatMoney(totalEgresos)}
+                    RD$
+                    {" "}
+                    {formatMoney(totalEgresos)}
 
-              </h2>
+                  </h2>
 
-            </div>
+                </div>
 
-            <div className="
+                <div className="
               w-12
               h-12
 
@@ -629,17 +675,17 @@ function EgresosPage() {
               justify-center
             ">
 
-              <TrendingDown size={20} />
+                  <TrendingDown size={20} />
+
+                </div>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* HOY */}
 
-        </div>
-
-        {/* HOY */}
-
-        <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -661,7 +707,7 @@ function EgresosPage() {
           duration-300
         ">
 
-          <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -676,15 +722,15 @@ function EgresosPage() {
             blur-3xl
           " />
 
-          <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-            <div>
+                <div>
 
-              <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -694,13 +740,13 @@ function EgresosPage() {
                 gap-2
               ">
 
-                <CalendarDays size={14} />
+                    <CalendarDays size={14} />
 
-                Gastado hoy
+                    Gastado hoy
 
-              </p>
+                  </p>
 
-              <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -710,15 +756,15 @@ function EgresosPage() {
                 text-yellow-500
               ">
 
-                RD$
-                {" "}
-                {formatMoney(totalHoy)}
+                    RD$
+                    {" "}
+                    {formatMoney(totalHoy)}
 
-              </h2>
+                  </h2>
 
-            </div>
+                </div>
 
-            <div className="
+                <div className="
               w-12
               h-12
 
@@ -733,17 +779,17 @@ function EgresosPage() {
               justify-center
             ">
 
-              <CalendarClock size={20} />
+                  <CalendarClock size={20} />
+
+                </div>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* MES */}
 
-        </div>
-
-        {/* MES */}
-
-        <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -765,7 +811,7 @@ function EgresosPage() {
           duration-300
         ">
 
-          <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -780,15 +826,15 @@ function EgresosPage() {
             blur-3xl
           " />
 
-          <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-            <div>
+                <div>
 
-              <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -798,13 +844,13 @@ function EgresosPage() {
                 gap-2
               ">
 
-                <BarChart3 size={14} />
+                    <BarChart3 size={14} />
 
-                Total mes
+                    Total mes
 
-              </p>
+                  </p>
 
-              <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -814,15 +860,15 @@ function EgresosPage() {
                 text-indigo-600
               ">
 
-                RD$
-                {" "}
-                {formatMoney(totalMes)}
+                    RD$
+                    {" "}
+                    {formatMoney(totalMes)}
 
-              </h2>
+                  </h2>
 
-            </div>
+                </div>
 
-            <div className="
+                <div className="
               w-12
               h-12
 
@@ -837,17 +883,17 @@ function EgresosPage() {
               justify-center
             ">
 
-              <PieChart size={20} />
+                  <PieChart size={20} />
+
+                </div>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* PROMEDIO */}
 
-        </div>
-
-        {/* PROMEDIO */}
-
-        <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -869,7 +915,7 @@ function EgresosPage() {
           duration-300
         ">
 
-          <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -884,15 +930,15 @@ function EgresosPage() {
             blur-3xl
           " />
 
-          <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-            <div>
+                <div>
 
-              <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -902,13 +948,13 @@ function EgresosPage() {
                 gap-2
               ">
 
-                <Receipt size={14} />
+                    <Receipt size={14} />
 
-                Promedio
+                    Promedio
 
-              </p>
+                  </p>
 
-              <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -918,15 +964,15 @@ function EgresosPage() {
                 text-emerald-600
               ">
 
-                RD$
-                {" "}
-                {formatMoney(promedioEgreso)}
+                    RD$
+                    {" "}
+                    {formatMoney(promedioEgreso)}
 
-              </h2>
+                  </h2>
 
-            </div>
+                </div>
 
-            <div className="
+                <div className="
               w-12
               h-12
 
@@ -941,19 +987,19 @@ function EgresosPage() {
               justify-center
             ">
 
-              <CircleDollarSign size={20} />
+                  <CircleDollarSign size={20} />
+
+                </div>
+
+              </div>
 
             </div>
 
           </div>
 
-        </div>
+          {/* MAIN CARD */}
 
-      </div>
-
-      {/* MAIN CARD */}
-
-      <div className="
+          <div className="
         bg-white/95
         backdrop-blur-md
 
@@ -977,9 +1023,9 @@ function EgresosPage() {
         overflow-hidden
       ">
 
-        {/* TOP */}
+            {/* TOP */}
 
-        <div className="
+            <div className="
           flex
           flex-col
           xl:flex-row
@@ -990,9 +1036,9 @@ function EgresosPage() {
           gap-4
         ">
 
-          {/* INFO */}
+              {/* INFO */}
 
-          <div className="
+              <div className="
             flex
             items-center
             gap-3
@@ -1000,7 +1046,7 @@ function EgresosPage() {
             flex-wrap
           ">
 
-            <div className="
+                <div className="
               px-4
               h-11
 
@@ -1021,19 +1067,19 @@ function EgresosPage() {
               text-rose-500
             ">
 
-              <Receipt size={14} />
+                  <Receipt size={14} />
 
-              {cantidadEgresos}
-              {" "}
-              egresos registrados
+                  {cantidadEgresos}
+                  {" "}
+                  egresos registrados
 
-            </div>
+                </div>
 
-          </div>
+              </div>
 
-          {/* CONTROLES */}
+              {/* CONTROLES */}
 
-          <div className="
+              <div className="
             flex
             flex-col
             sm:flex-row
@@ -1041,23 +1087,23 @@ function EgresosPage() {
             gap-3
           ">
 
-            <select
-              value={porPagina}
-              onChange={(e) => {
+                <select
+                  value={porPagina}
+                  onChange={(e) => {
 
-                const val =
-                  e.target.value === "all"
-                    ? "all"
-                    : parseInt(
-                      e.target.value
-                    );
+                    const val =
+                      e.target.value === "all"
+                        ? "all"
+                        : parseInt(
+                          e.target.value
+                        );
 
-                setPorPagina(val);
+                    setPorPagina(val);
 
-                setPagina(1);
+                    setPagina(1);
 
-              }}
-              className="
+                  }}
+                  className="
                 h-12
 
                 px-4
@@ -1076,29 +1122,29 @@ function EgresosPage() {
                 focus:ring-4
                 focus:ring-indigo-500/10
               "
-            >
+                >
 
-              <option value={7}>
-                7
-              </option>
+                  <option value={7}>
+                    7
+                  </option>
 
-              <option value={14}>
-                14
-              </option>
+                  <option value={14}>
+                    14
+                  </option>
 
-              <option value={28}>
-                28
-              </option>
+                  <option value={28}>
+                    28
+                  </option>
 
-              <option value="all">
-                Todos
-              </option>
+                  <option value="all">
+                    Todos
+                  </option>
 
-            </select>
+                </select>
 
-            <button
-              onClick={abrirCrear}
-              className="
+                <button
+                  onClick={abrirCrear}
+                  className="
                 group
 
                 relative
@@ -1137,29 +1183,29 @@ function EgresosPage() {
                 justify-center
                 gap-2
               "
-            >
+                >
 
-              <Plus
-                size={18}
-                className="
+                  <Plus
+                    size={18}
+                    className="
                   group-hover:rotate-90
 
                   transition-all
                   duration-300
                 "
-              />
+                  />
 
-              Nuevo egreso
+                  Nuevo egreso
 
-            </button>
+                </button>
 
-          </div>
+              </div>
 
-        </div>
+            </div>
 
-        {/* LIST */}
+            {/* LIST */}
 
-        <div className="
+            <div className="
           flex-1
           min-h-0
 
@@ -1173,9 +1219,9 @@ function EgresosPage() {
           scrollbar-track-transparent
         ">
 
-          {egresosPaginados.length === 0 ? (
+              {egresosPaginados.length === 0 ? (
 
-            <div className="
+                <div className="
               h-full
 
               flex
@@ -1187,7 +1233,7 @@ function EgresosPage() {
               text-center
             ">
 
-              <div className="
+                  <div className="
                 relative
 
                 w-28
@@ -1209,7 +1255,7 @@ function EgresosPage() {
                 shadow-[0_25px_60px_rgba(99,102,241,0.35)]
               ">
 
-                <div className="
+                    <div className="
                   absolute
                   inset-0
 
@@ -1220,14 +1266,14 @@ function EgresosPage() {
                   blur-xl
                 " />
 
-                <WalletCards
-                  size={42}
-                  className="relative z-10"
-                />
+                    <WalletCards
+                      size={42}
+                      className="relative z-10"
+                    />
 
-              </div>
+                  </div>
 
-              <h3 className="
+                  <h3 className="
                 mt-6
 
                 text-3xl
@@ -1236,45 +1282,45 @@ function EgresosPage() {
 
                 text-slate-800
               ">
-                No hay egresos
-              </h3>
+                    No hay egresos
+                  </h3>
 
-              <p className="
+                  <p className="
                 mt-3
 
                 text-slate-500
 
                 max-w-sm
               ">
-                Los gastos registrados aparecerán aquí automáticamente
-              </p>
+                    Los gastos registrados aparecerán aquí automáticamente
+                  </p>
+
+                </div>
+
+              ) : (
+
+                <EgresoList
+                  egresos={egresosPaginados}
+                  onEditar={abrirEditar}
+                  onEliminar={(egreso) => {
+
+                    setEgresoEliminar(
+                      egreso
+                    );
+
+                  }}
+                />
+
+              )}
 
             </div>
 
-          ) : (
+            {/* PAGINACION */}
 
-            <EgresoList
-              egresos={egresosPaginados}
-              onEditar={abrirEditar}
-              onEliminar={(egreso) => {
+            {porPagina !== "all" &&
+              totalPaginas > 1 && (
 
-                setEgresoEliminar(
-                  egreso
-                );
-
-              }}
-            />
-
-          )}
-
-        </div>
-
-        {/* PAGINACION */}
-
-        {porPagina !== "all" &&
-          totalPaginas > 1 && (
-
-            <div className="
+                <div className="
               pt-5
 
               border-t
@@ -1286,73 +1332,73 @@ function EgresosPage() {
               shrink-0
             ">
 
-              <Paginacion
-                pagina={pagina}
-                totalPaginas={totalPaginas}
-                onChange={setPagina}
-              />
+                  <Paginacion
+                    pagina={pagina}
+                    totalPaginas={totalPaginas}
+                    onChange={setPagina}
+                  />
 
-            </div>
+                </div>
 
-          )}
+              )}
 
-      </div>
+          </div>
 
-    </div>
+        </div>
 
-    {/* MODAL */}
+        {/* MODAL */}
 
-    {modalAbierto && (
+        {modalAbierto && (
 
-      <BaseModal
-        onClose={cerrarModal}
-      >
+          <BaseModal
+            onClose={cerrarModal}
+          >
 
-        <EgresoModal
-          egreso={egresoEditar}
-          onGuardar={guardarEgreso}
-          onClose={cerrarModal}
-        />
+            <EgresoModal
+              egreso={egresoEditar}
+              onGuardar={guardarEgreso}
+              onClose={cerrarModal}
+            />
 
-      </BaseModal>
+          </BaseModal>
 
-    )}
+        )}
 
-    {/* CONFIRM DELETE */}
+        {/* CONFIRM DELETE */}
 
-    {egresoEliminar && (
+        {egresoEliminar && (
 
-      <ConfirmModal
+          <ConfirmModal
 
-        mensaje={`
+            mensaje={`
 ¿Eliminar el egreso
 "${egresoEliminar.descripcion}"?
         `}
 
-        onConfirm={async () => {
+            onConfirm={async () => {
 
-          await eliminarEgreso.mutateAsync(
-            egresoEliminar.id
-          );
+              await eliminarEgreso.mutateAsync(
+                egresoEliminar.id
+              );
 
-          setEgresoEliminar(null);
+              setEgresoEliminar(null);
 
-          showSuccess(
-            "Egreso eliminado ✅"
-          );
+              showSuccess(
+                "Egreso eliminado ✅"
+              );
 
-        }}
+            }}
 
-        onCancel={() =>
-          setEgresoEliminar(null)
-        }
+            onCancel={() =>
+              setEgresoEliminar(null)
+            }
 
-      />
+          />
 
-    )}
-
-  </PageWrapper>
-);
+        )}
+      </motion.div>
+    </PageWrapper>
+  );
 
 }
 

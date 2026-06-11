@@ -130,108 +130,208 @@ function DashboardHome() {
   DATA
   ==========================================
   */
-  const revenueData = [
+  const mesActual =
+    ahora.getMonth();
 
-    {
-      mes: "Ene",
-      ingresos: 12000
-    },
+  const anioActual =
+    ahora.getFullYear();
 
-    {
-      mes: "Feb",
-      ingresos: 18000
-    },
-
-    {
-      mes: "Mar",
-      ingresos: 14000
-    },
-
-    {
-      mes: "Abr",
-      ingresos: 24000
-    },
-
-    {
-      mes: "May",
-      ingresos: 32000
-    },
-
-    {
-      mes: "Jun",
-      ingresos: 38000
-    }
-
+  const meses = [
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic"
   ];
 
-  const financeData = [
+  const revenueData =
+    meses.map((mes, index) => {
 
-    {
-      mes: "Ene",
-      ingresos: 12000,
-      egresos: 4000
-    },
+      let ingresosMes = 0;
 
-    {
-      mes: "Feb",
-      ingresos: 18000,
-      egresos: 6000
-    },
+      ingresos.forEach(i => {
 
-    {
-      mes: "Mar",
-      ingresos: 24000,
-      egresos: 8000
-    },
+        if (!i.created_at) return;
 
-    {
-      mes: "Abr",
-      ingresos: 28000,
-      egresos: 7000
-    },
+        const fecha =
+          parseFechaLocal(
+            i.created_at
+          );
 
-    {
-      mes: "May",
-      ingresos: 35000,
-      egresos: 10000
-    },
+        if (
+          fecha.getMonth() === index &&
+          fecha.getFullYear() === anioActual
+        ) {
 
-    {
-      mes: "Jun",
-      ingresos: 42000,
-      egresos: 12000
-    }
+          const servicios =
+            i.servicios || [];
 
-  ];
+          const subtotal =
+            servicios.reduce(
+              (acc, s) =>
+                acc + Number(s.monto || 0),
+              0
+            );
 
-  const servicesData = [
+          const itbis =
+            subtotal * 0.18;
 
-    {
-      name: "Limpieza",
-      value: 40
-    },
+          const descuento =
+            subtotal *
+            (
+              (i.descuento || 0) / 100
+            );
 
-    {
-      name: "Ortodoncia",
-      value: 25
-    },
+          ingresosMes +=
+            subtotal +
+            itbis -
+            descuento;
 
-    {
-      name: "Extracción",
-      value: 18
-    },
+        }
 
-    {
-      name: "Blanqueamiento",
-      value: 12
-    },
+      });
 
-    {
-      name: "Implantes",
-      value: 5
-    }
+      return {
 
-  ];
+        mes,
+
+        ingresos:
+          ingresosMes
+
+      };
+
+    });
+
+  const financeData =
+    meses.map((mes, index) => {
+
+      let ingresosMes = 0;
+
+      let egresosMes = 0;
+
+      ingresos.forEach(i => {
+
+        if (!i.created_at) return;
+
+        const fecha =
+          parseFechaLocal(
+            i.created_at
+          );
+
+        if (
+          fecha.getMonth() === index &&
+          fecha.getFullYear() === anioActual
+        ) {
+
+          const servicios =
+            i.servicios || [];
+
+          const subtotal =
+            servicios.reduce(
+              (acc, s) =>
+                acc + Number(s.monto || 0),
+              0
+            );
+
+          const itbis =
+            subtotal * 0.18;
+
+          const descuento =
+            subtotal *
+            (
+              (i.descuento || 0) / 100
+            );
+
+          ingresosMes +=
+            subtotal +
+            itbis -
+            descuento;
+
+        }
+
+      });
+
+      egresos.forEach(e => {
+
+        const fecha =
+          parseFechaLocal(
+            e.fecha ||
+            e.created_at
+          );
+
+        if (
+          fecha.getMonth() === index &&
+          fecha.getFullYear() === anioActual
+        ) {
+
+          egresosMes +=
+            Number(
+              e.monto || 0
+            );
+
+        }
+
+      });
+
+      return {
+
+        mes,
+
+        ingresos:
+          ingresosMes,
+
+        egresos:
+          egresosMes
+
+      };
+
+    });
+
+  const serviciosMap = {};
+
+  ingresos.forEach(i => {
+
+    (i.servicios || []).forEach(s => {
+
+      const nombre =
+        s.descripcion ||
+        s.nombre_servicio ||
+        s.nombre ||
+        s.servicio ||
+        "Procedimiento";
+
+      if (!serviciosMap[nombre]) {
+
+        serviciosMap[nombre] = 0;
+
+      }
+
+      serviciosMap[nombre] += 1;
+
+    });
+
+  });
+
+  const servicesData =
+    Object.entries(
+      serviciosMap
+    )
+      .map(([name, value]) => ({
+        name,
+        value
+      }))
+      .sort(
+        (a, b) =>
+          b.value - a.value
+      )
+      .slice(0, 5);
 
   const citasHoy = citas
     .filter(c => esHoy(c.fecha))
@@ -258,11 +358,6 @@ function DashboardHome() {
   let gananciaNeta = 0;
   let totalCostos = 0;
 
-  const mesActual =
-    ahora.getMonth();
-
-  const anioActual =
-    ahora.getFullYear();
 
   ingresos.forEach(i => {
 
@@ -427,39 +522,211 @@ function DashboardHome() {
   ACTIVIDAD
   ==========================================
   */
+const actividades = [
 
-  const actividades = [
+  /*
+  ==========================================
+  CITAS
+  ==========================================
+  */
 
-    ...(citasHoy || [])
-      .slice(0, 2)
-      .map(c => ({
-        icon: CalendarDays,
-        title: "Cita programada",
-        desc: `${c.cliente?.nombre} ${c.cliente?.apellido}`,
-        time: formatHora(
-          parseFechaLocal(c.fecha)
+  ...(citas || []).map(c => ({
+
+    tipo: "cita",
+
+    fecha:
+      parseFechaLocal(
+        c.created_at || c.fecha
+      ),
+
+    icon:
+      CalendarDays,
+
+    title:
+      c.estado === "completada"
+        ? "Cita completada"
+        : c.estado === "cancelada"
+          ? "Cita cancelada"
+          : "Cita programada",
+
+    desc:
+      `${c.cliente?.nombre || ""} ${c.cliente?.apellido || ""}`,
+
+    time:
+      formatFecha(
+        parseFechaLocal(
+          c.created_at || c.fecha
         )
-      })),
+      )
 
-    ...(ingresos || [])
-      .slice(0, 2)
-      .map(i => ({
-        icon: Receipt,
-        title: "Factura registrada",
-        desc: `Factura #${i.id}`,
-        time: "Hoy"
-      })),
+  })),
 
-    ...(clientes || [])
-      .slice(0, 2)
-      .map(c => ({
-        icon: Users,
-        title: "Paciente agregado",
-        desc: `${c.nombre} ${c.apellido}`,
-        time: "Reciente"
-      }))
+  /*
+  ==========================================
+  FACTURAS
+  ==========================================
+  */
 
-  ].slice(0, 6);
+  ...(ingresos || []).map(i => {
+
+    const servicios =
+      i.servicios || [];
+
+    const subtotal =
+      servicios.reduce(
+        (acc, s) =>
+          acc + Number(s.monto || 0),
+        0
+      );
+
+    const itbis =
+      subtotal * 0.18;
+
+    const descuento =
+      subtotal *
+      (
+        (i.descuento || 0) / 100
+      );
+
+    const total =
+      subtotal +
+      itbis -
+      descuento;
+
+    return {
+
+      tipo: "factura",
+
+      fecha:
+        parseFechaLocal(
+          i.created_at
+        ),
+
+      icon:
+        Receipt,
+
+      title:
+        i.pagado
+          ? "Factura pagada"
+          : "Factura pendiente",
+
+      desc:
+        `RD$ ${formatMoney(total)}`,
+
+      time:
+        formatFecha(
+          parseFechaLocal(
+            i.created_at
+          )
+        )
+
+    };
+
+  }),
+
+  /*
+  ==========================================
+  CLIENTES
+  ==========================================
+  */
+
+  ...(clientes || []).map(c => ({
+
+    tipo: "cliente",
+
+    fecha:
+      parseFechaLocal(
+        c.created_at
+      ),
+
+    icon:
+      Users,
+
+    title:
+      "Paciente registrado",
+
+    desc:
+      `${c.nombre || ""} ${c.apellido || ""}`,
+
+    time:
+      formatFecha(
+        parseFechaLocal(
+          c.created_at
+        )
+      )
+
+  })),
+
+  /*
+  ==========================================
+  EGRESOS
+  ==========================================
+  */
+
+  ...(egresos || []).map(e => ({
+
+    tipo: "egreso",
+
+    fecha:
+      parseFechaLocal(
+        e.created_at || e.fecha
+      ),
+
+    icon:
+      Banknote,
+
+    title:
+      "Egreso registrado",
+
+    desc:
+      e.descripcion ||
+      e.concepto ||
+      `RD$ ${formatMoney(
+        e.monto || 0
+      )}`,
+
+    time:
+      formatFecha(
+        parseFechaLocal(
+          e.created_at || e.fecha
+        )
+      )
+
+  }))
+
+]
+
+  /*
+  ==========================================
+  FILTRAR INVALIDOS
+  ==========================================
+  */
+
+  .filter(
+    a =>
+      a.fecha &&
+      !isNaN(a.fecha)
+  )
+
+  /*
+  ==========================================
+  ORDEN REAL
+  ==========================================
+  */
+
+  .sort(
+    (a, b) =>
+      b.fecha.getTime() -
+      a.fecha.getTime()
+  )
+
+  /*
+  ==========================================
+  LIMITE
+  ==========================================
+  */
+
+  .slice(0, 10);
 
   /*
   ==========================================
@@ -1146,7 +1413,17 @@ dark:border-slate-800
                     shrink-0
                   ">
 
-                      <item.icon size={18} />
+
+                      <item.icon
+                        size={18}
+                        className={`
+    ${item.tipo === "factura" && "text-emerald-500"}
+    ${item.tipo === "cliente" && "text-indigo-500"}
+    ${item.tipo === "cita" && "text-violet-500"}
+    ${item.tipo === "egreso" && "text-rose-500"}
+  `}
+                      />
+
 
                     </div>
 
@@ -1493,10 +1770,13 @@ dark:border-slate-800
 
           <SmartInsights
 
-            ingresos={49442}
-            egresos={3500}
-            citasHoy={3}
-            topServicio="Limpieza"
+            ingresos={caja}
+            egresos={totalEgresos}
+            citasHoy={cantidadCitasHoy}
+            topServicio={
+              servicesData[0]?.name ||
+              "N/A"
+            }
 
           />
           {/* ANALYTICS */}
