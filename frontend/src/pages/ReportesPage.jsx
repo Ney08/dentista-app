@@ -272,6 +272,7 @@ function ReportesPage() {
                 serviciosMap[s.servicio_id] ||
                 serviciosMap[s.catalogo_servicio_id] ||
                 serviciosMap[s.servicio_catalogo_id] ||
+                s.descripcion ||
                 s.nombre_servicio ||
                 s.nombre ||
                 s.servicio;
@@ -434,6 +435,7 @@ function ReportesPage() {
       const nombre =
         serviciosMap[s.servicio_id] ||
         serviciosMap[s.catalogo_servicio_id] ||
+        s.descripcion ||
         s.servicio ||
         s.nombre_servicio ||
         s.nombre ||
@@ -488,6 +490,13 @@ function ReportesPage() {
 
   };
 
+  const procedimientos =
+    servicios
+      .map(
+        s => s.descripcion
+      )
+      .join(", ");
+
   const handlePDF = () => {
 
     generarReporte({
@@ -506,10 +515,13 @@ function ReportesPage() {
 
   const handleExcel = () => {
 
+
     exportToExcel(
       datosOrdenados,
+      egresosFiltrados,
       `reporte_clinico_${tipo}`
     );
+
 
   };
 

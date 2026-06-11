@@ -959,64 +959,41 @@ function FacturaModal({
             {/* WHATSAPP */}
 
             <button
-              onClick={() => {
+              onClick={async () => {
 
-                const telefono =
-                  ingreso.cliente
-                    ?.telefono || "";
+                window.modoFactura =
+                  "whatsapp";
 
-                const mensaje =
-                  encodeURIComponent(
-
-                    `Hola ${ingreso.cliente?.nombre},
-
-Adjuntamos su factura:
-
-🧾 FAC-2026-${String(
-                      ingreso.id
-                    ).padStart(6, "0")}
-
-💰 Total: ${format(total)}
-
-Gracias por confiar en Clínica Dental.`
-
-                  );
-
-                window.open(
-
-                  `https://wa.me/${telefono}?text=${mensaje}`,
-
-                  "_blank"
-
+                await generarFactura(
+                  ingreso
                 );
 
               }}
+
               className="
-                flex-1
+    flex-1
 
-                h-14
+    h-14
 
-                rounded-[22px]
+    rounded-[22px]
 
-                bg-emerald-500
+    bg-emerald-500
 
-                text-white
+    text-white
 
-                font-black
+    font-black
 
-                shadow-[0_15px_35px_rgba(16,185,129,0.25)]
+    shadow-[0_15px_35px_rgba(16,185,129,0.25)]
 
-                hover:bg-emerald-600
+    hover:bg-emerald-600
 
-                hover:-translate-y-[2px]
+    hover:-translate-y-[2px]
 
-                transition-all
-                duration-300
-              "
+    transition-all
+    duration-300
+  "
             >
-
               💬 WhatsApp
-
             </button>
 
             {/* CLOSE */}
