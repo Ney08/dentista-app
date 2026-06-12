@@ -56,6 +56,26 @@ function ClienteDetalle({ cliente }) {
 
   const [textoEditado, setTextoEditado] =
     useState("");
+  /*
+==========================================
+SORT HISTORIAL
+==========================================
+*/
+
+  const historialOrdenado =
+    [...(historial || [])]
+
+      .sort((a, b) => {
+
+        return (
+
+          new Date(b.fecha) -
+
+          new Date(a.fecha)
+
+        );
+
+      });
 
   /*
   ==========================================
@@ -454,8 +474,10 @@ function ClienteDetalle({ cliente }) {
 
                 text-slate-700
               ">
-                {historial[0]
-                  ? formatFecha(historial[0].fecha)
+                {historialOrdenado[0]
+                  ? formatFecha(
+                    historialOrdenado[0].fecha
+                  )
                   : "Sin registros"}
               </h3>
 
@@ -666,7 +688,7 @@ function ClienteDetalle({ cliente }) {
 
         ) : (
 
-          (historial || []).map((h, index) => (
+          historialOrdenado.map((h, index) => (
 
             <div
               key={h.id}

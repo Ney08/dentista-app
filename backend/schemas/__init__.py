@@ -45,3 +45,9 @@ from .servicio import (
     Servicio,
     ServicioCreate
 )
+
+
+from .odontograma import (
+    FaceData,
+    OdontogramaPayload
+)

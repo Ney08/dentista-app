@@ -7,7 +7,10 @@ import {
   Tooltip,
   Legend
 } from "recharts";
+import {
+  TrendingUp,
 
+} from "lucide-react";
 function FinanceChart({
   data = []
 }) {
@@ -40,26 +43,32 @@ function FinanceChart({
 
         <div>
 
-          <h3 className="
-            text-2xl
+          <div className="
+                inline-flex
 
-            font-black
+                items-center
+                gap-2
 
-            text-slate-800
-          ">
+                text-indigo-600
 
-            Finanzas generales
+                text-sm
+                font-bold
+              ">
 
-          </h3>
+            <TrendingUp size={18} />
+
+             Finanzas generales
+
+          </div>
 
           <p className="
-            text-sm
+                mt-2
 
-            text-slate-500
-          ">
+                text-sm
 
+                text-slate-500
+              ">
             Ingresos vs egresos
-
           </p>
 
         </div>

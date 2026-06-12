@@ -5,7 +5,10 @@ import {
   XAxis,
   Tooltip
 } from "recharts";
-
+import {
+  TrendingUp,
+  
+} from "lucide-react";
 function RevenueChart({ data = [] }) {
 
   return (
@@ -36,29 +39,35 @@ function RevenueChart({ data = [] }) {
 
         <div>
 
-          <h3 className="
-            text-xl
+                <div className="
+                inline-flex
 
-            font-black
+                items-center
+                gap-2
 
-            text-slate-800
-          ">
+                text-indigo-600
 
-            Ingresos mensuales
+                text-sm
+                font-bold
+              ">
 
-          </h3>
+                  <TrendingUp size={18} />
 
-          <p className="
-            text-sm
+                  Ingresos mensuales
 
-            text-slate-500
-          ">
+                </div>
 
-            Rendimiento financiero
+                <p className="
+                mt-2
 
-          </p>
+                text-sm
 
-        </div>
+                text-slate-500
+              ">
+                 Rendimiento financiero
+                </p>
+
+              </div>
 
       </div>
 

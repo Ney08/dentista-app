@@ -7,7 +7,10 @@ import {
   showSuccess,
   showError
 } from "../ui/ToastStyles";
+import {
+  TrendingUp,
 
+} from "lucide-react";
 import {
   Calendar,
   dateFnsLocalizer
@@ -127,6 +130,7 @@ function AgendaCalendar() {
         ==========================================
         */
 
+
         let estado =
           cita.estado ||
           "pendiente";
@@ -150,8 +154,10 @@ function AgendaCalendar() {
           title:
 
             `${cita.cliente?.nombre || ""}
-             ${cita.cliente?.apellido || ""}
-             • ${cita.motivo || "Consulta"}`
+ ${cita.cliente?.apellido || ""}
+ • ${cita.motivo || "Consulta"}
+ • ${cita.telefono || ""}`
+
               .replace(/\s+/g, " ")
               .trim(),
 
@@ -190,12 +196,54 @@ function AgendaCalendar() {
   const [selectedSlot, setSelectedSlot] =
     useState(null);
 
+  const [view, setView] =
+    useState("week");
+  const [date, setDate] =
+    useState(new Date());
+
   /*
+  
 ==========================================
 STATS
 ==========================================
 */
+  useEffect(() => {
 
+    if (
+
+      !selectedEvent &&
+      !selectedSlot &&
+      !editingEvent
+
+    ) {
+
+      document.body.style.overflow =
+        "auto";
+
+      document.body.style.pointerEvents =
+        "auto";
+
+    }
+
+    return () => {
+
+      document.body.style.overflow =
+        "auto";
+
+      document.body.style.pointerEvents =
+        "auto";
+
+    };
+
+  }, [
+
+    selectedEvent,
+
+    selectedSlot,
+
+    editingEvent
+
+  ]);
   const [undoCancel, setUndoCancel] =
     useState(null);
 
@@ -982,29 +1030,37 @@ DUPLICAR CITA
         mb-6
       ">
 
-        <h3 className="
-          text-2xl
+        <div>
 
-          font-black
+          <div className="
+                inline-flex
 
-          text-slate-800
-          dark:text-slate-100
-        ">
+                items-center
+                gap-2
 
-          Agenda clínica
+                text-indigo-600
 
-        </h3>
+                text-sm
+                font-bold
+              ">
 
-        <p className="
-          text-sm
+            <TrendingUp size={18} />
 
-          text-slate-500
-          dark:text-slate-400
-        ">
+            Agenda clínica
 
-          Calendario profesional de citas
+          </div>
 
-        </p>
+          <p className="
+                mt-2
+
+                text-sm
+
+                text-slate-500
+              ">
+            Calendario profesional de citas
+          </p>
+
+        </div>
 
       </div>
 
@@ -1026,7 +1082,9 @@ DUPLICAR CITA
       ">
 
         <DnDCalendar
+
           onEventDrop={moveEvent}
+
           localizer={localizer}
 
           draggableAccessor={(event) => {
@@ -1042,70 +1100,89 @@ DUPLICAR CITA
             );
 
           }}
+
           onEventResize={resizeEvent}
+
           events={events}
-          components={{
 
-            event: (props) => (
+          /*
+          ==========================================
+          FIX AGENDA VIEW
+          ==========================================
+          */
 
-              <CalendarEvent
+          components={
 
-                {...props}
+            view === "agenda"
 
-                event={{
-                  ...props.event,
+              ? {}
 
-                  onContextMenu: (
-                    e,
-                    cita
-                  ) => {
+              : {
 
-                    setContextMenu({
+                event: (props) => (
 
-                      x: e.clientX,
+                  <CalendarEvent
 
-                      y: e.clientY,
+                    {...props}
 
-                      cita
+                    event={{
+                      ...props.event,
 
-                    });
+                      onContextMenu: (
+                        e,
+                        cita
+                      ) => {
 
-                  }
+                        setContextMenu({
 
-                }}
+                          x: e.clientX,
 
-                onEditar={(cita) => {
+                          y: e.clientY,
 
-                  setEditingEvent(cita);
+                          cita
 
-                }}
+                        });
 
-                onCompletar={(cita) => {
+                      }
 
-                  console.log(
-                    "completar",
-                    cita
-                  );
+                    }}
 
-                }}
+                    onEditar={(cita) => {
 
-                onCancelar={(cita) => {
+                      setEditingEvent(cita);
 
-                  console.log(
-                    "cancelar",
-                    cita
-                  );
+                    }}
 
-                }}
+                    onCompletar={(cita) => {
 
-              />
+                      console.log(
+                        "completar",
+                        cita
+                      );
 
-            )
+                    }}
 
-          }}
+                    onCancelar={(cita) => {
+
+                      console.log(
+                        "cancelar",
+                        cita
+                      );
+
+                    }}
+
+                  />
+
+                )
+
+              }
+
+          }
+
           startAccessor="start"
 
           endAccessor="end"
+
           scrollToTime={
             new Date(
               1970,
@@ -1115,11 +1192,10 @@ DUPLICAR CITA
               new Date().getMinutes()
             )
           }
+
           selectable
 
           resizable
-
-          popup
 
           culture="es"
 
@@ -1128,6 +1204,20 @@ DUPLICAR CITA
           timeslots={1}
 
           defaultView="week"
+
+          /*
+          ==========================================
+          VIEW STATE
+          ==========================================
+          */
+
+          view={view}
+
+          onView={setView}
+
+          date={date}
+
+          onNavigate={setDate}
 
           views={[
             "month",
@@ -1208,6 +1298,20 @@ DUPLICAR CITA
           */
 
           slotPropGetter={(date) => {
+
+            /*
+            ==========================================
+            AGENDA FIX
+            ==========================================
+            */
+
+            if (
+              view === "agenda"
+            ) {
+
+              return {};
+
+            }
 
             const slotStart =
               new Date(date);
@@ -1292,6 +1396,20 @@ DUPLICAR CITA
           */
 
           eventPropGetter={(event) => {
+
+            /*
+            ==========================================
+            AGENDA FIX
+            ==========================================
+            */
+
+            if (
+              view === "agenda"
+            ) {
+
+              return {};
+
+            }
 
             const estado =
               event.resource.estado;

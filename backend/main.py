@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# from routers.ai import (
+#     router as ai_router
+# )
+
 import os
 import models
-
+from dotenv import load_dotenv
 from database import engine, Base
 
 from routers.auth import router as auth_router
@@ -19,6 +23,11 @@ from routers.dashboard import router as dashboard_router
 
 from routers.servicios import (router as servicios_router)
 
+
+from routers.odontograma import (
+    router as odontograma_router
+)
+load_dotenv()
 
 # ✅ CREAR TABLAS
 Base.metadata.create_all(bind=engine)
@@ -51,3 +60,13 @@ app.include_router(dashboard_router)
 
 
 app.include_router(servicios_router)
+
+
+app.include_router(
+    odontograma_router
+)
+
+
+# app.include_router(
+#     ai_router
+# )

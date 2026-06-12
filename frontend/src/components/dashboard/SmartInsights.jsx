@@ -100,27 +100,37 @@ function SmartInsights({
 
       <div className="mb-6">
 
-        <h3 className="
-          text-2xl
+        <div>
 
-          font-black
+          <div className="
+                inline-flex
 
-          text-slate-800
-        ">
+                items-center
+                gap-2
 
-          Insights inteligentes
+                text-indigo-600
 
-        </h3>
+                text-sm
+                font-bold
+              ">
 
-        <p className="
-          text-sm
+            <TrendingUp size={18} />
 
-          text-slate-500
-        ">
+            Insights inteligentes
 
-          Resumen automático del sistema
+          </div>
 
-        </p>
+          <p className="
+                mt-2
+
+                text-sm
+
+                text-slate-500
+              ">
+            Resumen automático del sistema
+          </p>
+
+        </div>
 
       </div>
 

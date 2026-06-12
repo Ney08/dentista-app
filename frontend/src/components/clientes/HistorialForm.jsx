@@ -1,6 +1,9 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import BaseModal
+  from "../BaseModal";
+
 import { API_URL } from "../../config";
 import {
   showSuccess,
@@ -8,6 +11,9 @@ import {
   showWarning,
   showInfo
 } from "../ui/ToastStyles";
+
+import Odontograma
+  from "../odontograma/Odontograma";
 
 function HistorialForm({
   clienteId,
@@ -19,6 +25,14 @@ function HistorialForm({
 
   const [loading, setLoading] =
     useState(false);
+
+  const [
+
+    odontogramaOpen,
+
+    setOdontogramaOpen
+
+  ] = useState(false);
 
   /*
   ==========================================
@@ -39,7 +53,7 @@ function HistorialForm({
     }
 
     setLoading(true);
-
+    
     const toastId =
       toast.loading(
         "Guardando historial..."
@@ -87,9 +101,75 @@ function HistorialForm({
 
   };
 
+  // const mejorarConAI =
+  // async () => {
+
+  //   if (!texto.trim()) {
+
+  //     showWarning(
+  //       "Escribe una nota primero ⚠️"
+  //     );
+
+  //     return;
+
+  //   }
+
+  //   try {
+
+  //     const res = await fetch(
+
+  //       `${API_URL}/ai/clinical-note`,
+
+  //       {
+
+  //         method: "POST",
+
+  //         headers: {
+
+  //           "Content-Type":
+  //             "application/json"
+
+  //         },
+
+  //         body: JSON.stringify({
+
+  //           text: texto
+
+  //         })
+
+  //       }
+
+  //     );
+
+  //     if (!res.ok) {
+
+  //       throw new Error();
+
+  //     }
+
+  //     const data =
+  //       await res.json();
+
+  //     setTexto(
+  //       data.result
+  //     );
+
+  //     showSuccess(
+  //       "Nota mejorada con AI ✨"
+  //     );
+
+  //   } catch {
+
+  //     showError(
+  //       "Error usando AI ❌"
+  //     );
+
+  //   }
+
+  // };
   return (
 
-  <div className="
+    <div className="
     relative
     overflow-hidden
 
@@ -108,9 +188,9 @@ function HistorialForm({
     space-y-6
   ">
 
-    {/* AMBIENT GLOW */}
+      {/* AMBIENT GLOW */}
 
-    <div className="
+      <div className="
       absolute
       -top-16
       -right-16
@@ -125,9 +205,9 @@ function HistorialForm({
       blur-3xl
     " />
 
-    {/* HEADER */}
+      {/* HEADER */}
 
-    <div className="
+      <div className="
       relative
       z-10
 
@@ -138,9 +218,9 @@ function HistorialForm({
       gap-4
     ">
 
-      <div>
+        <div>
 
-        <h3 className="
+          <h3 className="
           text-2xl
 
           font-black
@@ -150,29 +230,29 @@ function HistorialForm({
           text-slate-800
         ">
 
-          Agregar nota clínica
+            Agregar nota clínica
 
-          <span className="ml-2">
-            🦷
-          </span>
+            <span className="ml-2">
+              🦷
+            </span>
 
-        </h3>
+          </h3>
 
-        <p className="
+          <p className="
           mt-1
 
           text-sm
 
           text-slate-500
         ">
-          Registra observaciones y seguimiento del paciente
-        </p>
+            Registra observaciones y seguimiento del paciente
+          </p>
 
-      </div>
+        </div>
 
-      {/* ICON */}
+        {/* ICON */}
 
-      <div className="
+        <div className="
         hidden
         sm:flex
 
@@ -195,37 +275,37 @@ function HistorialForm({
         justify-center
       ">
 
-        <div className="
+          <div className="
           absolute
           inset-0
 
           bg-white/10
         " />
 
-        <span className="
+          <span className="
           relative
           z-10
 
           text-xl
           text-white
         ">
-          📝
-        </span>
+            📝
+          </span>
+
+        </div>
 
       </div>
 
-    </div>
+      {/* TEXTAREA SECTION */}
 
-    {/* TEXTAREA SECTION */}
-
-    <div className="
+      <div className="
       relative
       z-10
 
       space-y-3
     ">
 
-      <label className="
+        <label className="
         block
 
         text-[11px]
@@ -238,17 +318,17 @@ function HistorialForm({
 
         text-slate-400
       ">
-        Nota clínica
-      </label>
+          Nota clínica
+        </label>
 
-      <textarea
-        value={texto}
-        onChange={(e) =>
-          setTexto(e.target.value)
-        }
-        placeholder="Ej: Paciente presenta dolor en molar 16, sensibilidad al frío y molestias al masticar..."
-        rows={5}
-        className="
+        <textarea
+          value={texto}
+          onChange={(e) =>
+            setTexto(e.target.value)
+          }
+          placeholder="Ej: Paciente presenta dolor en molar 16, sensibilidad al frío y molestias al masticar..."
+          rows={5}
+          className="
           w-full
 
           min-h-[180px]
@@ -285,27 +365,8 @@ function HistorialForm({
 
           resize-none
         "
-      />
-
-      {/* FOOTER INFO */}
-
-      <div className="
-        flex
-        items-center
-        justify-between
-
-        gap-3
-      ">
-
-        <p className="
-          text-xs
-
-          text-slate-400
-        ">
-          Las notas clínicas se guardan en el historial del paciente
-        </p>
-
-        <div className="
+        />
+        {/* <div className="
           hidden
           sm:flex
 
@@ -317,16 +378,140 @@ function HistorialForm({
 
           text-indigo-500
         ">
-          ✨ Historial clínico
+          ✨ Odontograma
+        </div> */}
+
+        {/* ODONTOGRAMA BUTTON */}
+
+        <div className="
+  flex
+  justify-end
+">
+          {/* <button
+
+  onClick={mejorarConAI}
+
+  className="
+    h-11
+
+    px-5
+
+    rounded-2xl
+
+    bg-gradient-to-r
+    from-indigo-500
+    to-violet-500
+
+    text-white
+
+    text-sm
+    font-bold
+
+    hover:scale-[1.02]
+
+    transition-all
+    duration-300
+  "
+>
+
+  ✨ Mejorar con AI
+
+</button> */}
+          <button
+
+            onClick={() =>
+              setOdontogramaOpen(true)
+            }
+
+            className="
+      group
+
+      inline-flex
+
+      items-center
+      gap-3
+
+      h-12
+
+      px-5
+
+      rounded-2xl
+
+      bg-white
+
+      border
+      border-slate-200
+
+      text-slate-700
+
+      text-sm
+      font-bold
+
+      shadow-sm
+
+      hover:border-indigo-200
+
+      hover:text-indigo-600
+
+      hover:shadow-lg
+
+      transition-all
+      duration-300
+    "
+          >
+
+            <span className="
+      text-lg
+    ">
+              🦷
+            </span>
+
+            Abrir odontograma
+
+          </button>
+
+        </div>
+
+        {/* FOOTER INFO */}
+
+        <div className="
+        flex
+        items-center
+        justify-between
+
+        gap-3
+      ">
+
+          <p className="
+          text-xs
+
+          text-slate-400
+        ">
+            Las notas clínicas se guardan en el historial del paciente
+          </p>
+
+          <div className="
+          hidden
+          sm:flex
+
+          items-center
+          gap-2
+
+          text-xs
+          font-semibold
+
+          text-indigo-500
+        ">
+            ✨ Historial clínico
+          </div>
+
         </div>
 
       </div>
 
-    </div>
+      {/* BUTTON */}
 
-    {/* BUTTON */}
-
-    <div className="
+      <div className="
       relative
       z-10
 
@@ -334,10 +519,10 @@ function HistorialForm({
       justify-center
     ">
 
-      <button
-        onClick={guardar}
-        disabled={loading}
-        className={`
+        <button
+          onClick={guardar}
+          disabled={loading}
+          className={`
           group
 
           relative
@@ -366,11 +551,11 @@ function HistorialForm({
           active:scale-[0.98]
 
           ${loading
-            ? `
+              ? `
               bg-slate-400
               cursor-not-allowed
             `
-            : `
+              : `
               bg-gradient-to-r
               from-indigo-500
               via-purple-500
@@ -380,13 +565,13 @@ function HistorialForm({
 
               hover:shadow-[0_20px_45px_rgba(99,102,241,0.32)]
             `
-          }
+            }
         `}
-      >
+        >
 
-        {!loading && (
+          {!loading && (
 
-          <div className="
+            <div className="
             absolute
             inset-0
 
@@ -400,24 +585,43 @@ function HistorialForm({
             duration-300
           " />
 
-        )}
+          )}
 
-        <span className="relative z-10">
+          <span className="relative z-10">
 
-          {loading
-            ? "Guardando..."
-            : "Guardar historial"
-          }
+            {loading
+              ? "Guardando..."
+              : "Guardar historial"
+            }
 
-        </span>
+          </span>
 
-      </button>
+        </button>
 
+      </div>
+      {
+        odontogramaOpen && (
+
+          <BaseModal
+
+            onClose={() =>
+              setOdontogramaOpen(false)
+            }
+
+            maxWidth="max-w-7xl"
+          >
+
+            <Odontograma
+              clienteId={clienteId}
+            />
+
+          </BaseModal>
+
+        )
+      }
     </div>
 
-  </div>
-
-);
+  );
 
 
 }

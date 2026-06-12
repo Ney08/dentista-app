@@ -531,3 +531,402 @@ PRINT
 
 }
 
+/*
+==================================================
+AGENDA VIEW PRO
+==================================================
+*/
+
+.rbc-agenda-view {
+
+  background:
+    white;
+
+  border-radius:
+    24px;
+
+  overflow:
+    hidden;
+
+}
+
+/*
+==========================================
+TABLE
+==========================================
+*/
+
+.rbc-agenda-view table {
+
+  border:
+    none !important;
+
+  border-collapse:
+    separate;
+
+  border-spacing:
+    0;
+
+  width:
+    100%;
+
+}
+
+/*
+==========================================
+HEADER
+==========================================
+*/
+
+.rbc-agenda-view table thead {
+
+  background:
+    linear-gradient(
+      to right,
+      #6366f1,
+      #8b5cf6
+    );
+
+}
+
+.rbc-agenda-view table thead th {
+
+  color:
+    white;
+
+  font-size:
+    13px;
+
+  font-weight:
+    800;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.08em;
+
+  padding:
+    16px 18px;
+
+  border:
+    none !important;
+
+}
+
+/*
+==========================================
+ROWS
+==========================================
+*/
+
+.rbc-agenda-view table tbody tr {
+
+  transition:
+    all 0.2s ease;
+
+}
+
+.rbc-agenda-view table tbody tr:hover {
+
+  background:
+    rgba(99,102,241,0.04);
+
+}
+
+/*
+==========================================
+CELLS
+==========================================
+*/
+
+.rbc-agenda-view table tbody td {
+
+  padding:
+    16px 18px;
+
+  border-bottom:
+    1px solid #eef2ff;
+
+  font-size:
+    14px;
+
+  color:
+    #334155;
+
+  vertical-align:
+    middle;
+
+}
+
+/*
+==========================================
+DATE COLUMN
+==========================================
+*/
+
+.rbc-agenda-date-cell {
+
+  font-weight:
+    800;
+
+  color:
+    #4f46e5;
+
+  min-width:
+    140px;
+
+}
+
+/*
+==========================================
+TIME COLUMN
+==========================================
+*/
+
+.rbc-agenda-time-cell {
+
+  font-weight:
+    700;
+
+  color:
+    #6366f1;
+
+  white-space:
+    nowrap;
+
+}
+
+/*
+==========================================
+EVENT COLUMN
+==========================================
+*/
+
+.rbc-agenda-event-cell {
+
+  font-weight:
+    700;
+
+}
+
+/*
+==========================================
+EMPTY
+==========================================
+*/
+
+.rbc-agenda-empty {
+
+  padding:
+    40px;
+
+  text-align:
+    center;
+
+  color:
+    #94a3b8;
+
+  font-weight:
+    700;
+
+}
+
+/*
+==========================================
+TODAY ROW
+==========================================
+*/
+
+.rbc-agenda-view table tbody tr.rbc-now {
+
+  background:
+    rgba(99,102,241,0.08);
+
+}
+
+/*
+==========================================
+SCROLL
+==========================================
+*/
+
+.rbc-agenda-view {
+
+  max-height:
+    100%;
+
+  overflow:
+    auto;
+
+}
+
+.rbc-agenda-view tr[data-status="cancelada"] {
+  opacity: 0.5;
+}
+/*
+==================================================
+RBC PREMIUM TOOLBAR
+==================================================
+*/
+
+.rbc-toolbar {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    18px;
+
+  margin-bottom:
+    24px;
+
+}
+
+/*
+==========================================
+GROUPS
+==========================================
+*/
+
+.rbc-btn-group {
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+}
+
+/*
+==========================================
+BUTTONS
+==========================================
+*/
+
+.rbc-toolbar button {
+
+  height:
+    46px !important;
+
+  padding:
+    0 20px !important;
+
+  border:
+    1px solid rgba(226,232,240,0.9) !important;
+
+  border-radius:
+    18px !important;
+
+  background:
+    rgba(255,255,255,0.92) !important;
+
+  backdrop-filter:
+    blur(14px);
+
+  color:
+    #334155 !important;
+
+  font-size:
+    14px !important;
+
+  font-weight:
+    700 !important;
+
+  letter-spacing:
+    -0.01em;
+
+  transition:
+    all 0.25s ease;
+
+  box-shadow:
+    0 4px 14px rgba(15,23,42,0.04);
+
+}
+
+/*
+==========================================
+HOVER
+==========================================
+*/
+
+.rbc-toolbar button:hover {
+
+  background:
+    linear-gradient(
+      135deg,
+      #6366f1,
+      #8b5cf6
+    ) !important;
+
+  color:
+    white !important;
+
+  border-color:
+    transparent !important;
+
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 12px 30px rgba(99,102,241,0.28);
+
+}
+
+/*
+==========================================
+ACTIVE
+==========================================
+*/
+
+.rbc-toolbar button.rbc-active {
+
+  background:
+    linear-gradient(
+      135deg,
+      #6366f1,
+      #8b5cf6
+    ) !important;
+
+  color:
+    white !important;
+
+  border-color:
+    transparent !important;
+
+  box-shadow:
+    0 14px 35px rgba(99,102,241,0.32);
+
+}
+
+/*
+==========================================
+LABEL
+==========================================
+*/
+
+.rbc-toolbar-label {
+
+  font-size:
+    20px !important;
+
+  font-weight:
+    900 !important;
+
+  color:
+    #0f172a;
+
+  letter-spacing:
+    -0.03em;
+
+}
