@@ -21,6 +21,10 @@ from routers.egresos import router as egresos_router
 from routers.dashboard import router as dashboard_router
 
 
+from routers.tratamientos import (
+    router as tratamientos_router
+)
+
 from routers.servicios import (router as servicios_router)
 
 
@@ -64,6 +68,10 @@ app.include_router(servicios_router)
 
 app.include_router(
     odontograma_router
+)
+
+app.include_router(
+    tratamientos_router
 )
 
 

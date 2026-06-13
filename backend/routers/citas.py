@@ -8,6 +8,10 @@ from schemas import CitaCreate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 
+from models.tratamiento import (
+    Tratamiento
+)
+
 from database import get_db
 
 router = APIRouter(
@@ -42,7 +46,8 @@ def crear_cita(data: CitaCreate, db: Session = Depends(get_db)):
     cita = models.Cita(
         cliente_id=data.cliente_id,
         fecha=data.fecha,
-        motivo=data.motivo,         # ✅ NUEVO
+        motivo=data.motivo,
+        tratamiento_id=data.tratamiento_id,# ✅ NUEVO
         detalle=data.detalle or None,  # ✅ NUEVO
         duracion=data.duracion or 30   # ✅ NUEVO
     )
@@ -68,6 +73,7 @@ def listar_citas(db: Session = Depends(get_db)):
         data.append({
             "id": c.id,
             "cliente_id": c.cliente_id,
+            "tratamiento_id": c.tratamiento_id,
 
             # ✅ ESTO ES LO QUE TE FALTABA
             "cliente": {
@@ -89,17 +95,119 @@ def listar_citas(db: Session = Depends(get_db)):
 
 
 @router.put("/{id}/completar")
-def completar_cita(id: int, db: Session = Depends(get_db)):
+def completar_cita(
 
-    cita = db.query(models.Cita).filter(models.Cita.id == id).first()
+    id: int,
+
+    db: Session = Depends(get_db)
+
+):
+
+    cita = (
+
+        db.query(models.Cita)
+
+        .filter(
+            models.Cita.id == id
+        )
+
+        .first()
+
+    )
 
     if not cita:
-        raise HTTPException(404, "No encontrada")
+
+        raise HTTPException(
+
+            status_code=404,
+
+            detail="Cita no encontrada"
+
+        )
+
+    """
+    ==========================================
+    COMPLETE CITA
+    ==========================================
+    """
 
     cita.estado = "completada"
+
+    """
+    ==========================================
+    UPDATE TRATAMIENTO
+    ==========================================
+    """
+
+    if cita.tratamiento_id:
+
+        tratamiento = (
+
+            db.query(Tratamiento)
+
+            .filter(
+                Tratamiento.id
+                == cita.tratamiento_id
+            )
+
+            .first()
+
+        )
+
+        if tratamiento:
+
+            """
+            AUMENTAR SESIONES
+            """
+
+            tratamiento.sesiones_completadas += 1
+
+            """
+            AUTO COMPLETE
+            """
+
+            balance = (
+
+                float(tratamiento.costo)
+
+                -
+
+                float(tratamiento.pagado)
+
+            )
+
+            if (
+
+                tratamiento
+                .sesiones_completadas
+
+                >=
+
+                tratamiento
+                .sesiones_totales
+
+                and
+
+                balance <= 0
+
+            ):
+
+                tratamiento.estado = (
+                    "Completado"
+                )
+
+            else:
+
+                tratamiento.estado = (
+                    "En progreso"
+                )
+
     db.commit()
 
+    db.refresh(cita)
+
     return cita
+
 
     
 
@@ -136,6 +244,9 @@ def actualizar_cita(id: int, data: CitaCreate, db: Session = Depends(get_db)):
     cita.motivo = data.motivo
     cita.detalle = data.detalle
     cita.duracion = data.duracion
+    
+    cita.tratamiento_id = data.tratamiento_id
+
 
     db.commit()
     db.refresh(cita)

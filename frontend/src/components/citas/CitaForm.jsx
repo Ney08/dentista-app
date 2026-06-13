@@ -54,6 +54,14 @@ function CitaForm({
   ==========================================
   */
 
+  const [
+
+    servicioId,
+
+    setServicioId
+
+  ] = useState("");
+
   const [horaSeleccionadaManual, setHoraSeleccionadaManual] =
     useState(false);
 
@@ -80,7 +88,21 @@ function CitaForm({
 
   const [clienteId, setClienteId] =
     useState("");
+  const [
 
+    tratamientos,
+
+    setTratamientos
+
+  ] = useState([]);
+
+  const [
+
+    tratamientoId,
+
+    setTratamientoId
+
+  ] = useState("");
   /*
   ==========================================
   CLIENTE PRESET
@@ -98,6 +120,32 @@ function CitaForm({
     }
 
   }, [clientePreset]);
+  /*
+==========================================
+LOAD TRATAMIENTOS
+==========================================
+*/
+
+  useEffect(() => {
+
+    if (!clienteId) return;
+
+    fetch(
+
+      `${API_URL}/tratamientos/${clienteId}`
+
+    )
+      .then((res) => res.json())
+      .then(setTratamientos)
+      .catch(() => {
+
+        toast.error(
+          "Error cargando tratamientos ❌"
+        );
+
+      });
+
+  }, [clienteId]);
 
   /*
   ==========================================
@@ -134,8 +182,16 @@ function CitaForm({
         cita.cliente_id || ""
       );
 
+      setServicioId(
+        cita.servicio_id || ""
+      );
+
       setMotivo(
         cita.motivo || ""
+      );
+
+      setTratamientoId(
+        cita.tratamiento_id || ""
       );
 
       setDetalle(
@@ -145,6 +201,7 @@ function CitaForm({
       setDuracion(
         cita.duracion || 30
       );
+
 
       const fecha =
         parseFechaLocal(
@@ -628,6 +685,15 @@ function CitaForm({
           data: {
             cliente_id:
               parseInt(clienteId),
+
+            tratamiento_id:
+
+              tratamientoId
+
+                ? parseInt(tratamientoId)
+
+                : null,
+
             fecha: fechaFinal,
             motivo,
             detalle,
@@ -644,6 +710,15 @@ function CitaForm({
         await crearCita.mutateAsync({
           cliente_id:
             parseInt(clienteId),
+
+          tratamiento_id:
+
+            tratamientoId
+
+              ? parseInt(tratamientoId)
+
+              : null,
+
           fecha: fechaFinal,
           motivo,
           detalle,
@@ -988,13 +1063,127 @@ function CitaForm({
             </label> */}
 
             <select
-              value={motivo}
-              onChange={(e) =>
-                setMotivo(
-                  e.target.value
-                )
-              }
+
+              value={servicioId}
+
+              onChange={(e) => {
+
+                const id =
+                  e.target.value;
+
+                setServicioId(id);
+
+                const servicio =
+                  catalogoServicios.find(
+
+                    (s) =>
+
+                      String(s.id)
+                      ===
+                      String(id)
+
+                  );
+
+                if (servicio) {
+
+                  setMotivo(
+                    servicio.nombre
+                  );
+
+                }
+
+              }}
+
               className="
+    w-full
+
+    h-14
+
+    px-5
+
+    rounded-[24px]
+
+    bg-white/80
+
+    border
+    border-slate-200
+
+    text-slate-700
+
+    shadow-sm
+
+    focus:outline-none
+
+    focus:ring-4
+    focus:ring-indigo-500/10
+
+    focus:border-indigo-300
+
+    transition-all
+    duration-300
+  "
+            >
+
+              <option value="">
+                Servicio / Motivo
+              </option>
+
+              {catalogoServicios.map((serv) => (
+
+
+                <option
+                  key={serv.id}
+                  value={serv.id}
+                >
+
+                  {serv.nombre}
+                </option>
+
+              ))}
+
+            </select>
+            {/* TRATAMIENTO */}
+
+            <div className="space-y-2">
+
+              <select
+
+                value={tratamientoId}
+
+                onChange={(e) => {
+
+                  const id =
+                    e.target.value;
+
+                  setTratamientoId(id);
+
+                  const tratamiento =
+                    tratamientos.find(
+
+                      (t) =>
+
+                        String(t.id)
+                        ===
+                        String(id)
+
+                    );
+
+                  if (tratamiento) {
+
+                    setMotivo(
+                      tratamiento.servicio_nombre
+                    );
+
+                    setServicioId(
+                      tratamiento.servicio_id
+                    );
+
+                  }
+
+                }}
+
+
+                className="
       w-full
 
       h-14
@@ -1022,25 +1211,59 @@ function CitaForm({
       transition-all
       duration-300
     "
-            >
+              >
 
-              <option value="">
-                Servicio / Motivo
-              </option>
-
-              {catalogoServicios.map((serv) => (
-
-                <option
-                  key={serv.id}
-                  value={serv.nombre}
-                >
-                  {serv.nombre}
+                <option value="">
+                  Tratamiento (opcional)
                 </option>
 
-              ))}
+                {
 
-            </select>
+                  tratamientos.map((t) => (
 
+                    <option
+
+                      key={t.id}
+
+                      value={t.id}
+
+                    >
+
+                      {
+
+                        t.servicio_nombre
+
+                      }
+
+                      {
+
+                        t.pieza
+
+                          ? ` • Pieza ${t.pieza}`
+
+                          : ""
+
+                      }
+
+                      {
+
+                        t.estado
+
+                          ? ` • ${t.estado}`
+
+                          : ""
+
+                      }
+
+                    </option>
+
+                  ))
+
+                }
+
+              </select>
+
+            </div>
           </div>
 
           {/* DETALLE */}
@@ -1509,7 +1732,23 @@ function CitaForm({
         text-slate-500
       ">
 
-              {motivo || "Sin servicio"}
+              {
+
+                tratamientoId
+
+                  ? tratamientos.find(
+
+                    (t) =>
+
+                      String(t.id)
+                      ===
+                      String(tratamientoId)
+
+                  )?.servicio_nombre
+
+                  : motivo
+
+              }
               {" • "}
               {duracion} min
 

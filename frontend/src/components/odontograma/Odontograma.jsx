@@ -7,7 +7,7 @@ import ConfirmModal
   from "../ConfirmModal";
 
 import {
-
+  X,
   RotateCcw,
 
   RotateCw,
@@ -116,7 +116,8 @@ function Legend({
 
 function Odontograma({
 
-  clienteId
+  clienteId,
+  onClose
 
 }) {
 
@@ -632,7 +633,55 @@ DELETE
 
       space-y-10
     ">
+      {/* CLOSE */}
 
+      <button
+
+        onClick={onClose}
+
+        className="
+    absolute
+    top-5
+    right-5
+
+    z-50
+
+    w-12
+    h-12
+
+    rounded-2xl
+
+    bg-white/80
+    backdrop-blur-xl
+
+    border
+    border-slate-200/80
+
+    text-slate-500
+
+    flex
+    items-center
+    justify-center
+
+    shadow-[0_10px_30px_rgba(0,0,0,0.08)]
+
+    hover:text-rose-500
+
+    hover:border-rose-200
+
+    hover:bg-white
+
+    hover:scale-105
+
+    transition-all
+    duration-300
+  "
+      >
+
+        <X size={18} />
+
+      </button>
+      
       {/* GLOW */}
 
       <div className="
@@ -651,6 +700,7 @@ DELETE
       " />
 
       {/* HEADER */}
+      
 
       <div className="
         relative

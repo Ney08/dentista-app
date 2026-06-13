@@ -17,5 +17,10 @@ class Cita(Base):
     motivo = Column(String)
     detalle = Column(String, nullable=True)
     duracion = Column(Integer, default=30)
+    
+    tratamiento_id = Column(
+        Integer,
+        nullable=True
+    )
 
     cliente = relationship("Cliente")

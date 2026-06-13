@@ -1,6 +1,8 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+
+
 import BaseModal
   from "../BaseModal";
 
@@ -53,7 +55,7 @@ function HistorialForm({
     }
 
     setLoading(true);
-    
+
     const toastId =
       toast.loading(
         "Guardando historial..."
@@ -613,6 +615,11 @@ function HistorialForm({
 
             <Odontograma
               clienteId={clienteId}
+
+              onClose={() =>
+                setOdontogramaOpen(false)
+              }
+
             />
 
           </BaseModal>

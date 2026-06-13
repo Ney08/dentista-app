@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 import toast from "react-hot-toast";
-
+import TratamientosList
+  from "../tratamientos/TratamientosList";
 import {
   MoreHorizontal,
   Pencil,
@@ -515,6 +516,10 @@ SORT HISTORIAL
         onAdd={(data) =>
           crearHistorial.mutate(data)
         }
+      />
+
+      <TratamientosList
+        clienteId={cliente.id}
       />
 
       {/* HEADER */}
