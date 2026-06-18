@@ -526,21 +526,16 @@ function IngresosPage() {
         }}
       >
         <div className="
-      h-full
-
       w-full
 
-      flex
-      flex-col
+        max-w-[1700px]
 
-      gap-7
+        mx-auto
 
-      pb-4
+        space-y-7
 
-      overflow-hidden
-
-      px-3
-      sm:px-5
+        px-3
+        sm:px-5
     ">
 
           {/* HEADER */}
@@ -1146,26 +1141,26 @@ function IngresosPage() {
 
           <div className="
         bg-white/95
-        backdrop-blur-md
+          backdrop-blur-md
 
-        border
-        border-slate-200/80
+          border
+          border-slate-200/80
 
-        rounded-[38px]
+          rounded-[36px]
 
-        shadow-[0_20px_60px_rgba(15,23,42,0.06)]
+          shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-        flex
-        flex-col
+          h-[760px]
 
-        h-[78vh]
+          p-5
+          sm:p-6
 
-        p-5
-        sm:p-6
+          flex
+          flex-col
 
-        gap-5
+          gap-5
 
-        overflow-hidden
+          overflow-hidden
       ">
 
             {/* TOOLBAR */}
@@ -1640,6 +1635,7 @@ function IngresosPage() {
 
           <BaseModal
             onClose={cerrarModal}
+            maxWidth="max-w-7xl"
           >
 
             <IngresoForm

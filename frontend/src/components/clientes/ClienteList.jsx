@@ -55,19 +55,36 @@ function ClienteList({
           return false;
         }
 
+        /*
+        ==========================
+        IGNORAR COMPLETADAS
+        ==========================
+        */
+
+        const estado =
+          (c.estado || "")
+            .toLowerCase();
+
+        if (
+
+          estado === "completada"
+
+          ||
+
+          estado === "cancelada"
+
+        ) {
+
+          return false;
+
+        }
+
         const fecha =
           new Date(c.fecha);
 
         return fecha >= ahora;
 
       })
-      .sort(
-        (a, b) =>
-          new Date(a.fecha) -
-          new Date(b.fecha)
-      );
-
-    return citasCliente[0] || null;
 
   };
 

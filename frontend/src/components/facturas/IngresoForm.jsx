@@ -309,12 +309,22 @@ function IngresoForm({
           "",
 
         monto:
-          servicioEncontrado.precio || "",
+
+          citaElegida?.tratamiento?.costo
+
+          ||
+
+          servicioEncontrado.precio
+
+          ||
+
+          "",
 
         costo_servicio:
           servicioEncontrado.costo_servicio || 0
 
       };
+
 
       return copia;
 
@@ -365,8 +375,15 @@ function IngresoForm({
             descripcion:
               encontrado.nombre,
 
+
             monto:
+
+              citaPreset?.tratamiento?.costo
+
+              ||
+
               encontrado.precio,
+
 
             costo_servicio:
               encontrado.costo_servicio || 0
@@ -517,7 +534,65 @@ function IngresoForm({
       }
 
     }
+    /*
+==========================================
+VALIDAR BALANCE
+==========================================
+*/
 
+    if (
+
+      citaSeleccionada?.tratamiento
+
+    ) {
+
+      const balance =
+
+        (
+
+          citaSeleccionada
+            .tratamiento
+            .costo || 0
+
+        )
+
+        -
+
+        (
+
+          citaSeleccionada
+            .tratamiento
+            .pagado || 0
+
+        );
+
+      const totalServicios =
+
+        servicios.reduce(
+
+          (acc, s) =>
+
+            acc + Number(s.monto || 0),
+
+          0
+
+        );
+
+      if (
+
+        totalServicios > balance
+
+      ) {
+
+        showWarning(
+          "El monto supera el balance pendiente ⚠️"
+        );
+
+        return;
+
+      }
+
+    }
     const payload = {
 
       cliente_id:
@@ -532,6 +607,13 @@ function IngresoForm({
 
       cita_id:
         citaSeleccionada?.id || null,
+
+      tratamiento_id:
+
+        citaSeleccionada
+          ?.tratamiento?.id
+
+        || null,
 
       servicios:
         servicios.map(s => ({
@@ -725,30 +807,33 @@ function IngresoForm({
 
       <form
         onSubmit={handleSubmit(onSubmit)}
+
         className="
-          relative
-          z-10
+    relative
+    z-10
 
-          flex
-          flex-col
+    grid
+    grid-cols-1
+    xl:grid-cols-[1.35fr_1fr]
 
-          gap-6
+    gap-6
+            
+    flex-1
+    min-h-0
+  "
 
-          flex-1
-          min-h-0
-        "
       >
 
         {/* CLIENTE */}
 
         <div className="
   bg-slate-50/70
-
+    order-1        
   border
   border-slate-200/70
 
   rounded-[30px]
-
+   h-fit         
   p-5
 
   shadow-sm
@@ -895,7 +980,7 @@ function IngresoForm({
 
             <div className="
     bg-emerald-50
-
+    
     border
     border-emerald-100
 
@@ -959,30 +1044,182 @@ function IngresoForm({
               </div>
 
               <div className="
-      inline-flex
+  inline-flex
 
-      items-center
-      gap-2
+  items-center
+  gap-2
 
-      px-4
-      py-2
+  px-4
+  py-2
 
-      rounded-2xl
+  rounded-2xl
 
-      bg-white
+  bg-white
 
-      text-sm
-      font-semibold
+  text-sm
+  font-semibold
 
-      text-emerald-600
+  text-emerald-600
 
-      shadow-sm
-    ">
+  shadow-sm
+">
 
                 <Sparkles size={14} />
 
                 {citaSeleccionada.motivo}
 
+
+                {
+
+                  citaSeleccionada?.tratamiento && (
+
+                    <div className="
+      mt-4
+
+      grid
+      grid-cols-1
+      sm:grid-cols-2
+
+      gap-3
+
+      w-full
+    ">
+
+                      {/* SESIONES */}
+
+                      <div className="
+        bg-white/70
+
+        border
+        border-emerald-100
+                 
+        rounded-2xl
+
+        px-4
+        py-3
+      ">
+
+                        <p className="
+          text-[11px]
+
+          uppercase
+
+          tracking-[0.12em]
+
+          text-slate-400
+
+          font-black
+        ">
+                          Sesiones
+                        </p>
+
+                        <p className="
+          mt-2
+
+          text-sm
+
+          font-black
+
+          text-emerald-600
+        ">
+
+                          {
+
+                            citaSeleccionada
+                              .tratamiento
+                              .sesiones_completadas
+
+                          }
+
+                          /
+
+                          {
+
+                            citaSeleccionada
+                              .tratamiento
+                              .sesiones_totales
+
+                          }
+
+                        </p>
+
+                      </div>
+
+                      {/* BALANCE */}
+
+                      <div className="
+        bg-white/70
+
+        border
+        border-rose-100
+
+        rounded-2xl
+
+        px-4
+        py-3
+      ">
+
+                        <p className="
+          text-[11px]
+
+          uppercase
+
+          tracking-[0.12em]
+
+          text-slate-400
+
+          font-black
+        ">
+                          Pendiente
+                        </p>
+
+                        <p className="
+          mt-2
+
+          text-sm
+
+          font-black
+
+          text-rose-500
+        ">
+
+                          RD$
+
+                          {
+
+                            formatMoney(
+
+                              (
+
+                                citaSeleccionada
+                                  .tratamiento
+                                  .costo || 0
+
+                              )
+
+                              -
+
+                              (
+
+                                citaSeleccionada
+                                  .tratamiento
+                                  .pagado || 0
+
+                              )
+
+                            )
+
+                          }
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  )
+
+                }
               </div>
 
             </div>
@@ -995,12 +1232,12 @@ function IngresoForm({
 
         <div className="
   bg-slate-50/70
-
+  order-2 xl:order-4
   border
   border-slate-200/70
 
   rounded-[30px]
-
+   xl:-mt-32       
   p-5
 
   shadow-sm
@@ -1403,7 +1640,7 @@ function IngresoForm({
 
         <div className="
   bg-slate-50/70
-
+    order-3
   border
   border-slate-200/70
 
@@ -1754,7 +1991,7 @@ function IngresoForm({
         <div className="
   sticky
   bottom-0
-
+  order-4
   bg-white/90
   backdrop-blur-xl
 
@@ -1864,9 +2101,9 @@ function IngresoForm({
 
         </div>
 
-      </form>
+      </form >
 
-    </div>
+    </div >
 
   );
 

@@ -1086,13 +1086,54 @@ LOAD TRATAMIENTOS
 
                 if (servicio) {
 
+                  /*
+                  ==========================================
+                  SET MOTIVO
+                  ==========================================
+                  */
+
                   setMotivo(
                     servicio.nombre
                   );
 
+                  /*
+                  ==========================================
+                  AUTO SELECT TRATAMIENTO
+                  ==========================================
+                  */
+
+                  const tratamientoRelacionado =
+
+                    tratamientos.find(
+
+                      (t) =>
+
+                        t.servicio_nombre
+                          ?.toLowerCase()
+
+                        ===
+
+                        servicio.nombre
+                          ?.toLowerCase()
+
+                    );
+
+                  if (tratamientoRelacionado) {
+
+                    setTratamientoId(
+                      tratamientoRelacionado.id
+                    );
+
+                  } else {
+
+                    setTratamientoId("");
+
+                  }
+
                 }
 
               }}
+
 
               className="
     w-full

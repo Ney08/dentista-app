@@ -7,6 +7,11 @@ from sqlalchemy.orm import (
     joinedload
 )
 
+from datetime import (
+    datetime,
+    timezone
+)
+
 from database import get_db
 
 from models.tratamiento import (
@@ -105,7 +110,16 @@ def get_tratamientos(
                 t.sesiones_completadas,
 
             "notas":
-                t.notas
+                t.notas,
+            
+            "created_at":
+
+                t.created_at.isoformat()
+
+            if t.created_at
+
+            else None,
+
 
         }
 
@@ -204,7 +218,17 @@ def create_tratamiento(
             tratamiento.sesiones_completadas,
 
         "notas":
-            tratamiento.notas
+            tratamiento.notas,
+            
+        
+        "created_at":
+
+            tratamiento.created_at.isoformat()
+
+        if tratamiento.created_at
+
+        else None,
+
 
     }
 

@@ -19,3 +19,5 @@ from .egreso import Egreso
 from .servicio import ServicioCatalogo
 
 from .odontograma import Odontograma
+
+from .tratamiento import Tratamiento

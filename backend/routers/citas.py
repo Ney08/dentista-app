@@ -2,11 +2,12 @@ from fastapi import FastAPI, Depends, File, UploadFile, Form, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timezone
-
+from sqlalchemy.orm import joinedload
 import models
 from schemas import CitaCreate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
+
 
 from models.tratamiento import (
     Tratamiento
@@ -63,9 +64,17 @@ def crear_cita(data: CitaCreate, db: Session = Depends(get_db)):
 @router.get("/")
 def listar_citas(db: Session = Depends(get_db)):
 
+    
     citas = db.query(models.Cita).options(
-        joinedload(models.Cita.cliente)
-    ).all()
+
+        joinedload(models.Cita.cliente),
+
+        joinedload(models.Cita.tratamiento)
+
+        .joinedload(Tratamiento.servicio)
+
+        ).all()
+
 
     data = []
 
@@ -73,9 +82,42 @@ def listar_citas(db: Session = Depends(get_db)):
         data.append({
             "id": c.id,
             "cliente_id": c.cliente_id,
-            "tratamiento_id": c.tratamiento_id,
+            "tratamiento": {
 
-            # ✅ ESTO ES LO QUE TE FALTABA
+                 "id":
+                    c.tratamiento.id,
+
+                "servicio":
+                    c.tratamiento.servicio.nombre
+
+                 if c.tratamiento.servicio
+
+                 else None,
+
+                "pieza":
+                     c.tratamiento.pieza,
+
+                "estado":
+                    c.tratamiento.estado,
+
+                "sesiones_totales":
+                    c.tratamiento.sesiones_totales,
+
+                "sesiones_completadas":
+                    c.tratamiento.sesiones_completadas,
+                    
+
+                "costo":
+                    c.tratamiento.costo,
+
+                "pagado":
+                    c.tratamiento.pagado
+
+
+            } if c.tratamiento else None,
+
+
+           
             "cliente": {
                 "nombre": c.cliente.nombre,
                 "apellido": c.cliente.apellido

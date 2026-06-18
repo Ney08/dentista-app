@@ -247,7 +247,7 @@ ${visible
           z-10
 
           p-5
-          md:p-7
+          md:p-4
         ">
 
           {children}

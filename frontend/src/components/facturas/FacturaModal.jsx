@@ -44,17 +44,26 @@ function FacturaModal({
     itbis -
     descuentoValor;
 
+
+
+  const balanceTratamiento =
+
+    ingreso.balance_restante || 0;
+
   /*
   ==========================================
   PAGOS
   ==========================================
   */
 
-  const abonado =
-    ingreso.abonado || total;
 
-  const restante =
-    total - abonado;
+  const abonado =
+    ingreso.monto_abonado
+    || 0;
+
+
+  // const restante =
+  //   total - abonado;
 
   /*
   ==========================================
@@ -71,8 +80,10 @@ function FacturaModal({
   ==========================================
   */
 
+
   const pagada =
-    restante <= 0;
+    ingreso.pagado;
+
 
   return (
 
@@ -616,7 +627,39 @@ function FacturaModal({
                       Tratamiento clínico
 
                     </p>
+                    {
 
+                      ingreso?.tratamiento && (
+
+                        <p className="
+      mt-1
+
+      text-xs
+
+      font-semibold
+
+      text-violet-500
+    ">
+
+                          Sesión {
+
+                            ingreso.tratamiento
+                              .sesiones_completadas
+
+                          }
+
+                          de {
+
+                            ingreso.tratamiento
+                              .sesiones_totales
+
+                          }
+
+                        </p>
+
+                      )
+
+                    }
                   </div>
 
                   {/* RIGHT */}
@@ -787,10 +830,46 @@ function FacturaModal({
                 </span>
 
               </div>
+              {
 
+                ingreso?.tratamiento && (
+
+                  <div className="
+      flex
+      items-center
+      justify-between
+
+      text-sm
+    ">
+
+                    <span className="
+        text-slate-500
+      ">
+
+                      Balance pendiente
+
+                    </span>
+
+                    <span className="
+        font-black
+
+        text-amber-500
+      ">
+
+                      {format(
+                        balanceTratamiento
+                      )}
+
+                    </span>
+
+                  </div>
+
+                )
+
+              }
               {/* RESTANTE */}
 
-              {restante > 0 && (
+              {/* {restante > 0 && (
 
                 <div className="
                   flex
@@ -820,7 +899,7 @@ function FacturaModal({
 
                 </div>
 
-              )}
+              )} */}
 
               {/* TOTAL */}
 

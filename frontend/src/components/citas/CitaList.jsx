@@ -737,9 +737,19 @@ function CitaList({
 
                     </div> */}
 
-                    {/* MOTIVO */}
+                    {/* MOTIVO + TRATAMIENTO */}
 
                     <div className="
+  grid
+  grid-cols-1
+  xl:grid-cols-2
+
+  gap-4
+">
+
+                      {/* MOTIVO */}
+
+                      <div className="
                       md:col-span-2
                       xl:col-span-4
 
@@ -754,7 +764,7 @@ function CitaList({
                       py-4
                     ">
 
-                      <p className="
+                        <p className="
                         text-[11px]
 
                         uppercase
@@ -765,10 +775,10 @@ function CitaList({
 
                         font-black
                       ">
-                        Motivo de la cita
-                      </p>
+                          Motivo de la cita
+                        </p>
 
-                      <p className="
+                        <p className="
                         mt-3
 
                         text-sm
@@ -780,25 +790,175 @@ function CitaList({
                         break-words
                       ">
 
-                        {c.motivo || "Sin motivo"}
+                          {c.motivo || "Sin motivo"}
 
-                      </p>
+                        </p>
+
+                      </div>
 
                     </div>
 
                   </div>
 
                 </div>
+                {/* TRATAMIENTO */}
 
-              </div>
+                {
 
-              {/* RIGHT PANEL */}
+                  c.tratamiento && (
 
-              <div
-                onClick={(e) =>
-                  e.stopPropagation()
+                    <div className="
+      md:col-span-2
+      xl:col-span-4
+
+      bg-indigo-50/70
+
+      border
+      border-indigo-100
+
+      rounded-[24px]
+
+      px-5
+      py-4
+    ">
+
+                      <p className="
+        text-[11px]
+
+        uppercase
+
+        tracking-[0.12em]
+
+        text-indigo-400
+
+        font-black
+      ">
+                        Tratamiento vinculado
+                      </p>
+
+                      <div className="
+        mt-2
+
+        flex
+        flex-wrap
+
+        items-center
+
+        gap-2
+      ">
+
+                        <div className="
+          px-3
+          py-1.5
+
+          rounded-full
+
+          bg-white
+
+          border
+          border-indigo-100
+
+          text-sx
+          font-bold
+
+          text-indigo-700
+        ">
+
+                          {
+
+                            c.tratamiento.servicio
+
+                          }
+
+                          {
+
+                            c.tratamiento.pieza
+
+                              ? ` • Pieza ${c.tratamiento.pieza}`
+
+                              : ""
+
+                          }
+
+                        </div>
+
+                        <div className="
+          px-3
+          py-1.5
+
+          rounded-full
+
+          bg-emerald-50
+
+          border
+          border-emerald-100
+
+          text-xs
+          font-bold
+
+          text-emerald-600
+        ">
+
+                          {
+
+                            c.tratamiento
+                              .sesiones_completadas
+
+                          }
+
+                          /
+
+                          {
+
+                            c.tratamiento
+                              .sesiones_totales
+
+                          }
+
+                          {" "}sesiones
+
+                        </div>
+
+                        <div className="
+          px-3
+          py-1.5
+
+          rounded-full
+
+          bg-slate-100
+
+          border
+          border-slate-200
+
+          text-xs
+          font-bold
+
+          text-slate-600
+        ">
+
+                          {
+
+                            c.tratamiento.estado
+
+                          }
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  )
+
                 }
-                className="
+        </div>
+                {/* RIGHT PANEL */}
+
+                <div
+                  onClick={(e) =>
+                    e.stopPropagation()
+                  }
+                  className="
     self-center
 
     2xl:w-[210px]
@@ -820,21 +980,21 @@ function CitaList({
 
     gap-3
   "
-              >
+                >
 
-                {/* PENDIENTE */}
+                  {/* PENDIENTE */}
 
-                {estado === "pendiente" && (
+                  {estado === "pendiente" && (
 
-                  <>
+                    <>
 
-                    {/* COMPLETAR */}
+                      {/* COMPLETAR */}
 
-                    <button
-                      onClick={() =>
-                        onCompletar(c)
-                      }
-                      className="
+                      <button
+                        onClick={() =>
+                          onCompletar(c)
+                        }
+                        className="
           h-12
 
           px-5
@@ -865,21 +1025,21 @@ function CitaList({
           justify-center
           gap-2
         "
-                    >
+                      >
 
-                      <CheckCircle2 size={15} />
+                        <CheckCircle2 size={15} />
 
-                      Completar
+                        Completar
 
-                    </button>
+                      </button>
 
-                    {/* EDIT */}
+                      {/* EDIT */}
 
-                    <button
-                      onClick={() =>
-                        onEditar(c)
-                      }
-                      className="
+                      <button
+                        onClick={() =>
+                          onEditar(c)
+                        }
+                        className="
           h-12
 
           px-5
@@ -906,21 +1066,21 @@ function CitaList({
           justify-center
           gap-2
         "
-                    >
+                      >
 
-                      <Pencil size={15} />
+                        <Pencil size={15} />
 
-                      Editar
+                        Editar
 
-                    </button>
+                      </button>
 
-                    {/* CANCEL */}
+                      {/* CANCEL */}
 
-                    <button
-                      onClick={() =>
-                        setCitaCancelar(c)
-                      }
-                      className="
+                      <button
+                        onClick={() =>
+                          setCitaCancelar(c)
+                        }
+                        className="
           h-12
 
           px-5
@@ -947,31 +1107,31 @@ function CitaList({
           justify-center
           gap-2
         "
-                    >
+                      >
 
-                      <XCircle size={15} />
+                        <XCircle size={15} />
 
-                      Cancelar
+                        Cancelar
 
-                    </button>
+                      </button>
 
-                  </>
+                    </>
 
-                )}
+                  )}
 
-                {/* ATRASADA */}
+                  {/* ATRASADA */}
 
-                {estado === "atrasada" && (
+                  {estado === "atrasada" && (
 
-                  <>
+                    <>
 
-                    {/* REAGENDAR */}
+                      {/* REAGENDAR */}
 
-                    <button
-                      onClick={() =>
-                        onEditar(c)
-                      }
-                      className="
+                      <button
+                        onClick={() =>
+                          onEditar(c)
+                        }
+                        className="
           h-12
 
           px-5
@@ -1002,21 +1162,21 @@ function CitaList({
           justify-center
           gap-2
         "
-                    >
+                      >
 
-                      <Pencil size={15} />
+                        <Pencil size={15} />
 
-                      Reagendar
+                        Reagendar
 
-                    </button>
+                      </button>
 
-                    {/* CANCELAR */}
+                      {/* CANCELAR */}
 
-                    <button
-                      onClick={() =>
-                        setCitaCancelar(c)
-                      }
-                      className="
+                      <button
+                        onClick={() =>
+                          setCitaCancelar(c)
+                        }
+                        className="
           h-12
 
           px-5
@@ -1043,124 +1203,124 @@ function CitaList({
           justify-center
           gap-2
         "
-                    >
+                      >
 
-                      <XCircle size={15} />
+                        <XCircle size={15} />
 
-                      Cancelar
+                        Cancelar
 
-                    </button>
+                      </button>
 
-                  </>
+                    </>
 
-                )}
+                  )}
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
-
-        );
+            );
 
       })}
 
-      {/* CONFIRM */}
+            {/* CONFIRM */}
 
-      {citaCancelar && (
+            {citaCancelar && (
 
-        <ConfirmModal
-          mensaje={`
+              <ConfirmModal
+                mensaje={`
 ¿Cancelar la cita de ${citaCancelar.cliente?.nombre}?
 
 📅 ${formatFecha(parseFechaLocal(citaCancelar.fecha))}
 ⏰ ${formatHora(parseFechaLocal(citaCancelar.fecha))}
 `}
-          onConfirm={() => {
+                onConfirm={() => {
 
-            /*
-            ==========================================
-            GUARDAR CITA
-            ==========================================
-            */
+                  /*
+                  ==========================================
+                  GUARDAR CITA
+                  ==========================================
+                  */
 
-            const cita =
-              citaCancelar;
+                  const cita =
+                    citaCancelar;
 
-            /*
-            ==========================================
-            OPTIMISTIC
-            ==========================================
-            */
+                  /*
+                  ==========================================
+                  OPTIMISTIC
+                  ==========================================
+                  */
 
-            onCancelar(
-              cita.id,
-              true
-            );
+                  onCancelar(
+                    cita.id,
+                    true
+                  );
 
-            /*
-            ==========================================
-            UNDO
-            ==========================================
-            */
+                  /*
+                  ==========================================
+                  UNDO
+                  ==========================================
+                  */
 
-            setUndoCancel(cita);
+                  setUndoCancel(cita);
 
-            /*
-            ==========================================
-            TIMER
-            ==========================================
-            */
+                  /*
+                  ==========================================
+                  TIMER
+                  ==========================================
+                  */
 
-            setTimeout(() => {
+                  setTimeout(() => {
 
-              setUndoCancel((current) => {
+                    setUndoCancel((current) => {
 
-                /*
-                ==========================================
-                YA DESHIZO
-                ==========================================
-                */
+                      /*
+                      ==========================================
+                      YA DESHIZO
+                      ==========================================
+                      */
 
-                if (
-                  !current
-                ) {
+                      if (
+                        !current
+                      ) {
 
-                  return null;
+                        return null;
 
+                      }
+
+                      /*
+                      ==========================================
+                      CONFIRMAR CANCELACIÓN
+                      ==========================================
+                      */
+
+                      onCancelar(
+                        cita.id,
+                        false
+                      );
+
+                      return null;
+
+                    });
+
+                  }, 5000);
+
+                  setCitaCancelar(null);
+
+                }}
+                onCancel={() =>
+                  setCitaCancelar(null)
                 }
+              />
 
-                /*
-                ==========================================
-                CONFIRMAR CANCELACIÓN
-                ==========================================
-                */
+            )}
+            {/* UNDO CANCEL */}
 
-                onCancelar(
-                  cita.id,
-                  false
-                );
+            {undoCancel && (
 
-                return null;
-
-              });
-
-            }, 5000);
-
-            setCitaCancelar(null);
-
-          }}
-          onCancel={() =>
-            setCitaCancelar(null)
-          }
-        />
-
-      )}
-      {/* UNDO CANCEL */}
-
-      {undoCancel && (
-
-        <div className="
+              <div className="
     fixed
 
     bottom-6
@@ -1189,9 +1349,9 @@ function CitaList({
     animate-modalUp
   ">
 
-          <div>
+                <div>
 
-            <p className="
+                  <p className="
         text-sm
 
         font-black
@@ -1199,40 +1359,40 @@ function CitaList({
         text-slate-800
       ">
 
-              Cita cancelada
+                    Cita cancelada
 
-            </p>
+                  </p>
 
-            <p className="
+                  <p className="
         text-xs
 
         text-slate-500
       ">
 
-              Puedes deshacer esta acción
+                    Puedes deshacer esta acción
 
-            </p>
+                  </p>
 
-          </div>
+                </div>
 
-          <button
-            onClick={() => {
+                <button
+                  onClick={() => {
 
-              /*
-              ==========================================
-              RESTORE
-              ==========================================
-              */
+                    /*
+                    ==========================================
+                    RESTORE
+                    ==========================================
+                    */
 
-              onCancelar(
-                undoCancel.id,
-                "restore"
-              );
+                    onCancelar(
+                      undoCancel.id,
+                      "restore"
+                    );
 
-              setUndoCancel(null);
+                    setUndoCancel(null);
 
-            }}
-            className="
+                  }}
+                  className="
         h-11
 
         rounded-full
@@ -1249,19 +1409,19 @@ function CitaList({
 
         shadow-[0_10px_30px_rgba(99,102,241,0.25)]
       "
-          >
+                >
 
-            Deshacer
+                  Deshacer
 
-          </button>
+                </button>
 
-        </div>
+              </div>
 
-      )}
-    </div>
+            )}
+          </div>
 
-  );
+        );
 
-}
+      }
 
 export default CitaList;

@@ -28,18 +28,27 @@ class IngresoCreate(BaseModel):
     descuento: float = 0
     cita_id: Optional[int] = None
     servicios: List[Servicio]
+    tratamiento_id: Optional[int] = None
 
 class Ingreso(BaseModel):
 
     id: int
 
     cliente_id: int
-
+    
+    tratamiento_id: Optional[int] = None
+    
+    tratamiento: Optional[dict] = None
+    
     cliente: ClienteOut
 
     descuento: float
 
     pagado: bool = False
+    
+    balance_restante: float = 0
+
+    monto_abonado: Optional[float] = 0
 
     servicios: List[Servicio]
 

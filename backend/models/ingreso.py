@@ -26,7 +26,26 @@ class Ingreso(Base):
     descuento = Column(Float, default=0)
     pagado = Column(Boolean, default=False)
     
+    balance_restante = Column(Float, default=0)   
+
+    monto_abonado = Column(Float, default=0)
+    
     fecha_pago = Column(DateTime(timezone=True),nullable=True)
+    tratamiento_id = Column(
+
+    Integer,
+
+    ForeignKey(
+        "tratamientos.id"
+    ),
+
+    nullable=True
+
+)
+
+    tratamiento = relationship(
+    "Tratamiento"
+    )
 
     
     cita_id = Column(Integer, ForeignKey("citas.id"), nullable=True)

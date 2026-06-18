@@ -51,3 +51,8 @@ from .odontograma import (
     FaceData,
     OdontogramaPayload
 )
+
+from .tratamiento import (
+    Tratamiento,
+    TratamientoCreate
+)

@@ -116,12 +116,20 @@ export const parseUTC = (fecha) => {
 
 export const formatUTCFechaHora = (fecha) => {
 
-  const f = parseUTC(fecha);
+  if (!fecha) return "-";
 
-  if (!f || isNaN(f)) return "";
+  return new Date(fecha).toLocaleString(
+    "es-DO",
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
 
-  return f.toLocaleString("es-DO", {
-    dateStyle: "short",
-    timeStyle: "short"
-  });
+      hour: "numeric",
+      minute: "2-digit",
+
+      hour12: true
+    }
+  );
+
 };

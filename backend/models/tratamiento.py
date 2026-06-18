@@ -1,12 +1,21 @@
+
 from sqlalchemy import (
 
     Column,
     Integer,
     String,
     Float,
-    ForeignKey
+    ForeignKey,
+    DateTime
 
 )
+
+
+from datetime import (
+    datetime,
+    timezone
+)
+
 
 from sqlalchemy.orm import relationship
 
@@ -68,6 +77,14 @@ class Tratamiento(Base):
     )
 
     
+    
+    
+    created_at = Column(
+        DateTime,
+        default=lambda:
+        datetime.now(timezone.utc)
+    )
+  
 
 
     costo = Column(
