@@ -951,14 +951,14 @@ function CitaList({
                   )
 
                 }
-        </div>
-                {/* RIGHT PANEL */}
+              </div>
+              {/* RIGHT PANEL */}
 
-                <div
-                  onClick={(e) =>
-                    e.stopPropagation()
-                  }
-                  className="
+              <div
+                onClick={(e) =>
+                  e.stopPropagation()
+                }
+                className="
     self-center
 
     2xl:w-[210px]
@@ -980,21 +980,21 @@ function CitaList({
 
     gap-3
   "
-                >
+              >
 
-                  {/* PENDIENTE */}
+                {/* PENDIENTE */}
 
-                  {estado === "pendiente" && (
+                {estado === "pendiente" && (
 
-                    <>
+                  <>
 
-                      {/* COMPLETAR */}
+                    {/* COMPLETAR */}
 
-                      <button
-                        onClick={() =>
-                          onCompletar(c)
-                        }
-                        className="
+                    <button
+                      onClick={() =>
+                        onCompletar(c)
+                      }
+                      className="
           h-12
 
           px-5
@@ -1025,21 +1025,21 @@ function CitaList({
           justify-center
           gap-2
         "
-                      >
+                    >
 
-                        <CheckCircle2 size={15} />
+                      <CheckCircle2 size={15} />
 
-                        Completar
+                      Completar
 
-                      </button>
+                    </button>
 
-                      {/* EDIT */}
+                    {/* EDIT */}
 
-                      <button
-                        onClick={() =>
-                          onEditar(c)
-                        }
-                        className="
+                    <button
+                      onClick={() =>
+                        onEditar(c)
+                      }
+                      className="
           h-12
 
           px-5
@@ -1066,21 +1066,21 @@ function CitaList({
           justify-center
           gap-2
         "
-                      >
+                    >
 
-                        <Pencil size={15} />
+                      <Pencil size={15} />
 
-                        Editar
+                      Editar
 
-                      </button>
+                    </button>
 
-                      {/* CANCEL */}
+                    {/* CANCEL */}
 
-                      <button
-                        onClick={() =>
-                          setCitaCancelar(c)
-                        }
-                        className="
+                    <button
+                      onClick={() =>
+                        setCitaCancelar(c)
+                      }
+                      className="
           h-12
 
           px-5
@@ -1107,31 +1107,31 @@ function CitaList({
           justify-center
           gap-2
         "
-                      >
+                    >
 
-                        <XCircle size={15} />
+                      <XCircle size={15} />
 
-                        Cancelar
+                      Cancelar
 
-                      </button>
+                    </button>
 
-                    </>
+                  </>
 
-                  )}
+                )}
 
-                  {/* ATRASADA */}
+                {/* ATRASADA */}
 
-                  {estado === "atrasada" && (
+                {estado === "atrasada" && (
 
-                    <>
+                  <>
 
-                      {/* REAGENDAR */}
+                    {/* REAGENDAR */}
 
-                      <button
-                        onClick={() =>
-                          onEditar(c)
-                        }
-                        className="
+                    <button
+                      onClick={() =>
+                        onEditar(c)
+                      }
+                      className="
           h-12
 
           px-5
@@ -1162,21 +1162,21 @@ function CitaList({
           justify-center
           gap-2
         "
-                      >
+                    >
 
-                        <Pencil size={15} />
+                      <Pencil size={15} />
 
-                        Reagendar
+                      Reagendar
 
-                      </button>
+                    </button>
 
-                      {/* CANCELAR */}
+                    {/* CANCELAR */}
 
-                      <button
-                        onClick={() =>
-                          setCitaCancelar(c)
-                        }
-                        className="
+                    <button
+                      onClick={() =>
+                        setCitaCancelar(c)
+                      }
+                      className="
           h-12
 
           px-5
@@ -1203,124 +1203,124 @@ function CitaList({
           justify-center
           gap-2
         "
-                      >
+                    >
 
-                        <XCircle size={15} />
+                      <XCircle size={15} />
 
-                        Cancelar
+                      Cancelar
 
-                      </button>
+                    </button>
 
-                    </>
+                  </>
 
-                  )}
-
-                </div>
+                )}
 
               </div>
 
             </div>
 
-            );
+          </div>
+
+        );
 
       })}
 
-            {/* CONFIRM */}
+      {/* CONFIRM */}
 
-            {citaCancelar && (
+      {citaCancelar && (
 
-              <ConfirmModal
-                mensaje={`
+        <ConfirmModal
+          mensaje={`
 ¿Cancelar la cita de ${citaCancelar.cliente?.nombre}?
 
 📅 ${formatFecha(parseFechaLocal(citaCancelar.fecha))}
 ⏰ ${formatHora(parseFechaLocal(citaCancelar.fecha))}
 `}
-                onConfirm={() => {
+          onConfirm={() => {
 
-                  /*
-                  ==========================================
-                  GUARDAR CITA
-                  ==========================================
-                  */
+            /*
+            ==========================================
+            GUARDAR CITA
+            ==========================================
+            */
 
-                  const cita =
-                    citaCancelar;
+            const cita =
+              citaCancelar;
 
-                  /*
-                  ==========================================
-                  OPTIMISTIC
-                  ==========================================
-                  */
+            /*
+            ==========================================
+            OPTIMISTIC
+            ==========================================
+            */
 
-                  onCancelar(
-                    cita.id,
-                    true
-                  );
+            onCancelar(
+              cita.id,
+              true
+            );
 
-                  /*
-                  ==========================================
-                  UNDO
-                  ==========================================
-                  */
+            /*
+            ==========================================
+            UNDO
+            ==========================================
+            */
 
-                  setUndoCancel(cita);
+            setUndoCancel(cita);
 
-                  /*
-                  ==========================================
-                  TIMER
-                  ==========================================
-                  */
+            /*
+            ==========================================
+            TIMER
+            ==========================================
+            */
 
-                  setTimeout(() => {
+            setTimeout(() => {
 
-                    setUndoCancel((current) => {
+              setUndoCancel((current) => {
 
-                      /*
-                      ==========================================
-                      YA DESHIZO
-                      ==========================================
-                      */
+                /*
+                ==========================================
+                YA DESHIZO
+                ==========================================
+                */
 
-                      if (
-                        !current
-                      ) {
+                if (
+                  !current
+                ) {
 
-                        return null;
+                  return null;
 
-                      }
-
-                      /*
-                      ==========================================
-                      CONFIRMAR CANCELACIÓN
-                      ==========================================
-                      */
-
-                      onCancelar(
-                        cita.id,
-                        false
-                      );
-
-                      return null;
-
-                    });
-
-                  }, 5000);
-
-                  setCitaCancelar(null);
-
-                }}
-                onCancel={() =>
-                  setCitaCancelar(null)
                 }
-              />
 
-            )}
-            {/* UNDO CANCEL */}
+                /*
+                ==========================================
+                CONFIRMAR CANCELACIÓN
+                ==========================================
+                */
 
-            {undoCancel && (
+                onCancelar(
+                  cita.id,
+                  false
+                );
 
-              <div className="
+                return null;
+
+              });
+
+            }, 5000);
+
+            setCitaCancelar(null);
+
+          }}
+          onCancel={() =>
+            setCitaCancelar(null)
+          }
+        />
+
+      )}
+      {/* UNDO CANCEL */}
+
+      {undoCancel && (
+
+        <div className="
     fixed
 
     bottom-6
@@ -1349,9 +1349,9 @@ function CitaList({
     animate-modalUp
   ">
 
-                <div>
+          <div>
 
-                  <p className="
+            <p className="
         text-sm
 
         font-black
@@ -1359,40 +1359,40 @@ function CitaList({
         text-slate-800
       ">
 
-                    Cita cancelada
+              Cita cancelada
 
-                  </p>
+            </p>
 
-                  <p className="
+            <p className="
         text-xs
 
         text-slate-500
       ">
 
-                    Puedes deshacer esta acción
+              Puedes deshacer esta acción
 
-                  </p>
+            </p>
 
-                </div>
+          </div>
 
-                <button
-                  onClick={() => {
+          <button
+            onClick={() => {
 
-                    /*
-                    ==========================================
-                    RESTORE
-                    ==========================================
-                    */
+              /*
+              ==========================================
+              RESTORE
+              ==========================================
+              */
 
-                    onCancelar(
-                      undoCancel.id,
-                      "restore"
-                    );
+              onCancelar(
+                undoCancel.id,
+                "restore"
+              );
 
-                    setUndoCancel(null);
+              setUndoCancel(null);
 
-                  }}
-                  className="
+            }}
+            className="
         h-11
 
         rounded-full
@@ -1409,19 +1409,19 @@ function CitaList({
 
         shadow-[0_10px_30px_rgba(99,102,241,0.25)]
       "
-                >
+          >
 
-                  Deshacer
+            Deshacer
 
-                </button>
+          </button>
 
-              </div>
+        </div>
 
-            )}
-          </div>
+      )}
+    </div>
 
-        );
+  );
 
-      }
+}
 
 export default CitaList;

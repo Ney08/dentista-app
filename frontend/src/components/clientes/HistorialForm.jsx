@@ -42,6 +42,9 @@ function HistorialForm({
   ==========================================
   */
 
+  const [activeTab, setActiveTab] =
+    useState("nota");
+
   const guardar = async () => {
 
     if (!texto.trim()) {
@@ -208,7 +211,94 @@ function HistorialForm({
     " />
 
       {/* HEADER */}
+    {/* TABS */}
 
+<div className="
+  relative
+  z-10
+
+  flex
+  flex-wrap
+
+  gap-3
+">
+
+  {
+
+    [
+
+      {
+        id: "nota",
+        label: "Nota clínica"
+      },
+
+      {
+        id: "odontograma",
+        label: "Odontograma"
+      },
+
+      {
+        id: "seguimiento",
+        label: "Seguimiento"
+      }
+
+    ].map((tab) => (
+
+      <button
+        key={tab.id}
+
+        onClick={() =>
+          setActiveTab(tab.id)
+        }
+
+        className={`
+          h-11
+
+          px-5
+
+          rounded-2xl
+
+          text-sm
+          font-bold
+
+          transition-all
+          duration-300
+
+          ${activeTab === tab.id
+
+            ? `
+              bg-gradient-to-r
+              from-indigo-500
+              to-violet-500
+
+              text-white
+
+              shadow-lg
+            `
+
+            : `
+              bg-white
+
+              border
+              border-slate-200
+
+              text-slate-600
+
+              hover:border-indigo-200
+            `
+          }
+        `}
+      >
+
+        {tab.label}
+
+      </button>
+
+    ))
+
+  }
+
+</div>
       <div className="
       relative
       z-10
@@ -219,7 +309,7 @@ function HistorialForm({
 
       gap-4
     ">
-
+      
         <div>
 
           <h3 className="
@@ -251,7 +341,7 @@ function HistorialForm({
           </p>
 
         </div>
-
+    
         {/* ICON */}
 
         <div className="
@@ -276,7 +366,7 @@ function HistorialForm({
         items-center
         justify-center
       ">
-
+        
           <div className="
           absolute
           inset-0

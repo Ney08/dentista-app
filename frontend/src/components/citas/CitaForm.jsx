@@ -177,23 +177,128 @@ LOAD TRATAMIENTOS
   useEffect(() => {
 
     if (isEdit && cita) {
-
+      console.log(cita);
       setClienteId(
         cita.cliente_id || ""
       );
 
+
       setServicioId(
-        cita.servicio_id || ""
+        String(
+          cita.tratamiento?.id
+            ? tratamientos.find(
+
+              (t) =>
+
+                String(t.id)
+
+                ===
+
+                String(
+                  cita.tratamiento.id
+                )
+
+            )?.servicio_id || ""
+
+            : ""
+        )
       );
 
       setMotivo(
         cita.motivo || ""
       );
 
+      /*
+==========================================
+BUSCAR SERVICIO POR MOTIVO
+==========================================
+*/
+
+      if (
+
+        !cita.tratamiento?.id
+
+        &&
+
+        cita.motivo
+
+        &&
+
+        catalogoServicios.length > 0
+
+      ) {
+
+        const servicioRelacionado =
+
+          catalogoServicios.find(
+
+            (s) =>
+
+              s.nombre?.toLowerCase()
+
+              ===
+
+              cita.motivo?.toLowerCase()
+
+          );
+
+        if (servicioRelacionado) {
+
+          setServicioId(
+            String(servicioRelacionado.id)
+          );
+
+        }
+
+      }
+
+
       setTratamientoId(
-        cita.tratamiento_id || ""
+        String(
+          cita.tratamiento?.id || ""
+        )
       );
 
+
+      if (
+
+        cita.tratamiento_id
+
+        &&
+
+        tratamientos.length > 0
+
+      ) {
+
+        const tratamientoRelacionado =
+
+          tratamientos.find(
+
+            (t) =>
+
+              String(t.id)
+
+              ===
+
+              String(
+                cita.tratamiento_id
+              )
+
+          );
+
+        if (tratamientoRelacionado) {
+
+
+          setServicioId(
+            String(
+              tratamientoRelacionado.servicio_id
+            )
+          );
+
+
+        }
+
+      }
       setDetalle(
         cita.detalle || ""
       );
@@ -234,7 +339,7 @@ LOAD TRATAMIENTOS
 
     }
 
-  }, [cita, isEdit]);
+  }, [cita, isEdit, tratamientos, catalogoServicios]);
 
   /*
   ==========================================
@@ -1108,6 +1213,10 @@ LOAD TRATAMIENTOS
 
                       (t) =>
 
+                        t.estado !== "Completado"
+
+                        &&
+
                         t.servicio_nombre
                           ?.toLowerCase()
 
@@ -1117,6 +1226,7 @@ LOAD TRATAMIENTOS
                           ?.toLowerCase()
 
                     );
+
 
                   if (tratamientoRelacionado) {
 
@@ -1260,45 +1370,79 @@ LOAD TRATAMIENTOS
 
                 {
 
-                  tratamientos.map((t) => (
 
-                    <option
+                  tratamientos
 
-                      key={t.id}
+                    .filter((t) => {
 
-                      value={t.id}
+                      /*
+                      ==========================================
+                      MOSTRAR EL ACTUAL EN EDIT
+                      ==========================================
+                      */
 
-                    >
+                      if (
 
-                      {
+                        isEdit
 
-                        t.servicio_nombre
+                        &&
 
-                      }
+                        String(t.id)
 
-                      {
+                        ===
 
-                        t.pieza
+                        String(tratamientoId)
 
-                          ? ` • Pieza ${t.pieza}`
+                      ) {
 
-                          : ""
-
-                      }
-
-                      {
-
-                        t.estado
-
-                          ? ` • ${t.estado}`
-
-                          : ""
+                        return true;
 
                       }
 
-                    </option>
+                      return t.estado !== "Completado";
 
-                  ))
+                    })
+
+                    .map((t) => (
+
+
+                      <option
+
+                        key={t.id}
+
+                        value={t.id}
+
+                      >
+
+                        {
+
+                          t.servicio_nombre
+
+                        }
+
+                        {
+
+                          t.pieza
+
+                            ? ` • Pieza ${t.pieza}`
+
+                            : ""
+
+                        }
+
+                        {
+
+                          t.estado
+
+                            ? ` • ${t.estado}`
+
+                            : ""
+
+                        }
+
+                      </option>
+
+                    ))
 
                 }
 
