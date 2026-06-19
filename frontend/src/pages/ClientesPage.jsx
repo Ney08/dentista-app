@@ -1444,6 +1444,7 @@ function ClientesPage() {
               onClose={() =>
                 setClienteSeleccionado(null)
               }
+              maxWidth="max-w-7xl"
             >
 
               <div className="space-y-5">
@@ -1560,6 +1561,7 @@ function ClientesPage() {
 
                   <ClienteDetalle
                     cliente={clienteSeleccionado}
+                   
                   />
 
                 </div>

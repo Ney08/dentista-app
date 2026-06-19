@@ -211,9 +211,9 @@ function HistorialForm({
     " />
 
       {/* HEADER */}
-    {/* TABS */}
+      {/* TABS */}
 
-<div className="
+      <div className="
   relative
   z-10
 
@@ -223,82 +223,105 @@ function HistorialForm({
   gap-3
 ">
 
-  {
+        {
 
-    [
+          [
 
-      {
-        id: "nota",
-        label: "Nota clínica"
-      },
+            {
+              id: "nota",
+              label: "Nota clínica"
+            },
 
-      {
-        id: "odontograma",
-        label: "Odontograma"
-      },
+            {
+              id: "odontograma",
+              label: "Odontograma"
+            },
 
-      {
-        id: "seguimiento",
-        label: "Seguimiento"
-      }
 
-    ].map((tab) => (
+            {
+              id: "tratamientos",
+              label: "Tratamientos"
+            },
 
-      <button
-        key={tab.id}
+            {
+              id: "seguimiento",
+              label: "Historial"
+            }
 
-        onClick={() =>
-          setActiveTab(tab.id)
+
+          ].map((tab) => (
+
+            <button
+              key={tab.id}
+
+              onClick={() =>
+                setActiveTab(tab.id)
+              }
+
+              className={`
+  group
+
+  inline-flex
+
+  items-center
+  gap-3
+
+  h-14
+
+  px-6
+
+  rounded-[22px]
+
+  text-sm
+  font-black
+
+  transition-all
+  duration-300
+
+  active:scale-[0.98]
+
+  ${activeTab === tab.id
+
+                  ? `
+      bg-gradient-to-r
+      from-indigo-500
+      via-purple-500
+      to-violet-500
+
+      text-white
+
+      shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+      scale-[1.02]
+    `
+
+                  : `
+      bg-white
+
+      border
+      border-slate-200
+
+      text-slate-600
+
+      hover:border-indigo-200
+
+      hover:text-indigo-600
+
+      hover:shadow-lg
+    `
+                }
+`}
+            >
+
+              {tab.label}
+
+            </button>
+
+          ))
+
         }
 
-        className={`
-          h-11
-
-          px-5
-
-          rounded-2xl
-
-          text-sm
-          font-bold
-
-          transition-all
-          duration-300
-
-          ${activeTab === tab.id
-
-            ? `
-              bg-gradient-to-r
-              from-indigo-500
-              to-violet-500
-
-              text-white
-
-              shadow-lg
-            `
-
-            : `
-              bg-white
-
-              border
-              border-slate-200
-
-              text-slate-600
-
-              hover:border-indigo-200
-            `
-          }
-        `}
-      >
-
-        {tab.label}
-
-      </button>
-
-    ))
-
-  }
-
-</div>
+      </div>
       <div className="
       relative
       z-10
@@ -309,7 +332,7 @@ function HistorialForm({
 
       gap-4
     ">
-      
+
         <div>
 
           <h3 className="
@@ -341,7 +364,7 @@ function HistorialForm({
           </p>
 
         </div>
-    
+
         {/* ICON */}
 
         <div className="
@@ -366,7 +389,7 @@ function HistorialForm({
         items-center
         justify-center
       ">
-        
+
           <div className="
           absolute
           inset-0
@@ -509,7 +532,7 @@ function HistorialForm({
   ✨ Mejorar con AI
 
 </button> */}
-          <button
+          {/* <button
 
             onClick={() =>
               setOdontogramaOpen(true)
@@ -560,7 +583,7 @@ function HistorialForm({
 
             Abrir odontograma
 
-          </button>
+          </button> */}
 
         </div>
 
@@ -692,27 +715,26 @@ function HistorialForm({
 
       </div>
       {
-        odontogramaOpen && (
+        activeTab === "odontograma" && (
 
-          <BaseModal
+          <div className="
+      rounded-[32px]
 
-            onClose={() =>
-              setOdontogramaOpen(false)
-            }
+      border
+      border-slate-200
 
-            maxWidth="max-w-7xl"
-          >
+      bg-white/70
+
+      p-6
+
+      shadow-sm
+    ">
 
             <Odontograma
               clienteId={clienteId}
-
-              onClose={() =>
-                setOdontogramaOpen(false)
-              }
-
             />
 
-          </BaseModal>
+          </div>
 
         )
       }

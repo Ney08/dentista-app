@@ -1,9 +1,7 @@
 import { useState } from "react";
 
-import toast from "react-hot-toast";
-import TratamientosList
-  from "../tratamientos/TratamientosList";
 import {
+
   MoreHorizontal,
   Pencil,
   Trash2,
@@ -11,52 +9,40 @@ import {
   CalendarDays,
   Sparkles,
   ClipboardList,
-  Clock3,
-  Activity,
   AlertCircle
+
 } from "lucide-react";
 
+import BaseModal
+  from "../../BaseModal";
 
 import {
+
   showSuccess,
-  showError,
-  showWarning,
-  showInfo
-} from "../ui/ToastStyles";
+  showError
 
-import HistorialForm from "../historial/HistorialForm";
-
-import BaseModal from "../BaseModal";
-
-import {
-  useHistorial
-} from "../../hooks/useHistorial";
+} from "../../ui/ToastStyles";
 
 import {
   formatFecha
-} from "../../utils/fecha";
+} from "../../../utils/fecha";
 
-import { API_URL } from "../../config";
+import { API_URL }
+  from "../../../config";
 
-function ClienteDetalle({ cliente }) {
+function SeguimientoTab({
 
-  const {
-    historial = [],
-    isLoading,
-    crearHistorial
-  } = useHistorial(cliente?.id);
+  historial = [],
 
-  const [notaSeleccionada, setNotaSeleccionada] =
-    useState(null);
+  cliente
 
-  const [menuAbierto, setMenuAbierto] =
-    useState(null);
+}) {
 
-  const [editando, setEditando] =
-    useState(null);
-
-  const [textoEditado, setTextoEditado] =
-    useState("");
+  /*
+  ==========================================
+  STATES
+  ==========================================
+  */
   /*
 ==========================================
 SORT HISTORIAL
@@ -78,6 +64,38 @@ SORT HISTORIAL
 
       });
 
+  const [
+
+    notaSeleccionada,
+
+    setNotaSeleccionada
+
+  ] = useState(null);
+
+  const [
+
+    menuAbierto,
+
+    setMenuAbierto
+
+  ] = useState(null);
+
+  const [
+
+    editando,
+
+    setEditando
+
+  ] = useState(null);
+
+  const [
+
+    textoEditado,
+
+    setTextoEditado
+
+  ] = useState("");
+
   /*
   ==========================================
   HELPERS
@@ -92,7 +110,9 @@ SORT HISTORIAL
     if (!texto) return "";
 
     return texto.length > limite
+
       ? texto.slice(0, limite) + "..."
+
       : texto;
 
   };
@@ -145,7 +165,7 @@ SORT HISTORIAL
 
   /*
   ==========================================
-  GUARDAR EDICION
+  EDITAR
   ==========================================
   */
 
@@ -166,6 +186,7 @@ SORT HISTORIAL
       const res = await fetch(
         `${API_URL}/historiales/${editando.id}`,
         {
+
           method: "PUT",
 
           headers: {
@@ -174,9 +195,15 @@ SORT HISTORIAL
           },
 
           body: JSON.stringify({
-            cliente_id: cliente.id,
-            descripcion: textoEditado
+
+            cliente_id:
+              cliente.id,
+
+            descripcion:
+              textoEditado
+
           })
+
         }
       );
 
@@ -206,329 +233,13 @@ SORT HISTORIAL
 
   };
 
-  /*
-  ==========================================
-  STATES
-  ==========================================
-  */
-
-  if (!cliente?.id) {
-
-    return (
-      <p>
-        Selecciona un cliente...
-      </p>
-    );
-
-  }
-
-  if (isLoading) {
-
-    return (
-
-      <div className="
-        flex
-        items-center
-        justify-center
-
-        py-20
-      ">
-
-        <div className="
-          flex
-          items-center
-          gap-3
-
-          text-slate-500
-        ">
-
-          <div className="
-            w-5
-            h-5
-
-            border-2
-            border-indigo-500
-            border-t-transparent
-
-            rounded-full
-
-            animate-spin
-          " />
-
-          Cargando historial...
-
-        </div>
-
-      </div>
-
-    );
-
-  }
-
   return (
 
     <div className="
       space-y-6
     ">
 
-      {/* STATS */}
-
-      <div className="
-        grid
-        grid-cols-1
-        sm:grid-cols-3
-
-        gap-4
-      ">
-
-        {/* TOTAL */}
-
-        <div className="
-          rounded-[28px]
-
-          bg-gradient-to-br
-          from-indigo-50
-          to-purple-50
-
-          border
-          border-indigo-100
-
-          p-5
-        ">
-
-          <div className="
-            flex
-            items-center
-            justify-between
-          ">
-
-            <div>
-
-              <p className="
-                text-xs
-
-                uppercase
-
-                tracking-[0.12em]
-
-                text-indigo-500
-
-                font-black
-              ">
-                Notas clínicas
-              </p>
-
-              <h3 className="
-                mt-2
-
-                text-3xl
-
-                font-black
-
-                text-slate-800
-              ">
-                {historial.length}
-              </h3>
-
-            </div>
-
-            <div className="
-              w-12
-              h-12
-
-              rounded-[18px]
-
-              bg-indigo-500/10
-
-              text-indigo-600
-
-              flex
-              items-center
-              justify-center
-            ">
-
-              <ClipboardList size={20} />
-
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* ESTADO */}
-
-        <div className="
-          rounded-[28px]
-
-          bg-gradient-to-br
-          from-emerald-50
-          to-green-50
-
-          border
-          border-emerald-100
-
-          p-5
-        ">
-
-          <div className="
-            flex
-            items-center
-            justify-between
-          ">
-
-            <div>
-
-              <p className="
-                text-xs
-
-                uppercase
-
-                tracking-[0.12em]
-
-                text-emerald-500
-
-                font-black
-              ">
-                Seguimiento
-              </p>
-
-              <h3 className="
-                mt-2
-
-                text-lg
-
-                font-black
-
-                text-slate-800
-              ">
-                Activo
-              </h3>
-
-            </div>
-
-            <div className="
-              w-12
-              h-12
-
-              rounded-[18px]
-
-              bg-emerald-500/10
-
-              text-emerald-600
-
-              flex
-              items-center
-              justify-center
-            ">
-
-              <Activity size={20} />
-
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* ULTIMA */}
-
-        <div className="
-          rounded-[28px]
-
-          bg-gradient-to-br
-          from-slate-50
-          to-slate-100/70
-
-          border
-          border-slate-200
-
-          p-5
-        ">
-
-          <div className="
-            flex
-            items-center
-            justify-between
-          ">
-
-            <div>
-
-              <p className="
-                text-xs
-
-                uppercase
-
-                tracking-[0.12em]
-
-                text-slate-400
-
-                font-black
-              ">
-                Última nota
-              </p>
-
-              <h3 className="
-                mt-2
-
-                text-sm
-
-                font-black
-
-                text-slate-700
-              ">
-                {historialOrdenado[0]
-                  ? formatFecha(
-                    historialOrdenado[0].fecha
-                  )
-                  : "Sin registros"}
-              </h3>
-
-            </div>
-
-            <div className="
-              w-12
-              h-12
-
-              rounded-[18px]
-
-              bg-slate-200/70
-
-              text-slate-600
-
-              flex
-              items-center
-              justify-center
-            ">
-
-              <Clock3 size={20} />
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* FORM */}
-
-      
-
-<HistorialForm
-
-      cliente={cliente}
-
-      historial={historialOrdenado}
-
-      clienteId={cliente.id}
-
-      onAdd={(data) =>
-        crearHistorial.mutate(data)
-      }
-
-    />
-
-
-
+     
       {/* HEADER */}
 
       <div className="
@@ -1414,4 +1125,4 @@ SORT HISTORIAL
 
 }
 
-export default ClienteDetalle;
+export default SeguimientoTab;
