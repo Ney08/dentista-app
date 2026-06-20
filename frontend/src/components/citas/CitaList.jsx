@@ -4,7 +4,7 @@ import {
   parseFechaLocal
 } from "../../utils/fecha";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import {
   CalendarDays,
@@ -26,11 +26,15 @@ function CitaList({
   onCompletar,
   onCancelar
 }) {
-
+  const timeoutRef = useRef(null);
   const [citaCancelar, setCitaCancelar] =
     useState(null);
   const [undoCancel, setUndoCancel] =
     useState(null);
+
+  const [pendingCancelId, setPendingCancelId] =
+    useState(null);
+
   const coloresAvatar = [
     "from-blue-500 to-cyan-500",
     "from-green-500 to-emerald-500",
@@ -59,8 +63,15 @@ function CitaList({
 
       {citas.map((c) => {
 
-        const estado =
+
+        const estadoReal =
           getEstado(c);
+
+        const estado =
+          pendingCancelId === c.id
+            ? "cancelada"
+            : estadoReal;
+
 
         const fecha =
           parseFechaLocal(c.fecha);
@@ -1238,87 +1249,81 @@ function CitaList({
 `}
           onConfirm={() => {
 
-            /*
-            ==========================================
-            GUARDAR CITA
-            ==========================================
-            */
-
-            const cita =
-              citaCancelar;
+            const id = citaCancelar.id;
 
             /*
             ==========================================
-            OPTIMISTIC
+            CANCELACIÓN VISUAL LOCAL
             ==========================================
             */
 
-            onCancelar(
-              cita.id,
-              true
-            );
+            setPendingCancelId(id);
 
             /*
             ==========================================
-            UNDO
+            MOSTRAR DESHACER
             ==========================================
             */
 
-            setUndoCancel(cita);
+            setUndoCancel(id);
 
             /*
             ==========================================
-            TIMER
+            LIMPIAR TIMER ANTERIOR
             ==========================================
             */
 
-            setTimeout(() => {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+              timeoutRef.current = null;
+            }
 
-              setUndoCancel((current) => {
+            /*
+            ==========================================
+            BACKEND DESPUÉS DE 5 SEGUNDOS
+            ==========================================
+            */
 
-                /*
-                ==========================================
-                YA DESHIZO
-                ==========================================
-                */
+            timeoutRef.current = setTimeout(async () => {
 
-                if (
-                  !current
-                ) {
+              try {
 
-                  return null;
+                await onCancelar(id, false);
 
-                }
+              } catch (error) {
 
-                /*
-                ==========================================
-                CONFIRMAR CANCELACIÓN
-                ==========================================
-                */
-
-                onCancelar(
-                  cita.id,
-                  false
+                console.error(
+                  "Error cancelando cita:",
+                  error
                 );
 
-                return null;
+                setPendingCancelId(null);
 
-              });
+              } finally {
+
+                setUndoCancel(null);
+                setPendingCancelId(null);
+                timeoutRef.current = null;
+
+              }
 
             }, 5000);
 
             setCitaCancelar(null);
 
           }}
+
           onCancel={() =>
             setCitaCancelar(null)
           }
         />
 
       )}
+
+
       {/* UNDO CANCEL */}
 
-      {undoCancel && (
+      {undoCancel !== null && (
 
         <div className="
     fixed
@@ -1380,14 +1385,22 @@ function CitaList({
 
               /*
               ==========================================
-              RESTORE
+              CANCELAR TIMER
               ==========================================
               */
 
-              onCancelar(
-                undoCancel.id,
-                "restore"
-              );
+              if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+              }
+
+              /*
+              ==========================================
+              RESTAURAR VISUALMENTE
+              ==========================================
+              */
+
+              setPendingCancelId(null);
 
               setUndoCancel(null);
 

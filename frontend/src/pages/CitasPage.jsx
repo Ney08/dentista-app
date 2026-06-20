@@ -1495,100 +1495,22 @@ function CitasPage() {
                     );
 
                   }}
-                  onCancelar={async (
-                    id,
-                    mode
-                  ) => {
+                  onCancelar={async (id, mode) => {
 
-                    /*
-                    ==========================================
-                    OPTIMISTIC
-                    ==========================================
-                    */
+                    if (mode === false) {
 
-                    if (mode === true) {
+                      console.log("BACKEND CANCELANDO:", id);
 
-                      queryClient.setQueryData(
-                        ["citas"],
-                        (old = []) =>
+                      const data =
+                        await cancelarCita.mutateAsync(id);
 
-                          old.map((c) =>
+                      console.log("BACKEND RESPUESTA:", data);
 
-                            c.id === id
-
-                              ? {
-                                ...c,
-                                estado:
-                                  "cancelada"
-                              }
-
-                              : c
-
-                          )
-
-                      );
+                      showSuccess("Cancelada ✅");
 
                       return;
 
                     }
-
-                    /*
-                    ==========================================
-                    RESTORE
-                    ==========================================
-                    */
-
-                    if (
-                      mode === "restore"
-                    ) {
-
-                      queryClient.setQueryData(
-                        ["citas"],
-                        (old = []) =>
-
-                          old.map((c) =>
-
-                            c.id === id
-
-                              ? {
-                                ...c,
-                                estado:
-                                  "pendiente"
-                              }
-
-                              : c
-
-                          )
-
-                      );
-
-                      return;
-
-                    }
-
-                    /*
-                    ==========================================
-                    BACKEND
-                    ==========================================
-                    */
-
-                    await actualizarCita
-                      .mutateAsync({
-
-                        id,
-
-                        data: {
-
-                          estado:
-                            "cancelada"
-
-                        }
-
-                      });
-
-                    showSuccess(
-                      "Cancelada ✅"
-                    );
 
                   }}
                 />

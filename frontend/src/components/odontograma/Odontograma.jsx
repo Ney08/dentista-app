@@ -635,7 +635,7 @@ DELETE
     ">
       {/* CLOSE */}
 
-      <button
+      {/* <button
 
         onClick={onClose}
 
@@ -680,7 +680,7 @@ DELETE
 
         <X size={18} />
 
-      </button>
+      </button> */}
       
       {/* GLOW */}
 

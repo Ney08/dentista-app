@@ -1,7 +1,10 @@
+
 import {
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from "react";
+
 
 import {
   showSuccess,
@@ -78,12 +81,16 @@ function AgendaCalendar() {
 
   const [contextMenu, setContextMenu] =
     useState(null);
+
   const {
     citas = [],
     actualizarCita,
-    crearCita
+    crearCita,
+    cancelarCita
   } = useCitas();
 
+  const [pendingCancelId, setPendingCancelId] =
+    useState(null);
 
   /*
   ==========================================
@@ -136,13 +143,18 @@ function AgendaCalendar() {
           "pendiente";
 
         if (
+          pendingCancelId === cita.id
+        ) {
+
+          estado = "cancelada";
+
+        } else if (
           estado !== "completada" &&
           estado !== "cancelada" &&
           end < ahora
         ) {
 
-          estado =
-            "atrasada";
+          estado = "atrasada";
 
         }
 
@@ -179,7 +191,7 @@ function AgendaCalendar() {
 
     setEvents(mapped);
 
-  }, [citas]);
+  }, [citas, pendingCancelId]);
 
   /*
   ==========================================
@@ -246,6 +258,11 @@ STATS
   ]);
   const [undoCancel, setUndoCancel] =
     useState(null);
+
+
+
+  const cancelTimeoutRef =
+    useRef(null);
 
   const citasHoy =
     events.filter((e) =>
@@ -813,6 +830,86 @@ DUPLICAR CITA
       }
 
     };
+
+
+  const iniciarCancelacionConUndo = (cita) => {
+
+    const id = cita.id;
+
+    /*
+    ==========================================
+    UI LOCAL
+    ==========================================
+    */
+
+    setPendingCancelId(id);
+
+    setUndoCancel(id);
+
+    /*
+    ==========================================
+    CERRAR MODALES
+    ==========================================
+    */
+
+    setSelectedEvent(null);
+
+    /*
+    ==========================================
+    LIMPIAR TIMER ANTERIOR
+    ==========================================
+    */
+
+    if (cancelTimeoutRef.current) {
+
+      clearTimeout(
+        cancelTimeoutRef.current
+      );
+
+      cancelTimeoutRef.current = null;
+
+    }
+
+    /*
+    ==========================================
+    BACKEND DESPUÉS DE 5s
+    ==========================================
+    */
+
+    cancelTimeoutRef.current =
+      setTimeout(async () => {
+
+        try {
+
+          await cancelarCita
+            .mutateAsync(id);
+
+          showSuccess(
+            "Cita cancelada ✅"
+          );
+
+        } catch {
+
+          showError(
+            "Error al cancelar cita ❌"
+          );
+
+          setPendingCancelId(null);
+
+        } finally {
+
+          setUndoCancel(null);
+
+          setPendingCancelId(null);
+
+          cancelTimeoutRef.current = null;
+
+        }
+
+      }, 5000);
+
+  };
+
   return (
 
     <div className="
@@ -1636,102 +1733,13 @@ DUPLICAR CITA
       {selectedEvent && (
 
         <CitaDetailsModal
+
           onCancelar={(cita) => {
 
-            setSelectedEvent(null);
-
-            /*
-            ==========================================
-            OPTIMISTIC
-            ==========================================
-            */
-
-            setEvents((prev) =>
-
-              prev.map((e) => {
-
-                if (
-                  e.id !== cita.id
-                ) {
-
-                  return e;
-
-                }
-
-                return {
-
-                  ...e,
-
-                  resource: {
-
-                    ...e.resource,
-
-                    estado:
-                      "cancelada"
-
-                  }
-
-                };
-
-              })
-
-            );
-
-            /*
-            ==========================================
-            UNDO
-            ==========================================
-            */
-
-            setUndoCancel(cita);
-
-            setTimeout(async () => {
-
-              setUndoCancel((current) => {
-
-                /*
-                ==========================================
-                YA DESHIZO
-                ==========================================
-                */
-
-                if (
-                  !current
-                ) {
-
-                  return null;
-
-                }
-
-                /*
-                ==========================================
-                CONFIRM CANCEL
-                ==========================================
-                */
-
-                actualizarCita
-                  .mutateAsync({
-
-                    id: cita.id,
-
-                    data: {
-
-                      ...cita,
-
-                      estado:
-                        "cancelada"
-
-                    }
-
-                  });
-
-                return null;
-
-              });
-
-            }, 5000);
+            iniciarCancelacionConUndo(cita);
 
           }}
+
           cita={{
 
             ...selectedEvent.resource,
@@ -1810,7 +1818,7 @@ DUPLICAR CITA
       )}
       {/* UNDO CANCEL */}
 
-      {undoCancel && (
+      {undoCancel !== null && (
 
         <div className="
     fixed
@@ -1874,41 +1882,27 @@ DUPLICAR CITA
 
               /*
               ==========================================
-              RESTORE
+              CANCELAR TIMER
               ==========================================
               */
 
-              setEvents((prev) =>
+              if (cancelTimeoutRef.current) {
 
-                prev.map((e) => {
+                clearTimeout(
+                  cancelTimeoutRef.current
+                );
 
-                  if (
-                    e.id !==
-                    undoCancel.id
-                  ) {
+                cancelTimeoutRef.current = null;
 
-                    return e;
+              }
 
-                  }
+              /*
+              ==========================================
+              RESTORE VISUAL
+              ==========================================
+              */
 
-                  return {
-
-                    ...e,
-
-                    resource: {
-
-                      ...e.resource,
-
-                      estado:
-                        "pendiente"
-
-                    }
-
-                  };
-
-                })
-
-              );
+              setPendingCancelId(null);
 
               setUndoCancel(null);
 

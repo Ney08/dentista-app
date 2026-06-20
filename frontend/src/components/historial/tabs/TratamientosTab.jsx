@@ -1,14 +1,36 @@
 import { useEffect, useState }
   from "react";
 
+import {
+
+  FileText,
+
+  Pencil,
+
+  Trash2,
+
+  MoreVertical,
+
+  Stethoscope
+
+} from "lucide-react";
+
+
+import BaseModal
+  from "../../BaseModal";
+
 import TratamientoModal
   from "../../tratamientos/TratamientoModal";
+import TratamientoTimeline
+  from "../../tratamientos/TratamientoTimeline";
 
 import { API_URL }
   from "../../../config";
 
 function TratamientosTab({
-  clienteId
+  clienteId,
+  tratamiento
+
 }) {
 
   /*
@@ -16,6 +38,24 @@ function TratamientosTab({
   STATES
   ==========================================
   */
+
+
+  const [
+
+    abierto,
+
+    setAbierto
+
+  ] = useState(false);
+
+
+  const [
+
+    tratamientoSeleccionado,
+
+    setTratamientoSeleccionado
+
+  ] = useState(null);
 
   const [
 
@@ -105,6 +145,26 @@ function TratamientosTab({
   ==========================================
   */
 
+  const timelineEvents = tratamientos
+  .flatMap((t) => [
+    {
+      title: `Tratamiento: ${t.servicio_nombre}`,
+      date: t.created_at
+        ? new Date(t.created_at).toLocaleDateString()
+        : "--",
+      description: `Se creó el tratamiento (Estado: ${t.estado})`
+    },
+    {
+      title: `Estado actualizado`,
+      date: "Actual",
+      description: `Actualmente está en estado: ${t.estado}`
+    }
+  ])
+  .sort((a, b) => {
+    // opcional: ordenar por fecha si quieres
+    return new Date(b.date) - new Date(a.date);
+  });
+  
   return (
 
     <div className="
@@ -421,14 +481,22 @@ function TratamientosTab({
 
                   tratamientos.map((t) => (
 
+
                     <div
                       key={t.id}
 
-                      className="
-                        group
+                      onClick={() =>
+                        setTratamientoSeleccionado(t)
+                      }
 
-                        relative
-                        overflow-hidden
+                      className="
+    group
+
+    relative
+    overflow-hidden
+
+    cursor-pointer
+
 
                         rounded-[32px]
 
@@ -441,7 +509,13 @@ function TratamientosTab({
 
                         shadow-sm
 
-                        hover:shadow-xl
+                        
+hover:-translate-y-1
+
+hover:border-indigo-200
+
+hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
+
 
                         transition-all
                         duration-300
@@ -708,7 +782,420 @@ function TratamientosTab({
         )
 
       }
+      {
 
+        tratamientoSeleccionado && (
+
+          <BaseModal
+            onClose={() =>
+              setTratamientoSeleccionado(null)
+            }
+
+            maxWidth="max-w-5xl"
+          >
+
+            <div className="
+        space-y-8
+      ">
+
+              {/* HEADER */}
+
+              <div className="
+          flex
+          items-start
+          justify-between
+
+          gap-4
+        ">
+
+                <div>
+
+                  <div className="
+              inline-flex
+
+              items-center
+              gap-2
+
+              px-3
+              py-1.5
+
+              rounded-full
+
+              bg-indigo-500/10
+
+              text-indigo-600
+
+              text-xs
+              font-black
+
+              mb-4
+            ">
+
+                    🦷 Tratamiento dental
+
+                  </div>
+
+                  <h2 className="
+              text-4xl
+
+              font-black
+
+              tracking-tight
+
+              text-slate-800
+            ">
+
+                    {
+
+                      tratamientoSeleccionado
+                        .servicio_nombre
+
+                    }
+
+                  </h2>
+
+                </div>
+
+                <button
+                  onClick={() =>
+                    setTratamientoSeleccionado(null)
+                  }
+
+                  className="
+              w-12
+              h-12
+
+              rounded-2xl
+
+              bg-slate-100
+
+              border
+              border-slate-200
+            "
+                >
+
+                  ✕
+
+                </button>
+
+              </div>
+
+              {/* GRID */}
+
+              <div className="
+          grid
+          grid-cols-1
+          lg:grid-cols-2
+
+          gap-6
+        ">
+
+                {/* INFO */}
+
+                <div className="
+            rounded-[30px]
+
+            bg-slate-50
+
+            border
+            border-slate-200
+
+            p-6
+
+            space-y-4
+          ">
+
+                  <h3 className="
+              text-lg
+
+              font-black
+
+              text-slate-800
+            ">
+
+                    Información clínica
+
+                  </h3>
+
+                  <div className="
+              flex
+              justify-between
+            ">
+
+                    <span>Pieza</span>
+
+                    <strong>
+
+                      {
+
+                        tratamientoSeleccionado
+                          .pieza || "--"
+
+                      }
+
+                    </strong>
+
+                  </div>
+
+                  <div className="
+              flex
+              justify-between
+            ">
+
+                    <span>Estado</span>
+
+                    <strong>
+
+                      {
+
+                        tratamientoSeleccionado
+                          .estado
+
+                      }
+
+                    </strong>
+
+                  </div>
+
+                  <div className="
+              flex
+              justify-between
+            ">
+
+                    <span>Sesiones</span>
+
+                    <strong>
+
+                      {
+
+                        tratamientoSeleccionado
+                          .sesiones_completadas
+
+                      }
+
+                      /
+
+                      {
+
+                        tratamientoSeleccionado
+                          .sesiones_totales
+
+                      }
+
+                    </strong>
+
+                  </div>
+
+                </div>
+
+                {/* FINANZAS */}
+
+                <div className="
+            rounded-[30px]
+
+            bg-indigo-50/60
+
+            border
+            border-indigo-100
+
+            p-6
+
+            space-y-4
+          ">
+
+                  <h3 className="
+              text-lg
+
+              font-black
+
+              text-slate-800
+            ">
+
+                    Balance financiero
+
+                  </h3>
+
+                  <div className="
+              flex
+              justify-between
+            ">
+
+                    <span>Costo</span>
+
+                    <strong>
+
+                      RD$
+
+                      {
+
+                        tratamientoSeleccionado
+                          .costo
+
+                      }
+
+                    </strong>
+
+                  </div>
+
+                  <div className="
+              flex
+              justify-between
+            ">
+
+                    <span>Pagado</span>
+
+                    <strong>
+
+                      RD$
+
+                      {
+
+                        tratamientoSeleccionado
+                          .pagado
+
+                      }
+
+                    </strong>
+
+                  </div>
+
+                  <div className="
+              flex
+              justify-between
+
+              text-indigo-600
+            ">
+
+                    <span>Balance</span>
+
+                    <strong>
+
+                      RD$
+
+                      {
+
+                        Number(
+                          tratamientoSeleccionado.costo || 0
+                        )
+
+                        -
+
+                        Number(
+                          tratamientoSeleccionado.pagado || 0
+                        )
+
+                      }
+
+                    </strong>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* NOTES */}
+
+              {
+
+                tratamientoSeleccionado.notas && (
+
+                  <div className="
+              rounded-[30px]
+
+              bg-white
+
+              border
+              border-slate-200
+
+              p-6
+            ">
+
+                    <h3 className="
+                text-lg
+
+                font-black
+
+                mb-4
+              ">
+
+                      Observaciones clínicas
+
+                    </h3>
+
+                    <p className="
+                text-slate-600
+
+                leading-relaxed
+              ">
+
+                      {
+
+                        tratamientoSeleccionado
+                          .notas
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                )
+
+              }
+
+            </div>
+
+          </BaseModal>
+
+        )
+
+
+
+      }
+      {/* TIMELINE */}
+
+      <div className="
+        relative
+        z-10
+
+        mt-8
+      ">
+
+        <div className="
+          flex
+          items-center
+          gap-2
+
+          mb-5
+
+          text-slate-500
+
+          text-xs
+          font-black
+
+          uppercase
+
+          tracking-[0.12em]
+        ">
+
+          <MoreVertical
+            size={14}
+          />
+
+          Timeline clínico
+
+        </div>
+
+        <TratamientoTimeline
+
+          events={
+            timelineEvents
+          }
+
+        />
+
+      </div>
     </div>
 
   );

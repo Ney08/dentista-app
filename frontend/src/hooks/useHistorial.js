@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_URL } from "../config";
 
@@ -25,8 +26,8 @@ export const useHistorial = (clienteId) => {
     }
   });
 
+  // ✅ CREAR
   const crearHistorial = useMutation({
-
     mutationFn: async (data) => {
       const res = await fetch(`${API_URL}/historiales/`, {
         method: "POST",
@@ -36,60 +37,77 @@ export const useHistorial = (clienteId) => {
         body: JSON.stringify(data)
       });
 
-      let result = {};
-      try {
-        result = await res.json();
-      } catch {}
+      if (!res.ok) throw new Error();
 
-      if (!res.ok) {
-        throw new Error(result?.detail || "Error al crear ❌");
-      }
-
-      return result;
+      return await res.json();
     },
 
-    onMutate: async (nuevaNota) => {
-
-      await queryClient.cancelQueries({
-        queryKey: ["historial", clienteId]
-      });
-
-      const prev = queryClient.getQueryData(["historial", clienteId]);
-
+    onSuccess: (data) => {
       queryClient.setQueryData(
         ["historial", clienteId],
-        (old = []) => [
-          ...old,
-          {
-            ...nuevaNota,
-            id: Date.now(),
-            fecha: new Date().toISOString()
-          }
-        ]
+        (old = []) => [...old, data]
+      );
+    }
+  });
+
+  // ✅ EDITAR
+  const actualizarHistorial = useMutation({
+    mutationFn: async ({ id, cliente_id, descripcion }) => {
+
+      const res = await fetch(`${API_URL}/historiales/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ cliente_id, descripcion })
+      });
+
+      if (!res.ok) throw new Error();
+
+      return { id, descripcion };
+    },
+
+    onSuccess: ({ id, descripcion }) => {
+      queryClient.setQueryData(
+        ["historial", clienteId],
+        (old = []) =>
+          old.map((h) =>
+            h.id === id
+              ? { ...h, descripcion }
+              : h
+          )
+      );
+    }
+  });
+
+  // ✅ ELIMINAR
+  const eliminarHistorial = useMutation({
+    mutationFn: async (id) => {
+
+      const res = await fetch(
+        `${API_URL}/historiales/${id}`,
+        { method: "DELETE" }
       );
 
-      return { prev };
+      if (!res.ok) throw new Error();
+
+      return id;
     },
 
-    onError: (_err, _data, context) => {
-      if (context?.prev) {
-        queryClient.setQueryData(
-          ["historial", clienteId],
-          context.prev
-        );
-      }
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["historial", clienteId]
-      });
+    onSuccess: (id) => {
+      queryClient.setQueryData(
+        ["historial", clienteId],
+        (old = []) =>
+          old.filter((h) => h.id !== id)
+      );
     }
   });
 
   return {
     historial,
     isLoading,
-    crearHistorial
+    crearHistorial,
+    actualizarHistorial,
+    eliminarHistorial 
   };
 };

@@ -120,51 +120,42 @@ export const useCitas = () => {
     }
   });
 
-  // ✅ CANCELAR CITA
   const cancelarCita = useMutation({
     mutationFn: async (id) => {
       const res = await fetch(`${API_URL}/citas/${id}/cancelar`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        }
+        method: "PUT"
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        console.error("ERROR BACKEND:", text);
-        throw new Error("Error al cancelar");
+        const error = await res.json().catch(() => null);
+
+        console.error("ERROR BACKEND CANCELAR:", error);
+
+        throw new Error(
+          error?.detail || "Error al cancelar cita"
+        );
       }
 
-      return await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      return data;
     },
 
-    // ✅ OPTIMISTIC
-    onMutate: async (id) => {
-
-      await queryClient.cancelQueries({ queryKey: ["citas"] });
-
-      const prev = queryClient.getQueryData(["citas"]);
-
+    onSuccess: (_data, id) => {
       queryClient.setQueryData(["citas"], (old = []) =>
-        old.map(c =>
+        old.map((c) =>
           c.id === id
-            ? { ...c, estado: "cancelada" }
+            ? {
+              ...c,
+              estado: "cancelada"
+            }
             : c
         )
       );
 
-      return { prev };
-    },
-
-    onError: (_err, _id, context) => {
-      if (context?.prev) {
-        queryClient.setQueryData(["citas"], context.prev);
-      }
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["citas"] });
+      queryClient.invalidateQueries({
+        queryKey: ["citas"]
+      });
     }
   });
 

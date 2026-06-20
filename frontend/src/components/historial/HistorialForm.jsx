@@ -1,7 +1,22 @@
 import { useState } from "react";
 
-import NotaClinicaTab
-    from "./tabs/NotaClinicaTab";
+
+import {
+    FileText,
+    Activity,
+    Tooth,
+    Gem,
+    BarChart3,
+    Plus,
+    ClipboardList,
+    Clock
+} from "lucide-react";
+
+
+import HistorialTab
+    from "./tabs/HistorialTab";
+
+
 
 import OdontogramaTab
     from "./tabs/OdontogramaTab";
@@ -16,18 +31,19 @@ function HistorialForm({
     clienteId,
     onAdd,
     historial,
-    cliente
+    cliente,
+    tratamiento
 }) {
 
     const [activeTab, setActiveTab] =
-        useState("nota");
+        useState("historial");
 
     const tabs = [
 
         {
-            id: "nota",
-            label: "Nota clínica",
-            icon: "📝"
+            id: "historial",
+            label: "historial clínica",
+            icon: <ClipboardList size={16} />
         },
 
         {
@@ -39,13 +55,13 @@ function HistorialForm({
         {
             id: "tratamientos",
             label: "Tratamientos",
-            icon: "💎"
+            icon: <Gem size={16} />
         },
 
         {
             id: "seguimiento",
             label: "Historial",
-            icon: "📈"
+            icon: <BarChart3 size={16} />
         }
 
     ];
@@ -126,51 +142,41 @@ function HistorialForm({
 
                         <button
                             key={tab.id}
-
-                            onClick={() =>
-                                setActiveTab(tab.id)
-                            }
-
+                            onClick={() => setActiveTab(tab.id)}
                             className={`
-                h-14
+    h-14
+    px-6
 
-                px-6
+    flex items-center gap-2   ✅ CLAVE
 
-                rounded-[22px]
+    rounded-[22px]
 
-                text-sm
-                font-black
+    text-sm font-black
 
-                transition-all
-                duration-300
+    transition-all duration-300
 
-                ${activeTab === tab.id
-
+    ${activeTab === tab.id
                                     ? `
-                    bg-gradient-to-r
-                    from-indigo-500
-                    to-violet-500
-
-                    text-white
-                  `
-
+        bg-gradient-to-r
+        from-indigo-500
+        to-violet-500
+        text-white
+      `
                                     : `
-                    bg-white
-
-                    border
-                    border-slate-200
-
-                    text-slate-600
-                  `
+        bg-white
+        border border-slate-200
+        text-slate-600
+      `
                                 }
-              `}
+  `}
                         >
+                            <span className="flex items-center justify-center w-5 h-5">
+                                {tab.icon}
+                            </span>
 
-                            {tab.icon}
-                            {" "}
-                            {tab.label}
-
+                            <span>{tab.label}</span>
                         </button>
+
 
                     ))
 
@@ -184,20 +190,25 @@ function HistorialForm({
         min-h-[650px]
       ">
 
+
                 {
+                    activeTab === "historial" && (
 
-                    activeTab === "nota"
+                        < HistorialTab
 
-                    &&
+                            cliente={cliente}
 
-                    (
-                        <NotaClinicaTab
+                            historial={historial}
+
                             clienteId={clienteId}
-                            onAdd={onAdd}
-                        />
-                    )
 
+                            onAdd={onAdd}
+
+                        />
+
+                    )
                 }
+
 
                 {
 
@@ -222,6 +233,7 @@ function HistorialForm({
                     (
                         <TratamientosTab
                             clienteId={clienteId}
+                            tratamiento={tratamiento}
                         />
                     )
 
