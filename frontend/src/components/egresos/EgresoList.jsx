@@ -49,10 +49,12 @@ function EgresoList({
 
             rounded-[34px]
 
-            bg-gradient-to-br
-            from-indigo-500
-            via-purple-500
-            to-violet-500
+            
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
             flex
             items-center
@@ -60,7 +62,7 @@ function EgresoList({
 
             text-white
 
-            shadow-[0_25px_60px_rgba(99,102,241,0.35)]
+            shadow-[0_25px_60px_rgba(7,89,133,0.35)]
           ">
 
             <div className="
@@ -139,9 +141,11 @@ function EgresoList({
 
             shadow-[0_10px_30px_rgba(0,0,0,0.05)]
 
-            hover:shadow-[0_20px_45px_rgba(99,102,241,0.08)]
+            
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.08)]
 
-            hover:border-indigo-200
+hover:border-sky-200
+
 
             hover:-translate-y-[2px]
 
@@ -225,10 +229,12 @@ function EgresoList({
 
                 rounded-[24px]
 
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+               
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 flex
                 items-center
@@ -236,7 +242,7 @@ function EgresoList({
 
                 text-white
 
-                shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+                shadow-[0_15px_35px_rgba(7,89,133,0.25)]
 
                 shrink-0
               ">
@@ -355,9 +361,11 @@ function EgresoList({
 
                         rounded-full
 
-                        bg-indigo-50
+                        
+bg-sky-50
 
-                        text-indigo-600
+text-sky-800
+
 
                         text-xs
                         font-semibold
@@ -579,10 +587,12 @@ function EgresoList({
                   {/* TOTAL */}
 
                   <div className="
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+                    
+bg-gradient-to-r
+from-rose-500
+via-pink-500
+to-rose-600
+
 
                     rounded-[28px]
 
@@ -591,7 +601,7 @@ function EgresoList({
 
                     text-white
 
-                    shadow-[0_15px_35px_rgba(99,102,241,0.18)]
+                    shadow-[0_15px_35px_rgba(244,63,94,0.18)]
                   ">
 
                     <p className="
@@ -747,19 +757,21 @@ function EgresoList({
 
                   rounded-2xl
 
-                  bg-gradient-to-r
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+                  
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                   text-white
 
                   text-sm
                   font-black
 
-                  shadow-[0_12px_30px_rgba(99,102,241,0.25)]
+                  shadow-[0_12px_30px_rgba(7,89,133,0.25)]
 
-                  hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+                  hover:shadow-[0_18px_40px_rgba(7,89,133,0.35)]
 
                   hover:scale-[1.02]
 

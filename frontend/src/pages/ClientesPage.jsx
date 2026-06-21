@@ -390,10 +390,12 @@ function ClientesPage() {
   py-2
   rounded-full
  
-bg-indigo-500/10
+
+bg-sky-500/10
 border
-border-indigo-100
-text-indigo-600
+border-sky-100
+text-sky-800
+
 
   text-sm
   font-semibold
@@ -479,8 +481,7 @@ text-indigo-600
                 text-3xl
 
                 font-black
-
-                text-indigo-600
+text-sky-800
               ">
                   {nuevosEsteMes}
                 </h3>
@@ -491,9 +492,11 @@ text-indigo-600
 
                 rounded-2xl
 
-                bg-gradient-to-br
-                from-indigo-500
-                to-purple-500
+                
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
 
                 text-white
 
@@ -811,7 +814,7 @@ to-emerald-500
 
               p-5
 
-              shadow-[0_20px_50px_rgba(99,102,241,0.25)]
+              shadow-[0_20px_50px_rgba(7,89,133,0.25)]
 
               text-white
 
@@ -854,7 +857,7 @@ to-emerald-500
                   <p className="
                   text-sm
 
-                  text-indigo-100
+                  text-cyan-50
                 ">
                     Nuevos pacientes
                   </p>
@@ -876,7 +879,7 @@ to-emerald-500
 
                   font-semibold
 
-                  text-indigo-100
+                  text-cyan-50
                 ">
                     Últimos 30 días
                   </p>
@@ -1054,18 +1057,22 @@ to-emerald-500
 
                 rounded-2xl
 
-                bg-gradient-to-r
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 text-white
 
                 font-black
 
-                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+                
+shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
-                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+
 
                 hover:-translate-y-[2px]
 
@@ -1157,9 +1164,11 @@ to-emerald-500
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  
+focus:ring-sky-500/10
 
-                  focus:border-indigo-300
+focus:border-sky-300
+
 
                   transition-all
                   duration-300
@@ -1197,7 +1206,7 @@ to-emerald-500
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  focus:ring-sky-500/10
                 "
                 >
 
@@ -1244,7 +1253,7 @@ to-emerald-500
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  focus:ring-sky-500/10
                 "
                 >
 
@@ -1285,7 +1294,7 @@ to-emerald-500
                 overflow-y-auto
 
                 scrollbar-thin
-                scrollbar-thumb-indigo-200
+                scrollbar-thumb-sky-200
                 scrollbar-track-transparent
               `
                 : "overflow-y-hidden"}
@@ -1311,9 +1320,11 @@ to-emerald-500
 
                   rounded-[30px]
 
-                  bg-gradient-to-br
-                  from-indigo-500
-                  to-purple-500
+                  
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
 
                   flex
                   items-center
@@ -1321,7 +1332,7 @@ to-emerald-500
 
                   text-white
 
-                  shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+                  shadow-[0_20px_50px_rgba(7,89,133,0.35)]
                 ">
 
                     <Users size={42} />
@@ -1365,15 +1376,17 @@ to-emerald-500
 
                     rounded-2xl
 
-                    bg-gradient-to-r
-                    from-indigo-500
-                    to-purple-500
+                    
+bg-gradient-to-r
+from-sky-700
+to-sky-900
+
 
                     text-white
 
                     font-bold
 
-                    shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+                    shadow-[0_15px_35px_rgba(7,89,133,0.25)]
                   "
                   >
                     Crear primer paciente
@@ -1485,9 +1498,11 @@ to-emerald-500
 
                     rounded-[24px]
 
-                    bg-gradient-to-br
-                    from-indigo-500
-                    to-purple-500
+                    
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
 
                     text-white
 
@@ -1500,8 +1515,7 @@ to-emerald-500
 
                     ring-4
                     ring-white
-
-                    shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+shadow-[0_15px_35px_rgba(7,89,133,0.25)]
                   ">
 
                       {clienteSeleccionado.nombre

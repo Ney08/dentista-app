@@ -67,10 +67,12 @@ function ServiciosTab({
 
             rounded-[24px]
 
-            bg-gradient-to-br
-            from-indigo-500
-            via-purple-500
-            to-violet-500
+            
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
             text-white
 
@@ -78,7 +80,7 @@ function ServiciosTab({
             items-center
             justify-center
 
-            shadow-[0_20px_45px_rgba(99,102,241,0.30)]
+            shadow-[0_20px_45px_rgba(7,89,133,0.30)]
           ">
 
             <FolderCog size={30} />
@@ -136,21 +138,23 @@ function ServiciosTab({
 
             rounded-[22px]
 
-            bg-gradient-to-r
-            from-indigo-500
-            via-purple-500
-            to-violet-500
+            
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
             text-white
 
             text-sm
             font-black
 
-            shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+            shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
             hover:scale-[1.02]
 
-            hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+            hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
 
             active:scale-[0.98]
 
@@ -207,10 +211,12 @@ function ServiciosTab({
 
                 rounded-[32px]
 
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 flex
                 items-center
@@ -218,7 +224,7 @@ function ServiciosTab({
 
                 text-white
 
-                shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+                shadow-[0_20px_50px_rgba(7,89,133,0.35)]
               ">
 
                 <PackageOpen size={52} />
@@ -299,10 +305,12 @@ function ServiciosTab({
                 w-full
                 h-1
 
-                bg-gradient-to-r
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
               " />
 
               {/* GLOW */}
@@ -317,7 +325,7 @@ function ServiciosTab({
 
                 rounded-full
 
-                bg-indigo-500/10
+                bg-sky-500/10
 
                 blur-3xl
 
@@ -365,9 +373,11 @@ function ServiciosTab({
 
                     rounded-[24px]
 
-                    bg-gradient-to-br
-                    from-indigo-500
-                    to-violet-500
+                    
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
 
                     flex
                     items-center
@@ -375,7 +385,7 @@ function ServiciosTab({
 
                     text-white
 
-                    shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+                    shadow-[0_15px_35px_rgba(7,89,133,0.25)]
 
                     shrink-0
                   ">
@@ -425,12 +435,14 @@ function ServiciosTab({
 
                         rounded-full
 
-                        bg-indigo-50
+                       
+bg-sky-50
 
-                        border
-                        border-indigo-100
+border
+border-sky-100
 
-                        text-indigo-500
+text-sky-700
+
 
                         text-[11px]
                         font-black
@@ -645,9 +657,11 @@ function ServiciosTab({
                       {/* GANANCIA */}
 
                       <div className="
-                        bg-gradient-to-r
-                        from-indigo-500
-                        to-violet-500
+                        
+bg-gradient-to-r
+from-sky-700
+to-sky-900
+
 
                         rounded-[24px]
 
@@ -656,7 +670,9 @@ function ServiciosTab({
 
                         text-white
 
-                        shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+                        
+shadow-[0_15px_35px_rgba(7,89,133,0.25)]
+
                       ">
 
                         <div className="

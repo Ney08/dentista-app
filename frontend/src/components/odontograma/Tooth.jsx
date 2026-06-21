@@ -68,7 +68,7 @@ function Tooth({
 
           rounded-[32px]
 
-          bg-indigo-500/10
+          bg-sky-500/10
 
           blur-xl
 
@@ -101,12 +101,12 @@ function Tooth({
 
             ? `
               bg-gradient-to-br
-              from-indigo-50
-              to-violet-50
+              from-sky-50
+              to-cyan-50
 
-              border-indigo-200
+              border-sky-200
 
-              shadow-[0_18px_40px_rgba(99,102,241,0.15)]
+              shadow-[0_18px_40px_rgba(7,89,133,0.15)]
             `
 
             : `
@@ -120,9 +120,9 @@ function Tooth({
 
         hover:-translate-y-1
 
-        hover:border-indigo-300
+        hover:border-sky-300
 
-        hover:shadow-[0_20px_45px_rgba(99,102,241,0.18)]
+        hover:shadow-[0_20px_45px_rgba(7,89,133,0.18)]
       `}>
 
         {/* SHINE */}
@@ -271,9 +271,9 @@ function Tooth({
 
             rounded-full
 
-            bg-indigo-500
+            bg-sky-700
 
-            shadow-[0_0_14px_rgba(99,102,241,0.8)]
+            shadow-[0_0_14px_rgba(7,89,133,0.8)]
           " />
 
         )}
@@ -301,7 +301,7 @@ function Tooth({
           ${
             hasTreatment
 
-              ? "text-indigo-600"
+              ? "text-sky-800"
 
               : "text-slate-500"
           }
@@ -319,7 +319,7 @@ function Tooth({
 
             rounded-full
 
-            bg-indigo-500
+            bg-sky-800
           " />
 
         )}

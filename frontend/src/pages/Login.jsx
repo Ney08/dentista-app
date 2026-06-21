@@ -2,12 +2,23 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 
 import { useAuth } from "../hooks/useAuth";
+
 import {
   showSuccess,
   showError,
-  showWarning,
   showInfo
 } from "../components/ui/ToastStyles";
+
+import {
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  ShieldCheck,
+  User2
+} from "lucide-react";
+
+import logoIcon from "../assets/dentalapp_icon_sky_128x128.png";
+
 function Login() {
 
   const {
@@ -32,8 +43,7 @@ function Login() {
   const [password, setPassword] =
     useState("");
 
-  const [mostrarPassword,
-    setMostrarPassword] =
+  const [mostrarPassword, setMostrarPassword] =
     useState(false);
 
   const [recordar, setRecordar] =
@@ -48,20 +58,16 @@ function Login() {
   ==========================================
   */
 
-  const [mostrarRecovery,
-    setMostrarRecovery] =
+  const [mostrarRecovery, setMostrarRecovery] =
     useState(false);
 
-  const [claveSeguridad,
-    setClaveSeguridad] =
+  const [claveSeguridad, setClaveSeguridad] =
     useState("");
 
-  const [nuevaPassword,
-    setNuevaPassword] =
+  const [nuevaPassword, setNuevaPassword] =
     useState("");
 
-  const [claveValida,
-    setClaveValida] =
+  const [claveValida, setClaveValida] =
     useState(false);
 
   const CLAVE_SEGURIDAD =
@@ -193,7 +199,7 @@ function Login() {
 
       }, 500);
 
-     showError(
+      showError(
         error.message
       );
 
@@ -305,7 +311,7 @@ function Login() {
 
     <>
 
-      {/* ✅ LOGIN */}
+      {/* LOGIN */}
 
       <div className={`
         min-h-screen
@@ -320,48 +326,66 @@ function Login() {
         px-4
 
         bg-gradient-to-br
-        from-indigo-100
-        via-slate-100
-        to-violet-200
+        from-sky-50
+        via-slate-50
+        to-cyan-100
 
         ${errorShake
           ? "shake"
           : ""}
       `}>
 
-        {/* ✅ BG GLOW */}
+        {/* BACKGROUND GLOWS */}
 
         <div className="
           absolute
-          top-[-120px]
+          top-[-140px]
           left-[-120px]
 
-          w-[350px]
-          h-[350px]
+          w-[420px]
+          h-[420px]
 
           rounded-full
 
-          bg-indigo-500/20
+          bg-sky-500/20
 
           blur-3xl
         " />
 
         <div className="
           absolute
-          bottom-[-120px]
+          bottom-[-140px]
           right-[-120px]
 
-          w-[350px]
-          h-[350px]
+          w-[420px]
+          h-[420px]
 
           rounded-full
 
-          bg-violet-500/20
+          bg-cyan-500/20
 
           blur-3xl
         " />
 
-        {/* ✅ CARD */}
+        <div className="
+          absolute
+          top-1/2
+          left-1/2
+
+          w-[520px]
+          h-[520px]
+
+          -translate-x-1/2
+          -translate-y-1/2
+
+          rounded-full
+
+          bg-white/60
+
+          blur-3xl
+        " />
+
+        {/* CARD */}
 
         <form
           onSubmit={login}
@@ -369,27 +393,31 @@ function Login() {
             relative
             overflow-hidden
 
-            w-full
-            max-w-md
+            
+w-full
+max-w-[520px]
+
 
             bg-white/90
             backdrop-blur-2xl
 
             border
-            border-white/40
+            border-white/60
 
             rounded-[36px]
 
-            shadow-[0_25px_80px_rgba(0,0,0,0.12)]
+            shadow-[0_30px_90px_rgba(15,23,42,0.14)]
 
-            p-7
-            sm:p-8
+           
+p-8
+sm:p-10
+
 
             space-y-6
           "
         >
 
-          {/* ✅ GLOW */}
+          {/* CARD GLOW */}
 
           <div className="
             absolute
@@ -401,95 +429,133 @@ function Login() {
 
             rounded-full
 
-            bg-indigo-500/10
+            bg-sky-500/10
 
             blur-3xl
           " />
 
-          {/* ✅ HEADER */}
+          {/* HEADER */}
+<div className="
+  relative
+  z-10
 
-          <div className="
-            relative
-            z-10
+  text-center
 
-            text-center
+  space-y-5
+">
 
-            space-y-4
-          ">
+  {/* LOGO */}
 
-            {/* ICON */}
+  <div className="
+    mx-auto
 
-            <div className="
-              w-24
-              h-24
+    inline-flex
+    items-center
+    justify-center
 
-              mx-auto
+    gap-4
 
-              rounded-[30px]
+    mb-1
+  ">
 
-              bg-gradient-to-br
-              from-indigo-500
-              via-purple-500
-              to-violet-500
+    
+<img
+  src={logoIcon}
+  alt="DentalApp"
+  className="
+    w-24
+    h-24
 
-              flex
-              items-center
-              justify-center
+    rounded-[26px]
 
-              text-6xl
+    shadow-[0_18px_45px_rgba(7,89,133,0.25)]
+  "
+/>
 
-              text-white
 
-              shadow-[0_20px_50px_rgba(99,102,241,0.35)]
-            ">
-              🔐
-            </div>
+    <div className="
+      text-left
+    ">
 
-            {/* TITLE */}
+      <h2 className="
+        
+text-3xl
+  sm:text-4xl
 
-            <div className="
-              space-y-3
-            ">
 
-              <h1 className="
-                text-4xl
+        font-black
 
-                font-black
+        leading-none
 
-                tracking-tight
+        text-slate-800
+      ">
+        DentalApp
+      </h2>
 
-                text-slate-800
-              ">
-                Login
-              </h1>
+      <p className="
+        mt-1
 
-              <div className="
-                w-20
-                h-1
+        text-xs
+        sm:text-sm
 
-                mx-auto
+        font-semibold
 
-                rounded-full
+        text-slate-500
+      ">
+        Gestión clínica inteligente
+      </p>
 
-                bg-gradient-to-r
-                from-indigo-500
-                to-violet-500
-              " />
+    </div>
 
-              <p className="
-                text-sm
-                sm:text-base
+  </div>
 
-                text-gray-500
-              ">
-                Accede a tu sistema
-              </p>
+  <div className="
+    
+space-y-4
+  mt-2
 
-            </div>
+  ">
 
-          </div>
+    <h1 className="
+      text-3xl
+      sm:text-4xl
 
-          {/* ✅ FORM */}
+      font-black
+
+      tracking-tight
+
+      text-slate-800
+    ">
+      Acceso seguro
+    </h1>
+
+    <div className="
+      w-20
+      h-1
+
+      mx-auto
+
+      rounded-full
+
+      bg-gradient-to-r
+      from-cyan-500
+      to-sky-800
+    " />
+
+    <p className="
+      text-sm
+      sm:text-base
+
+      text-slate-500
+    ">
+      Ingresa a tu sistema clínico
+    </p>
+
+  </div>
+
+</div>
+
+          {/* FORM */}
 
           <div className="
             relative
@@ -511,55 +577,75 @@ function Login() {
 
                 tracking-[0.12em]
 
-                text-gray-400
+                text-slate-400
 
                 font-black
               ">
                 Usuario
               </p>
 
-              <input
-                placeholder="Usuario"
+              <div className="
+                relative
+              ">
 
-                value={username}
+                <User2
+                  size={17}
+                  className="
+                    absolute
+                    left-4
+                    top-1/2
 
-                onChange={(e) =>
-                  setUsername(
-                    e.target.value
-                  )
-                }
+                    -translate-y-1/2
 
-                className="
-                  w-full
+                    text-slate-400
+                  "
+                />
 
-                  h-14
+                <input
+                  placeholder="Usuario"
 
-                  px-5
+                  value={username}
 
-                  rounded-[22px]
+                  onChange={(e) =>
+                    setUsername(
+                      e.target.value
+                    )
+                  }
 
-                  bg-white
+                  className="
+                    w-full
 
-                  border
-                  border-slate-200
+                    h-14
 
-                  hover:border-indigo-300
+                    pl-12
+                    pr-5
 
-                  text-slate-700
+                    rounded-[22px]
 
-                  shadow-sm
+                    bg-white
 
-                  focus:outline-none
+                    border
+                    border-slate-200
 
-                  focus:ring-4
-                  focus:ring-indigo-500/10
+                    hover:border-sky-300
 
-                  focus:border-indigo-300
+                    text-slate-700
 
-                  transition-all
-                  duration-300
-                "
-              />
+                    shadow-sm
+
+                    focus:outline-none
+
+                    focus:ring-4
+                    focus:ring-sky-500/10
+
+                    focus:border-sky-300
+
+                    transition-all
+                    duration-300
+                  "
+                />
+
+              </div>
 
             </div>
 
@@ -576,7 +662,7 @@ function Login() {
 
                 tracking-[0.12em]
 
-                text-gray-400
+                text-slate-400
 
                 font-black
               ">
@@ -586,6 +672,19 @@ function Login() {
               <div className="
                 relative
               ">
+
+                <LockKeyhole
+                  size={17}
+                  className="
+                    absolute
+                    left-4
+                    top-1/2
+
+                    -translate-y-1/2
+
+                    text-slate-400
+                  "
+                />
 
                 <input
                   type={
@@ -609,7 +708,7 @@ function Login() {
 
                     h-14
 
-                    px-5
+                    pl-12
                     pr-14
 
                     rounded-[22px]
@@ -619,7 +718,7 @@ function Login() {
                     border
                     border-slate-200
 
-                    hover:border-indigo-300
+                    hover:border-sky-300
 
                     text-slate-700
 
@@ -628,9 +727,9 @@ function Login() {
                     focus:outline-none
 
                     focus:ring-4
-                    focus:ring-indigo-500/10
+                    focus:ring-sky-500/10
 
-                    focus:border-indigo-300
+                    focus:border-sky-300
 
                     transition-all
                     duration-300
@@ -655,19 +754,17 @@ function Login() {
 
                     -translate-y-1/2
 
-                    text-lg
-
                     text-slate-400
 
-                    hover:text-indigo-500
+                    hover:text-sky-700
 
                     transition-all
                     duration-300
                   "
                 >
                   {mostrarPassword
-                    ? "🙈"
-                    : "👁️"}
+                    ? <EyeOff size={18} />
+                    : <Eye size={18} />}
                 </button>
 
               </div>
@@ -714,7 +811,7 @@ function Login() {
                     w-4
                     h-4
 
-                    accent-indigo-500
+                    accent-sky-700
                   "
                 />
 
@@ -738,9 +835,9 @@ function Login() {
                 }}
 
                 className="
-                  text-indigo-500
+                  text-sky-700
 
-                  hover:text-indigo-600
+                  hover:text-sky-900
 
                   font-semibold
 
@@ -778,19 +875,24 @@ function Login() {
 
                 active:scale-[0.98]
 
+                flex
+                items-center
+                justify-center
+                gap-2
+
                 ${loading
-                  ? "bg-gray-400"
+                  ? "bg-gray-400 cursor-not-allowed"
                   : `
                     bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+                    from-sky-700
+                    via-sky-800
+                    to-sky-900
 
-                    shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+                    shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
                     hover:scale-[1.01]
 
-                    hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+                    hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
                   `
                 }
               `}
@@ -808,37 +910,37 @@ function Login() {
 
       </div>
 
-      {/* ✅ RECOVERY MODAL */}
+      {/* RECOVERY MODAL */}
 
       <div
         onClick={cerrarModal}
         className={`
-    fixed
-    inset-0
-    z-50
+          fixed
+          inset-0
+          z-50
 
-    flex
-    items-end
-    md:items-center
+          flex
+          items-end
+          md:items-center
 
-    justify-center
+          justify-center
 
-    bg-black/40
-    backdrop-blur-sm
+          bg-slate-950/50
+          backdrop-blur-sm
 
-    transition-all
-    duration-300
+          transition-all
+          duration-300
 
-    px-4
+          px-4
 
-    ${mostrarRecovery
+          ${mostrarRecovery
             ? "opacity-100 visible"
             : "opacity-0 invisible"
           }
-  `}
+        `}
       >
 
-        {/* ✅ MODAL */}
+        {/* MODAL */}
 
         <div
           onClick={(e) =>
@@ -846,136 +948,135 @@ function Login() {
           }
 
           className={`
-    w-full
+            w-full
 
-    md:max-w-2xl
+            md:max-w-2xl
 
-    p-0
-    md:p-4
+            p-0
+            md:p-4
 
-    transform
-    transition-all
-    duration-300
+            transform
+            transition-all
+            duration-300
 
-    ${mostrarRecovery
+            ${mostrarRecovery
               ? "translate-y-0 md:scale-100 opacity-100"
               : "translate-y-full md:scale-95 opacity-0"
             }
-  `}
+          `}
         >
 
-
           <div className="
-              relative
-              overflow-hidden
+            relative
+            overflow-hidden
 
-              bg-white/95
-              backdrop-blur-2xl
+            bg-white/95
+            backdrop-blur-2xl
 
-              rounded-t-[36px]
-              md:rounded-[36px]
+            rounded-t-[36px]
+            md:rounded-[36px]
 
-              border-0
-              md:border
+            border-0
+            md:border
 
-              border-white/40
+            border-white/40
 
-              shadow-[0_25px_80px_rgba(0,0,0,0.15)]
+            shadow-[0_25px_80px_rgba(0,0,0,0.15)]
 
-              p-7 sm:p-8
+            p-7
+            sm:p-8
 
-              space-y-6
-            ">
+            space-y-6
+          ">
 
             {/* GLOW */}
 
             <div className="
-                absolute
-                -top-20
-                -right-20
+              absolute
+              -top-20
+              -right-20
 
-                w-72
-                h-72
+              w-72
+              h-72
 
-                rounded-full
+              rounded-full
 
-                bg-indigo-500/10
+              bg-sky-500/10
 
-                blur-3xl
-              " />
+              blur-3xl
+            " />
 
             {/* HEADER */}
 
             <div className="
-                relative
-                z-10
+              relative
+              z-10
 
-                text-center
+              text-center
 
-                space-y-3
-              ">
+              space-y-4
+            ">
 
               <div className="
-                  w-24
-                  h-24
+                mx-auto
 
-                  mx-auto
+                w-20
+                h-20
 
-                  rounded-[30px]
+                rounded-[28px]
 
-                  bg-gradient-to-br
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+                bg-gradient-to-br
+                from-sky-700
+                via-sky-800
+                to-sky-900
 
-                  flex
-                  items-center
-                  justify-center
+                flex
+                items-center
+                justify-center
 
-                  text-5xl
+                text-white
 
-                  text-white
-
-                  shadow-[0_20px_50px_rgba(99,102,241,0.35)]
-                ">
-                🔐
+                shadow-[0_20px_50px_rgba(7,89,133,0.35)]
+              ">
+                <ShieldCheck size={34} />
               </div>
 
               <h2 className="
-                  text-4xl
+                text-3xl
+                sm:text-4xl
 
-                  font-black
+                font-black
 
-                  tracking-tight
+                tracking-tight
 
-                  text-slate-800
-                ">
+                text-slate-800
+              ">
                 Recuperar contraseña
               </h2>
 
               <div className="
-                  w-20
-                  h-1
+                w-20
+                h-1
 
-                  mx-auto
+                mx-auto
 
-                  rounded-full
+                rounded-full
 
-                  bg-gradient-to-r
-                  from-indigo-500
-                  to-violet-500
-                " />
+                bg-gradient-to-r
+                from-cyan-500
+                to-sky-800
+              " />
 
               <p className="
-                  text-sm
-                  text-gray-500
-                ">
+                text-sm
+                text-slate-500
+              ">
                 Usuario:
                 {" "}
                 <span className="
-                    font-bold
-                    text-slate-700
-                  ">
+                  font-bold
+                  text-slate-700
+                ">
                   {username ||
                     "No definido"}
                 </span>
@@ -986,11 +1087,11 @@ function Login() {
             {/* FORM */}
 
             <div className="
-                relative
-                z-10
+              relative
+              z-10
 
-                space-y-5
-              ">
+              space-y-5
+            ">
 
               {/* CLAVE */}
 
@@ -1006,47 +1107,47 @@ function Login() {
                 }
 
                 className={`
-                    w-full
+                  w-full
 
-                    h-14
+                  h-14
 
-                    px-5
+                  px-5
 
-                    rounded-[22px]
+                  rounded-[22px]
 
-                    bg-white
+                  bg-white
 
-                    border
+                  border
 
-                    text-slate-700
+                  text-slate-700
 
-                    shadow-sm
+                  shadow-sm
 
-                    focus:outline-none
+                  focus:outline-none
 
-                    transition-all
-                    duration-300
+                  transition-all
+                  duration-300
 
-                    ${claveSeguridad &&
+                  ${claveSeguridad &&
                     !claveValida
                     ? `
-                          border-red-400
+                      border-red-400
 
-                          focus:ring-4
-                          focus:ring-red-500/10
-                        `
+                      focus:ring-4
+                      focus:ring-red-500/10
+                    `
                     : `
-                          border-slate-200
+                      border-slate-200
 
-                          hover:border-indigo-300
+                      hover:border-sky-300
 
-                          focus:ring-4
-                          focus:ring-indigo-500/10
+                      focus:ring-4
+                      focus:ring-sky-500/10
 
-                          focus:border-indigo-300
-                        `
+                      focus:border-sky-300
+                    `
                   }
-                  `}
+                `}
               />
 
               {/* ERROR */}
@@ -1082,76 +1183,77 @@ function Login() {
                 }
 
                 className="
-                    w-full
+                  w-full
 
-                    h-14
+                  h-14
 
-                    px-5
+                  px-5
 
-                    rounded-[22px]
+                  rounded-[22px]
 
-                    bg-white
+                  bg-white
 
-                    border
-                    border-slate-200
+                  border
+                  border-slate-200
 
-                    hover:border-indigo-300
+                  hover:border-sky-300
 
-                    text-slate-700
+                  text-slate-700
 
-                    shadow-sm
+                  shadow-sm
 
-                    focus:outline-none
+                  focus:outline-none
 
-                    focus:ring-4
-                    focus:ring-indigo-500/10
+                  focus:ring-4
+                  focus:ring-sky-500/10
 
-                    focus:border-indigo-300
+                  focus:border-sky-300
 
-                    transition-all
-                    duration-300
-                  "
+                  transition-all
+                  duration-300
+                "
               />
 
               {/* BUTTONS */}
 
               <div className="
-                  flex
-                  flex-col
-                  sm:flex-row
+                flex
+                flex-col
+                sm:flex-row
 
-                  gap-3
-                ">
-                  {/* CANCEL */}
+                gap-3
+              ">
+
+                {/* CANCEL */}
 
                 <button
                   onClick={cerrarModal}
 
                   className="
-                      flex-1
+                    flex-1
 
-                      h-14
+                    h-14
 
-                      rounded-[24px]
+                    rounded-[24px]
 
-                      bg-slate-100/80
-                      backdrop-blur-xl
+                    bg-slate-100/80
+                    backdrop-blur-xl
 
-                      hover:bg-slate-200
+                    hover:bg-slate-200
 
-                      text-slate-700
+                    text-slate-700
 
-                      font-semibold
+                    font-semibold
 
-                      transition-all
-                      duration-300
+                    transition-all
+                    duration-300
 
-                      active:scale-[0.98]
-                    "
+                    active:scale-[0.98]
+                  "
                 >
                   Cancelar
                 </button>
-                
+
                 {/* SAVE */}
 
                 <button
@@ -1166,39 +1268,43 @@ function Login() {
                   }
 
                   className={`
-                      flex-1
+                    flex-1
 
-                      h-14
+                    h-14
 
-                      rounded-[24px]
+                    rounded-[24px]
 
-                      text-white
+                    text-white
 
-                      font-black
+                    font-black
 
-                      transition-all
-                      duration-300
+                    transition-all
+                    duration-300
 
-                      active:scale-[0.98]
+                    active:scale-[0.98]
 
-                      ${claveValida &&
-                      nuevaPassword.length >= 4
+                    ${claveValida &&
+                      nuevaPassword.length >= 4 &&
+                      !loading
                       ? `
-                            bg-gradient-to-r
-                            from-emerald-500
-                            to-green-500
+                        bg-gradient-to-r
+                        from-emerald-500
+                        via-green-500
+                        to-emerald-600
 
-                            shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+                        shadow-[0_15px_35px_rgba(16,185,129,0.28)]
 
-                            hover:scale-[1.01]
-                          `
+                        hover:scale-[1.01]
+
+                        hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+                      `
                       : `
-                            bg-gray-400
+                        bg-gray-400
 
-                            cursor-not-allowed
-                          `
+                        cursor-not-allowed
+                      `
                     }
-                    `}
+                  `}
                 >
 
                   {loading
@@ -1206,8 +1312,6 @@ function Login() {
                     : "Guardar"}
 
                 </button>
-
-                
 
               </div>
 
@@ -1218,7 +1322,6 @@ function Login() {
         </div>
 
       </div>
-
 
     </>
 

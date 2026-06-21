@@ -28,13 +28,15 @@ function ClienteList({
   const [seleccionadoId, setSeleccionadoId] =
     useState(null);
 
+
   const colores = [
-    "from-blue-500 to-cyan-500",
-    "from-green-500 to-emerald-500",
-    "from-purple-500 to-violet-500",
-    "from-pink-500 to-rose-500",
-    "from-indigo-500 to-blue-500"
+    "from-sky-700 to-sky-900",
+    "from-cyan-500 to-sky-700",
+    "from-teal-500 to-cyan-600",
+    "from-emerald-500 to-teal-600",
+    "from-blue-600 to-sky-800"
   ];
+
 
   const obtenerProximaCita = (clienteId) => {
 
@@ -184,12 +186,12 @@ function ClienteList({
 
               hover:-translate-y-[2px]
 
-              hover:border-indigo-200
+             hover:border-sky-200
 
-              hover:shadow-[0_20px_40px_rgba(99,102,241,0.08)]
+hover:shadow-[0_20px_40px_rgba(7,89,133,0.08)]
 
-              ${isSelected
-                ? "ring-2 ring-indigo-400 shadow-[0_25px_60px_rgba(99,102,241,0.14)]"
+${isSelected
+                ? "ring-2 ring-sky-500 shadow-[0_25px_60px_rgba(7,89,133,0.14)]"
                 : ""
               }
             `}
@@ -223,7 +225,7 @@ function ClienteList({
 
               rounded-full
 
-              bg-indigo-500/10
+              bg-sky-500/10
 
               blur-3xl
 
@@ -421,9 +423,11 @@ function ClienteList({
 
                           rounded-full
 
-                          bg-indigo-50
+                          
+bg-sky-50
 
-                          text-indigo-600
+text-sky-800
+
 
                           text-xs
                           font-semibold
@@ -472,12 +476,14 @@ function ClienteList({
 
   rounded-[24px]
 
-  bg-gradient-to-br
-  from-indigo-50
-  to-purple-50
 
-  border
-  border-indigo-100
+bg-gradient-to-br
+from-sky-50
+to-cyan-50
+
+border
+border-sky-100
+
 
   px-5
   py-4
@@ -490,7 +496,7 @@ function ClienteList({
     items-center
     gap-2
 
-    text-indigo-600
+    text-sky-800
 
     text-sm
     font-bold
@@ -536,9 +542,11 @@ function ClienteList({
 
           rounded-full
 
-          bg-indigo-100
+          
+bg-sky-100
 
-          text-indigo-700
+text-sky-800
+
 
           text-[11px]
           font-bold
@@ -823,19 +831,23 @@ function ClienteList({
 
                     rounded-2xl
 
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+                    
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                     text-white
 
                     text-sm
                     font-bold
 
-                    shadow-[0_12px_30px_rgba(99,102,241,0.25)]
+                    
+shadow-[0_12px_30px_rgba(7,89,133,0.25)]
 
-                    hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+hover:shadow-[0_18px_40px_rgba(7,89,133,0.35)]
+
 
                     hover:scale-[1.02]
 
@@ -892,9 +904,11 @@ function ClienteList({
                     text-sm
                     font-bold
 
-                    hover:border-indigo-200
+                    
+hover:border-sky-200
 
-                    hover:text-indigo-600
+hover:text-sky-800
+
 
                     hover:shadow-md
 
@@ -1024,9 +1038,9 @@ function ClienteList({
 
                   rounded-full
 
-                  bg-indigo-500
+                  text-sky-800
 
-                  shadow-[0_0_20px_rgba(99,102,241,0.9)]
+                  shadow-[0_0_20px_rgba(7,89,133,0.9)]
                 " />
 
               </div>
@@ -1072,7 +1086,7 @@ function ClienteList({
 
             rounded-full
 
-            bg-indigo-500/10
+            bg-sky-500/10
 
             blur-3xl
           " />
@@ -1088,10 +1102,12 @@ function ClienteList({
 
             rounded-[30px]
 
-            bg-gradient-to-br
-            from-indigo-500
-            via-purple-500
-            to-violet-500
+            
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
             flex
             items-center
@@ -1099,7 +1115,7 @@ function ClienteList({
 
             text-white
 
-            shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+            shadow-[0_20px_50px_rgba(7,89,133,0.35)]
           ">
 
             <UserCheck size={42} />

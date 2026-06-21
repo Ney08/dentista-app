@@ -442,12 +442,14 @@ function SettingsPage() {
 
               rounded-full
 
-              bg-indigo-500/10
+              
+bg-sky-500/10
 
-              border
-              border-indigo-100
+border
+border-sky-100
 
-              text-indigo-600
+text-sky-800
+
 
               text-sm
               font-semibold
@@ -568,9 +570,14 @@ function SettingsPage() {
 
                 rounded-[20px]
 
-                bg-gradient-to-br
-                from-emerald-500
-                to-green-500
+                
+bg-gradient-to-br
+from-emerald-500
+via-green-500
+to-emerald-600
+
+shadow-[0_15px_35px_rgba(16,185,129,0.25)]
+
 
                 text-white
 
@@ -629,7 +636,7 @@ function SettingsPage() {
 
               rounded-full
 
-              bg-indigo-500/10
+              bg-sky-500/10
 
               blur-3xl
             " />
@@ -668,7 +675,7 @@ function SettingsPage() {
 
                   font-black
 
-                  text-indigo-600
+                  text-sky-800
                 ">
 
                   {servicios.length}
@@ -683,9 +690,11 @@ function SettingsPage() {
 
                 rounded-2xl
 
-                bg-indigo-50
+                
+bg-sky-50
 
-                text-indigo-500
+text-sky-700
+
 
                 flex
                 items-center
@@ -806,10 +815,12 @@ function SettingsPage() {
             relative
             overflow-hidden
 
-            bg-gradient-to-br
-            from-indigo-500
-            via-purple-500
-            to-violet-500
+            
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
             rounded-[30px]
 
@@ -817,7 +828,7 @@ function SettingsPage() {
 
             text-white
 
-            shadow-[0_20px_50px_rgba(99,102,241,0.28)]
+            shadow-[0_20px_50px_rgba(7,89,133,0.28)]
           ">
 
             <div className="
@@ -946,16 +957,18 @@ function SettingsPage() {
 
                 ${tab === t
                   ? `
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+                    
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
 
-                    text-white
+text-white
 
-                    border-transparent
+border-transparent
 
-                    shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+
+                    shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
                     scale-[1.02]
                   `
@@ -966,6 +979,10 @@ function SettingsPage() {
                     border-white/40
 
                     text-slate-700
+                    
+hover:border-sky-200
+hover:text-sky-800
+hover:bg-sky-50/60
 
                     hover:bg-white
                   `
@@ -1042,10 +1059,11 @@ function SettingsPage() {
 
                   rounded-[22px]
 
-                  bg-gradient-to-br
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+                  
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-800
 
                   text-white
 
@@ -1116,9 +1134,10 @@ function SettingsPage() {
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  
+focus:ring-sky-500/10
 
-                  focus:border-indigo-300
+focus:border-sky-300
 
                   transition-all
                   duration-300
@@ -1150,10 +1169,16 @@ function SettingsPage() {
                   ${loading
                     ? "bg-gray-400"
                     : `
-                      bg-gradient-to-r
-                      from-indigo-500
-                      via-purple-500
-                      to-violet-500
+                      
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
+shadow-[0_15px_35px_rgba(7,89,133,0.28)]
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+hover:scale-[1.01]
+
                     `
                   }
                 `}
@@ -1349,13 +1374,20 @@ function SettingsPage() {
                   duration-300
 
                   ${loading
-                    ? "bg-gray-400"
-                    : `
-                      bg-gradient-to-r
-                      from-emerald-500
-                      to-green-500
-                    `
-                  }
+  ? "bg-gray-400 cursor-not-allowed"
+  : `
+    bg-gradient-to-r
+    from-emerald-500
+    via-green-500
+    to-emerald-600
+
+    shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+
+    hover:scale-[1.01]
+
+    hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+  `
+}
                 `}
               >
 

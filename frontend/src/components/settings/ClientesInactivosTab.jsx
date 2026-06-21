@@ -574,20 +574,25 @@ function ClientesInactivosTab({
 
                       rounded-[20px]
 
-                      bg-gradient-to-r
-                      from-emerald-500
-                      to-green-500
+                      
+bg-gradient-to-r
+from-emerald-500
+via-green-500
+to-emerald-600
+
 
                       text-white
 
                       text-sm
                       font-black
 
-                      shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+                      
+shadow-[0_15px_35px_rgba(16,185,129,0.28)]
 
-                      hover:scale-[1.04]
+hover:scale-[1.04]
 
-                      hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+
 
                       active:scale-95
 

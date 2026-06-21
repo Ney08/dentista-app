@@ -671,12 +671,14 @@ function ReportesPage() {
 
             rounded-full
 
-            bg-indigo-500/10
+           
+bg-sky-500/10
 
-            border
-            border-indigo-100
+border
+border-sky-100
 
-            text-indigo-600
+text-sky-800
+
 
             text-sm
             font-semibold
@@ -773,7 +775,7 @@ function ReportesPage() {
 
                 font-black
 
-                text-indigo-600
+                text-sky-800
               ">
 
                     RD$
@@ -806,10 +808,12 @@ function ReportesPage() {
 
               rounded-[20px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              via-purple-500
-              to-violet-500
+              
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
               text-white
 
@@ -874,10 +878,12 @@ function ReportesPage() {
 
               rounded-2xl
 
-              bg-indigo-50
+              
+bg-indigo-50
 
-              border
-              border-indigo-100
+border
+border-indigo-100
+
 
               flex
               items-center
@@ -886,7 +892,7 @@ function ReportesPage() {
               text-sm
               font-semibold
 
-              text-indigo-600
+             text-sky-800
             ">
 
                   <Activity size={14} />
@@ -1076,9 +1082,11 @@ function ReportesPage() {
 
                     ${tipo === t
                           ? `
-                        bg-gradient-to-r
-                        from-indigo-500
-                        to-purple-500
+                        
+bg-gradient-to-r
+from-sky-700
+to-sky-900
+
 
                         text-white
 
@@ -1146,7 +1154,10 @@ function ReportesPage() {
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+                
+focus:ring-sky-500/10
+focus:border-sky-300
+
               "
                 />
 
@@ -1177,7 +1188,10 @@ function ReportesPage() {
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+                
+focus:ring-sky-500/10
+focus:border-sky-300
+
               "
                 />
 
@@ -1339,7 +1353,7 @@ function ReportesPage() {
 
             rounded-full
 
-            bg-indigo-500/10
+            bg-sky-500/10
 
             blur-3xl
           " />
@@ -1374,7 +1388,7 @@ function ReportesPage() {
 
                 font-black
 
-                text-indigo-600
+                text-sky-800
               ">
 
                     RD$
@@ -1391,9 +1405,11 @@ function ReportesPage() {
 
               rounded-2xl
 
-              bg-indigo-50
+             
+bg-sky-50
 
-              text-indigo-500
+text-sky-700
+
 
               flex
               items-center
@@ -1591,7 +1607,7 @@ function ReportesPage() {
 
                 font-black
 
-                text-indigo-600
+                text-sky-800
               ">
 
                     {pacientesUnicos}
@@ -1606,9 +1622,11 @@ function ReportesPage() {
 
               rounded-2xl
 
-              bg-indigo-50
+              
+bg-sky-50
 
-              text-indigo-500
+text-sky-700
+
 
               flex
               items-center
@@ -1629,10 +1647,12 @@ function ReportesPage() {
           relative
           overflow-hidden
 
-          bg-gradient-to-br
-          from-indigo-500
-          via-purple-500
-          to-violet-500
+          
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
           rounded-[30px]
 
@@ -1640,7 +1660,7 @@ function ReportesPage() {
 
           text-white
 
-          shadow-[0_20px_50px_rgba(99,102,241,0.28)]
+          shadow-[0_20px_50px_rgba(7,89,133,0.28)]
         ">
 
               <div className="
@@ -1737,10 +1757,12 @@ function ReportesPage() {
 
         rounded-[18px]
 
-        bg-gradient-to-br
-        from-indigo-500
-        via-purple-500
-        to-violet-500
+        
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
         text-white
 
@@ -2133,7 +2155,7 @@ function ReportesPage() {
 
             font-black
 
-            text-indigo-600
+            text-sky-800
           ">
 
                       RD$
@@ -2279,10 +2301,11 @@ function ReportesPage() {
 
                 rounded-2xl
 
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
 
                 text-white
 
@@ -2373,9 +2396,11 @@ function ReportesPage() {
 
           rounded-[18px]
 
-          bg-indigo-50
+          
+bg-sky-50
 
-          text-indigo-500
+text-sky-700
+
 
           flex
           items-center
@@ -2467,7 +2492,7 @@ function ReportesPage() {
                       <p className="
               font-black
 
-              text-indigo-600
+              text-sky-800
             ">
 
                         RD$
@@ -2697,7 +2722,7 @@ function ReportesPage() {
               border-b
               border-slate-100
 
-              hover:bg-indigo-50/40
+              hover:bg-sky-50/40
 
               transition-all
               duration-200
@@ -2811,7 +2836,7 @@ function ReportesPage() {
 
               text-right
 
-              text-indigo-600
+              text-sky-800
 
               font-bold
             ">

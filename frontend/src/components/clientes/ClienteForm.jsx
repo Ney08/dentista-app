@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 import { useClientes } from "../../hooks/useClientes";
 
@@ -372,7 +372,7 @@ function ClienteForm({
 
         rounded-full
 
-        bg-purple-500/10
+        bg-sky-500/10
 
         blur-3xl
       " />
@@ -399,9 +399,9 @@ function ClienteForm({
     rounded-[28px]
 
     bg-gradient-to-br
-    from-indigo-500
-    via-purple-500
-    to-violet-500
+from-sky-700
+via-sky-800
+to-sky-900
 
     text-white
 
@@ -409,7 +409,7 @@ function ClienteForm({
     items-center
     justify-center
 
-    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+    shadow-[0_20px_50px_rgba(7,89,133,0.35)]
   ">
 
           <User2 size={34} />
@@ -441,9 +441,11 @@ function ClienteForm({
 
     rounded-full
 
-    bg-gradient-to-r
-    from-indigo-500
-    to-purple-500
+    
+bg-gradient-to-r
+from-cyan-500
+to-sky-800
+
   " />
 
         <p className="
@@ -504,10 +506,12 @@ function ClienteForm({
 
       rounded-[18px]
 
-      bg-gradient-to-br
-      from-indigo-500
-      via-purple-500
-      to-violet-500
+      
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
       text-white
 
@@ -605,9 +609,11 @@ function ClienteForm({
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                 
+focus:ring-sky-500/10
 
-                  focus:border-indigo-300
+focus:border-sky-300
+
 
                   transition-all
                   duration-300
@@ -665,9 +671,11 @@ function ClienteForm({
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  
+focus:ring-sky-500/10
 
-                  focus:border-indigo-300
+focus:border-sky-300
+
 
                   transition-all
                   duration-300
@@ -1215,9 +1223,9 @@ function ClienteForm({
 
         </div>
 
-       {/* ACTIONS */}
+        {/* ACTIONS */}
 
-<div className="
+        <div className="
   sticky
   bottom-0
 
@@ -1235,12 +1243,12 @@ function ClienteForm({
   shrink-0
 ">
 
-  {/* CANCEL */}
+          {/* CANCEL */}
 
-  <button
-    type="button"
-    onClick={onClose}
-    className="
+          <button
+            type="button"
+            onClick={onClose}
+            className="
       flex-1
 
       h-14
@@ -1265,23 +1273,23 @@ function ClienteForm({
       justify-center
       gap-2
     "
-  >
+          >
 
-    <X size={18} />
+            <X size={18} />
 
-    Cancelar
+            Cancelar
 
-  </button>
+          </button>
 
-  {/* SUBMIT */}
+          {/* SUBMIT */}
 
-  <button
-    type="submit"
-    disabled={
-      loading ||
-      cedulaError
-    }
-    className={`
+          <button
+            type="submit"
+            disabled={
+              loading ||
+              cedulaError
+            }
+            className={`
       flex-1
 
       h-14
@@ -1306,34 +1314,35 @@ function ClienteForm({
       gap-2
 
       ${loading || cedulaError
-        ? "bg-gray-400 cursor-not-allowed"
-        : `
-          bg-gradient-to-r
-          from-indigo-500
-          via-purple-500
-          to-violet-500
+                ? "bg-gray-400 cursor-not-allowed"
+                : `
+          
 
-          shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
 
-          hover:scale-[1.01]
+shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
-          hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+
         `
-      }
+              }
     `}
-  >
+          >
 
-    <Save size={18} />
+            <Save size={18} />
 
-    {loading
-      ? "Guardando..."
-      : isEdit
-        ? "Actualizar cliente"
-        : "Crear cliente"}
+            {loading
+              ? "Guardando..."
+              : isEdit
+                ? "Actualizar cliente"
+                : "Crear cliente"}
 
-  </button>
+          </button>
 
-</div>
+        </div>
 
       </form>
 

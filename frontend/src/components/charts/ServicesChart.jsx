@@ -5,13 +5,15 @@ import {
   Cell,
   Tooltip
 } from "recharts";
-import {
-  TrendingUp,
 
+import {
+  TrendingUp
 } from "lucide-react";
+
 const COLORS = [
-  "#8b5cf6",
-  "#6366f1",
+  "#075985",
+  "#0284c7",
+  "#06b6d4",
   "#14b8a6",
   "#22c55e",
   "#f43f5e"
@@ -44,16 +46,16 @@ function ServicesChart({
         <div>
 
           <div className="
-                inline-flex
+            inline-flex
 
-                items-center
-                gap-2
+            items-center
+            gap-2
 
-                text-indigo-600
+            text-sky-800
 
-                text-sm
-                font-bold
-              ">
+            text-sm
+            font-bold
+          ">
 
             <TrendingUp size={18} />
 
@@ -62,12 +64,12 @@ function ServicesChart({
           </div>
 
           <p className="
-                mt-2
+            mt-2
 
-                text-sm
+            text-sm
 
-                text-slate-500
-              ">
+            text-slate-500
+          ">
             Procedimientos más realizados
           </p>
 
@@ -103,7 +105,7 @@ function ServicesChart({
                   key={index}
                   fill={
                     COLORS[
-                    index % COLORS.length
+                      index % COLORS.length
                     ]
                   }
                 />

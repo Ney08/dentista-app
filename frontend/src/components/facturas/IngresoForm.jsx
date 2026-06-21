@@ -714,7 +714,7 @@ VALIDAR BALANCE
 
         rounded-full
 
-        bg-indigo-500/10
+        bg-sky-500/10
 
         blur-3xl
       " />
@@ -740,10 +740,12 @@ VALIDAR BALANCE
 
     rounded-[28px]
 
-    bg-gradient-to-br
-    from-indigo-500
-    via-purple-500
-    to-violet-500
+   
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
     text-white
 
@@ -751,7 +753,7 @@ VALIDAR BALANCE
     items-center
     justify-center
 
-    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+    shadow-[0_20px_50px_rgba(7,89,133,0.35)]
   ">
 
           <Receipt size={34} />
@@ -783,9 +785,11 @@ VALIDAR BALANCE
 
     rounded-full
 
-    bg-gradient-to-r
-    from-indigo-500
-    to-purple-500
+    
+bg-gradient-to-r
+from-cyan-500
+to-sky-800
+
   " />
 
         <p className="
@@ -853,10 +857,12 @@ VALIDAR BALANCE
 
       rounded-[18px]
 
-      bg-gradient-to-br
-      from-indigo-500
-      via-purple-500
-      to-violet-500
+      
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
       text-white
 
@@ -941,9 +947,11 @@ VALIDAR BALANCE
               focus:outline-none
 
               focus:ring-4
-              focus:ring-indigo-500/10
+             
+focus:ring-sky-500/10
 
-              focus:border-indigo-300
+focus:border-sky-300
+
 
               transition-all
               duration-300
@@ -1324,17 +1332,19 @@ VALIDAR BALANCE
 
         rounded-2xl
 
-        bg-gradient-to-r
-        from-indigo-500
-        via-purple-500
-        to-violet-500
+        
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
         text-white
 
         text-sm
         font-bold
 
-        shadow-[0_10px_30px_rgba(99,102,241,0.25)]
+        shadow-[0_10px_30px_rgba(7,89,133,0.25)]
 
         hover:scale-[1.03]
 
@@ -1489,9 +1499,11 @@ VALIDAR BALANCE
                     focus:outline-none
 
                     focus:ring-4
-                    focus:ring-indigo-500/10
+                   
+focus:ring-sky-500/10
 
-                    focus:border-indigo-300
+focus:border-sky-300
+
 
                     transition-all
                     duration-300
@@ -2076,16 +2088,18 @@ VALIDAR BALANCE
       ${loading
                 ? "bg-gray-400"
                 : `
-          bg-gradient-to-r
-          from-indigo-500
-          via-purple-500
-          to-violet-500
+          
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
 
-          shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+shadow-[0_15px_35px_rgba(7,89,133,0.28)]
+
 
           hover:scale-[1.01]
 
-          hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+          hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
         `
               }
     `}

@@ -5,6 +5,7 @@ function TratamientoTimeline({ events = [] }) {
     if (!fecha || fecha === "Actual") {
       return new Date(); // ✅ lo trata como lo más reciente
     }
+
     return new Date(fecha);
   };
 
@@ -24,26 +25,29 @@ function TratamientoTimeline({ events = [] }) {
           <div key={index} className="flex gap-4">
 
             {/* TIMELINE */}
+
             <div className="relative flex flex-col items-center">
 
               {/* DOT */}
+
               <div
                 className={`
                   w-4 h-4 rounded-full transition-all
                   ${esActivo
-                    ? "bg-indigo-500 scale-110 shadow-md"
+                    ? "bg-sky-700 scale-110 shadow-md"
                     : "bg-slate-300"
                   }
                 `}
               />
 
               {/* LINE */}
+
               {index !== eventosOrdenados.length - 1 && (
                 <div
                   className={`
                     w-[2px] flex-1 mt-1
                     ${esActivo
-                      ? "bg-indigo-200"
+                      ? "bg-sky-200"
                       : "bg-slate-200"
                     }
                   `}
@@ -53,6 +57,7 @@ function TratamientoTimeline({ events = [] }) {
             </div>
 
             {/* CONTENT */}
+
             <div className="flex-1 pb-5">
 
               <div className={`
@@ -63,12 +68,13 @@ function TratamientoTimeline({ events = [] }) {
                 shadow-sm
                 transition-all
                 ${esActivo
-                  ? "border-indigo-200 shadow-md"
+                  ? "border-sky-200 shadow-md"
                   : "border-slate-100"
                 }
               `}>
 
                 {/* HEADER */}
+
                 <div className="flex items-center justify-between gap-4">
 
                   <h4 className="text-sm font-black text-slate-800">
@@ -78,7 +84,7 @@ function TratamientoTimeline({ events = [] }) {
                   <span className={`
                     text-xs font-semibold
                     ${esActivo
-                      ? "text-indigo-500"
+                      ? "text-sky-700"
                       : "text-slate-400"
                     }
                   `}>
@@ -88,6 +94,7 @@ function TratamientoTimeline({ events = [] }) {
                 </div>
 
                 {/* DESCRIPTION */}
+
                 {event.description && (
                   <p className="mt-3 text-sm leading-relaxed text-slate-500">
                     {event.description}
@@ -95,6 +102,7 @@ function TratamientoTimeline({ events = [] }) {
                 )}
 
                 {/* BADGE ACTUAL */}
+
                 {esActivo && (
                   <span className="
                     inline-block mt-3
@@ -102,8 +110,8 @@ function TratamientoTimeline({ events = [] }) {
                     font-bold
                     px-2 py-1
                     rounded-full
-                    bg-indigo-100
-                    text-indigo-600
+                    bg-sky-100
+                    text-sky-800
                   ">
                     ACTUAL
                   </span>
@@ -115,10 +123,12 @@ function TratamientoTimeline({ events = [] }) {
 
           </div>
         );
+
       })}
 
     </div>
   );
+
 }
 
 export default TratamientoTimeline;

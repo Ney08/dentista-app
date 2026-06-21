@@ -157,10 +157,12 @@ function EgresoModal({
 
     rounded-[28px]
 
-    bg-gradient-to-br
-    from-indigo-500
-    via-purple-500
-    to-violet-500
+    
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
     text-white
 
@@ -168,7 +170,7 @@ function EgresoModal({
     items-center
     justify-center
 
-    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+    shadow-[0_20px_50px_rgba(7,89,133,0.35)]
   ">
 
           <WalletCards size={34} />
@@ -200,9 +202,11 @@ function EgresoModal({
 
     rounded-full
 
-    bg-gradient-to-r
-    from-indigo-500
-    to-purple-500
+    
+bg-gradient-to-r
+from-cyan-500
+to-sky-800
+
   " />
 
         <p className="
@@ -260,10 +264,12 @@ function EgresoModal({
 
       rounded-[18px]
 
-      bg-gradient-to-br
-      from-indigo-500
-      via-purple-500
-      to-violet-500
+     
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
       flex
       items-center
@@ -358,9 +364,11 @@ function EgresoModal({
       focus:outline-none
 
       focus:ring-4
-      focus:ring-indigo-500/10
+     
+focus:ring-sky-500/10
 
-      focus:border-indigo-300
+focus:border-sky-300
+
 
       transition-all
       duration-300
@@ -698,10 +706,12 @@ function EgresoModal({
             {/* KPI */}
 
             <div className="
-  bg-gradient-to-r
-  from-indigo-500
-  via-purple-500
-  to-violet-500
+
+bg-gradient-to-r
+from-rose-500
+via-pink-500
+to-rose-600
+
 
   rounded-[28px]
 
@@ -709,7 +719,7 @@ function EgresoModal({
 
   text-white
 
-  shadow-[0_20px_45px_rgba(99,102,241,0.25)]
+  shadow-[0_20px_45px_rgba(244,63,94,0.25)]
 
   text-center
 ">
@@ -795,10 +805,12 @@ function EgresoModal({
 
       rounded-[18px]
 
-      bg-gradient-to-br
-      from-indigo-500
-      via-purple-500
-      to-violet-500
+     
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
       flex
       items-center
@@ -875,9 +887,11 @@ function EgresoModal({
               focus:outline-none
 
               focus:ring-4
-              focus:ring-indigo-500/10
+             
+focus:ring-sky-500/10
 
-              focus:border-indigo-300
+focus:border-sky-300
+
 
               transition-all
               duration-300
@@ -952,10 +966,12 @@ function EgresoModal({
 
       rounded-[24px]
 
-      bg-gradient-to-r
-      from-indigo-500
-      via-purple-500
-      to-violet-500
+      
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
       text-white
 
@@ -964,12 +980,11 @@ function EgresoModal({
 
       font-black
 
-      shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+      shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
       hover:scale-[1.01]
 
-      hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
-
+      hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
       active:scale-[0.98]
 
       transition-all

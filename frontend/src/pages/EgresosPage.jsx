@@ -417,12 +417,14 @@ function EgresosPage() {
 
             rounded-full
 
-            bg-indigo-500/10
+           
+bg-sky-500/10
 
-            border
-            border-indigo-100
+border
+border-sky-100
 
-            text-indigo-600
+text-sky-800
+
 
             text-sm
             font-semibold
@@ -817,7 +819,7 @@ to-pink-500
 
             rounded-full
 
-            bg-indigo-500/10
+            bg-sky-500/10
 
             blur-3xl
           " />
@@ -853,7 +855,7 @@ to-pink-500
 
                 font-black
 
-                text-indigo-600
+                text-sky-800
               ">
 
                     RD$
@@ -870,9 +872,11 @@ to-pink-500
 
               rounded-2xl
 
-              bg-indigo-50
+              
+bg-sky-50
 
-              text-indigo-500
+text-sky-700
+
 
               flex
               items-center
@@ -1116,7 +1120,11 @@ to-pink-500
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+               
+focus:ring-sky-500/10
+
+focus:border-sky-300
+
               "
                 >
 
@@ -1154,18 +1162,20 @@ to-pink-500
 
                 rounded-2xl
 
-                bg-gradient-to-r
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 text-white
 
                 font-black
 
-                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+                shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
-                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+                hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
 
                 hover:-translate-y-[2px]
 
@@ -1211,7 +1221,7 @@ to-pink-500
           pr-2
 
           scrollbar-thin
-          scrollbar-thumb-indigo-200/70
+          scrollbar-thumb-sky-200/70
           scrollbar-track-transparent
         ">
 
@@ -1237,10 +1247,12 @@ to-pink-500
 
                 rounded-[34px]
 
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 flex
                 items-center
@@ -1248,7 +1260,7 @@ to-pink-500
 
                 text-white
 
-                shadow-[0_25px_60px_rgba(99,102,241,0.35)]
+                shadow-[0_25px_60px_rgba(7,89,133,0.35)].35)]
               ">
 
                     <div className="

@@ -7,10 +7,11 @@ import {
   Tooltip,
   Legend
 } from "recharts";
-import {
-  TrendingUp,
 
+import {
+  TrendingUp
 } from "lucide-react";
+
 function FinanceChart({
   data = []
 }) {
@@ -44,30 +45,30 @@ function FinanceChart({
         <div>
 
           <div className="
-                inline-flex
+            inline-flex
 
-                items-center
-                gap-2
+            items-center
+            gap-2
 
-                text-indigo-600
+            text-sky-800
 
-                text-sm
-                font-bold
-              ">
+            text-sm
+            font-bold
+          ">
 
             <TrendingUp size={18} />
 
-             Finanzas generales
+            Finanzas generales
 
           </div>
 
           <p className="
-                mt-2
+            mt-2
 
-                text-sm
+            text-sm
 
-                text-slate-500
-              ">
+            text-slate-500
+          ">
             Ingresos vs egresos
           </p>
 
@@ -100,13 +101,13 @@ function FinanceChart({
 
                 <stop
                   offset="0%"
-                  stopColor="#8b5cf6"
-                  stopOpacity={0.4}
+                  stopColor="#0284c7"
+                  stopOpacity={0.38}
                 />
 
                 <stop
                   offset="100%"
-                  stopColor="#8b5cf6"
+                  stopColor="#0284c7"
                   stopOpacity={0}
                 />
 
@@ -167,7 +168,7 @@ function FinanceChart({
             <Area
               type="monotone"
               dataKey="ingresos"
-              stroke="#8b5cf6"
+              stroke="#075985"
               fill="url(#income)"
               strokeWidth={3}
             />

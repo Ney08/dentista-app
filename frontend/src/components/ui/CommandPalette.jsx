@@ -913,44 +913,44 @@ function CommandPalette() {
       case "Cliente":
 
         return `
-          bg-emerald-100
-          text-emerald-600
-        `;
+        bg-emerald-100
+        text-emerald-600
+      `;
 
       case "Factura":
 
         return `
-          bg-indigo-100
-          text-indigo-600
-        `;
+        bg-sky-100
+        text-sky-800
+      `;
 
       case "Cita":
 
         return `
-          bg-violet-100
-          text-violet-600
-        `;
+        bg-cyan-100
+        text-cyan-700
+      `;
 
       case "Egreso":
 
         return `
-          bg-rose-100
-          text-rose-600
-        `;
+        bg-rose-100
+        text-rose-600
+      `;
 
       case "Acción":
 
         return `
-          bg-amber-100
-          text-amber-600
-        `;
+        bg-amber-100
+        text-amber-600
+      `;
 
       default:
 
         return `
-          bg-slate-100
-          text-slate-500
-        `;
+        bg-slate-100
+        text-slate-500
+      `;
 
     }
 
@@ -1036,7 +1036,7 @@ function CommandPalette() {
 
           rounded-full
 
-          bg-indigo-500/10
+          bg-sky-500/10
 
           blur-3xl
         " />
@@ -1060,23 +1060,23 @@ function CommandPalette() {
         ">
 
           <div className="
-            w-14
-            h-14
+  w-14
+  h-14
 
-            rounded-[22px]
+  rounded-[22px]
 
-            bg-gradient-to-br
-            from-indigo-500
-            to-violet-500
+  bg-gradient-to-br
+  from-sky-700
+  to-sky-900
 
-            text-white
+  text-white
 
-            flex
-            items-center
-            justify-center
+  flex
+  items-center
+  justify-center
 
-            shadow-[0_15px_35px_rgba(99,102,241,0.25)]
-          ">
+  shadow-[0_15px_35px_rgba(7,89,133,0.25)]
+">
 
             <Sparkles size={22} />
 
@@ -1282,12 +1282,12 @@ Buscar pacientes, citas, facturas, páginas...
                     text-slate-700
 
                     aria-selected:bg-gradient-to-r
-                    aria-selected:from-indigo-500
-                    aria-selected:to-violet-500
+aria-selected:from-sky-700
+aria-selected:to-sky-900
 
-                    aria-selected:text-white
+aria-selected:text-white
 
-                    aria-selected:shadow-[0_18px_45px_rgba(99,102,241,0.28)]
+aria-selected:shadow-[0_18px_45px_rgba(7,89,133,0.28)]
                   "
                 >
 

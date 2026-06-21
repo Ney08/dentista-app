@@ -55,7 +55,7 @@ function SmartInsights({
         <CalendarDays size={18} />,
 
       color:
-        "from-indigo-500 to-violet-500",
+        "from-sky-700 to-sky-900",
 
       title:
         "Agenda activa",
@@ -103,16 +103,16 @@ function SmartInsights({
         <div>
 
           <div className="
-                inline-flex
+            inline-flex
 
-                items-center
-                gap-2
+            items-center
+            gap-2
 
-                text-indigo-600
+            text-sky-800
 
-                text-sm
-                font-bold
-              ">
+            text-sm
+            font-bold
+          ">
 
             <TrendingUp size={18} />
 
@@ -121,12 +121,12 @@ function SmartInsights({
           </div>
 
           <p className="
-                mt-2
+            mt-2
 
-                text-sm
+            text-sm
 
-                text-slate-500
-              ">
+            text-slate-500
+          ">
             Resumen automático del sistema
           </p>
 

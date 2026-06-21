@@ -31,12 +31,17 @@
     "active": true,
     "targets": ["nsis"],   
     "icon": [
-      "icons/v4_32.png",
-      "icons/v4_48.png",
-      "icons/v4_256.png",
-      "icons/dentalapp.ico"
+      "icons/24x24.png",
+      "icons/32x32.png",
+      "icons/48x48.png",
+	    "icons/64x64.png",
+	    "icons/128x128.png",
+	    "icons/180x180.png",
+	    "icons/192x192.png",
+	    "icons/256x256.png",
+      "icons/512x512.png",
+      "icons/icon.ico"
     ],
-
     
     "windows": {
       "digestAlgorithm": "sha256"

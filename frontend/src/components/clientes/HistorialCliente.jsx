@@ -229,9 +229,11 @@ SORT HISTORIAL
 
             rounded-full
 
-            bg-indigo-500/10
+           
+bg-sky-500/10
 
-            text-indigo-600
+text-sky-800
+
 
             text-xs
             font-black
@@ -275,9 +277,11 @@ SORT HISTORIAL
 
           rounded-full
 
-          bg-indigo-500/10
+          
+bg-sky-500/10
 
-          text-indigo-600
+text-sky-800
+
 
           text-xs
           font-black
@@ -306,7 +310,7 @@ SORT HISTORIAL
         space-y-4
 
         scrollbar-thin
-        scrollbar-thumb-indigo-200/70
+        scrollbar-thumb-sky-200/70
         scrollbar-track-transparent
       ">
 
@@ -336,9 +340,11 @@ SORT HISTORIAL
 
               rounded-[26px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              to-purple-500
+              
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
 
               text-white
 
@@ -346,7 +352,7 @@ SORT HISTORIAL
               items-center
               justify-center
 
-              shadow-[0_20px_50px_rgba(99,102,241,0.25)]
+              shadow-[0_20px_50px_rgba(7,89,133,0.25)]
             ">
 
               <ClipboardList size={36} />
@@ -415,9 +421,11 @@ SORT HISTORIAL
 
                   z-10
 
-                  ${index === 0
-                    ? "bg-indigo-500"
+                  
+${index === 0
+                    ? "bg-sky-700"
                     : "bg-slate-300"}
+
                 `} />
 
                 {index !== historial.length - 1 && (
@@ -453,17 +461,21 @@ SORT HISTORIAL
 
     ${index === 0
                     ? `
-        border-indigo-200
-        shadow-[0_18px_40px_rgba(99,102,241,0.12)]
-        bg-indigo-50/40
+        
+border-sky-200
+shadow-[0_18px_40px_rgba(7,89,133,0.12)]
+bg-sky-50/50
+
         scale-[1.01]
       `
                     : `
         border-slate-200/80
         shadow-[0_10px_30px_rgba(0,0,0,0.04)]
         hover:-translate-y-[2px]
-        hover:border-indigo-200
-        hover:shadow-[0_18px_40px_rgba(99,102,241,0.08)]
+       
+hover:border-sky-200
+hover:shadow-[0_18px_40px_rgba(7,89,133,0.08)]
+
       `
                   }
   `}
@@ -507,9 +519,11 @@ SORT HISTORIAL
 
                       text-slate-500
 
-                      hover:text-indigo-600
+                      
+hover:text-sky-800
 
-                      hover:border-indigo-200
+hover:border-sky-200
+
 
                       transition-all
                       duration-300
@@ -578,7 +592,7 @@ SORT HISTORIAL
 
                           text-slate-700
 
-                          hover:bg-indigo-50
+                          hover:bg-sky-50
 
                           transition-all
                           duration-200
@@ -650,11 +664,13 @@ SORT HISTORIAL
 
                     rounded-full
 
-                    bg-gradient-to-r
-                    from-indigo-500/10
-                    to-purple-500/10
+                    
+bg-gradient-to-r
+from-sky-500/10
+to-cyan-500/10
 
-                    text-indigo-600
+text-sky-800
+
 
                     text-[11px]
                     font-black
@@ -690,7 +706,7 @@ SORT HISTORIAL
                     <span className="
                       ml-2
 
-                      text-indigo-500
+                      text-sky-700
 
                       text-sm
                       font-semibold
@@ -813,9 +829,11 @@ SORT HISTORIAL
 
                   rounded-full
 
-                  bg-indigo-500/10
+                 
+bg-sky-500/10
 
-                  text-indigo-600
+text-sky-800
+
 
                   text-xs
                   font-black
@@ -999,9 +1017,11 @@ SORT HISTORIAL
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+               
+focus:ring-sky-500/10
 
-                focus:border-indigo-300
+focus:border-sky-300
+
 
                 resize-none
 
@@ -1070,7 +1090,7 @@ SORT HISTORIAL
               items-center
               gap-2
 
-              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+              shadow-[0_15px_35px_rgba(7,89,133,0.25)]
 
               transition-all
               duration-300
@@ -1083,10 +1103,12 @@ SORT HISTORIAL
                   `
 
                     : `
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+                    
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                     hover:scale-[1.02]
 

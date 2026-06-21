@@ -519,12 +519,14 @@ function CitasPage() {
 
             rounded-full
 
-            bg-indigo-500/10
+           
+bg-sky-500/10
 
-            border
-            border-indigo-100
+border
+border-sky-100
 
-            text-indigo-600
+text-sky-800
+
 
             text-sm
             font-semibold
@@ -1204,10 +1206,12 @@ function CitasPage() {
 
                     active:scale-[0.98]
 
-                    ${filtro === item.key
-                          ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-transparent shadow-lg shadow-indigo-200/40"
-                          : "bg-white hover:bg-slate-100 text-slate-700 border-slate-200/70"
+                    
+${filtro === item.key
+                          ? "bg-gradient-to-r from-sky-700 to-sky-900 text-white border-transparent shadow-lg shadow-sky-200/40"
+                          : "bg-white hover:bg-sky-50 text-slate-700 border-slate-200/70 hover:border-sky-200"
                         }
+
                   `}
                     >
 
@@ -1295,7 +1299,10 @@ function CitasPage() {
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+               
+focus:ring-sky-500/10
+focus:border-sky-300
+
               "
                 >
 
@@ -1333,18 +1340,22 @@ function CitasPage() {
 
                 rounded-2xl
 
-                bg-gradient-to-r
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 text-white
 
                 font-black
 
-                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+                
+shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
-                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+
 
                 hover:-translate-y-[2px]
 
@@ -1390,7 +1401,7 @@ function CitasPage() {
           pr-2
 
           scrollbar-thin
-          scrollbar-thumb-indigo-200/70
+          scrollbar-thumb-sky-200/70
           scrollbar-track-transparent
         ">
 
@@ -1416,10 +1427,11 @@ function CitasPage() {
 
                 rounded-[34px]
 
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+
 
                 flex
                 items-center
@@ -1427,7 +1439,7 @@ function CitasPage() {
 
                 text-white
 
-                shadow-[0_25px_60px_rgba(99,102,241,0.35)]
+                shadow-[0_25px_60px_rgba(7,89,133,0.35)]
               ">
 
                     <div className="

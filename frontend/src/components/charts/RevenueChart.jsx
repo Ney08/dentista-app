@@ -5,10 +5,11 @@ import {
   XAxis,
   Tooltip
 } from "recharts";
+
 import {
-  TrendingUp,
-  
+  TrendingUp
 } from "lucide-react";
+
 function RevenueChart({ data = [] }) {
 
   return (
@@ -39,35 +40,35 @@ function RevenueChart({ data = [] }) {
 
         <div>
 
-                <div className="
-                inline-flex
+          <div className="
+            inline-flex
 
-                items-center
-                gap-2
+            items-center
+            gap-2
 
-                text-indigo-600
+            text-sky-800
 
-                text-sm
-                font-bold
-              ">
+            text-sm
+            font-bold
+          ">
 
-                  <TrendingUp size={18} />
+            <TrendingUp size={18} />
 
-                  Ingresos mensuales
+            Ingresos mensuales
 
-                </div>
+          </div>
 
-                <p className="
-                mt-2
+          <p className="
+            mt-2
 
-                text-sm
+            text-sm
 
-                text-slate-500
-              ">
-                 Rendimiento financiero
-                </p>
+            text-slate-500
+          ">
+            Rendimiento financiero
+          </p>
 
-              </div>
+        </div>
 
       </div>
 
@@ -96,13 +97,13 @@ function RevenueChart({ data = [] }) {
 
                 <stop
                   offset="0%"
-                  stopColor="#8b5cf6"
+                  stopColor="#0284c7"
                   stopOpacity={0.45}
                 />
 
                 <stop
                   offset="100%"
-                  stopColor="#8b5cf6"
+                  stopColor="#0284c7"
                   stopOpacity={0}
                 />
 
@@ -133,7 +134,7 @@ function RevenueChart({ data = [] }) {
             <Area
               type="monotone"
               dataKey="ingresos"
-              stroke="#8b5cf6"
+              stroke="#075985"
               strokeWidth={4}
               fill="url(#incomeGradient)"
             />

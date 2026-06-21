@@ -147,7 +147,7 @@ function FacturaModal({
 
           rounded-full
 
-          bg-violet-500/10
+          bg-sky-500/10
 
           blur-3xl
         " />
@@ -189,7 +189,7 @@ function FacturaModal({
 
                 rounded-full
 
-                bg-violet-50
+                bg-sky-50
 
                 px-4
                 py-2
@@ -202,7 +202,7 @@ function FacturaModal({
 
                 tracking-[0.14em]
 
-                text-violet-600
+               text-sky-800
               ">
 
                 🦷 Clínica Dental
@@ -638,7 +638,7 @@ function FacturaModal({
 
       font-semibold
 
-      text-violet-500
+      text-sky-700
     ">
 
                           Sesión {
@@ -931,9 +931,11 @@ function FacturaModal({
 
                   font-black
 
-                  bg-gradient-to-r
-                  from-violet-600
-                  to-indigo-600
+                  
+bg-gradient-to-r
+from-sky-700
+to-sky-900
+
 
                   bg-clip-text
                   text-transparent
@@ -1011,18 +1013,21 @@ function FacturaModal({
 
                 rounded-[22px]
 
-                bg-gradient-to-r
-                from-indigo-500
-                via-violet-500
-                to-purple-500
+                
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
 
                 text-white
 
                 font-black
 
-                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+                
+shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
-                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+
 
                 hover:-translate-y-[2px]
 

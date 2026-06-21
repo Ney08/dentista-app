@@ -431,115 +431,48 @@ DELETE
 ==========================================
 */
 
-  const eliminarOdontograma =
-    async () => {
+const eliminarOdontograma =
+  async () => {
 
-      const eliminarOdontograma =
-        async () => {
+    try {
 
-          try {
+      const res = await fetch(
 
-            const res = await fetch(
+        `${API_URL}/odontograma/${clienteId}`,
 
-              `${API_URL}/odontograma/${clienteId}`,
-
-              {
-
-                method: "DELETE"
-
-              }
-
-            );
-
-            if (!res.ok) {
-
-              throw new Error();
-
-            }
-
-            /*
-            ==========================================
-            RESET
-            ==========================================
-            */
-
-            setOdontograma({});
-
-            setHistory([]);
-
-            setFuture([]);
-
-            /*
-            ==========================================
-            CLOSE MODAL
-            ==========================================
-            */
-
-            setConfirmDeleteOpen(
-              false
-            );
-
-            showSuccess(
-              "Odontograma eliminado ✅"
-            );
-
-          } catch {
-
-            showError(
-              "Error eliminando odontograma ❌"
-            );
-
-          }
-
-        };
-
-
-
-      try {
-
-        const res = await fetch(
-
-          `${API_URL}/odontograma/${clienteId}`,
-
-          {
-
-            method: "DELETE"
-
-          }
-
-        );
-
-        if (!res.ok) {
-
-          throw new Error();
-
+        {
+          method: "DELETE"
         }
 
-        /*
-        ==========================================
-        RESET FRONTEND
-        ==========================================
-        */
+      );
 
-        setOdontograma({});
+      if (!res.ok) {
 
-        setHistory([]);
-
-        setFuture([]);
-
-        showSuccess(
-          "Odontograma eliminado ✅"
-        );
-
-      } catch {
-
-        showError(
-          "Error eliminando odontograma ❌"
-        );
+        throw new Error();
 
       }
 
-    };
+      setOdontograma({});
+
+      setHistory([]);
+
+      setFuture([]);
+
+      setConfirmDeleteOpen(false);
+
+      showSuccess(
+        "Odontograma eliminado ✅"
+      );
+
+    } catch {
+
+      showError(
+        "Error eliminando odontograma ❌"
+      );
+
+    }
+
+  };
   /*
   ==========================================
   STATS
@@ -593,7 +526,7 @@ DELETE
             h-5
 
             border-2
-            border-indigo-500
+            border-sky-700
             border-t-transparent
 
             rounded-full
@@ -681,7 +614,7 @@ DELETE
         <X size={18} />
 
       </button> */}
-      
+
       {/* GLOW */}
 
       <div className="
@@ -694,13 +627,13 @@ DELETE
 
         rounded-full
 
-        bg-indigo-500/10
+        bg-sky-500/10
 
         blur-3xl
       " />
 
       {/* HEADER */}
-      
+
 
       <div className="
         relative
@@ -729,9 +662,11 @@ DELETE
 
             rounded-full
 
-            bg-indigo-500/10
+            
+bg-sky-500/10
 
-            text-indigo-600
+text-sky-800
+
 
             text-xs
             font-black
@@ -788,10 +723,12 @@ DELETE
 
             rounded-[22px]
 
-            bg-indigo-50
+           
+bg-sky-50
 
-            border
-            border-indigo-100
+border
+border-sky-100
+
           ">
 
             <p className="
@@ -803,7 +740,7 @@ DELETE
 
               tracking-[0.12em]
 
-              text-indigo-500
+              text-sky-700
             ">
 
               Tratamientos
@@ -925,9 +862,11 @@ DELETE
             items-center
             gap-2
 
-            hover:border-indigo-200
+            
+hover:border-sky-200
 
-            hover:text-indigo-600
+hover:text-sky-800
+
 
             hover:shadow-md
 
@@ -976,9 +915,11 @@ DELETE
             items-center
             gap-2
 
-            hover:border-indigo-200
+            
+hover:border-sky-200
 
-            hover:text-indigo-600
+hover:text-sky-800
+
 
             hover:shadow-md
 
@@ -1022,7 +963,7 @@ DELETE
             items-center
             gap-2
 
-            shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+            shadow-[0_15px_35px_rgba(7,89,133,0.25)]
 
             transition-all
             duration-300
@@ -1035,14 +976,16 @@ DELETE
                 `
 
               : `
-                  bg-gradient-to-r
-                  from-indigo-500
-                  via-purple-500
-                  to-violet-500
+                 
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                   hover:scale-[1.02]
 
-                  hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+                  hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
                 `
             }
           `}
@@ -1134,10 +1077,12 @@ DELETE
           label="Corona"
         />
 
-        <Legend
-          color="bg-violet-500"
-          label="Implante"
-        />
+        
+<Legend
+  color="bg-cyan-700"
+  label="Implante"
+/>
+
 
         <Legend
           color="bg-slate-700"

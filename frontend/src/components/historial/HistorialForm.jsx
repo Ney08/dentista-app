@@ -157,15 +157,24 @@ function HistorialForm({
 
     ${activeTab === tab.id
                                     ? `
-        bg-gradient-to-r
-        from-indigo-500
-        to-violet-500
-        text-white
+        
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+text-white
+shadow-[0_12px_30px_rgba(7,89,133,0.22)]
+
       `
                                     : `
-        bg-white
-        border border-slate-200
-        text-slate-600
+
+bg-white
+border border-slate-200
+text-slate-600
+hover:border-sky-200
+hover:text-sky-800
+hover:bg-sky-50/60
+
       `
                                 }
   `}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import TratamientosList
   from "../tratamientos/TratamientosList";
 import {
@@ -39,7 +39,7 @@ import {
 import { API_URL } from "../../config";
 
 function ClienteDetalle({ cliente }) {
-  
+
   const {
     historial = [],
     isLoading,
@@ -247,7 +247,7 @@ SORT HISTORIAL
             h-5
 
             border-2
-            border-indigo-500
+           border-sky-700
             border-t-transparent
 
             rounded-full
@@ -286,12 +286,14 @@ SORT HISTORIAL
         <div className="
           rounded-[28px]
 
-          bg-gradient-to-br
-          from-indigo-50
-          to-purple-50
+          
+bg-gradient-to-br
+from-sky-50
+to-cyan-50
 
-          border
-          border-indigo-100
+border
+border-sky-100
+
 
           p-5
         ">
@@ -311,7 +313,7 @@ SORT HISTORIAL
 
                 tracking-[0.12em]
 
-                text-indigo-500
+                text-sky-700
 
                 font-black
               ">
@@ -338,9 +340,11 @@ SORT HISTORIAL
 
               rounded-[18px]
 
-              bg-indigo-500/10
+              
+bg-sky-500/10
 
-              text-indigo-600
+text-sky-800
+
 
               flex
               items-center
@@ -511,23 +515,23 @@ SORT HISTORIAL
 
       {/* FORM */}
 
-      
 
-<HistorialForm
 
-      cliente={cliente}
+      <HistorialForm
 
-      historial={historialOrdenado}
+        cliente={cliente}
 
-      clienteId={cliente.id}
+        historial={historialOrdenado}
 
-      onAdd={(data) =>
-        crearHistorial.mutate(data)
-      }
+        clienteId={cliente.id}
 
-      
+        onAdd={(data) =>
+          crearHistorial.mutate(data)
+        }
 
-    />
+
+
+      />
 
 
 
@@ -573,9 +577,11 @@ SORT HISTORIAL
 
                   rounded-full
 
-                  bg-indigo-500/10
+                  
+bg-sky-500/10
 
-                  text-indigo-600
+text-sky-800
+
 
                   text-xs
                   font-black
@@ -686,7 +692,7 @@ SORT HISTORIAL
 
       {/* EDIT MODAL */}
 
-      
+
 
     </div>
 

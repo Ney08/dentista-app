@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
-
+// import toast from "react-hot-toast";
+import {
+  showSuccess,
+  showError,
+  showWarning,
+  showInfo
+} from "../ui/ToastStyles";
 import Calendar from "react-calendar";
 
 import "react-calendar/dist/Calendar.css";
@@ -139,7 +144,7 @@ LOAD TRATAMIENTOS
       .then(setTratamientos)
       .catch(() => {
 
-        toast.error(
+        showError(
           "Error cargando tratamientos ❌"
         );
 
@@ -160,7 +165,7 @@ LOAD TRATAMIENTOS
       .then(setCitas)
       .catch(() => {
 
-        toast.error(
+       showError(
           "Error al cargar citas ❌"
         );
 
@@ -648,7 +653,7 @@ BUSCAR SERVICIO POR MOTIVO
           false
         );
 
-        toast.success(
+        showInfo(
           `Día lleno → movido al ${formatFecha(siguiente)} ✅`,
           { id: "dia-lleno" }
         );
@@ -727,7 +732,7 @@ BUSCAR SERVICIO POR MOTIVO
       !motivo
     ) {
 
-      return toast.error(
+      return showError(
         "Completa los campos ⚠️"
       );
 
@@ -761,7 +766,7 @@ BUSCAR SERVICIO POR MOTIVO
       )
     ) {
 
-      return toast.error(
+      return showWarning(
         "Ese horario no tiene espacio suficiente ⏰"
       );
 
@@ -773,7 +778,7 @@ BUSCAR SERVICIO POR MOTIVO
       ) < new Date()
     ) {
 
-      return toast.error(
+      return showError(
         "Fecha inválida ⏰"
       );
 
@@ -806,7 +811,7 @@ BUSCAR SERVICIO POR MOTIVO
           }
         });
 
-        toast.success(
+        showSuccess(
           "Cita actualizada ✅"
         );
 
@@ -830,7 +835,7 @@ BUSCAR SERVICIO POR MOTIVO
           duracion
         });
 
-        toast.success(
+       showSuccess(
           "Cita creada ✅"
         );
 
@@ -842,7 +847,7 @@ BUSCAR SERVICIO POR MOTIVO
 
     } catch {
 
-      toast.error(
+      showError(
         "Error ❌"
       );
 
@@ -872,7 +877,7 @@ BUSCAR SERVICIO POR MOTIVO
 
         rounded-full
 
-        bg-indigo-500/10
+        bg-sky-500/10
 
         blur-3xl
       " />
@@ -898,10 +903,12 @@ BUSCAR SERVICIO POR MOTIVO
 
     rounded-[28px]
 
-    bg-gradient-to-br
-    from-indigo-500
-    via-purple-500
-    to-violet-500
+    
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
     text-white
 
@@ -909,7 +916,7 @@ BUSCAR SERVICIO POR MOTIVO
     items-center
     justify-center
 
-    shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+    shadow-[0_20px_50px_rgba(7,89,133,0.35)]
   ">
 
           <CalendarDays size={34} />
@@ -941,9 +948,11 @@ BUSCAR SERVICIO POR MOTIVO
 
     rounded-full
 
-    bg-gradient-to-r
-    from-indigo-500
-    to-purple-500
+    
+bg-gradient-to-r
+from-cyan-500
+to-sky-800
+
   " />
 
         <p className="
@@ -992,10 +1001,12 @@ BUSCAR SERVICIO POR MOTIVO
     items-center
     gap-3
 
-    bg-indigo-50
+   
+bg-sky-50
 
-    border
-    border-indigo-100
+border
+border-sky-100
+
 
     rounded-[24px]
 
@@ -1011,10 +1022,12 @@ BUSCAR SERVICIO POR MOTIVO
 
       rounded-[18px]
 
-      bg-gradient-to-br
-      from-indigo-500
-      via-purple-500
-      to-violet-500
+      
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
       text-white
 
@@ -1103,9 +1116,10 @@ BUSCAR SERVICIO POR MOTIVO
   focus:outline-none
 
   focus:ring-4
-  focus:ring-indigo-500/10
+  
+focus:ring-sky-500/10
 
-  focus:border-indigo-300
+focus:border-sky-300
 
   transition-all
   duration-300
@@ -1266,9 +1280,11 @@ BUSCAR SERVICIO POR MOTIVO
     focus:outline-none
 
     focus:ring-4
-    focus:ring-indigo-500/10
+   
+focus:ring-sky-500/10
 
-    focus:border-indigo-300
+focus:border-sky-300
+
 
     transition-all
     duration-300
@@ -1355,9 +1371,11 @@ BUSCAR SERVICIO POR MOTIVO
       focus:outline-none
 
       focus:ring-4
-      focus:ring-indigo-500/10
+      
+focus:ring-sky-500/10
 
-      focus:border-indigo-300
+focus:border-sky-300
+
 
       transition-all
       duration-300
@@ -1504,9 +1522,11 @@ BUSCAR SERVICIO POR MOTIVO
       focus:outline-none
 
       focus:ring-4
-      focus:ring-indigo-500/10
+      
+focus:ring-sky-500/10
 
-      focus:border-indigo-300
+focus:border-sky-300
+
 
       transition-all
       duration-300
@@ -1545,9 +1565,11 @@ BUSCAR SERVICIO POR MOTIVO
               focus:outline-none
 
               focus:ring-4
-              focus:ring-indigo-500/10
+             
+focus:ring-sky-500/10
 
-              focus:border-indigo-300
+focus:border-sky-300
+
 
               transition-all
               duration-300
@@ -1627,7 +1649,7 @@ BUSCAR SERVICIO POR MOTIVO
                       false
                     );
 
-                    toast.success(
+                    showInfo(
                       `Día lleno 🚫 → movido al ${formatFecha(siguiente)} ✅`,
                       {
                         id: "dia-lleno"
@@ -1636,7 +1658,7 @@ BUSCAR SERVICIO POR MOTIVO
 
                   } else {
 
-                    toast.error(
+                    showError(
                       "No hay días disponibles próximos 🚫",
                       {
                         id: "sin-disponibilidad"
@@ -1679,7 +1701,7 @@ BUSCAR SERVICIO POR MOTIVO
 
               <CalendarClock
                 size={16}
-                className="text-indigo-500"
+                className="text-sky-700"
               />
 
               <p className="
@@ -1697,7 +1719,7 @@ BUSCAR SERVICIO POR MOTIVO
             <span className="
     text-xs
 
-    text-indigo-500
+    text-sky-700
 
     font-semibold
   ">
@@ -1789,15 +1811,17 @@ BUSCAR SERVICIO POR MOTIVO
                       ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
                       : hora === h
                         ? `
-                          bg-gradient-to-r
-                          from-indigo-500
-                          to-purple-500
+                          
+bg-gradient-to-r
+from-sky-700
+to-sky-900
+
 
                           text-white
 
                           border-transparent
 
-                          shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+                          shadow-[0_15px_35px_rgba(7,89,133,0.25)]
 
                           scale-[1.03]
                         `
@@ -1808,9 +1832,11 @@ BUSCAR SERVICIO POR MOTIVO
 
                           border-slate-200
 
-                          hover:border-indigo-200
+                         
+hover:border-sky-200
 
-                          hover:bg-indigo-50
+hover:bg-sky-50
+
                         `
                     }
                   `}
@@ -1847,11 +1873,13 @@ BUSCAR SERVICIO POR MOTIVO
 
   ${hora && clienteId
           ? `
-      bg-gradient-to-r
-      from-indigo-50
-      to-purple-50
+      
+bg-gradient-to-r
+from-sky-50
+to-cyan-50
 
-      border-indigo-100
+border-sky-100
+
     `
           : `
       bg-slate-50
@@ -1901,7 +1929,7 @@ BUSCAR SERVICIO POR MOTIVO
     ">
 
             <p className="
-        text-indigo-600
+        text-sky-800
 
         font-semibold
       ">
@@ -2036,16 +2064,20 @@ BUSCAR SERVICIO POR MOTIVO
       ${loading
               ? "bg-gray-400"
               : `
-          bg-gradient-to-r
-          from-indigo-500
-          via-purple-500
-          to-violet-500
+          
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
 
-          shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+shadow-[0_15px_35px_rgba(7,89,133,0.28)]
+
 
           hover:scale-[1.01]
 
-          hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+          
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+
         `
             }
     `}

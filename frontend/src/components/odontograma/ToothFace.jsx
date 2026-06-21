@@ -63,11 +63,11 @@ function ToothFace({
       case "implante":
 
         return `
-          bg-violet-500
+          bg-teal-500
 
-          border-violet-600
+          border-teal-600
 
-          shadow-[0_0_14px_rgba(139,92,246,0.45)]
+          shadow-[0_0_14px_rgba(20,184,166,0.45)]
         `;
 
       default:
@@ -77,9 +77,9 @@ function ToothFace({
 
           border-slate-200
 
-          hover:bg-indigo-100
+          hover:bg-sky-100
 
-          hover:border-indigo-300
+          hover:border-sky-300
         `;
 
     }

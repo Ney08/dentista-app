@@ -146,25 +146,25 @@ function TratamientosTab({
   */
 
   const timelineEvents = tratamientos
-  .flatMap((t) => [
-    {
-      title: `Tratamiento: ${t.servicio_nombre}`,
-      date: t.created_at
-        ? new Date(t.created_at).toLocaleDateString()
-        : "--",
-      description: `Se creó el tratamiento (Estado: ${t.estado})`
-    },
-    {
-      title: `Estado actualizado`,
-      date: "Actual",
-      description: `Actualmente está en estado: ${t.estado}`
-    }
-  ])
-  .sort((a, b) => {
-    // opcional: ordenar por fecha si quieres
-    return new Date(b.date) - new Date(a.date);
-  });
-  
+    .flatMap((t) => [
+      {
+        title: `Tratamiento: ${t.servicio_nombre}`,
+        date: t.created_at
+          ? new Date(t.created_at).toLocaleDateString()
+          : "--",
+        description: `Se creó el tratamiento (Estado: ${t.estado})`
+      },
+      {
+        title: `Estado actualizado`,
+        date: "Actual",
+        description: `Actualmente está en estado: ${t.estado}`
+      }
+    ])
+    .sort((a, b) => {
+      // opcional: ordenar por fecha si quieres
+      return new Date(b.date) - new Date(a.date);
+    });
+
   return (
 
     <div className="
@@ -199,12 +199,14 @@ function TratamientosTab({
 
             rounded-2xl
 
-            bg-indigo-50
+           
+bg-sky-50
 
-            border
-            border-indigo-100
+border
+border-sky-100
 
-            text-indigo-600
+text-sky-800
+
 
             text-xs
             font-black
@@ -274,7 +276,7 @@ function TratamientosTab({
 
               tracking-wider
 
-              text-indigo-400
+              text-sky-600
             ">
 
               Total
@@ -365,18 +367,20 @@ function TratamientosTab({
 
             rounded-[24px]
 
-            bg-gradient-to-r
-            from-indigo-500
-            via-purple-500
-            to-violet-500
+            
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
             text-white
 
             text-sm
             font-black
 
-            shadow-[0_15px_35px_rgba(99,102,241,0.25)]
-
+           shadow-[0_15px_35px_rgba(7,89,133,0.25)]
+          hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
             hover:scale-[1.02]
 
             transition-all
@@ -512,9 +516,11 @@ function TratamientosTab({
                         
 hover:-translate-y-1
 
-hover:border-indigo-200
 
-hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
+hover:border-sky-200
+
+hover:shadow-[0_25px_60px_rgba(7,89,133,0.12)]
+
 
 
                         transition-all
@@ -674,7 +680,7 @@ hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
                           <span className="
                             font-black
 
-                            text-indigo-600
+                            text-sky-800
                           ">
 
                             RD$
@@ -733,9 +739,14 @@ hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
 
                               rounded-full
 
-                              bg-gradient-to-r
-                              from-indigo-500
-                              to-violet-500
+                              
+
+bg-gradient-to-r
+from-cyan-500
+via-sky-700
+to-sky-800
+
+
                             "
                           />
 
@@ -821,9 +832,11 @@ hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
 
               rounded-full
 
-              bg-indigo-500/10
+             
+bg-sky-500/10
 
-              text-indigo-600
+text-sky-800
+
 
               text-xs
               font-black
@@ -993,10 +1006,12 @@ hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
                 <div className="
             rounded-[30px]
 
-            bg-indigo-50/60
+            
+bg-sky-50/60
 
-            border
-            border-indigo-100
+border
+border-sky-100
+
 
             p-6
 
@@ -1063,7 +1078,7 @@ hover:shadow-[0_25px_60px_rgba(99,102,241,0.12)]
               flex
               justify-between
 
-              text-indigo-600
+              text-sky-800
             ">
 
                     <span>Balance</span>

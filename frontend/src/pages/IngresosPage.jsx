@@ -566,12 +566,14 @@ function IngresosPage() {
 
             rounded-full
 
-            bg-indigo-500/10
+            
+bg-sky-500/10
 
-            border
-            border-indigo-100
+border
+border-sky-100
 
-            text-indigo-600
+text-sky-800
+
 
             text-sm
             font-semibold
@@ -964,7 +966,7 @@ function IngresosPage() {
 
             rounded-full
 
-            bg-indigo-500/10
+            bg-sky-500/10
 
             blur-3xl
           " />
@@ -1000,7 +1002,7 @@ function IngresosPage() {
 
                 font-black
 
-                text-indigo-600
+                text-sky-800
               ">
 
                     {ingresos.length}
@@ -1015,9 +1017,11 @@ function IngresosPage() {
 
               rounded-2xl
 
-              bg-indigo-50
+              
+bg-sky-50
 
-              text-indigo-500
+text-sky-700
+
 
               flex
               items-center
@@ -1200,10 +1204,11 @@ function IngresosPage() {
 
                 rounded-2xl
 
-                bg-indigo-50
+               
+bg-sky-50
 
-                border
-                border-indigo-100
+border
+border-sky-100
 
                 flex
                 items-center
@@ -1212,7 +1217,7 @@ function IngresosPage() {
                 text-sm
                 font-semibold
 
-                text-indigo-600
+               text-sky-800
               ">
 
                     <Receipt size={14} />
@@ -1272,18 +1277,20 @@ function IngresosPage() {
 
                 rounded-2xl
 
-                bg-gradient-to-r
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 text-white
 
                 font-black
 
-                shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+                shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
-                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+                hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
 
                 hover:-translate-y-[2px]
 
@@ -1380,7 +1387,10 @@ function IngresosPage() {
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
+                  
+focus:ring-sky-500/10
+focus:border-sky-300
+
                 "
                   />
 
@@ -1412,7 +1422,10 @@ function IngresosPage() {
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+                
+focus:ring-sky-500/10
+focus:border-sky-300
+
               "
                 >
 
@@ -1465,7 +1478,10 @@ function IngresosPage() {
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+                
+focus:ring-sky-500/10
+focus:border-sky-300
+
               "
                 >
 
@@ -1499,7 +1515,7 @@ function IngresosPage() {
           pr-2
 
           scrollbar-thin
-          scrollbar-thumb-indigo-200/70
+          scrollbar-thumb-sky-200/70
           scrollbar-track-transparent
         ">
 
@@ -1525,10 +1541,12 @@ function IngresosPage() {
 
                 rounded-[34px]
 
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-500
+                
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                 flex
                 items-center
@@ -1536,7 +1554,7 @@ function IngresosPage() {
 
                 text-white
 
-                shadow-[0_25px_60px_rgba(99,102,241,0.35)]
+                shadow-[0_25px_60px_rgba(7,89,133,0.35)]
               ">
 
                     <div className="

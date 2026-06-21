@@ -82,7 +82,7 @@ const tools = [
       "Implante dental",
 
     color:
-      "bg-violet-500",
+      "bg-teal-500",
 
     icon: Circle
 
@@ -163,7 +163,7 @@ function ToothToolbar({
 
         rounded-full
 
-        bg-indigo-500/10
+        bg-sky-500/10
 
         blur-3xl
       " />
@@ -196,9 +196,9 @@ function ToothToolbar({
 
             rounded-full
 
-            bg-indigo-500/10
+            bg-sky-500/10
 
-            text-indigo-600
+            text-sky-800
 
             text-xs
             font-black
@@ -307,12 +307,13 @@ function ToothToolbar({
                       border-transparent
 
                       bg-gradient-to-br
-                      from-indigo-500
-                      to-violet-500
+                      from-sky-700
+                      via-sky-800
+                      to-sky-900
 
                       text-white
 
-                      shadow-[0_20px_45px_rgba(99,102,241,0.30)]
+                      shadow-[0_20px_45px_rgba(7,89,133,0.30)]
                     `
 
                     : `
@@ -322,7 +323,7 @@ function ToothToolbar({
 
                       text-slate-700
 
-                      hover:border-indigo-200
+                      hover:border-sky-200
 
                       hover:shadow-lg
                     `
@@ -342,7 +343,7 @@ function ToothToolbar({
                   rounded-[26px]
 
                   ring-4
-                  ring-indigo-500/20
+                  ring-sky-500/20
                 " />
 
               )}

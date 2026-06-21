@@ -43,26 +43,26 @@ function Paginacion({
 
     shadow-[0_8px_25px_rgba(0,0,0,0.05)]
 
-    hover:shadow-[0_15px_35px_rgba(99,102,241,0.15)]
+    hover:shadow-[0_15px_35px_rgba(7,89,133,0.15)]
 
-    hover:border-indigo-200
+    hover:border-sky-200
 
-    hover:text-indigo-600
+    hover:text-sky-800
 
     hover:scale-[1.05]
   `;
 
   const buttonActive = `
     bg-gradient-to-r
-    from-indigo-500
-    via-purple-500
-    to-violet-500
+    from-sky-700
+    via-sky-800
+    to-sky-900
 
     border-transparent
 
     text-white
 
-    shadow-[0_15px_35px_rgba(99,102,241,0.28)]
+    shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
     scale-[1.05]
   `;
@@ -139,6 +139,7 @@ function Paginacion({
             >
 
               {/* GLOW */}
+
               {pagina === num && (
 
                 <div className="

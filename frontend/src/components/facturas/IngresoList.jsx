@@ -27,13 +27,15 @@ function IngresoList({
   const [ingresoAPagar, setIngresoAPagar] =
     useState(null);
 
-  const coloresAvatar = [
-    "from-blue-500 to-cyan-500",
-    "from-green-500 to-emerald-500",
-    "from-purple-500 to-violet-500",
-    "from-pink-500 to-rose-500",
-    "from-indigo-500 to-blue-500"
-  ];
+
+const coloresAvatar = [
+  "from-sky-700 to-sky-900",
+  "from-cyan-500 to-sky-700",
+  "from-teal-500 to-cyan-600",
+  "from-emerald-500 to-teal-600",
+  "from-blue-600 to-sky-800"
+];
+
 
   return (
 
@@ -49,7 +51,7 @@ function IngresoList({
       pb-2
 
       scrollbar-thin
-      scrollbar-thumb-indigo-200/70
+      scrollbar-thumb-sky-200/70
       scrollbar-track-transparent
     ">
 
@@ -117,9 +119,11 @@ function IngresoList({
 
               hover:-translate-y-[2px]
 
-              hover:shadow-[0_20px_45px_rgba(99,102,241,0.08)]
+             
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.08)]
 
-              hover:border-indigo-200
+hover:border-sky-200
+
             `}
           >
 
@@ -363,9 +367,11 @@ function IngresoList({
 
                           rounded-full
 
-                          bg-indigo-50
+                          
+bg-sky-50
 
-                          text-indigo-600
+text-sky-800
+
 
                           text-xs
                           font-semibold
@@ -705,7 +711,7 @@ function IngresoList({
 
                       text-white
 
-                      shadow-[0_15px_35px_rgba(99,102,241,0.18)]
+                      shadow-[0_15px_35px_rgba(7,89,133,0.18)]
 
                       ${i.pagado
                         ? `
@@ -714,10 +720,12 @@ function IngresoList({
                           to-green-500
                         `
                         : `
-                          bg-gradient-to-r
-                          from-indigo-500
-                          via-purple-500
-                          to-violet-500
+                          
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
                         `
                       }
                     `}>
@@ -828,19 +836,23 @@ function IngresoList({
 
         rounded-2xl
 
-        bg-gradient-to-r
-        from-indigo-500
-        via-purple-500
-        to-violet-500
+        
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
         text-white
 
         text-sm
         font-black
 
-        shadow-[0_12px_30px_rgba(99,102,241,0.25)]
+        
+shadow-[0_12px_30px_rgba(7,89,133,0.25)]
 
-        hover:shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+hover:shadow-[0_18px_40px_rgba(7,89,133,0.35)]
+
 
         hover:scale-[1.02]
 

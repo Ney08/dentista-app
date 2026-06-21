@@ -127,15 +127,20 @@ function NotaClinicaModal({
 
             rounded-[20px]
 
-            bg-gradient-to-r
-            from-indigo-500
-            to-violet-500
+            
+bg-gradient-to-r
+from-sky-700
+to-sky-900
+
+
+shadow-[0_15px_35px_rgba(7,89,133,0.25)]
+hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
 
             text-white
 
             font-bold
 
-            shadow-lg
+
 
             hover:scale-[1.02]
 
@@ -247,8 +252,8 @@ inflamación y sensibilidad...
                   focus:outline-none
 
                   focus:ring-4
-                  focus:ring-indigo-500/10
-
+                  focus:ring-sky-500/10
+                  focus:border-sky-300
                   resize-none
                 "
               />
@@ -317,7 +322,7 @@ inflamación y sensibilidad...
               gap-2
 
               shadow-[0_15px_35px_rgba(99,102,241,0.25)]
-
+               shadow-[0_15px_35px_rgba(7,89,133,0.25)]     
               transition-all
               duration-300
 
@@ -329,14 +334,16 @@ inflamación y sensibilidad...
                   `
 
                       : `
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+                    
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
 
                     hover:scale-[1.02]
 
-                    hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+                    hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
                   `
                     }
             `}

@@ -136,7 +136,7 @@ function ServicioModal({
 
           rounded-full
 
-          bg-indigo-500/10
+          bg-sky-500/10
 
           blur-3xl
         " />
@@ -160,10 +160,12 @@ function ServicioModal({
 
             rounded-[28px]
 
-            bg-gradient-to-br
-            from-indigo-500
-            via-purple-500
-            to-violet-500
+            
+bg-gradient-to-br
+from-sky-700
+via-sky-800
+to-sky-900
+
 
             text-white
 
@@ -171,7 +173,7 @@ function ServicioModal({
             items-center
             justify-center
 
-            shadow-[0_20px_50px_rgba(99,102,241,0.35)]
+            shadow-[0_20px_50px_rgba(7,89,133,0.35)]
           ">
 
             <FolderCog size={34} />
@@ -203,9 +205,11 @@ function ServicioModal({
 
             rounded-full
 
-            bg-gradient-to-r
-            from-indigo-500
-            to-violet-500
+            
+bg-gradient-to-r
+from-cyan-500
+to-sky-800
+
           " />
 
           <p className="
@@ -265,9 +269,10 @@ function ServicioModal({
 
                 rounded-[18px]
 
-                bg-gradient-to-br
-                from-indigo-500
-                to-violet-500
+                
+bg-gradient-to-br
+from-sky-700
+to-sky-900
 
                 flex
                 items-center
@@ -342,9 +347,10 @@ function ServicioModal({
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+                
+focus:ring-sky-500/10
 
-                focus:border-indigo-300
+focus:border-sky-300
 
                 transition-all
                 duration-300
@@ -384,9 +390,11 @@ function ServicioModal({
                 focus:outline-none
 
                 focus:ring-4
-                focus:ring-indigo-500/10
+                
+focus:ring-sky-500/10
 
-                focus:border-indigo-300
+focus:border-sky-300
+
 
                 transition-all
                 duration-300
@@ -706,9 +714,11 @@ function ServicioModal({
               {/* GANANCIA */}
 
               <div className="
-                bg-gradient-to-r
-                from-indigo-500
-                to-violet-500
+                
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
 
                 rounded-[24px]
 
@@ -838,8 +848,9 @@ function ServicioModal({
                 rounded-[24px]
 
                 bg-gradient-to-r
-                from-emerald-500
-                to-green-500
+from-sky-700
+via-sky-800
+to-sky-900
 
                 text-white
 
@@ -848,11 +859,11 @@ function ServicioModal({
 
                 font-black
 
-                shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+                shadow-[0_15px_35px_rgba(7,89,133,0.28)]
 
                 hover:scale-[1.01]
 
-                hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+                hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
 
                 active:scale-[0.98]
 

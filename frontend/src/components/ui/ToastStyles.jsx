@@ -8,8 +8,13 @@ import {
 
 import toast from "react-hot-toast";
 
+const TOAST_Z_INDEX = 2147483647;
+
 const baseStyle = `
   relative
+  z-[2147483647]
+  pointer-events-auto
+
   overflow-hidden
 
   min-w-[320px]
@@ -20,10 +25,10 @@ const baseStyle = `
   border
   border-white/40
 
-  bg-white/80
+  bg-white/90
   backdrop-blur-2xl
 
-  shadow-[0_20px_50px_rgba(0,0,0,0.10)]
+  shadow-[0_20px_50px_rgba(15,23,42,0.18)]
 
   px-5
   py-4
@@ -33,6 +38,20 @@ const baseStyle = `
 
   gap-4
 `;
+
+const getToastOptions = (
+  id,
+  duration,
+  options = {}
+) => ({
+  id,
+  duration,
+  style: {
+    zIndex: TOAST_Z_INDEX,
+    ...options.style
+  },
+  ...options
+});
 
 const renderToast = ({
   t,
@@ -206,7 +225,8 @@ SUCCESS
 */
 
 export const showSuccess = (
-  message
+  message,
+  options = {}
 ) => {
 
   toast.custom((t) => (
@@ -224,23 +244,21 @@ export const showSuccess = (
       message,
 
       gradient:
-        "from-emerald-500 to-green-500",
+        "from-emerald-500 via-green-500 to-emerald-600",
 
       glow:
         "from-emerald-500 to-green-500",
 
       progress:
-        "from-emerald-500 to-green-500"
+        "from-emerald-500 via-green-500 to-emerald-600"
 
     })
 
-  ), {
-
-    id: "success-toast",
-
-    duration: 2500
-
-  });
+  ), getToastOptions(
+    options.id || "success-toast",
+    options.duration || 2500,
+    options
+  ));
 
 };
 
@@ -251,7 +269,8 @@ ERROR
 */
 
 export const showError = (
-  message
+  message,
+  options = {}
 ) => {
 
   toast.custom((t) => (
@@ -269,23 +288,21 @@ export const showError = (
       message,
 
       gradient:
-        "from-rose-500 to-pink-500",
+        "from-rose-500 via-pink-500 to-rose-600",
 
       glow:
         "from-rose-500 to-pink-500",
 
       progress:
-        "from-rose-500 to-pink-500"
+        "from-rose-500 via-pink-500 to-rose-600"
 
     })
 
-  ), {
-
-    id: "error-toast",
-
-    duration: 3000
-
-  });
+  ), getToastOptions(
+    options.id || "error-toast",
+    options.duration || 3000,
+    options
+  ));
 
 };
 
@@ -296,7 +313,8 @@ WARNING
 */
 
 export const showWarning = (
-  message
+  message,
+  options = {}
 ) => {
 
   toast.custom((t) => (
@@ -314,23 +332,21 @@ export const showWarning = (
       message,
 
       gradient:
-        "from-amber-400 to-orange-500",
+        "from-amber-400 via-orange-400 to-orange-500",
 
       glow:
         "from-amber-400 to-orange-500",
 
       progress:
-        "from-amber-400 to-orange-500"
+        "from-amber-400 via-orange-400 to-orange-500"
 
     })
 
-  ), {
-
-    id: "warning-toast",
-
-    duration: 3000
-
-  });
+  ), getToastOptions(
+    options.id || "warning-toast",
+    options.duration || 3000,
+    options
+  ));
 
 };
 
@@ -341,7 +357,8 @@ INFO
 */
 
 export const showInfo = (
-  message
+  message,
+  options = {}
 ) => {
 
   toast.custom((t) => (
@@ -359,22 +376,20 @@ export const showInfo = (
       message,
 
       gradient:
-        "from-indigo-500 to-violet-500",
+        "from-sky-700 via-sky-800 to-sky-900",
 
       glow:
-        "from-indigo-500 to-violet-500",
+        "from-sky-500 to-cyan-500",
 
       progress:
-        "from-indigo-500 to-violet-500"
+        "from-cyan-500 via-sky-700 to-sky-800"
 
     })
 
-  ), {
-
-    id: "info-toast",
-
-    duration: 2500
-
-  });
+  ), getToastOptions(
+    options.id || "info-toast",
+    options.duration || 2500,
+    options
+  ));
 
 };

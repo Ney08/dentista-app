@@ -37,13 +37,21 @@ function App() {
 
 
       <Toaster
-        position="top-right"
-        gutter={16}
-        containerStyle={{
-          top: 24,
-          right: 24
-        }}
-      />
+  position="top-right"
+  reverseOrder={false}
+  gutter={16}
+  containerStyle={{
+    top: 24,
+    right: 24,
+    zIndex: 2147483647
+  }}
+  toastOptions={{
+    style: {
+      zIndex: 2147483647
+    }
+  }}
+/>
+
 
 
 
