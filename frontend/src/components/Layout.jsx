@@ -161,7 +161,7 @@ function Layout({ children }) {
 
     overflow-hidden
 
-    shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+    shadow-[0_18px_40px_rgba(7,89,133,0.35)]
 
     flex
     items-center
@@ -225,11 +225,11 @@ function Layout({ children }) {
           gap-3
         ">
 
-          
-<BrandLogo
-  size="w-11 h-11"
-  radius="rounded-[18px]"
-/>
+
+          <BrandLogo
+            size="w-11 h-11"
+            radius="rounded-[18px]"
+          />
 
 
           <div>
@@ -281,9 +281,11 @@ function Layout({ children }) {
 
             shadow-[0_10px_30px_rgba(0,0,0,0.06)]
 
-            hover:border-indigo-200
+           
+hover:border-sky-200
 
-            hover:shadow-[0_15px_35px_rgba(99,102,241,0.15)]
+hover:shadow-[0_15px_35px_rgba(7,89,133,0.15)]
+
 
             active:scale-[0.96]
 
@@ -302,9 +304,11 @@ function Layout({ children }) {
 
             opacity-0
 
-            bg-gradient-to-br
-            from-indigo-500/10
-            to-purple-500/10
+            
+bg-gradient-to-br
+from-cyan-500/10
+to-sky-800/10
+
 
             group-hover:opacity-100
 
@@ -387,7 +391,7 @@ function Layout({ children }) {
           w-full
           h-64
 
-          bg-indigo-500/10
+          bg-sky-500/10
 
           blur-3xl
 
@@ -475,9 +479,11 @@ function Layout({ children }) {
 
               hover:bg-white/10
 
-              hover:border-indigo-400/20
+             
+hover:border-sky-400/20
 
-              hover:shadow-[0_15px_35px_rgba(99,102,241,0.15)]
+hover:shadow-[0_15px_35px_rgba(7,89,133,0.15)]
+
 
               active:scale-[0.96]
 
@@ -496,9 +502,11 @@ function Layout({ children }) {
 
               opacity-0
 
-              bg-gradient-to-br
-              from-indigo-500/10
-              to-purple-500/10
+              
+bg-gradient-to-br
+from-cyan-500/10
+to-sky-800/10
+
 
               group-hover:opacity-100
 
@@ -572,14 +580,18 @@ function Layout({ children }) {
 
                   ${active
                     ? `
-                      bg-gradient-to-r
-                      from-indigo-500
-                      via-purple-500
-                      to-violet-500
+                      
+
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
+
+
 
                       text-white
 
-                      shadow-[0_15px_40px_rgba(99,102,241,0.28)]
+                      shadow-[0_15px_40px_rgba(7,89,133,0.28)]
                     `
                     : `
                       text-slate-300
@@ -623,16 +635,19 @@ function Layout({ children }) {
                   transition-all
                   duration-300
 
-                  ${active
+                  
+${active
                     ? `
-                      bg-white/15
-                    `
+    bg-cyan-400/20
+    text-white
+  `
                     : `
-                      bg-white/[0.03]
+    bg-white/[0.03]
 
-                      group-hover:bg-white/10
-                    `
+    group-hover:bg-white/10
+  `
                   }
+
                 `}>
 
                   <Icon size={20} />
@@ -931,14 +946,16 @@ function Layout({ children }) {
 
                   ${active
                     ? `
-                      bg-gradient-to-r
-                      from-indigo-500
-                      via-purple-500
-                      to-violet-500
+                      
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
 
-                      text-white
+text-white
 
-                      shadow-[0_15px_40px_rgba(99,102,241,0.28)]
+shadow-[0_15px_40px_rgba(7,89,133,0.28)]
+
                     `
                     : `
                       text-slate-300
@@ -959,10 +976,12 @@ function Layout({ children }) {
                   items-center
                   justify-center
 
-                  ${active
-                    ? "bg-white/15"
-                    : "bg-white/[0.03]"
-                  }
+                  
+${active
+  ? "bg-cyan-400/20 text-white"
+  : "bg-white/[0.03]"
+}
+
                 `}>
 
                   <Icon size={20} />
@@ -1107,14 +1126,16 @@ function Layout({ children }) {
 
                 ${active
                   ? `
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
+                    
+bg-gradient-to-r
+from-sky-700
+via-sky-800
+to-sky-900
 
-                    text-white
+text-white
 
-                    shadow-[0_12px_30px_rgba(99,102,241,0.25)]
+shadow-[0_15px_40px_rgba(7,89,133,0.28)]
+
                   `
                   : `
                     text-slate-500

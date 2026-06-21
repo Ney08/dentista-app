@@ -486,13 +486,15 @@ function DashboardHome() {
       bg: "from-emerald-500/10 to-emerald-400/10",
       icon: Wallet
     },
+
     {
       title: "Ganancia Bruta",
       value: formato(gananciaBruta),
-      color: "text-indigo-600",
-      bg: "from-indigo-500/10 to-violet-500/10",
+      color: "text-sky-800",
+      bg: "from-sky-500/10 to-sky-800/10",
       icon: TrendingUp
     },
+
     {
       title: "Costos Servicios",
       value: formato(totalCostos),
@@ -767,7 +769,7 @@ function DashboardHome() {
 
         shadow-[0_8px_20px_rgba(0,0,0,0.05)]
 
-        hover:border-indigo-200
+        hover:border-sky-200
 
         transition-all
         duration-300
@@ -784,9 +786,11 @@ function DashboardHome() {
 
         rounded-lg
 
-        bg-gradient-to-br
-        from-indigo-500
-        to-purple-500
+        
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
 
         flex
         items-center
@@ -949,12 +953,14 @@ function DashboardHome() {
 
               rounded-full
 
-              bg-indigo-500/10
+             
+bg-sky-500/10
 
-              border
-              border-indigo-100
+border
+border-sky-100
 
-              text-indigo-600
+text-sky-800
+
 
               text-sm
               font-semibold
@@ -1337,7 +1343,7 @@ dark:border-slate-800
                 items-center
                 gap-2
 
-                text-indigo-600
+                text-sky-800
 
                 text-sm
                 font-bold
@@ -1509,7 +1515,7 @@ ${item.tipo === "egreso" && "text-rose-500"}
                 items-center
                 gap-2
 
-                text-indigo-600
+                text-sky-800
 
                 text-sm
                 font-bold
@@ -1570,17 +1576,18 @@ ${item.tipo === "egreso" && "text-rose-500"}
                 overflow-hidden
 
                 
+
 bg-gradient-to-br
-from-indigo-500
-via-violet-500
-to-purple-600
+from-sky-700
+via-sky-800
+to-sky-900
 
 
                 rounded-[34px]
 
                 p-7
 
-                shadow-[0_20px_50px_rgba(99,102,241,0.20)]
+                shadow-[0_20px_50px_rgba(7,89,133,0.24)]
 
                 min-h-[180px]
 
@@ -1594,7 +1601,7 @@ to-purple-600
                     <p className="
                     text-sm
 
-                    text-purple-100
+                    text-sky-100
                   ">
                       Ganancia neta
                     </p>
@@ -1796,7 +1803,7 @@ to-purple-600
                 items-center
                 gap-2
 
-                text-indigo-600
+                text-sky-800
 
                 text-sm
                 font-bold
@@ -1882,7 +1889,7 @@ to-purple-600
                       items-center
                       gap-2
 
-                      text-indigo-600
+                      text-sky-800
 
                       text-sm
                       font-bold
@@ -1912,10 +1919,12 @@ to-purple-600
 
                     rounded-[22px]
 
-                    bg-indigo-500/10
+                    
+bg-sky-500/10
 
-                    border
-                    border-indigo-100
+border
+border-sky-100
+
                   ">
 
                       <p className="
@@ -1927,7 +1936,7 @@ to-purple-600
 
                       font-black
 
-                      text-indigo-400
+                     text-sky-500
                     ">
                         Ganancia neta
                       </p>
@@ -1938,8 +1947,7 @@ to-purple-600
                       text-lg
 
                       font-black
-
-                      text-indigo-700
+text-sky-800
                     ">
                         {formato(gananciaNeta)}
                       </p>

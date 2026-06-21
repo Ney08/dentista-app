@@ -20,7 +20,7 @@ body {
   background:
     linear-gradient(
       to bottom right,
-      #eef2ff,
+      #f0f9ff,
       #f8fafc,
       #e0e7ff
     );
@@ -50,8 +50,8 @@ SCROLLBAR
   background:
     linear-gradient(
       to bottom,
-      #c7d2fe,
-      #a5b4fc
+      #bae6fd,
+      #7dd3fc
     );
 
   border-radius: 999px;
@@ -61,10 +61,11 @@ SCROLLBAR
   background:
     linear-gradient(
       to bottom,
-      #818cf8,
-      #6366f1
+      #0284c7,
+      #075985
     );
 }
+
 
 /* ✅ HIDE SCROLLBAR */
 
@@ -106,13 +107,14 @@ INPUTS
 
     outline-none
 
-    hover:border-indigo-300
+    hover:border-sky-300
 
     focus:ring-4
-    focus:ring-indigo-500/10
+    focus:ring-sky-500/10
 
-    focus:border-indigo-300;
+    focus:border-sky-300;
 }
+
 
 /*
 ==================================================
@@ -243,7 +245,7 @@ CALENDAR
 }
 
 .custom-calendar button:enabled:hover {
-  background: #eef2ff;
+  background: #e0f2fe;
 
   transform: translateY(-1px);
 }
@@ -252,16 +254,17 @@ CALENDAR
   background:
     linear-gradient(
       to right,
-      #6366f1,
-      #8b5cf6
+      #0284c7,
+      #075985
     ) !important;
 
   color: white !important;
 
   box-shadow:
     0 10px 25px
-    rgba(99,102,241,0.35);
+    rgba(7,89,133,0.35);
 }
+
 
 .custom-calendar .react-calendar__navigation button {
   min-width: 42px;
@@ -579,14 +582,12 @@ HEADER
 */
 
 .rbc-agenda-view table thead {
-
   background:
     linear-gradient(
       to right,
-      #6366f1,
-      #8b5cf6
+      #0284c7,
+      #075985
     );
-
 }
 
 .rbc-agenda-view table thead th {
@@ -628,10 +629,8 @@ ROWS
 }
 
 .rbc-agenda-view table tbody tr:hover {
-
   background:
-    rgba(99,102,241,0.04);
-
+    rgba(7,89,133,0.04);
 }
 
 /*
@@ -645,8 +644,10 @@ CELLS
   padding:
     16px 18px;
 
-  border-bottom:
-    1px solid #eef2ff;
+  
+border-bottom:
+  1px solid #e0f2fe;
+
 
   font-size:
     14px;
@@ -666,16 +667,14 @@ DATE COLUMN
 */
 
 .rbc-agenda-date-cell {
-
   font-weight:
     800;
 
   color:
-    #4f46e5;
+    #075985;
 
   min-width:
     140px;
-
 }
 
 /*
@@ -684,18 +683,18 @@ TIME COLUMN
 ==========================================
 */
 
-.rbc-agenda-time-cell {
 
+.rbc-agenda-time-cell {
   font-weight:
     700;
 
   color:
-    #6366f1;
+    #0284c7;
 
   white-space:
     nowrap;
-
 }
+
 
 /*
 ==========================================
@@ -861,12 +860,11 @@ HOVER
 */
 
 .rbc-toolbar button:hover {
-
   background:
     linear-gradient(
       135deg,
-      #6366f1,
-      #8b5cf6
+      #0284c7,
+      #075985
     ) !important;
 
   color:
@@ -879,7 +877,8 @@ HOVER
     translateY(-1px);
 
   box-shadow:
-    0 12px 30px rgba(99,102,241,0.28);
+    0 12px 30px rgba(7,89,133,0.28);
+
 
 }
 
@@ -891,11 +890,12 @@ ACTIVE
 
 .rbc-toolbar button.rbc-active {
 
-  background:
+  
+ background:
     linear-gradient(
       135deg,
-      #6366f1,
-      #8b5cf6
+      #0284c7,
+      #075985
     ) !important;
 
   color:
@@ -904,8 +904,12 @@ ACTIVE
   border-color:
     transparent !important;
 
+  transform:
+    translateY(-1px);
+
   box-shadow:
-    0 14px 35px rgba(99,102,241,0.32);
+    0 12px 30px rgba(7,89,133,0.28);
+
 
 }
 

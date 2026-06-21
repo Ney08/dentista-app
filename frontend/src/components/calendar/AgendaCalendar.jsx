@@ -946,9 +946,9 @@ DUPLICAR CITA
     rounded-[24px]
 
     border
-    border-indigo-200/60
+    border-sky-200/60
 
-    bg-indigo-500/5
+    bg-sky-500/5
 
     p-4
   ">
@@ -962,7 +962,7 @@ DUPLICAR CITA
 
       tracking-[0.14em]
 
-      text-indigo-400
+     text-sky-500
     ">
 
             Pendientes
@@ -976,7 +976,7 @@ DUPLICAR CITA
 
       font-black
 
-      text-indigo-600
+     text-sky-800
     ">
 
             {pendientes}
@@ -1135,7 +1135,7 @@ DUPLICAR CITA
                 items-center
                 gap-2
 
-                text-indigo-600
+                text-sky-800
 
                 text-sm
                 font-bold
@@ -1471,7 +1471,7 @@ DUPLICAR CITA
                 style: {
 
                   background:
-                    "rgba(99,102,241,0.06)",
+                    "rgba(7,89,133,0.06)",
 
                   cursor:
                     "not-allowed"
@@ -1651,7 +1651,7 @@ DUPLICAR CITA
               style: {
 
                 background:
-                  "linear-gradient(135deg,#8b5cf6,#6366f1)",
+                  "linear-gradient(135deg,#0284c7,#075985)",
 
                 border:
                   "none",
@@ -1669,7 +1669,7 @@ DUPLICAR CITA
                   700,
 
                 boxShadow:
-                  "0 10px 30px rgba(99,102,241,0.25)"
+                  "0 10px 30px rgba(7,89,133,0.25)"
 
               }
 
@@ -1912,8 +1912,8 @@ DUPLICAR CITA
 
         rounded-full
 
-        bg-indigo-500
-
+        bg-sky-800
+        hover:bg-sky-900    
         px-5
 
         text-sm
@@ -1922,7 +1922,7 @@ DUPLICAR CITA
 
         text-white
 
-        shadow-[0_10px_30px_rgba(99,102,241,0.25)]
+        shadow-[0_10px_30px_rgba(7,89,133,0.25)]
       "
           >
 
@@ -1999,7 +1999,7 @@ DUPLICAR CITA
         text-sm
         font-bold
 
-        hover:bg-indigo-50
+       hover:bg-sky-50
       "
           >
 
@@ -2032,7 +2032,7 @@ DUPLICAR CITA
         text-sm
         font-bold
 
-        hover:bg-violet-50
+        hover:bg-cyan-50
       "
           >
 
