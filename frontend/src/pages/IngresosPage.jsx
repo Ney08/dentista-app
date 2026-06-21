@@ -661,7 +661,7 @@ function IngresosPage() {
 
                 font-black
 
-                text-indigo-600
+                text-emerald-600
               ">
                     RD$
                     {" "}
@@ -683,24 +683,23 @@ function IngresosPage() {
                 </div>
 
                 <div className="
-              w-14
-              h-14
+  w-14
+  h-14
 
-              rounded-[20px]
+  rounded-[20px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              via-purple-500
-              to-violet-500
+  bg-gradient-to-br
+  from-emerald-500
+  to-green-500
 
-              text-white
+  text-white
 
-              flex
-              items-center
-              justify-center
+  flex
+  items-center
+  justify-center
 
-              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
-            ">
+  shadow-[0_15px_35px_rgba(16,185,129,0.25)]
+">
 
                   <Receipt size={22} />
 
@@ -1067,7 +1066,7 @@ function IngresosPage() {
 
             rounded-full
 
-            bg-yellow-500/10
+            bg-amber-500/10
 
             blur-3xl
           " />
@@ -1103,7 +1102,7 @@ function IngresosPage() {
 
                 font-black
 
-                text-yellow-500
+                text-amber-500
               ">
 
                     {pendientesCount}
@@ -1118,9 +1117,9 @@ function IngresosPage() {
 
               rounded-2xl
 
-              bg-yellow-50
+              bg-amber-50
 
-              text-yellow-500
+              text-amber-500
 
               flex
               items-center

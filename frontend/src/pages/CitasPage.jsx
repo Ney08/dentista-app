@@ -614,7 +614,7 @@ function CitasPage() {
 
                 font-black
 
-                text-indigo-600
+               text-amber-600
               ">
                     {pendientes}
                   </h3>
@@ -634,24 +634,23 @@ function CitasPage() {
                 </div>
 
                 <div className="
-              w-14
-              h-14
+  w-14
+  h-14
 
-              rounded-[20px]
+  rounded-[20px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              via-purple-500
-              to-violet-500
+  bg-gradient-to-br
+  from-amber-500
+  to-yellow-500
 
-              text-white
+  text-white
 
-              flex
-              items-center
-              justify-center
+  flex
+  items-center
+  justify-center
 
-              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
-            ">
+  shadow-[0_15px_35px_rgba(245,158,11,0.25)]
+">
 
                   <CalendarClock size={22} />
 
@@ -708,7 +707,7 @@ function CitasPage() {
 
             rounded-full
 
-            bg-blue-500/10
+            bg-amber-500/10
 
             blur-3xl
           " />
@@ -744,7 +743,7 @@ function CitasPage() {
 
                 font-black
 
-                text-blue-600
+               text-amber-600
               ">
                     {hoyCount}
                   </h2>
@@ -757,9 +756,9 @@ function CitasPage() {
 
               rounded-2xl
 
-              bg-blue-50
+              bg-amber-50
 
-              text-blue-500
+              text-amber-500
 
               flex
               items-center
@@ -808,7 +807,7 @@ function CitasPage() {
 
             rounded-full
 
-            bg-yellow-500/10
+            bg-amber-500/10
 
             blur-3xl
           " />
@@ -844,7 +843,7 @@ function CitasPage() {
 
                 font-black
 
-                text-yellow-500
+                text-amber-500
               ">
                     {pendientes}
                   </h2>
@@ -857,7 +856,7 @@ function CitasPage() {
 
               rounded-2xl
 
-              bg-yellow-50
+              bg-amber-50
 
               text-yellow-500
 

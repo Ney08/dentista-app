@@ -370,12 +370,14 @@ function ReportesPage() {
       ) * 100
       : 0;
 
+
   const rentabilidadColor =
     margenRentabilidad >= 40
       ? "text-emerald-500"
       : margenRentabilidad >= 20
-        ? "text-yellow-500"
+        ? "text-amber-500"
         : "text-rose-500";
+
 
   const totalFacturas =
     datosOrdenados.length;
@@ -623,7 +625,7 @@ function ReportesPage() {
           duration: 0.25
         }}
       >
-      <div className="
+        <div className="
       h-full
 
       w-full
@@ -641,9 +643,9 @@ function ReportesPage() {
       sm:px-5
     ">
 
-        {/* HEADER */}
+          {/* HEADER */}
 
-        <div className="
+          <div className="
         flex
         flex-col
         xl:flex-row
@@ -654,11 +656,11 @@ function ReportesPage() {
         gap-5
       ">
 
-          {/* LEFT */}
+            {/* LEFT */}
 
-          <div>
+            <div>
 
-            <div className="
+              <div className="
             inline-flex
 
             items-center
@@ -682,13 +684,13 @@ function ReportesPage() {
             mb-4
           ">
 
-              <BarChart3 size={14} />
+                <BarChart3 size={14} />
 
-              Inteligencia financiera
+                Inteligencia financiera
 
-            </div>
+              </div>
 
-            <h1 className="
+              <h1 className="
             text-3xl
             md:text-4xl
 
@@ -699,11 +701,11 @@ function ReportesPage() {
             text-slate-800
           ">
 
-              Reportes clínicos
+                Reportes clínicos
 
-            </h1>
+              </h1>
 
-            <p className="
+              <p className="
             mt-2
 
             text-sm
@@ -712,20 +714,20 @@ function ReportesPage() {
             text-slate-500
           ">
 
-              {(desde || hasta)
-                ? "Filtro personalizado activo"
-                : labelMap[tipo]
-              }
-              {" • "}
-              análisis financiero odontológico
+                {(desde || hasta)
+                  ? "Filtro personalizado activo"
+                  : labelMap[tipo]
+                }
+                {" • "}
+                análisis financiero odontológico
 
-            </p>
+              </p>
 
-          </div>
+            </div>
 
-          {/* RIGHT */}
+            {/* RIGHT */}
 
-          <div className="
+            <div className="
           bg-white/95
           backdrop-blur-md
 
@@ -742,7 +744,7 @@ function ReportesPage() {
           min-w-[260px]
         ">
 
-            <p className="
+              <p className="
             text-xs
 
             uppercase
@@ -753,10 +755,10 @@ function ReportesPage() {
 
             text-slate-400
           ">
-              Utilidad neta
-            </p>
+                Utilidad neta
+              </p>
 
-            <div className="
+              <div className="
             mt-3
 
             flex
@@ -764,9 +766,9 @@ function ReportesPage() {
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <h3 className="
+                  <h3 className="
                 text-3xl
 
                 font-black
@@ -774,13 +776,13 @@ function ReportesPage() {
                 text-indigo-600
               ">
 
-                  RD$
-                  {" "}
-                  {formatMoney(utilidadNeta)}
+                    RD$
+                    {" "}
+                    {formatMoney(utilidadNeta)}
 
-                </h3>
+                  </h3>
 
-                <p className={`
+                  <p className={`
                 mt-1
 
                 text-xs
@@ -790,15 +792,15 @@ function ReportesPage() {
                 ${rentabilidadColor}
               `}>
 
-                  Rentabilidad
-                  {" "}
-                  {margenRentabilidad.toFixed(1)}%
+                    Rentabilidad
+                    {" "}
+                    {margenRentabilidad.toFixed(1)}%
 
-                </p>
+                  </p>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-14
               h-14
 
@@ -816,7 +818,9 @@ function ReportesPage() {
               justify-center
             ">
 
-                <TrendingUp size={22} />
+                  <TrendingUp size={22} />
+
+                </div>
 
               </div>
 
@@ -824,11 +828,9 @@ function ReportesPage() {
 
           </div>
 
-        </div>
+          {/* FILTROS */}
 
-        {/* FILTROS */}
-
-        <div className="
+          <div className="
         bg-white/95
         backdrop-blur-md
 
@@ -844,9 +846,9 @@ function ReportesPage() {
         space-y-5
       ">
 
-          {/* TOP */}
+            {/* TOP */}
 
-          <div className="
+            <div className="
           flex
           flex-col
           xl:flex-row
@@ -857,16 +859,16 @@ function ReportesPage() {
           gap-4
         ">
 
-            {/* LEFT */}
+              {/* LEFT */}
 
-            <div className="
+              <div className="
             flex
             items-center
             gap-3
             flex-wrap
           ">
 
-              <div className="
+                <div className="
               px-4
               h-11
 
@@ -887,15 +889,15 @@ function ReportesPage() {
               text-indigo-600
             ">
 
-                <Activity size={14} />
+                  <Activity size={14} />
 
-                {totalFacturas}
-                {" "}
-                facturas analizadas
+                  {totalFacturas}
+                  {" "}
+                  facturas analizadas
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               px-4
               h-11
 
@@ -916,19 +918,19 @@ function ReportesPage() {
               text-emerald-600
             ">
 
-                <Users size={14} />
+                  <Users size={14} />
 
-                {pacientesUnicos}
-                {" "}
-                pacientes
+                  {pacientesUnicos}
+                  {" "}
+                  pacientes
+
+                </div>
 
               </div>
 
-            </div>
+              {/* EXPORT */}
 
-            {/* EXPORT */}
-
-            <div className="
+              <div className="
             flex
             flex-col
             sm:flex-row
@@ -936,9 +938,9 @@ function ReportesPage() {
             gap-3
           ">
 
-              <button
-                onClick={handlePDF}
-                className="
+                <button
+                  onClick={handlePDF}
+                  className="
                 h-12
 
                 px-5
@@ -962,17 +964,17 @@ function ReportesPage() {
                 justify-center
                 gap-2
               "
-              >
+                >
 
-                <FileText size={16} />
+                  <FileText size={16} />
 
-                Exportar PDF
+                  Exportar PDF
 
-              </button>
+                </button>
 
-              <button
-                onClick={handleExcel}
-                className="
+                <button
+                  onClick={handleExcel}
+                  className="
                 h-12
 
                 px-5
@@ -996,21 +998,21 @@ function ReportesPage() {
                 justify-center
                 gap-2
               "
-              >
+                >
 
-                <FileSpreadsheet size={16} />
+                  <FileSpreadsheet size={16} />
 
-                Exportar Excel
+                  Exportar Excel
 
-              </button>
+                </button>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* FILTERS */}
 
-          {/* FILTERS */}
-
-          <div className="
+            <div className="
           flex
           flex-col
           xl:flex-row
@@ -1018,9 +1020,9 @@ function ReportesPage() {
           gap-3
         ">
 
-            {/* PERIODOS */}
+              {/* PERIODOS */}
 
-            <div className="
+              <div className="
             bg-slate-50/90
 
             rounded-[26px]
@@ -1037,22 +1039,22 @@ function ReportesPage() {
             no-scrollbar
           ">
 
-              <div className="
+                <div className="
               flex
               gap-2
 
               min-w-max
             ">
 
-                {["semanal", "mensual", "anual"].map((t) => (
+                  {["semanal", "mensual", "anual"].map((t) => (
 
-                  <button
-                    key={t}
-                    onClick={() =>
-                      setTipo(t)
-                    }
-                    disabled={desde || hasta}
-                    className={`
+                    <button
+                      key={t}
+                      onClick={() =>
+                        setTipo(t)
+                      }
+                      disabled={desde || hasta}
+                      className={`
                     flex
                     items-center
                     gap-2
@@ -1073,7 +1075,7 @@ function ReportesPage() {
                     duration-300
 
                     ${tipo === t
-                        ? `
+                          ? `
                         bg-gradient-to-r
                         from-indigo-500
                         to-purple-500
@@ -1082,32 +1084,32 @@ function ReportesPage() {
 
                         border-transparent
                       `
-                        : `
+                          : `
                         bg-white
 
                         text-slate-700
 
                         border-slate-200/70
                       `
-                      }
+                        }
                   `}
-                  >
+                    >
 
-                    <CalendarDays size={14} />
+                      <CalendarDays size={14} />
 
-                    {t}
+                      {t}
 
-                  </button>
+                    </button>
 
-                ))}
+                  ))}
+
+                </div>
 
               </div>
 
-            </div>
+              {/* DATES */}
 
-            {/* DATES */}
-
-            <div className="
+              <div className="
             flex
             flex-col
             sm:flex-row
@@ -1117,15 +1119,15 @@ function ReportesPage() {
             flex-1
           ">
 
-              <input
-                type="date"
-                value={desde}
-                onChange={(e) =>
-                  setDesde(
-                    e.target.value
-                  )
-                }
-                className="
+                <input
+                  type="date"
+                  value={desde}
+                  onChange={(e) =>
+                    setDesde(
+                      e.target.value
+                    )
+                  }
+                  className="
                 flex-1
 
                 h-12
@@ -1146,17 +1148,17 @@ function ReportesPage() {
                 focus:ring-4
                 focus:ring-indigo-500/10
               "
-              />
+                />
 
-              <input
-                type="date"
-                value={hasta}
-                onChange={(e) =>
-                  setHasta(
-                    e.target.value
-                  )
-                }
-                className="
+                <input
+                  type="date"
+                  value={hasta}
+                  onChange={(e) =>
+                    setHasta(
+                      e.target.value
+                    )
+                  }
+                  className="
                 flex-1
 
                 h-12
@@ -1177,17 +1179,17 @@ function ReportesPage() {
                 focus:ring-4
                 focus:ring-indigo-500/10
               "
-              />
+                />
 
-              <button
-                onClick={() => {
+                <button
+                  onClick={() => {
 
-                  setDesde("");
+                    setDesde("");
 
-                  setHasta("");
+                    setHasta("");
 
-                }}
-                className="
+                  }}
+                  className="
                 h-12
 
                 px-5
@@ -1213,23 +1215,23 @@ function ReportesPage() {
                 justify-center
                 gap-2
               "
-              >
+                >
 
-                <X size={15} />
+                  <X size={15} />
 
-                Limpiar
+                  Limpiar
 
-              </button>
+                </button>
+
+              </div>
 
             </div>
 
           </div>
 
-        </div>
+          {/* KPIS */}
 
-        {/* KPIS */}
-
-        <div className="
+          <div className="
         grid
         grid-cols-1
         sm:grid-cols-2
@@ -1239,11 +1241,11 @@ function ReportesPage() {
         gap-5
       ">
 
-          {/* INGRESOS */}
+            {/* INGRESOS */}
 
-          <div className={cardKpi}>
+            <div className={cardKpi}>
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -1258,15 +1260,15 @@ function ReportesPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
 
                 text-slate-500
@@ -1276,13 +1278,13 @@ function ReportesPage() {
                 gap-2
               ">
 
-                  <TrendingUp size={14} />
+                    <TrendingUp size={14} />
 
-                  Ingresos clínicos
+                    Ingresos clínicos
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -1292,15 +1294,15 @@ function ReportesPage() {
                 text-emerald-600
               ">
 
-                  RD$
-                  {" "}
-                  {formatMoney(ingresosClinicos)}
+                    RD$
+                    {" "}
+                    {formatMoney(ingresosClinicos)}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -1315,19 +1317,19 @@ function ReportesPage() {
               justify-center
             ">
 
-                <ArrowUpRight size={20} />
+                  <ArrowUpRight size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* CAJA */}
 
-          {/* CAJA */}
+            <div className={cardKpi}>
 
-          <div className={cardKpi}>
-
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -1342,15 +1344,15 @@ function ReportesPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
                 text-slate-500
 
@@ -1359,13 +1361,13 @@ function ReportesPage() {
                 gap-2
               ">
 
-                  <Wallet size={14} />
+                    <Wallet size={14} />
 
-                  Caja disponible
+                    Caja disponible
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -1375,15 +1377,15 @@ function ReportesPage() {
                 text-indigo-600
               ">
 
-                  RD$
-                  {" "}
-                  {formatMoney(cajaDisponible)}
+                    RD$
+                    {" "}
+                    {formatMoney(cajaDisponible)}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -1398,19 +1400,19 @@ function ReportesPage() {
               justify-center
             ">
 
-                <CircleDollarSign size={20} />
+                  <CircleDollarSign size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* EGRESOS */}
 
-          {/* EGRESOS */}
+            <div className={cardKpi}>
 
-          <div className={cardKpi}>
-
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -1425,15 +1427,15 @@ function ReportesPage() {
             blur-3xl
           " />
 
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
                 text-slate-500
 
@@ -1442,13 +1444,13 @@ function ReportesPage() {
                 gap-2
               ">
 
-                  <TrendingDown size={14} />
+                    <TrendingDown size={14} />
 
-                  Egresos
+                    Egresos
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -1458,15 +1460,15 @@ function ReportesPage() {
                 text-rose-500
               ">
 
-                  RD$
-                  {" "}
-                  {formatMoney(totalEgresos)}
+                    RD$
+                    {" "}
+                    {formatMoney(totalEgresos)}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -1481,27 +1483,27 @@ function ReportesPage() {
               justify-center
             ">
 
-                <TrendingDown size={20} />
+                  <TrendingDown size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* FACTURAS */}
 
-          {/* FACTURAS */}
+            <div className={cardKpi}>
 
-          <div className={cardKpi}>
-
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
                 text-slate-500
 
@@ -1510,13 +1512,13 @@ function ReportesPage() {
                 gap-2
               ">
 
-                  <Receipt size={14} />
+                    <Receipt size={14} />
 
-                  Facturas
+                    Facturas
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -1526,13 +1528,13 @@ function ReportesPage() {
                 text-slate-800
               ">
 
-                  {totalFacturas}
+                    {totalFacturas}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -1547,27 +1549,27 @@ function ReportesPage() {
               justify-center
             ">
 
-                <Receipt size={20} />
+                  <Receipt size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* PACIENTES */}
 
-          {/* PACIENTES */}
+            <div className={cardKpi}>
 
-          <div className={cardKpi}>
-
-            <div className="
+              <div className="
             flex
             items-start
             justify-between
           ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                 text-sm
                 text-slate-500
 
@@ -1576,13 +1578,13 @@ function ReportesPage() {
                 gap-2
               ">
 
-                  <Users size={14} />
+                    <Users size={14} />
 
-                  Pacientes
+                    Pacientes
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                 mt-2
 
                 text-3xl
@@ -1592,13 +1594,13 @@ function ReportesPage() {
                 text-indigo-600
               ">
 
-                  {pacientesUnicos}
+                    {pacientesUnicos}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
               w-12
               h-12
 
@@ -1613,17 +1615,17 @@ function ReportesPage() {
               justify-center
             ">
 
-                <Users size={20} />
+                  <Users size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* PROMEDIO */}
 
-          {/* PROMEDIO */}
-
-          <div className="
+            <div className="
           relative
           overflow-hidden
 
@@ -1641,7 +1643,7 @@ function ReportesPage() {
           shadow-[0_20px_50px_rgba(99,102,241,0.28)]
         ">
 
-            <div className="
+              <div className="
             absolute
             -top-10
             -right-10
@@ -1656,9 +1658,9 @@ function ReportesPage() {
             blur-3xl
           " />
 
-            <div className="relative z-10">
+              <div className="relative z-10">
 
-              <p className="
+                <p className="
               text-sm
 
               text-white/70
@@ -1668,13 +1670,13 @@ function ReportesPage() {
               gap-2
             ">
 
-                <BadgeDollarSign size={14} />
+                  <BadgeDollarSign size={14} />
 
-                Promedio factura
+                  Promedio factura
 
-              </p>
+                </p>
 
-              <h2 className="
+                <h2 className="
               mt-2
 
               text-3xl
@@ -1682,20 +1684,20 @@ function ReportesPage() {
               font-black
             ">
 
-                RD$
-                {" "}
-                {formatMoney(promedioFactura)}
+                  RD$
+                  {" "}
+                  {formatMoney(promedioFactura)}
 
-              </h2>
+                </h2>
+
+              </div>
 
             </div>
 
           </div>
+          {/* RESUMEN + ANALISIS */}
 
-        </div>
-        {/* RESUMEN + ANALISIS */}
-
-        <div className="
+          <div className="
   grid
   grid-cols-1
   xl:grid-cols-3
@@ -1703,9 +1705,9 @@ function ReportesPage() {
   gap-6
 ">
 
-          {/* RESUMEN */}
+            {/* RESUMEN */}
 
-          <div className="
+            <div className="
     xl:col-span-2
 
     bg-white/95
@@ -1721,7 +1723,7 @@ function ReportesPage() {
     shadow-[0_10px_30px_rgba(0,0,0,0.05)]
   ">
 
-            <div className="
+              <div className="
       flex
       items-center
       gap-3
@@ -1729,7 +1731,7 @@ function ReportesPage() {
       mb-6
     ">
 
-              <div className="
+                <div className="
         w-12
         h-12
 
@@ -1747,13 +1749,13 @@ function ReportesPage() {
         justify-center
       ">
 
-                <ClipboardList size={20} />
+                  <ClipboardList size={20} />
 
-              </div>
+                </div>
 
-              <div>
+                <div>
 
-                <h3 className="
+                  <h3 className="
           text-2xl
 
           font-black
@@ -1761,29 +1763,29 @@ function ReportesPage() {
           text-slate-800
         ">
 
-                  Resumen financiero
+                    Resumen financiero
 
-                </h3>
+                  </h3>
 
-                <p className="
+                  <p className="
           text-sm
 
           text-slate-500
         ">
 
-                  Estado financiero de la clínica
+                    Estado financiero de la clínica
 
-                </p>
+                  </p>
+
+                </div>
 
               </div>
 
-            </div>
+              <div className="space-y-5">
 
-            <div className="space-y-5">
+                {/* INGRESOS */}
 
-              {/* INGRESOS */}
-
-              <div className="
+                <div className="
         flex
         items-center
         justify-between
@@ -1794,13 +1796,13 @@ function ReportesPage() {
         pb-4
       ">
 
-                <div className="
+                  <div className="
           flex
           items-center
           gap-3
         ">
 
-                  <div className="
+                    <div className="
             w-11
             h-11
 
@@ -1815,33 +1817,33 @@ function ReportesPage() {
             justify-center
           ">
 
-                    <TrendingUp size={18} />
+                      <TrendingUp size={18} />
 
-                  </div>
+                    </div>
 
-                  <div>
+                    <div>
 
-                    <p className="
+                      <p className="
               font-semibold
 
               text-slate-700
             ">
-                      Ingresos clínicos
-                    </p>
+                        Ingresos clínicos
+                      </p>
 
-                    <p className="
+                      <p className="
               text-sm
 
               text-slate-400
             ">
-                      Facturación total registrada
-                    </p>
+                        Facturación total registrada
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
-
-                <h3 className="
+                  <h3 className="
           text-2xl
 
           font-black
@@ -1849,17 +1851,17 @@ function ReportesPage() {
           text-emerald-600
         ">
 
-                  RD$
-                  {" "}
-                  {formatMoney(ingresosClinicos)}
+                    RD$
+                    {" "}
+                    {formatMoney(ingresosClinicos)}
 
-                </h3>
+                  </h3>
 
-              </div>
+                </div>
 
-              {/* COSTOS */}
+                {/* COSTOS */}
 
-              <div className="
+                <div className="
         flex
         items-center
         justify-between
@@ -1870,13 +1872,13 @@ function ReportesPage() {
         pb-4
       ">
 
-                <div className="
+                  <div className="
           flex
           items-center
           gap-3
         ">
 
-                  <div className="
+                    <div className="
             w-11
             h-11
 
@@ -1891,33 +1893,33 @@ function ReportesPage() {
             justify-center
           ">
 
-                    <BadgeDollarSign size={18} />
+                      <BadgeDollarSign size={18} />
 
-                  </div>
+                    </div>
 
-                  <div>
+                    <div>
 
-                    <p className="
+                      <p className="
               font-semibold
 
               text-slate-700
             ">
-                      Costos clínicos
-                    </p>
+                        Costos clínicos
+                      </p>
 
-                    <p className="
+                      <p className="
               text-sm
 
               text-slate-400
             ">
-                      Materiales y procedimientos
-                    </p>
+                        Materiales y procedimientos
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
-
-                <h3 className="
+                  <h3 className="
           text-2xl
 
           font-black
@@ -1925,17 +1927,17 @@ function ReportesPage() {
           text-orange-500
         ">
 
-                  - RD$
-                  {" "}
-                  {formatMoney(costosClinicos)}
+                    - RD$
+                    {" "}
+                    {formatMoney(costosClinicos)}
 
-                </h3>
+                  </h3>
 
-              </div>
+                </div>
 
-              {/* EGRESOS */}
+                {/* EGRESOS */}
 
-              <div className="
+                <div className="
         flex
         items-center
         justify-between
@@ -1946,13 +1948,13 @@ function ReportesPage() {
         pb-4
       ">
 
-                <div className="
+                  <div className="
           flex
           items-center
           gap-3
         ">
 
-                  <div className="
+                    <div className="
             w-11
             h-11
 
@@ -1967,33 +1969,33 @@ function ReportesPage() {
             justify-center
           ">
 
-                    <TrendingDown size={18} />
+                      <TrendingDown size={18} />
 
-                  </div>
+                    </div>
 
-                  <div>
+                    <div>
 
-                    <p className="
+                      <p className="
               font-semibold
 
               text-slate-700
             ">
-                      Egresos operativos
-                    </p>
+                        Egresos operativos
+                      </p>
 
-                    <p className="
+                      <p className="
               text-sm
 
               text-slate-400
             ">
-                      Gastos administrativos
-                    </p>
+                        Gastos administrativos
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
-
-                <h3 className="
+                  <h3 className="
           text-2xl
 
           font-black
@@ -2001,17 +2003,17 @@ function ReportesPage() {
           text-rose-500
         ">
 
-                  - RD$
-                  {" "}
-                  {formatMoney(totalEgresos)}
+                    - RD$
+                    {" "}
+                    {formatMoney(totalEgresos)}
 
-                </h3>
+                  </h3>
 
-              </div>
+                </div>
 
-              {/* DESCUENTOS */}
+                {/* DESCUENTOS */}
 
-              <div className="
+                <div className="
         flex
         items-center
         justify-between
@@ -2022,13 +2024,13 @@ function ReportesPage() {
         pb-4
       ">
 
-                <div className="
+                  <div className="
           flex
           items-center
           gap-3
         ">
 
-                  <div className="
+                    <div className="
             w-11
             h-11
 
@@ -2043,33 +2045,33 @@ function ReportesPage() {
             justify-center
           ">
 
-                    <Receipt size={18} />
+                      <Receipt size={18} />
 
-                  </div>
+                    </div>
 
-                  <div>
+                    <div>
 
-                    <p className="
+                      <p className="
               font-semibold
 
               text-slate-700
             ">
-                      Descuentos aplicados
-                    </p>
+                        Descuentos aplicados
+                      </p>
 
-                    <p className="
+                      <p className="
               text-sm
 
               text-slate-400
             ">
-                      Promociones y ajustes
-                    </p>
+                        Promociones y ajustes
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
-
-                <h3 className="
+                  <h3 className="
           text-2xl
 
           font-black
@@ -2077,17 +2079,17 @@ function ReportesPage() {
           text-pink-500
         ">
 
-                  - RD$
-                  {" "}
-                  {formatMoney(descuentosTotales)}
+                    - RD$
+                    {" "}
+                    {formatMoney(descuentosTotales)}
 
-                </h3>
+                  </h3>
 
-              </div>
+                </div>
 
-              {/* UTILIDAD */}
+                {/* UTILIDAD */}
 
-              <div className="
+                <div className="
         pt-2
 
         flex
@@ -2100,33 +2102,33 @@ function ReportesPage() {
         gap-4
       ">
 
-                <div>
+                  <div>
 
-                  <p className="
+                    <p className="
             text-lg
 
             font-black
 
             text-slate-800
           ">
-                    Utilidad neta final
-                  </p>
+                      Utilidad neta final
+                    </p>
 
-                  <p className="
+                    <p className="
             text-sm
 
             text-slate-500
           ">
-                    Resultado operativo actual
-                  </p>
+                      Resultado operativo actual
+                    </p>
 
-                </div>
+                  </div>
 
-                <div className="
+                  <div className="
           text-right
         ">
 
-                  <h2 className="
+                    <h2 className="
             text-4xl
 
             font-black
@@ -2134,13 +2136,13 @@ function ReportesPage() {
             text-indigo-600
           ">
 
-                    RD$
-                    {" "}
-                    {formatMoney(utilidadNeta)}
+                      RD$
+                      {" "}
+                      {formatMoney(utilidadNeta)}
 
-                  </h2>
+                    </h2>
 
-                  <p className={`
+                    <p className={`
             mt-1
 
             text-sm
@@ -2150,11 +2152,13 @@ function ReportesPage() {
             ${rentabilidadColor}
           `}>
 
-                    Rentabilidad
-                    {" "}
-                    {margenRentabilidad.toFixed(1)}%
+                      Rentabilidad
+                      {" "}
+                      {margenRentabilidad.toFixed(1)}%
 
-                  </p>
+                    </p>
+
+                  </div>
 
                 </div>
 
@@ -2162,17 +2166,15 @@ function ReportesPage() {
 
             </div>
 
-          </div>
+            {/* SIDE ANALYTICS */}
 
-          {/* SIDE ANALYTICS */}
-
-          <div className="
+            <div className="
     space-y-6
   ">
 
-            {/* PACIENTES */}
+              {/* PACIENTES */}
 
-            <div className="
+              <div className="
       bg-white/95
       backdrop-blur-md
 
@@ -2186,7 +2188,7 @@ function ReportesPage() {
       shadow-[0_10px_30px_rgba(0,0,0,0.05)]
     ">
 
-              <div className="
+                <div className="
         flex
         items-center
         gap-3
@@ -2194,7 +2196,7 @@ function ReportesPage() {
         mb-5
       ">
 
-                <div className="
+                  <div className="
           w-12
           h-12
 
@@ -2209,13 +2211,13 @@ function ReportesPage() {
           justify-center
         ">
 
-                  <Crown size={20} />
+                    <Crown size={20} />
 
-                </div>
+                  </div>
 
-                <div>
+                  <div>
 
-                  <h3 className="
+                    <h3 className="
             text-xl
 
             font-black
@@ -2223,31 +2225,31 @@ function ReportesPage() {
             text-slate-800
           ">
 
-                    Pacientes top
+                      Pacientes top
 
-                  </h3>
+                    </h3>
 
-                  <p className="
+                    <p className="
             text-sm
 
             text-slate-500
           ">
-                    Mayor facturación
-                  </p>
+                      Mayor facturación
+                    </p>
+
+                  </div>
 
                 </div>
 
-              </div>
-
-              <div className="
+                <div className="
         space-y-3
       ">
 
-                {topPacientes.map(([paciente, total], i) => (
+                  {topPacientes.map(([paciente, total], i) => (
 
-                  <div
-                    key={i}
-                    className="
+                    <div
+                      key={i}
+                      className="
               bg-slate-50/80
 
               border
@@ -2263,15 +2265,15 @@ function ReportesPage() {
 
               gap-3
             "
-                  >
+                    >
 
-                    <div className="
+                      <div className="
               flex
               items-center
               gap-3
             ">
 
-                      <div className="
+                        <div className="
                 w-10
                 h-10
 
@@ -2291,59 +2293,59 @@ function ReportesPage() {
                 justify-center
               ">
 
-                        {i + 1}
+                          {i + 1}
 
-                      </div>
+                        </div>
 
-                      <div>
+                        <div>
 
-                        <p className="
+                          <p className="
                   font-semibold
 
                   text-slate-700
                 ">
 
-                          {paciente}
+                            {paciente}
 
-                        </p>
+                          </p>
 
-                        <p className="
+                          <p className="
                   text-xs
 
                   text-slate-400
                 ">
 
-                          Paciente recurrente
+                            Paciente recurrente
 
-                        </p>
+                          </p>
+
+                        </div>
 
                       </div>
 
-                    </div>
-
-                    <p className="
+                      <p className="
               font-black
 
               text-emerald-600
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(total)}
+                        RD$
+                        {" "}
+                        {formatMoney(total)}
 
-                    </p>
+                      </p>
 
-                  </div>
+                    </div>
 
-                ))}
+                  ))}
+
+                </div>
 
               </div>
 
-            </div>
+              {/* PROCEDIMIENTOS */}
 
-            {/* PROCEDIMIENTOS */}
-
-            <div className="
+              <div className="
       bg-white/95
       backdrop-blur-md
 
@@ -2357,7 +2359,7 @@ function ReportesPage() {
       shadow-[0_10px_30px_rgba(0,0,0,0.05)]
     ">
 
-              <div className="
+                <div className="
         flex
         items-center
         gap-3
@@ -2365,7 +2367,7 @@ function ReportesPage() {
         mb-5
       ">
 
-                <div className="
+                  <div className="
           w-12
           h-12
 
@@ -2380,13 +2382,13 @@ function ReportesPage() {
           justify-center
         ">
 
-                  <Stethoscope size={20} />
+                    <Stethoscope size={20} />
 
-                </div>
+                  </div>
 
-                <div>
+                  <div>
 
-                  <h3 className="
+                    <h3 className="
             text-xl
 
             font-black
@@ -2394,31 +2396,31 @@ function ReportesPage() {
             text-slate-800
           ">
 
-                    Procedimientos
+                      Procedimientos
 
-                  </h3>
+                    </h3>
 
-                  <p className="
+                    <p className="
             text-sm
 
             text-slate-500
           ">
-                    Más realizados
-                  </p>
+                      Más realizados
+                    </p>
+
+                  </div>
 
                 </div>
 
-              </div>
-
-              <div className="
+                <div className="
         space-y-3
       ">
 
-                {tratamientosFrecuentes.map(([nombre, data], i) => (
+                  {tratamientosFrecuentes.map(([nombre, data], i) => (
 
-                  <div
-                    key={i}
-                    className="
+                    <div
+                      key={i}
+                      className="
               bg-slate-50/80
 
               border
@@ -2434,49 +2436,51 @@ function ReportesPage() {
 
               gap-3
             "
-                  >
+                    >
 
-                    <div>
+                      <div>
 
-                      <p className="
+                        <p className="
                 font-semibold
 
                 text-slate-700
               ">
 
-                        {nombre}
+                          {nombre}
 
-                      </p>
+                        </p>
 
-                      <p className="
+                        <p className="
                 text-xs
 
                 text-slate-400
               ">
 
-                        {data.cantidad}
-                        {" "}
-                        procedimientos
+                          {data.cantidad}
+                          {" "}
+                          procedimientos
 
-                      </p>
+                        </p>
 
-                    </div>
+                      </div>
 
-                    <p className="
+                      <p className="
               font-black
 
               text-indigo-600
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(data.total)}
+                        RD$
+                        {" "}
+                        {formatMoney(data.total)}
 
-                    </p>
+                      </p>
 
-                  </div>
+                    </div>
 
-                ))}
+                  ))}
+
+                </div>
 
               </div>
 
@@ -2484,11 +2488,9 @@ function ReportesPage() {
 
           </div>
 
-        </div>
+          {/* TABLA */}
 
-        {/* TABLA */}
-
-        <div className="
+          <div className="
   bg-white/95
   backdrop-blur-md
 
@@ -2502,9 +2504,9 @@ function ReportesPage() {
   overflow-hidden
 ">
 
-          {/* HEADER */}
+            {/* HEADER */}
 
-          <div className="
+            <div className="
     px-6
     py-5
 
@@ -2516,7 +2518,7 @@ function ReportesPage() {
     gap-3
   ">
 
-            <div className="
+              <div className="
       w-12
       h-12
 
@@ -2533,13 +2535,13 @@ function ReportesPage() {
       justify-center
     ">
 
-              <BadgeDollarSign size={20} />
+                <BadgeDollarSign size={20} />
 
-            </div>
+              </div>
 
-            <div>
+              <div>
 
-              <h3 className="
+                <h3 className="
         text-2xl
 
         font-black
@@ -2547,39 +2549,39 @@ function ReportesPage() {
         text-slate-800
       ">
 
-                Detalle financiero clínico
+                  Detalle financiero clínico
 
-              </h3>
+                </h3>
 
-              <p className="
+                <p className="
         text-sm
 
         text-slate-500
       ">
 
-                Facturación y producción odontológica
+                  Facturación y producción odontológica
 
-              </p>
+                </p>
+
+              </div>
 
             </div>
 
-          </div>
+            {/* TABLE */}
 
-          {/* TABLE */}
-
-          <div className="
+            <div className="
     max-h-[70vh]
 
     overflow-auto
   ">
 
-            <table className="
+              <table className="
       w-full
 
       text-sm
     ">
 
-              <thead className="
+                <thead className="
         sticky
         top-0
 
@@ -2598,100 +2600,100 @@ function ReportesPage() {
         text-slate-400
       ">
 
-                <tr>
+                  <tr>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-left
           ">
-                    Fecha
-                  </th>
+                      Fecha
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-left
           ">
-                    Paciente
-                  </th>
+                      Paciente
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-left
           ">
-                    Procedimientos
-                  </th>
+                      Procedimientos
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-right
           ">
-                    Subtotal
-                  </th>
+                      Subtotal
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-right
           ">
-                    ITBIS
-                  </th>
+                      ITBIS
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-right
           ">
-                    Desc.
-                  </th>
+                      Desc.
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-right
           ">
-                    Costos
-                  </th>
+                      Costos
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-right
           ">
-                    Producción
-                  </th>
+                      Producción
+                    </th>
 
-                  <th className="
+                    <th className="
             px-5
             py-4
 
             text-right
           ">
-                    Total
-                  </th>
+                      Total
+                    </th>
 
-                </tr>
+                  </tr>
 
-              </thead>
+                </thead>
 
-              <tbody>
+                <tbody>
 
-                {datosOrdenados.map((d, i) => (
+                  {datosOrdenados.map((d, i) => (
 
-                  <tr
-                    key={i}
-                    className="
+                    <tr
+                      key={i}
+                      className="
               border-b
               border-slate-100
 
@@ -2700,20 +2702,20 @@ function ReportesPage() {
               transition-all
               duration-200
             "
-                  >
+                    >
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
               text-slate-600
             ">
 
-                      {d.FechaStr}
+                        {d.FechaStr}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2722,11 +2724,11 @@ function ReportesPage() {
               text-slate-700
             ">
 
-                      {d.Paciente}
+                        {d.Paciente}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2735,11 +2737,11 @@ function ReportesPage() {
               max-w-[280px]
             ">
 
-                      {d.Tratamientos}
+                        {d.Tratamientos}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2748,13 +2750,13 @@ function ReportesPage() {
               text-slate-700
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(d.Subtotal)}
+                        RD$
+                        {" "}
+                        {formatMoney(d.Subtotal)}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2763,13 +2765,13 @@ function ReportesPage() {
               text-slate-700
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(d.ITBIS)}
+                        RD$
+                        {" "}
+                        {formatMoney(d.ITBIS)}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2780,13 +2782,13 @@ function ReportesPage() {
               font-semibold
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(d.Descuento)}
+                        RD$
+                        {" "}
+                        {formatMoney(d.Descuento)}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2797,13 +2799,13 @@ function ReportesPage() {
               font-bold
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(d.Costos)}
+                        RD$
+                        {" "}
+                        {formatMoney(d.Costos)}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2814,13 +2816,13 @@ function ReportesPage() {
               font-bold
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(d.Utilidad)}
+                        RD$
+                        {" "}
+                        {formatMoney(d.Utilidad)}
 
-                    </td>
+                      </td>
 
-                    <td className="
+                      <td className="
               px-5
               py-4
 
@@ -2831,19 +2833,19 @@ function ReportesPage() {
               text-emerald-600
             ">
 
-                      RD$
-                      {" "}
-                      {formatMoney(d.Total)}
+                        RD$
+                        {" "}
+                        {formatMoney(d.Total)}
 
-                    </td>
+                      </td>
 
-                  </tr>
+                    </tr>
 
-                ))}
+                  ))}
 
-              </tbody>
+                </tbody>
 
-              <tfoot className="
+                <tfoot className="
         sticky
         bottom-0
 
@@ -2853,11 +2855,11 @@ function ReportesPage() {
         border-slate-100
       ">
 
-                <tr>
+                  <tr>
 
-                  <td
-                    colSpan="8"
-                    className="
+                    <td
+                      colSpan="8"
+                      className="
               px-5
               py-5
 
@@ -2867,13 +2869,13 @@ function ReportesPage() {
 
               text-slate-700
             "
-                  >
+                    >
 
-                    Total General
+                      Total General
 
-                  </td>
+                    </td>
 
-                  <td className="
+                    <td className="
             px-5
             py-5
 
@@ -2884,22 +2886,22 @@ function ReportesPage() {
             text-emerald-600
           ">
 
-                    RD$
-                    {" "}
-                    {formatMoney(ingresosClinicos)}
+                      RD$
+                      {" "}
+                      {formatMoney(ingresosClinicos)}
 
-                  </td>
+                    </td>
 
-                </tr>
+                  </tr>
 
-              </tfoot>
+                </tfoot>
 
-            </table>
+              </table>
+
+            </div>
 
           </div>
-
         </div>
-      </div>
       </motion.div>
     </PageWrapper>
   );

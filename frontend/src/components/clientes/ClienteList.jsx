@@ -928,10 +928,16 @@ function ClienteList({
 
                   {/* EDIT */}
 
+
                   <button
-                    onClick={() =>
-                      onEditarClick(cliente)
-                    }
+                    onClick={(e) => {
+
+                      e.stopPropagation();
+
+                      onEditarClick(cliente);
+
+                    }}
+
                     className="
                       w-11
                       h-11

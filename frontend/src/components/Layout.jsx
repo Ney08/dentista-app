@@ -7,7 +7,7 @@ import {
   Link,
   useLocation
 } from "react-router-dom";
-
+import dentalLogo from "../assets/dentalapp_logo_square.png";
 import CommandPalette from "./ui/CommandPalette";
 import {
   LayoutDashboard,
@@ -147,6 +147,43 @@ function Layout({ children }) {
     logout();
 
   };
+  const BrandLogo = ({
+    size = "w-14 h-14",
+    radius = "rounded-[24px]"
+  }) => (
+
+    <div className={`
+    relative
+
+    ${size}
+
+    ${radius}
+
+    overflow-hidden
+
+    shadow-[0_18px_40px_rgba(99,102,241,0.35)]
+
+    flex
+    items-center
+    justify-center
+
+    shrink-0
+  `}>
+
+      <img
+        src={dentalLogo}
+        alt="DentalApp"
+        className="
+        w-full
+        h-full
+
+        object-contain
+      "
+      />
+
+    </div>
+
+  );
 
   return (
 
@@ -188,42 +225,12 @@ function Layout({ children }) {
           gap-3
         ">
 
-          <div className="
-            relative
+          
+<BrandLogo
+  size="w-11 h-11"
+  radius="rounded-[18px]"
+/>
 
-            w-11
-            h-11
-
-            rounded-[18px]
-
-            bg-gradient-to-br
-            from-indigo-500
-            via-purple-500
-            to-violet-500
-
-            shadow-[0_15px_35px_rgba(99,102,241,0.30)]
-
-            flex
-            items-center
-            justify-center
-          ">
-
-            <div className="
-              absolute
-              inset-0
-
-              rounded-[18px]
-
-              bg-white/10
-            " />
-
-
-            <span className="text-white text-xl">
-              <Stethoscope size={22} />
-            </span>
-
-
-          </div>
 
           <div>
 
@@ -413,42 +420,7 @@ function Layout({ children }) {
               gap-4
             ">
 
-              <div className="
-                relative
-
-                w-14
-                h-14
-
-                rounded-[24px]
-
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-500
-
-                shadow-[0_18px_40px_rgba(99,102,241,0.35)]
-
-                flex
-                items-center
-                justify-center
-              ">
-
-                <div className="
-                  absolute
-                  inset-0
-
-                  rounded-[24px]
-
-                  bg-white/10
-                " />
-
-
-                <span className="text-white text-xl">
-                  <Stethoscope size={22} />
-                </span>
-
-
-              </div>
+              <BrandLogo />
 
               <div>
 
@@ -862,31 +834,7 @@ function Layout({ children }) {
             gap-4
           ">
 
-            <div className="
-              w-14
-              h-14
-
-              rounded-[24px]
-
-              bg-gradient-to-br
-              from-indigo-500
-              via-purple-500
-              to-violet-500
-
-              flex
-              items-center
-              justify-center
-
-              shadow-[0_18px_40px_rgba(99,102,241,0.35)]
-            ">
-
-
-              <span className="text-white text-xl">
-                <Stethoscope size={22} />
-              </span>
-
-
-            </div>
+            <BrandLogo />
 
             <div>
 

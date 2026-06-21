@@ -235,16 +235,18 @@ function CitaList({
 
             {/* CONTENT */}
 
+
             <div className="
-              relative
-              z-10
+  relative
+  z-10
 
-              grid
-              grid-cols-1
-              2xl:grid-cols-[1fr_auto]
+  grid
+  grid-cols-1
+  2xl:grid-cols-[minmax(0,1fr)_210px]
 
-              gap-6
-            ">
+  gap-6
+">
+
 
               {/* LEFT */}
 
@@ -535,14 +537,16 @@ function CitaList({
 
                   {/* GRID */}
 
-                  <div className="
-                    grid
-                    grid-cols-1
-                    md:grid-cols-2
-                    xl:grid-cols-4
 
-                    gap-4
-                  ">
+                  <div className="
+  grid
+  grid-cols-1
+  sm:grid-cols-2
+  xl:grid-cols-3
+
+  gap-4
+">
+
 
                     {/* FECHA */}
 
@@ -808,160 +812,138 @@ function CitaList({
                       </div>
 
                     </div>
+                    {/* TRATAMIENTO */}
 
-                  </div>
-
-                </div>
-                {/* TRATAMIENTO */}
-
-                {
-
-                  c.tratamiento && (
-
-                    <div className="
-      md:col-span-2
-      xl:col-span-4
-
-      bg-indigo-50/70
-
-      border
-      border-indigo-100
-
-      rounded-[24px]
-
-      px-5
-      py-4
-    ">
-
-                      <p className="
-        text-[11px]
-
-        uppercase
-
-        tracking-[0.12em]
-
-        text-indigo-400
-
-        font-black
-      ">
-                        Tratamiento vinculado
-                      </p>
+                    {c.tratamiento && (
 
                       <div className="
-        mt-2
+    w-full
 
-        flex
-        flex-wrap
+    bg-indigo-50/70
 
-        items-center
+    border
+    border-indigo-100
 
-        gap-2
+    rounded-[24px]
+
+    px-5
+    py-4
+
+    overflow-hidden
+  ">
+
+                        <p className="
+      text-[11px]
+
+      uppercase
+
+      tracking-[0.12em]
+
+      text-indigo-400
+
+      font-black
+    ">
+                          Tratamiento vinculado
+                        </p>
+
+                        <div className="
+      mt-3
+
+      flex
+      flex-wrap
+
+      items-center
+
+      gap-2
+    ">
+
+                          <div className="
+        max-w-full
+
+        px-3
+        py-1.5
+
+        rounded-full
+
+        bg-white
+
+        border
+        border-indigo-100
+
+        text-xs
+        font-bold
+
+        text-indigo-700
+
+        break-words
       ">
 
-                        <div className="
-          px-3
-          py-1.5
+                            {c.tratamiento.servicio}
 
-          rounded-full
-
-          bg-white
-
-          border
-          border-indigo-100
-
-          text-sx
-          font-bold
-
-          text-indigo-700
-        ">
-
-                          {
-
-                            c.tratamiento.servicio
-
-                          }
-
-                          {
-
-                            c.tratamiento.pieza
-
+                            {c.tratamiento.pieza
                               ? ` • Pieza ${c.tratamiento.pieza}`
+                              : ""}
 
-                              : ""
+                          </div>
 
-                          }
+                          <div className="
+        px-3
+        py-1.5
 
-                        </div>
+        rounded-full
 
-                        <div className="
-          px-3
-          py-1.5
+        bg-emerald-50
 
-          rounded-full
+        border
+        border-emerald-100
 
-          bg-emerald-50
+        text-xs
+        font-bold
 
-          border
-          border-emerald-100
+        text-emerald-600
 
-          text-xs
-          font-bold
+        whitespace-nowrap
+      ">
 
-          text-emerald-600
-        ">
+                            {c.tratamiento.sesiones_completadas}
+                            /
+                            {c.tratamiento.sesiones_totales}
+                            {" "}sesiones
 
-                          {
+                          </div>
 
-                            c.tratamiento
-                              .sesiones_completadas
+                          <div className="
+        px-3
+        py-1.5
 
-                          }
+        rounded-full
 
-                          /
+        bg-slate-100
 
-                          {
+        border
+        border-slate-200
 
-                            c.tratamiento
-                              .sesiones_totales
+        text-xs
+        font-bold
 
-                          }
+        text-slate-600
 
-                          {" "}sesiones
+        whitespace-nowrap
+      ">
 
-                        </div>
+                            {c.tratamiento.estado}
 
-                        <div className="
-          px-3
-          py-1.5
-
-          rounded-full
-
-          bg-slate-100
-
-          border
-          border-slate-200
-
-          text-xs
-          font-bold
-
-          text-slate-600
-        ">
-
-                          {
-
-                            c.tratamiento.estado
-
-                          }
+                          </div>
 
                         </div>
 
                       </div>
 
-                    </div>
+                    )}
+                  </div>
 
-                  )
+                </div>
 
-                }
               </div>
               {/* RIGHT PANEL */}
 

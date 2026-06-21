@@ -34,93 +34,53 @@ function QuickActions() {
   ==========================================
   */
 
-  const actions = [
+const actions = [
 
   {
-    title:
-      "Nueva cita",
-
-    description:
-      "Agendar paciente",
-
-    icon:
-      <CalendarPlus size={22} />,
-
-    color:
-      "from-indigo-500 to-violet-500",
-
+    title: "Nueva cita",
+    description: "Agendar paciente",
+    icon: <CalendarPlus size={22} />,
+    color: "from-amber-500 to-yellow-500",
+    glow: "from-amber-500/10 to-yellow-500/10",
     onClick: () => {
-
       openCita();
-
       navigate("/citas");
-
     }
   },
 
   {
-    title:
-      "Nuevo cliente",
-
-    description:
-      "Registrar paciente",
-
-    icon:
-      <UserPlus size={22} />,
-
-    color:
-      "from-emerald-500 to-green-500",
-
+    title: "Nuevo cliente",
+    description: "Registrar paciente",
+    icon: <UserPlus size={22} />,
+    color: "from-cyan-500 to-teal-500",
+    glow: "from-cyan-500/10 to-teal-500/10",
     onClick: () => {
-
       openCliente();
-
       navigate("/clientes");
-
     }
   },
 
   {
-    title:
-      "Facturar",
-
-    description:
-      "Crear factura",
-
-    icon:
-      <Receipt size={22} />,
-
-    color:
-      "from-orange-400 to-amber-500",
-
+    title: "Facturar",
+    description: "Crear factura",
+    icon: <Receipt size={22} />,
+    color: "from-emerald-500 to-green-500",
+    glow: "from-emerald-500/10 to-green-500/10",
     onClick: () => {
-
       openFactura();
-
       navigate("/facturaciones");
-
     }
   },
 
   {
-    title:
-      "Registrar egreso",
-
-    description:
-      "Nuevo gasto",
-
-    icon:
-      <Wallet size={22} />,
-
-    color:
-      "from-rose-500 to-pink-500",
-
+    title: "Registrar egreso",
+    description: "Nuevo gasto",
+    icon: <Wallet size={22} />,
+    color: "from-rose-500 to-pink-500",
+    glow: "from-rose-500/10 to-pink-500/10",
     onClick: () => {
-
       openEgreso();
-
       navigate("/egresos");
-
     }
   }
 

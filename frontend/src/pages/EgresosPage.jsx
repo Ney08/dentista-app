@@ -512,7 +512,7 @@ function EgresosPage() {
 
                 font-black
 
-                text-indigo-600
+                text-rose-600
               ">
                     RD$
                     {" "}
@@ -539,10 +539,11 @@ function EgresosPage() {
 
               rounded-[20px]
 
-              bg-gradient-to-br
-              from-indigo-500
-              via-purple-500
-              to-violet-500
+              
+bg-gradient-to-br
+from-rose-500
+to-pink-500
+
 
               text-white
 
@@ -550,7 +551,7 @@ function EgresosPage() {
               items-center
               justify-center
 
-              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+              shadow-[0_15px_35px_rgba(244,63,94,0.25)]
             ">
 
                   <BadgeDollarSign size={22} />
@@ -712,7 +713,7 @@ function EgresosPage() {
 
             rounded-full
 
-            bg-yellow-500/10
+            bg-amber-500/10
 
             blur-3xl
           " />
@@ -748,7 +749,7 @@ function EgresosPage() {
 
                 font-black
 
-                text-yellow-500
+              text-amber-500
               ">
 
                     RD$
@@ -765,7 +766,7 @@ function EgresosPage() {
 
               rounded-2xl
 
-              bg-yellow-50
+              bg-amber-50
 
               text-yellow-500
 
@@ -920,7 +921,7 @@ function EgresosPage() {
 
             rounded-full
 
-            bg-emerald-500/10
+            bg-slate-500/10
 
             blur-3xl
           " />
@@ -956,7 +957,7 @@ function EgresosPage() {
 
                 font-black
 
-                text-emerald-600
+                text-slate-700
               ">
 
                     RD$
@@ -973,9 +974,9 @@ function EgresosPage() {
 
               rounded-2xl
 
-              bg-emerald-50
+             bg-slate-100
 
-              text-emerald-500
+              text-slate-500
 
               flex
               items-center

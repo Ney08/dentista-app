@@ -1,7 +1,9 @@
 import jsPDF from "jspdf";
 import axios from "axios";
-import { API_URL } from "../config";
 import QRCode from "qrcode";
+
+import facturaTemplateUrl from "../assets/factura.svg";
+import dentalLogo from "../assets/dentalapp_logo_invoice_transparent_shadow.png";
 
 import {
   formatUTCFechaHora
@@ -18,12 +20,138 @@ import {
 } from "@tauri-apps/plugin-dialog";
 
 import {
+  invoke
+} from "@tauri-apps/api/core";
+
+import {
   writeFile
 } from "@tauri-apps/plugin-fs";
 
 import {
-  openPath
+  openUrl
 } from "@tauri-apps/plugin-opener";
+
+/*
+==========================================
+IMAGE URL TO DATA URL
+==========================================
+*/
+
+const imageUrlToDataUrl = async (url) => {
+
+  const response =
+    await fetch(url);
+
+  const blob =
+    await response.blob();
+
+  return await new Promise((resolve, reject) => {
+
+    const reader =
+      new FileReader();
+
+    reader.onloadend = () =>
+      resolve(reader.result);
+
+    reader.onerror = reject;
+
+    reader.readAsDataURL(blob);
+
+  });
+
+};
+
+/*
+==========================================
+GET SVG TEXT
+==========================================
+*/
+
+const getSvgText = async (svgUrl) => {
+
+  const response =
+    await fetch(svgUrl);
+
+  if (!response.ok) {
+
+    throw new Error(
+      `No se pudo cargar el SVG: ${response.status}`
+    );
+
+  }
+
+  return await response.text();
+
+};
+
+/*
+==========================================
+SVG TO PNG DATA URL
+==========================================
+*/
+
+const svgToDataUrl = async (svgText) => {
+
+  const svgBlob =
+    new Blob(
+      [svgText],
+      {
+        type: "image/svg+xml;charset=utf-8"
+      }
+    );
+
+  const url =
+    URL.createObjectURL(svgBlob);
+
+  const img =
+    new Image();
+
+  img.src = url;
+
+  await new Promise((resolve, reject) => {
+
+    img.onload = resolve;
+
+    img.onerror = () =>
+      reject(
+        new Error(
+          "No se pudo renderizar el SVG. Revisa si tiene imágenes externas, fuentes no convertidas o elementos incompatibles."
+        )
+      );
+
+  });
+
+  const canvas =
+    document.createElement("canvas");
+
+  /*
+  ==========================================
+  A4 300DPI APROX
+  ==========================================
+  */
+
+  canvas.width =
+    2480;
+
+  canvas.height =
+    3508;
+
+  const ctx =
+    canvas.getContext("2d");
+
+  ctx.drawImage(
+    img,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  URL.revokeObjectURL(url);
+
+  return canvas.toDataURL("image/png");
+
+};
 
 export const generarFactura = async (
   ingreso
@@ -31,23 +159,22 @@ export const generarFactura = async (
 
   /*
   ==========================================
-  PDF
+  PDF A4
   ==========================================
   */
 
-  const doc = new jsPDF({
-    orientation: "portrait",
-    unit: "mm",
-    format: "a4"
-  });
+  const doc =
+    new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4"
+    });
 
   const pageWidth =
     doc.internal.pageSize.getWidth();
 
   const pageHeight =
     doc.internal.pageSize.getHeight();
-
-  let y = 20;
 
   /*
   ==========================================
@@ -88,8 +215,32 @@ export const generarFactura = async (
     itbis -
     descuentoValor;
 
+  const abonado =
+    ingreso.monto_abonado ||
+    0;
+
+  const balanceTratamiento =
+    ingreso.balance_restante ||
+    0;
+
+  const tratamiento =
+    ingreso.tratamiento ||
+    null;
+
+  const metodoPago =
+    ingreso.metodo_pago ||
+    "Efectivo";
+
+  const doctor =
+    ingreso.doctor ||
+    "Clínica Dental";
+
+  const pagada =
+    ingreso.pagado;
+
   const fecha =
     formatUTCFechaHora(
+      ingreso.fecha ||
       ingreso.created_at
     );
 
@@ -97,6 +248,14 @@ export const generarFactura = async (
     `B01${String(
       ingreso.id
     ).padStart(8, "0")}`;
+
+  const facturaCodigo =
+    `FAC-2026-${String(
+      ingreso.id
+    ).padStart(6, "0")}`;
+
+  const money = (n) =>
+    `RD$ ${formatMoney(n)}`;
 
   /*
   ==========================================
@@ -106,9 +265,11 @@ export const generarFactura = async (
 
   const qrData = `
 Factura #${ingreso.id}
+Código: ${facturaCodigo}
 Paciente: ${clienteNombre}
 NCF: ${ncf}
-Total: RD$ ${formatMoney(total)}
+Fecha: ${fecha}
+Total: ${money(total)}
 `;
 
   const qrImage =
@@ -118,108 +279,122 @@ Total: RD$ ${formatMoney(total)}
 
   /*
   ==========================================
-  WATERMARK
+  ASSETS
   ==========================================
   */
 
-  doc.setTextColor(245);
+  let svgText = "";
+  let templateDataUrl = "";
+  let logoDataUrl = "";
 
-  doc.setFontSize(60);
+  try {
+
+    svgText =
+      await getSvgText(
+        facturaTemplateUrl
+      );
+
+    svgText =
+      svgText
+        .replaceAll("{{CLIENTE}}", clienteNombre)
+        .replaceAll("{{FACTURA}}", facturaCodigo)
+        .replaceAll("{{FECHA}}", fecha)
+        .replaceAll("{{NCF}}", ncf)
+        .replaceAll("{{METODO}}", metodoPago)
+        .replaceAll("{{DOCTOR}}", doctor)
+        .replaceAll("{{TELEFONO}}", telefono || "N/A")
+        .replaceAll("{{TOTAL}}", money(total));
+
+    templateDataUrl =
+      await svgToDataUrl(
+        svgText
+      );
+
+    logoDataUrl =
+      await imageUrlToDataUrl(
+        dentalLogo
+      );
+
+  } catch (error) {
+
+    console.error(
+      "ERROR CARGANDO ASSETS:",
+      error
+    );
+
+    toast.error(
+      "Error cargando la plantilla de factura ❌"
+    );
+
+    return;
+
+  }
+
+  /*
+  ==========================================
+  TEMPLATE COMO FONDO
+  ==========================================
+  */
+
+  doc.addImage(
+    templateDataUrl,
+    "PNG",
+    0,
+    0,
+    pageWidth,
+    pageHeight
+  );
+
+  /*
+  ==========================================
+  COLORES
+  ==========================================
+  */
+
+  const azul =
+    [0, 75, 130];
+
+  const azulOscuro =
+    [10, 18, 40];
+
+  const slate =
+    [15, 23, 42];
+
+  const muted =
+    [100, 116, 139];
+
+  /*
+  ==========================================
+  HEADER CONTENT
+  ==========================================
+  */
+
+  doc.addImage(
+    logoDataUrl,
+    "PNG",
+    12,
+    6,
+    28,
+    28
+  );
 
   doc.setFont(
     "helvetica",
     "bold"
   );
 
-  doc.text(
-    "SONRISA",
-    40,
-    190,
-    {
-      angle: 45
-    }
+  doc.setFontSize(19);
+
+  doc.setTextColor(
+    255,
+    255,
+    255
   );
-
-  /*
-  ==========================================
-  HEADER
-  ==========================================
-  */
-
-  doc.setFillColor(
-    10,
-    18,
-    40
-  );
-
-  doc.rect(
-    0,
-    0,
-    210,
-    42,
-    "F"
-  );
-
-  /*
-  ==========================================
-  LOGO CIRCLE
-  ==========================================
-  */
-
-  doc.setFillColor(
-    99,
-    102,
-    241
-  );
-
-  doc.circle(
-    24,
-    21,
-    10,
-    "F"
-  );
-
-  doc.setTextColor(255);
-
-  doc.setFontSize(18);
-
-  doc.setFont(
-    "helvetica",
-    "bold"
-  );
-
-  doc.text(
-    "DS",
-    24,
-    24,
-    {
-      align: "center"
-    }
-  );
-
-  /*
-  ==========================================
-  TITULO
-  ==========================================
-  */
-
-  doc.setFontSize(22);
 
   doc.text(
     "CLINICA DENTAL SONRISA",
-    105,
-    18,
-    {
-      align: "center"
-    }
-  );
-
-  doc.setFontSize(10);
-
-  doc.setTextColor(
-    203,
-    213,
-    225
+    50,
+    15
   );
 
   doc.setFont(
@@ -227,40 +402,43 @@ Total: RD$ ${formatMoney(total)}
     "normal"
   );
 
-  doc.text(
-    "Odontología premium y estética dental",
-    105,
-    26,
-    {
-      align: "center"
-    }
+  doc.setFontSize(9);
+
+  doc.setTextColor(
+    203,
+    213,
+    225
   );
 
-  /*
-  ==========================================
-  INFO CLINICA
-  ==========================================
-  */
-
-  doc.setTextColor(255);
-
-  doc.setFontSize(9);
+  doc.text(
+    "Odontología premium y estética dental",
+    50,
+    26
+  );
 
   doc.setFont(
     "helvetica",
     "bold"
   );
 
+  doc.setFontSize(8.5);
+
+  doc.setTextColor(
+    255,
+    255,
+    255
+  );
+
   doc.text(
     "RNC: 123456789",
     160,
-    14
+    10
   );
 
   doc.text(
     "809-000-0000",
     160,
-    20
+    18
   );
 
   doc.text(
@@ -271,132 +449,27 @@ Total: RD$ ${formatMoney(total)}
 
   /*
   ==========================================
-  RESET
+  TITLE
   ==========================================
   */
-
-  doc.setTextColor(
-    15,
-    23,
-    42
-  );
-
-  /*
-  ==========================================
-  CARD FACTURA
-  ==========================================
-  */
-
-  y = 55;
-
-  doc.setFillColor(
-    248,
-    250,
-    252
-  );
-
-  doc.roundedRect(
-    15,
-    y,
-    180,
-    38,
-    8,
-    8,
-    "F"
-  );
-
-  doc.setDrawColor(
-    226,
-    232,
-    240
-  );
-
-  doc.roundedRect(
-    15,
-    y,
-    180,
-    38,
-    8,
-    8
-  );
-
-  doc.setFontSize(10);
-
-  doc.setTextColor(100);
 
   doc.setFont(
     "helvetica",
     "bold"
+  );
+
+  doc.setFontSize(21);
+
+  doc.setTextColor(
+    6,
+    182,
+    212
   );
 
   doc.text(
     "FACTURA",
-    25,
-    y + 10
-  );
-
-  doc.setFontSize(20);
-
-  doc.setTextColor(
-    15,
-    23,
-    42
-  );
-
-  doc.text(
-    `#${ingreso.id}`,
-    25,
-    y + 22
-  );
-
-  doc.setFontSize(10);
-
-  doc.setFont(
-    "helvetica",
-    "normal"
-  );
-
-  doc.text(
-    `NCF: ${ncf}`,
-    25,
-    y + 32
-  );
-
-  /*
-  ==========================================
-  ESTADO
-  ==========================================
-  */
-
-  doc.setFillColor(
-    16,
-    185,
-    129
-  );
-
-  doc.roundedRect(
-    145,
-    y + 9,
-    35,
-    12,
-    5,
-    5,
-    "F"
-  );
-
-  doc.setTextColor(255);
-
-  doc.setFontSize(11);
-
-  doc.setFont(
-    "helvetica",
-    "bold"
-  );
-
-  doc.text(
-    "PAGADA",
-    162.5,
-    y + 17,
+    pageWidth / 2,
+    75,
     {
       align: "center"
     }
@@ -404,60 +477,176 @@ Total: RD$ ${formatMoney(total)}
 
   /*
   ==========================================
-  DATOS PACIENTE
+  LIMPIEZA SUAVE DE ÁREAS DINÁMICAS
+  Ajustada para no borrar decoraciones.
   ==========================================
   */
 
-  y += 55;
-
-  doc.setTextColor(
-    15,
-    23,
-    42
+  doc.setFillColor(
+    255,
+    255,
+    255
   );
 
-  doc.setFontSize(12);
+  /*
+  Solo valores del bloque superior, no todo el diseño.
+  */
+  doc.rect(
+    70,
+    78,
+    42,
+    18,
+    "F"
+  );
+
+  doc.rect(
+    138,
+    78,
+    25,
+    18,
+    "F"
+  );
+
+  /*
+  Área de tabla dinámica.
+  */
+  doc.rect(
+    24,
+    127,
+    162,
+    58,
+    "F"
+  );
+
+  /*
+  Área notas + payment.
+  */
+  doc.rect(
+    22,
+    198,
+    80,
+    46,
+    "F"
+  );
+
+  /*
+  Área total.
+  */
+  doc.rect(
+    116,
+    196,
+    72,
+    50,
+    "F"
+  );
+
+  /*
+  ==========================================
+  META INFO
+  ==========================================
+  */
 
   doc.setFont(
     "helvetica",
     "bold"
   );
 
-  doc.text(
-    "DATOS DEL PACIENTE",
-    20,
-    y
+  doc.setFontSize(8);
+
+  doc.setTextColor(
+    azul[0],
+    azul[1],
+    azul[2]
   );
 
-  y += 12;
+  doc.text(
+    "To:",
+    58,
+    82
+  );
 
-  doc.setFontSize(11);
+  doc.text(
+    "Invoice N°:",
+    48,
+    90
+  );
+
+  doc.text(
+    "Date:",
+    122,
+    82
+  );
+
+  doc.text(
+    "Account:",
+    116,
+    90
+  );
 
   doc.setFont(
     "helvetica",
     "normal"
   );
 
-  doc.text(
-    `Paciente: ${clienteNombre}`,
-    20,
-    y
+  doc.setTextColor(
+    slate[0],
+    slate[1],
+    slate[2]
   );
 
-  y += 9;
-
   doc.text(
-    `Fecha: ${fecha}`,
-    20,
-    y
+    clienteNombre,
+    75,
+    82
   );
 
-  y += 9;
+  doc.text(
+    facturaCodigo,
+    75,
+    90
+  );
 
   doc.text(
-    `Teléfono: ${telefono || "N/A"}`,
-    20,
-    y
+    fecha,
+    141,
+    82
+  );
+
+  doc.text(
+    metodoPago,
+    141,
+    90
+  );
+
+  /*
+  ==========================================
+  EXTRA INFO
+  ==========================================
+  */
+
+  doc.setFontSize(7);
+
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+
+  doc.setTextColor(
+    muted[0],
+    muted[1],
+    muted[2]
+  );
+
+  doc.text(
+    `NCF: ${ncf}`,
+    48,
+    101
+  );
+
+  doc.text(
+    `Doctor: ${doctor}`,
+    116,
+    101
   );
 
   /*
@@ -469,241 +658,581 @@ Total: RD$ ${formatMoney(total)}
   doc.addImage(
     qrImage,
     "PNG",
-    150,
-    y - 28,
-    35,
-    35
+    164,
+    78,
+    24,
+    24
   );
 
-  /*
-  ==========================================
-  TABLA HEADER
-  ==========================================
-  */
-
-  y += 30;
-
-  doc.setFillColor(
-    23,
-    92,
-    169
-  );
-
-  doc.roundedRect(
-    15,
-    y,
-    180,
-    12,
-    4,
-    4,
-    "F"
-  );
-
-  doc.setTextColor(255);
-
-  doc.setFontSize(11);
-
-  doc.setFont(
-    "helvetica",
-    "bold"
-  );
-
-  doc.text(
-    "SERVICIO",
-    22,
-    y + 8
-  );
-
-  doc.text(
-    "PRECIO",
-    180,
-    y + 8,
-    {
-      align: "right"
-    }
-  );
-
-  y += 18;
-
-  /*
-  ==========================================
-  SERVICIOS
-  ==========================================
-  */
-
-  servicios.forEach(
-    (s, index) => {
-
-      if (y > 240) {
-
-        doc.addPage();
-
-        y = 20;
-
-      }
-
-      if (index % 2 === 0) {
-
-        doc.setFillColor(
-          241,
-          245,
-          249
-        );
-
-        doc.roundedRect(
-          15,
-          y - 6,
-          180,
-          12,
-          3,
-          3,
-          "F"
-        );
-
-      }
-
-      doc.setTextColor(
-        15,
-        23,
-        42
-      );
-
-      doc.setFontSize(11);
-
-      doc.setFont(
-        "helvetica",
-        "normal"
-      );
-
-      doc.text(
-        s.descripcion ||
-        "Servicio",
-        22,
-        y
-      );
-
-      doc.setFont(
-        "helvetica",
-        "bold"
-      );
-
-      doc.text(
-        `RD$ ${formatMoney(
-          s.monto
-        )}`,
-        180,
-        y,
-        {
-          align: "right"
-        }
-      );
-
-      y += 14;
-
-    }
-  );
-
-  /*
-  ==========================================
-  TOTAL CARD
-  ==========================================
-  */
-
-  y += 15;
-
-  doc.setFillColor(
-    10,
-    18,
-    40
-  );
-
-  doc.roundedRect(
-    108,
-    y,
-    87,
-    45,
-    8,
-    8,
-    "F"
-  );
-
-  doc.setTextColor(255);
-
-  doc.setFontSize(10);
+  doc.setFontSize(6);
 
   doc.setFont(
     "helvetica",
     "normal"
   );
 
-  doc.text(
-    "Subtotal",
-    118,
-    y + 10
+  doc.setTextColor(
+    muted[0],
+    muted[1],
+    muted[2]
   );
 
   doc.text(
-    `RD$ ${formatMoney(
-      subtotal
-    )}`,
-    185,
-    y + 10,
+    "Escanear",
+    176,
+    105,
     {
-      align: "right"
+      align: "center"
     }
   );
 
-  doc.text(
-    "ITBIS",
-    118,
-    y + 19
+  /*
+  ==========================================
+  ESTADO
+  ==========================================
+  */
+
+  if (pagada) {
+
+    doc.setFillColor(
+      16,
+      185,
+      129
+    );
+
+  } else {
+
+    doc.setFillColor(
+      245,
+      158,
+      11
+    );
+
+  }
+
+  doc.roundedRect(
+    160,
+    111,
+    30,
+    9,
+    4.5,
+    4.5,
+    "F"
   );
 
-  doc.text(
-    `RD$ ${formatMoney(
-      itbis
-    )}`,
-    185,
-    y + 19,
-    {
-      align: "right"
-    }
-  );
+  doc.setTextColor(255);
 
-  doc.text(
-    "Descuento",
-    118,
-    y + 28
-  );
-
-  doc.text(
-    `${descuento}%`,
-    185,
-    y + 28,
-    {
-      align: "right"
-    }
-  );
+  doc.setFontSize(6.8);
 
   doc.setFont(
     "helvetica",
     "bold"
   );
 
-  doc.setFontSize(15);
+  doc.text(
+    pagada
+      ? "PAGADA"
+      : "PEND.",
+    175,
+    117.2,
+    {
+      align: "center"
+    }
+  );
+
+  /*
+  ==========================================
+  TABLE HEADER
+  ==========================================
+  */
+
+  const tableX = 24;
+  const tableW = 162;
+
+  let tableY = 128;
+
+  doc.setFillColor(
+    azul[0],
+    azul[1],
+    azul[2]
+  );
+
+  doc.rect(
+    tableX,
+    tableY,
+    tableW,
+    10,
+    "F"
+  );
+
+  doc.setFontSize(8);
+
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+
+  doc.setTextColor(255);
 
   doc.text(
-    "TOTAL",
-    118,
-    y + 39
+    "Description",
+    30,
+    tableY + 7
   );
 
   doc.text(
-    `RD$ ${formatMoney(
-      total
-    )}`,
-    185,
-    y + 39,
+    "Qty",
+    112,
+    tableY + 7,
+    {
+      align: "center"
+    }
+  );
+
+  doc.text(
+    "Price",
+    145,
+    tableY + 7,
+    {
+      align: "right"
+    }
+  );
+
+  doc.text(
+    "Total",
+    180,
+    tableY + 7,
+    {
+      align: "right"
+    }
+  );
+
+  tableY += 15;
+
+  /*
+  ==========================================
+  TABLE ROWS
+  ==========================================
+  */
+
+  servicios.forEach(
+    (s, index) => {
+
+      const rowHeight =
+        tratamiento
+          ? 15
+          : 11;
+
+      if (index % 2 === 0) {
+
+        doc.setFillColor(
+          255,
+          255,
+          255
+        );
+
+      } else {
+
+        doc.setFillColor(
+          226,
+          232,
+          240
+        );
+
+      }
+
+      doc.rect(
+        tableX,
+        tableY - 6,
+        tableW,
+        rowHeight,
+        "F"
+      );
+
+      const nombreServicio =
+        s.descripcion ||
+        s.nombre_servicio ||
+        s.nombre ||
+        s.servicio ||
+        "Servicio";
+
+      const cantidad =
+        Number(
+          s.cantidad ||
+          s.qty ||
+          1
+        );
+
+      const precio =
+        Number(
+          s.monto || 0
+        );
+
+      const totalLinea =
+        precio * cantidad;
+
+      doc.setFontSize(8);
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setTextColor(
+        azul[0],
+        azul[1],
+        azul[2]
+      );
+
+      doc.text(
+        nombreServicio,
+        30,
+        tableY
+      );
+
+      doc.setFontSize(6.3);
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setTextColor(
+        muted[0],
+        muted[1],
+        muted[2]
+      );
+
+      doc.text(
+        "Tratamiento clínico",
+        30,
+        tableY + 5
+      );
+
+      if (tratamiento) {
+
+        doc.setFont(
+          "helvetica",
+          "bold"
+        );
+
+        doc.setTextColor(
+          99,
+          102,
+          241
+        );
+
+        doc.text(
+          `Sesión ${tratamiento.sesiones_completadas} de ${tratamiento.sesiones_totales}`,
+          30,
+          tableY + 10
+        );
+
+      }
+
+      doc.setFontSize(8);
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setTextColor(
+        azul[0],
+        azul[1],
+        azul[2]
+      );
+
+      doc.text(
+        String(cantidad),
+        112,
+        tableY,
+        {
+          align: "center"
+        }
+      );
+
+      doc.text(
+        money(precio),
+        145,
+        tableY,
+        {
+          align: "right"
+        }
+      );
+
+      doc.text(
+        money(totalLinea),
+        180,
+        tableY,
+        {
+          align: "right"
+        }
+      );
+
+      tableY += rowHeight;
+
+    }
+  );
+
+  /*
+  ==========================================
+  NOTES
+  ==========================================
+  */
+
+  doc.setFontSize(8);
+
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+
+  doc.setTextColor(
+    azul[0],
+    azul[1],
+    azul[2]
+  );
+
+
+  doc.text(
+    "Notas:",
+    24,
+    207
+  );
+
+
+  doc.setFontSize(6.3);
+
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+
+  doc.setTextColor(
+    muted[0],
+    muted[1],
+    muted[2]
+  );
+
+  doc.text(
+    "Documento generado automáticamente por el sistema clínico.",
+    24,
+    207
+  );
+
+  doc.text(
+    "Gracias por confiar en Clínica Dental Sonrisa.",
+    24,
+    212
+  );
+
+  /*
+  ==========================================
+  PAYMENT INFO
+  ==========================================
+  */
+
+  doc.setFontSize(8);
+
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+
+  doc.setTextColor(
+    azul[0],
+    azul[1],
+    azul[2]
+  );
+
+
+  doc.text(
+    "Pago info:",
+    24,
+    230
+  );
+
+
+  doc.setFontSize(6.3);
+
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+
+  doc.setTextColor(
+    muted[0],
+    muted[1],
+    muted[2]
+  );
+
+  doc.text(
+    `Método: ${metodoPago}`,
+    24,
+    230
+  );
+
+  doc.text(
+    `Teléfono: ${telefono || "N/A"}`,
+    24,
+    235
+  );
+
+  doc.text(
+    `Estado: ${pagada ? "Pagada" : "Pendiente"}`,
+    24,
+    240
+  );
+
+  /*
+  ==========================================
+  TOTALS
+  ==========================================
+  */
+
+  const totalsX = 118;
+  const totalsY = 198;
+  const totalsW = 68;
+
+  const totalsRows = [
+    {
+      label: "Sub total",
+      value: money(subtotal),
+      color: [255, 255, 255]
+    },
+    {
+      label: "Taxes 18%",
+      value: money(itbis),
+      color: [255, 255, 255]
+    }
+  ];
+
+  if (descuento > 0) {
+
+    totalsRows.push({
+      label: `Discount ${descuento}%`,
+      value: `- ${money(descuentoValor)}`,
+      color: [244, 63, 94]
+    });
+
+  }
+
+  totalsRows.push({
+    label: "Paid",
+    value: money(abonado),
+    color: [16, 185, 129]
+  });
+
+  if (tratamiento) {
+
+    totalsRows.push({
+      label: "Balance",
+      value: money(balanceTratamiento),
+      color: [245, 158, 11]
+    });
+
+  }
+
+  const totalsH =
+    12 +
+    totalsRows.length * 7 +
+    13;
+
+
+  doc.setFillColor(
+    0,
+    75,
+    130
+  );
+
+
+  doc.rect(
+    totalsX,
+    totalsY,
+    totalsW,
+    totalsH,
+    "F"
+  );
+
+  let totalY =
+    totalsY + 8;
+
+  totalsRows.forEach((row) => {
+
+    doc.setFontSize(7);
+
+    doc.setFont(
+      "helvetica",
+      "normal"
+    );
+
+    doc.setTextColor(255);
+
+    doc.text(
+      row.label,
+      totalsX + 8,
+      totalY
+    );
+
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    doc.setTextColor(
+      row.color[0],
+      row.color[1],
+      row.color[2]
+    );
+
+    doc.text(
+      row.value,
+      totalsX + totalsW - 7,
+      totalY,
+      {
+        align: "right"
+      }
+    );
+
+    totalY += 7;
+
+  });
+
+  doc.setDrawColor(
+    180,
+    210,
+    230
+  );
+
+  doc.line(
+    totalsX + 8,
+    totalY,
+    totalsX + totalsW - 7,
+    totalY
+  );
+
+  totalY += 9;
+
+  doc.setFontSize(8.5);
+
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+
+  doc.setTextColor(255);
+
+  doc.text(
+    "Total",
+    totalsX + 8,
+    totalY
+  );
+
+  doc.text(
+    money(total),
+    totalsX + totalsW - 7,
+    totalY,
     {
       align: "right"
     }
@@ -715,8 +1244,6 @@ Total: RD$ ${formatMoney(total)}
   ==========================================
   */
 
-  y += 70;
-
   doc.setDrawColor(
     180
   );
@@ -726,34 +1253,29 @@ Total: RD$ ${formatMoney(total)}
   );
 
   doc.line(
-    25,
-    y,
-    85,
-    y
+    24,
+    262,
+    79,
+    262
   );
 
   doc.line(
-    125,
-    y,
-    185,
-    y
+    86,
+    262,
+    141,
+    262
   );
+
+  doc.setFontSize(7.5);
 
   doc.setTextColor(
     120
   );
 
-  doc.setFontSize(10);
-
-  doc.setFont(
-    "helvetica",
-    "normal"
-  );
-
   doc.text(
     "Firma del paciente",
-    55,
-    y + 6,
+    51.5,
+    267,
     {
       align: "center"
     }
@@ -761,61 +1283,8 @@ Total: RD$ ${formatMoney(total)}
 
   doc.text(
     "Firma autorizada",
-    155,
-    y + 6,
-    {
-      align: "center"
-    }
-  );
-
-  /*
-  ==========================================
-  FOOTER LINE
-  ==========================================
-  */
-
-  doc.setDrawColor(
-    99,
-    102,
-    241
-  );
-
-  doc.setLineWidth(
-    0.8
-  );
-
-  doc.line(
-    20,
-    275,
-    190,
-    275
-  );
-
-  /*
-  ==========================================
-  FOOTER
-  ==========================================
-  */
-
-  doc.setFontSize(8);
-
-  doc.setTextColor(
-    120
-  );
-
-  doc.text(
-    "Clínica Dental Sonrisa • Santiago, República Dominicana",
-    pageWidth / 2,
-    282,
-    {
-      align: "center"
-    }
-  );
-
-  doc.text(
-    "www.clinicasonrisa.com",
-    pageWidth / 2,
-    287,
+    113.5,
+    267,
     {
       align: "center"
     }
@@ -837,11 +1306,12 @@ Total: RD$ ${formatMoney(total)}
 
   const pdfBlob =
     doc.output("blob");
+
   /*
-==========================================
-WHATSAPP DIRECTO
-==========================================
-*/
+  ==========================================
+  WHATSAPP DIRECTO
+  ==========================================
+  */
 
   if (
     window.modoFactura ===
@@ -865,15 +1335,10 @@ WHATSAPP DIRECTO
       );
 
       const res =
-
-
         await axios.post(
           `http://127.0.0.1:8000/ingresos/${ingreso.id}/factura`,
           formData
         );
-
-
-
 
       const urlPDF =
         res.data?.archivo
@@ -881,44 +1346,88 @@ WHATSAPP DIRECTO
           : "";
 
       const mensaje = `
-🦷 *CLÍNICA DENTAL SONRISA*
+*CLÍNICA DENTAL SONRISA*
 
-Hola *${clienteNombre}* 👋
+Hola *${clienteNombre}*
 
-Su factura ha sido generada exitosamente ✅
+Su factura ha sido generada exitosamente.
 
 ━━━━━━━━━━━━━━
 
-🧾 *Factura:* #${ingreso.id}
+*Factura:* #${ingreso.id}
 
-🏷️ *NCF:* ${ncf}
+*NCF:* ${ncf}
 
-📅 *Fecha:* ${fecha}
+*Fecha:* ${fecha}
 
-🦷 *Servicios:*
+*Servicios:*
 ${servicios
           .map(
-            s => `• ${s.descripcion}`
+            s => `- ${s.descripcion || "Servicio"}`
           )
           .join("\n")}
 
-💰 *Total:* RD$ ${formatMoney(total)}
+*Total:* RD$ ${formatMoney(total)}
 
 ━━━━━━━━━━━━━━
 
-📄 *Ver / Descargar PDF:*
+*Ver / Descargar PDF:*
 ${urlPDF}
 
-💙 Gracias por confiar en nosotros.
+Gracias por confiar en nosotros.
 `;
 
-      const waURL =
-        `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+      const limpiarTelefonoWhatsApp = (telefono) => {
 
-      window.open(
-        waURL,
-        "_blank"
-      );
+        let numero =
+          String(telefono || "")
+            .replace(/\D/g, "");
+
+        if (
+          numero.length === 10 &&
+          (
+            numero.startsWith("809") ||
+            numero.startsWith("829") ||
+            numero.startsWith("849")
+          )
+        ) {
+
+          numero =
+            `1${numero}`;
+
+        }
+
+        return numero;
+
+      };
+
+      const telefonoWhatsApp =
+        limpiarTelefonoWhatsApp(telefono);
+
+      const textoWhatsApp =
+        encodeURIComponent(
+          mensaje.normalize("NFC")
+        );
+
+      const waURL =
+        `https://wa.me/${telefonoWhatsApp}?text=${textoWhatsApp}`;
+
+      const whatsappAppURL =
+        `whatsapp://send?phone=${telefonoWhatsApp}&text=${textoWhatsApp}`;
+
+      try {
+
+        await openUrl(
+          whatsappAppURL
+        );
+
+      } catch {
+
+        await openUrl(
+          waURL
+        );
+
+      }
 
       return;
 
@@ -938,6 +1447,7 @@ ${urlPDF}
     }
 
   }
+
   /*
   ==========================================
   PREVIEW
@@ -983,20 +1493,35 @@ ${urlPDF}
       );
 
       toast.success(
-        "PDF listo para imprimir ✅"
+        "PDF guardado ✅"
       );
 
-      await openPath(
+      console.log(
+        "PDF guardado en:",
         filePath
       );
 
+      await invoke(
+        "open_pdf",
+        {
+          path: filePath
+        }
+      );
+
+      return;
+
     } catch (err) {
 
-      console.error(err);
+      console.error(
+        "ERROR PREVIEW PDF:",
+        err
+      );
 
       toast.error(
-        "Error PDF ❌"
+        "Error abriendo PDF ❌"
       );
+
+      return;
 
     }
 
@@ -1061,13 +1586,5 @@ ${urlPDF}
     }
 
   }
-
-  /*
-  ==========================================
-  BACKEND + WHATSAPP
-  ==========================================
-  */
-
-
 
 };

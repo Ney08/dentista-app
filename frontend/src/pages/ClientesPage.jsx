@@ -383,33 +383,24 @@ function ClientesPage() {
             <div>
 
               <div className="
-              inline-flex
+  inline-flex
+  items-center
+  gap-2
+  px-4
+  py-2
+  rounded-full
+ 
+bg-indigo-500/10
+border
+border-indigo-100
+text-indigo-600
 
-              items-center
-              gap-2
-
-              px-4
-              py-2
-
-              rounded-full
-
-              bg-indigo-500/10
-
-              border
-              border-indigo-100
-
-              text-indigo-600
-
-              text-sm
-              font-semibold
-
-              mb-4
-            ">
-
+  text-sm
+  font-semibold
+  mb-4
+">
                 <Users size={18} />
-
                 CRM clínico
-
               </div>
 
               <h1 className="
@@ -576,7 +567,7 @@ function ClientesPage() {
 
                   font-black
 
-                  text-slate-800
+                   text-cyan-500
                 ">
                     {clientesTotales}
                   </h2>
@@ -588,7 +579,7 @@ function ClientesPage() {
 
                   font-semibold
 
-                  text-indigo-500
+                 text-cyan-500
                 ">
                     CRM clínico
                   </p>
@@ -601,9 +592,10 @@ function ClientesPage() {
 
                 rounded-[18px]
 
-                bg-indigo-500/10
+               
+bg-cyan-500/10
+text-cyan-600
 
-                text-indigo-600
 
                 flex
                 items-center
@@ -808,10 +800,12 @@ function ClientesPage() {
               relative
               overflow-hidden
 
-              bg-gradient-to-br
-              from-indigo-500
-              via-purple-500
-              to-violet-600
+             
+bg-gradient-to-br
+from-cyan-500
+via-teal-500
+to-emerald-500
+
 
               rounded-[30px]
 
@@ -1047,7 +1041,14 @@ function ClientesPage() {
 
                 }}
                 className="
+                group
+
+                relative
+                overflow-hidden
+
                 h-12
+
+                min-w-[180px]
 
                 px-6
 
@@ -1060,11 +1061,15 @@ function ClientesPage() {
 
                 text-white
 
-                font-bold
+                font-black
 
                 shadow-[0_15px_35px_rgba(99,102,241,0.28)]
 
+                hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
+
                 hover:-translate-y-[2px]
+
+                active:scale-95
 
                 transition-all
                 duration-300
@@ -1076,7 +1081,15 @@ function ClientesPage() {
               "
               >
 
-                <Plus size={18} />
+                <Plus
+                  size={18}
+                  className="
+                  group-hover:rotate-90
+
+                  transition-all
+                  duration-300
+                "
+                />
 
                 Nuevo paciente
 
@@ -1375,14 +1388,15 @@ function ClientesPage() {
                   clientes={clientesFinal}
                   citas={citas}
                   onToggleActivo={handleToggleActivo}
-                  onEditarClick={(c) => {
 
+                  onEditarClick={(c) => {
 
                     setClienteEditar(c);
 
-                    openCliente();
+                    setModalAbierto(true);
 
                   }}
+
                   onSeleccionar={(c) =>
                     setClienteSeleccionado(c)
                   }
@@ -1561,7 +1575,7 @@ function ClientesPage() {
 
                   <ClienteDetalle
                     cliente={clienteSeleccionado}
-                   
+
                   />
 
                 </div>

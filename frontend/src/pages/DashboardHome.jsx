@@ -482,37 +482,43 @@ function DashboardHome() {
     {
       title: "Caja",
       value: formato(caja),
-      color: "text-green-600",
+      color: "text-emerald-600",
+      bg: "from-emerald-500/10 to-emerald-400/10",
       icon: Wallet
     },
     {
       title: "Ganancia Bruta",
       value: formato(gananciaBruta),
-      color: "text-blue-600",
+      color: "text-indigo-600",
+      bg: "from-indigo-500/10 to-violet-500/10",
       icon: TrendingUp
     },
     {
       title: "Costos Servicios",
       value: formato(totalCostos),
       color: "text-rose-500",
+      bg: "from-rose-500/10 to-pink-500/10",
       icon: Receipt
     },
     {
       title: "Egresos",
       value: formato(totalEgresos),
-      color: "text-red-500",
+      color: "text-rose-600",
+      bg: "from-rose-500/10 to-red-500/10",
       icon: Banknote
     },
     {
       title: "Clientes hoy",
       value: clientesHoy,
-      color: "text-slate-700",
+      color: "text-cyan-600",
+      bg: "from-cyan-500/10 to-teal-500/10",
       icon: Users
     },
     {
       title: "Citas hoy",
       value: cantidadCitasHoy,
-      color: "text-indigo-600",
+      color: "text-amber-600",
+      bg: "from-amber-500/10 to-yellow-500/10",
       icon: CalendarDays
     }
   ];
@@ -522,211 +528,211 @@ function DashboardHome() {
   ACTIVIDAD
   ==========================================
   */
-const actividades = [
+  const actividades = [
 
-  /*
-  ==========================================
-  CITAS
-  ==========================================
-  */
+    /*
+    ==========================================
+    CITAS
+    ==========================================
+    */
 
-  ...(citas || []).map(c => ({
+    ...(citas || []).map(c => ({
 
-    tipo: "cita",
-
-    fecha:
-      parseFechaLocal(
-        c.created_at || c.fecha
-      ),
-
-    icon:
-      CalendarDays,
-
-    title:
-      c.estado === "completada"
-        ? "Cita completada"
-        : c.estado === "cancelada"
-          ? "Cita cancelada"
-          : "Cita programada",
-
-    desc:
-      `${c.cliente?.nombre || ""} ${c.cliente?.apellido || ""}`,
-
-    time:
-      formatFecha(
-        parseFechaLocal(
-          c.created_at || c.fecha
-        )
-      )
-
-  })),
-
-  /*
-  ==========================================
-  FACTURAS
-  ==========================================
-  */
-
-  ...(ingresos || []).map(i => {
-
-    const servicios =
-      i.servicios || [];
-
-    const subtotal =
-      servicios.reduce(
-        (acc, s) =>
-          acc + Number(s.monto || 0),
-        0
-      );
-
-    const itbis =
-      subtotal * 0.18;
-
-    const descuento =
-      subtotal *
-      (
-        (i.descuento || 0) / 100
-      );
-
-    const total =
-      subtotal +
-      itbis -
-      descuento;
-
-    return {
-
-      tipo: "factura",
+      tipo: "cita",
 
       fecha:
         parseFechaLocal(
-          i.created_at
+          c.created_at || c.fecha
         ),
 
       icon:
-        Receipt,
+        CalendarDays,
 
       title:
-        i.pagado
-          ? "Factura pagada"
-          : "Factura pendiente",
+        c.estado === "completada"
+          ? "Cita completada"
+          : c.estado === "cancelada"
+            ? "Cita cancelada"
+            : "Cita programada",
 
       desc:
-        `RD$ ${formatMoney(total)}`,
+        `${c.cliente?.nombre || ""} ${c.cliente?.apellido || ""}`,
 
       time:
         formatFecha(
           parseFechaLocal(
-            i.created_at
+            c.created_at || c.fecha
           )
         )
 
-    };
+    })),
 
-  }),
+    /*
+    ==========================================
+    FACTURAS
+    ==========================================
+    */
 
-  /*
-  ==========================================
-  CLIENTES
-  ==========================================
-  */
+    ...(ingresos || []).map(i => {
 
-  ...(clientes || []).map(c => ({
+      const servicios =
+        i.servicios || [];
 
-    tipo: "cliente",
+      const subtotal =
+        servicios.reduce(
+          (acc, s) =>
+            acc + Number(s.monto || 0),
+          0
+        );
 
-    fecha:
-      parseFechaLocal(
-        c.created_at
-      ),
+      const itbis =
+        subtotal * 0.18;
 
-    icon:
-      Users,
+      const descuento =
+        subtotal *
+        (
+          (i.descuento || 0) / 100
+        );
 
-    title:
-      "Paciente registrado",
+      const total =
+        subtotal +
+        itbis -
+        descuento;
 
-    desc:
-      `${c.nombre || ""} ${c.apellido || ""}`,
+      return {
 
-    time:
-      formatFecha(
+        tipo: "factura",
+
+        fecha:
+          parseFechaLocal(
+            i.created_at
+          ),
+
+        icon:
+          Receipt,
+
+        title:
+          i.pagado
+            ? "Factura pagada"
+            : "Factura pendiente",
+
+        desc:
+          `RD$ ${formatMoney(total)}`,
+
+        time:
+          formatFecha(
+            parseFechaLocal(
+              i.created_at
+            )
+          )
+
+      };
+
+    }),
+
+    /*
+    ==========================================
+    CLIENTES
+    ==========================================
+    */
+
+    ...(clientes || []).map(c => ({
+
+      tipo: "cliente",
+
+      fecha:
         parseFechaLocal(
           c.created_at
+        ),
+
+      icon:
+        Users,
+
+      title:
+        "Paciente registrado",
+
+      desc:
+        `${c.nombre || ""} ${c.apellido || ""}`,
+
+      time:
+        formatFecha(
+          parseFechaLocal(
+            c.created_at
+          )
         )
-      )
 
-  })),
+    })),
 
-  /*
-  ==========================================
-  EGRESOS
-  ==========================================
-  */
+    /*
+    ==========================================
+    EGRESOS
+    ==========================================
+    */
 
-  ...(egresos || []).map(e => ({
+    ...(egresos || []).map(e => ({
 
-    tipo: "egreso",
+      tipo: "egreso",
 
-    fecha:
-      parseFechaLocal(
-        e.created_at || e.fecha
-      ),
-
-    icon:
-      Banknote,
-
-    title:
-      "Egreso registrado",
-
-    desc:
-      e.descripcion ||
-      e.concepto ||
-      `RD$ ${formatMoney(
-        e.monto || 0
-      )}`,
-
-    time:
-      formatFecha(
+      fecha:
         parseFechaLocal(
           e.created_at || e.fecha
+        ),
+
+      icon:
+        Banknote,
+
+      title:
+        "Egreso registrado",
+
+      desc:
+        e.descripcion ||
+        e.concepto ||
+        `RD$ ${formatMoney(
+          e.monto || 0
+        )}`,
+
+      time:
+        formatFecha(
+          parseFechaLocal(
+            e.created_at || e.fecha
+          )
         )
-      )
 
-  }))
+    }))
 
-]
+  ]
 
-  /*
-  ==========================================
-  FILTRAR INVALIDOS
-  ==========================================
-  */
+    /*
+    ==========================================
+    FILTRAR INVALIDOS
+    ==========================================
+    */
 
-  .filter(
-    a =>
-      a.fecha &&
-      !isNaN(a.fecha)
-  )
+    .filter(
+      a =>
+        a.fecha &&
+        !isNaN(a.fecha)
+    )
 
-  /*
-  ==========================================
-  ORDEN REAL
-  ==========================================
-  */
+    /*
+    ==========================================
+    ORDEN REAL
+    ==========================================
+    */
 
-  .sort(
-    (a, b) =>
-      b.fecha.getTime() -
-      a.fecha.getTime()
-  )
+    .sort(
+      (a, b) =>
+        b.fecha.getTime() -
+        a.fecha.getTime()
+    )
 
-  /*
-  ==========================================
-  LIMITE
-  ==========================================
-  */
+    /*
+    ==========================================
+    LIMITE
+    ==========================================
+    */
 
-  .slice(0, 10);
+    .slice(0, 10);
 
   /*
   ==========================================
@@ -1088,23 +1094,21 @@ dark:border-slate-800
 
                 <div>
 
+
+
                   <div className="
-                  inline-flex
-
-                  items-center
-                  gap-2
-
-                  text-indigo-600
-
-                  text-sm
-                  font-bold
-                ">
-
+  inline-flex
+  items-center
+  gap-2
+  text-amber-600
+  text-sm
+  font-bold
+">
                     <CalendarDays size={18} />
-
                     Citas de hoy
-
                   </div>
+
+
 
                   <p className="
                   mt-2
@@ -1257,8 +1261,7 @@ dark:border-slate-800
                               ${estado === "cancelada" &&
                                 "bg-slate-100 text-slate-700"}
 
-                              ${estado === "pendiente" &&
-                                "bg-yellow-100 text-yellow-700"}
+                              ${estado === "pendiente" && "bg-amber-100 text-amber-700"}
                             `}>
 
                                 {estado}
@@ -1334,7 +1337,7 @@ dark:border-slate-800
                 items-center
                 gap-2
 
-                text-violet-600
+                text-indigo-600
 
                 text-sm
                 font-bold
@@ -1394,33 +1397,29 @@ dark:border-slate-800
                   "
                   >
 
+
                     <div className="
-                    w-11
-                    h-11
+  w-11
+  h-11
+  rounded-[18px]
+  bg-slate-100
+  flex
+  items-center
+  justify-center
+  shrink-0
+">
 
-                    rounded-[18px]
-
-                    bg-gradient-to-br
-                    from-indigo-500/10
-                    to-purple-500/10
-
-                    text-indigo-600
-
-                    flex
-                    items-center
-                    justify-center
-
-                    shrink-0
-                  ">
 
 
                       <item.icon
                         size={18}
                         className={`
-    ${item.tipo === "factura" && "text-emerald-500"}
-    ${item.tipo === "cliente" && "text-indigo-500"}
-    ${item.tipo === "cita" && "text-violet-500"}
-    ${item.tipo === "egreso" && "text-rose-500"}
+    
+${item.tipo === "factura" && "text-emerald-500"}
+${item.tipo === "cliente" && "text-cyan-500"}
+${item.tipo === "cita" && "text-amber-500"}
+${item.tipo === "egreso" && "text-rose-500"}
+
   `}
                       />
 
@@ -1570,10 +1569,12 @@ dark:border-slate-800
                 relative
                 overflow-hidden
 
-                bg-gradient-to-br
-                from-indigo-500
-                via-purple-500
-                to-violet-600
+                
+bg-gradient-to-br
+from-indigo-500
+via-violet-500
+to-purple-600
+
 
                 rounded-[34px]
 
@@ -1685,20 +1686,18 @@ dark:border-slate-800
                   "
                   >
 
-                    <div className="
-                    w-12
-                    h-12
 
-                    rounded-[18px]
+                    <div className={`
+  w-12
+  h-12
+  rounded-[18px]
+  bg-gradient-to-br
+  ${kpi.bg}
+  flex
+  items-center
+  justify-center
+`}>
 
-                    bg-gradient-to-br
-                    from-indigo-500/10
-                    to-purple-500/10
-
-                    flex
-                    items-center
-                    justify-center
-                  ">
 
                       <kpi.icon
                         size={22}
@@ -2002,7 +2001,7 @@ dark:border-slate-800
                         items-center
                         gap-2
 
-                        text-emerald-600
+                        text-cyan-600
 
                         text-sm
                         font-bold
@@ -2095,7 +2094,7 @@ dark:border-slate-800
                         items-center
                         gap-2
 
-                        text-orange-500
+                        text-amber-600
 
                         text-sm
                         font-bold
@@ -2134,7 +2133,7 @@ dark:border-slate-800
                         <p className="
                         text-xs
 
-                        text-orange-500
+                        text-amber-500
 
                         font-semibold
                       ">
