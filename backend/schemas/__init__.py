@@ -15,7 +15,6 @@ from .cliente import (
 )
 
 from .ingreso import (
-    Servicio,
     ServicioSchema,
     IngresoCreate,
     Ingreso,

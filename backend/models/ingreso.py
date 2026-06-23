@@ -59,7 +59,7 @@ class Servicios(Base):
     id = Column(Integer, primary_key=True)
     descripcion = Column(String)
     monto = Column(Float)
-    
+    detalle = Column(String, nullable=True)
     costo_servicio = Column(Float, default=0)
 
     ingreso_id = Column(Integer, ForeignKey("ingresos.id"))

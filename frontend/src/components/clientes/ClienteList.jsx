@@ -40,53 +40,52 @@ function ClienteList({
 
   const obtenerProximaCita = (clienteId) => {
 
-    const ahora = new Date();
+    const ahora =
+      new Date();
 
-    const citasCliente = citas
-      .filter(c => {
+    const citasCliente =
+      citas
+        .filter(c => {
 
-        const idCliente =
-          c?.cliente_id ||
-          c?.cliente?.id;
+          const idCliente =
+            c?.cliente_id ||
+            c?.cliente?.id;
 
-        if (idCliente !== clienteId) {
-          return false;
-        }
+          if (
+            Number(idCliente) !==
+            Number(clienteId)
+          ) {
+            return false;
+          }
 
-        if (!c.fecha) {
-          return false;
-        }
+          if (!c.fecha) {
+            return false;
+          }
 
-        /*
-        ==========================
-        IGNORAR COMPLETADAS
-        ==========================
-        */
+          const estado =
+            (c.estado || "")
+              .toLowerCase();
 
-        const estado =
-          (c.estado || "")
-            .toLowerCase();
+          if (
+            estado === "completada" ||
+            estado === "cancelada"
+          ) {
+            return false;
+          }
 
-        if (
+          const fecha =
+            new Date(c.fecha);
 
-          estado === "completada"
+          return fecha >= ahora;
 
-          ||
+        })
+        .sort(
+          (a, b) =>
+            new Date(a.fecha) -
+            new Date(b.fecha)
+        );
 
-          estado === "cancelada"
-
-        ) {
-
-          return false;
-
-        }
-
-        const fecha =
-          new Date(c.fecha);
-
-        return fecha >= ahora;
-
-      })
+    return citasCliente[0] || null;
 
   };
 
@@ -120,7 +119,208 @@ function ClienteList({
       );
 
   };
+  const obtenerCitasCliente = (clienteId) => {
 
+    return citas.filter(c => {
+
+      const idCliente =
+        c?.cliente_id ||
+        c?.cliente?.id;
+
+      return (
+        Number(idCliente) ===
+        Number(clienteId)
+      );
+
+    });
+
+  };
+
+  const obtenerCitasCompletadas = (clienteId) => {
+
+    return obtenerCitasCliente(clienteId)
+      .filter(c =>
+        (c.estado || "")
+          .toLowerCase() === "completada"
+      );
+
+  };
+
+  const obtenerUltimaVisita = (clienteId) => {
+
+    const completadas =
+      obtenerCitasCompletadas(clienteId)
+        .filter(c => c.fecha)
+        .sort(
+          (a, b) =>
+            new Date(b.fecha) -
+            new Date(a.fecha)
+        );
+
+    return completadas[0] || null;
+
+  };
+
+  const diasDesdeFecha = (fecha) => {
+
+    if (!fecha) {
+      return null;
+    }
+
+    const hoy =
+      new Date();
+
+    const fechaBase =
+      new Date(fecha);
+
+    const diffMs =
+      hoy - fechaBase;
+
+    return Math.floor(
+      diffMs / (1000 * 60 * 60 * 24)
+    );
+
+  };
+
+  const getBadgeFrecuenciaCliente = (cliente) => {
+
+    const citasCompletadas =
+      obtenerCitasCompletadas(cliente.id);
+
+    const total =
+      citasCompletadas.length;
+
+
+    if (!cliente.activo) {
+
+      return {
+        label: "Seguimiento pausado",
+        icon: <Activity size={12} />,
+        className: `
+      bg-rose-50
+      text-rose-600
+      border-rose-100
+    `
+      };
+
+    }
+
+
+    if (total >= 5) {
+
+      return {
+        label: "Paciente frecuente",
+        icon: <Activity size={12} />,
+        className: `
+        bg-sky-50
+        text-sky-800
+        border-sky-100
+      `
+      };
+
+    }
+
+    if (total >= 2) {
+
+      return {
+        label: "Paciente recurrente",
+        icon: <Activity size={12} />,
+        className: `
+        bg-cyan-50
+        text-cyan-700
+        border-cyan-100
+      `
+      };
+
+    }
+
+    if (total === 1) {
+
+      return {
+        label: "Paciente en seguimiento",
+        icon: <Activity size={12} />,
+        className: `
+        bg-emerald-50
+        text-emerald-600
+        border-emerald-100
+      `
+      };
+
+    }
+
+    return {
+      label: "Paciente nuevo",
+      icon: <Activity size={12} />,
+      className: `
+      bg-slate-100
+      text-slate-600
+      border-slate-200
+    `
+    };
+
+  };
+
+  const getBadgeUltimaVisita = (cliente) => {
+
+    const ultimaVisita =
+      obtenerUltimaVisita(cliente.id);
+
+    if (!ultimaVisita) {
+
+      return {
+        label: "Sin visitas registradas",
+        icon: <Clock3 size={12} />,
+        className: `
+        bg-slate-100
+        text-slate-600
+        border-slate-200
+      `
+      };
+
+    }
+
+    const dias =
+      diasDesdeFecha(ultimaVisita.fecha);
+
+    if (dias !== null && dias <= 30) {
+
+      return {
+        label: "Última visita reciente",
+        icon: <Clock3 size={12} />,
+        className: `
+        bg-emerald-50
+        text-emerald-600
+        border-emerald-100
+      `
+      };
+
+    }
+
+    if (dias !== null && dias <= 90) {
+
+      return {
+        label: `Última visita hace ${dias} días`,
+        icon: <Clock3 size={12} />,
+        className: `
+        bg-amber-50
+        text-amber-600
+        border-amber-100
+      `
+      };
+
+    }
+
+    return {
+      label: "Sin actividad reciente",
+      icon: <Clock3 size={12} />,
+      className: `
+      bg-rose-50
+      text-rose-600
+      border-rose-100
+    `
+    };
+
+  };
   return (
 
     <div className="
@@ -148,8 +348,16 @@ function ClienteList({
             ? cliente.direccion
             : `${cliente.direccion?.municipio_nombre || ""}, ${cliente.direccion?.provincia_nombre || ""}`;
 
+
         const proximaCita =
           obtenerProximaCita(cliente.id);
+
+        const frecuenciaBadge =
+          getBadgeFrecuenciaCliente(cliente);
+
+        const ultimaVisitaBadge =
+          getBadgeUltimaVisita(cliente);
+
 
         return (
 
@@ -412,55 +620,53 @@ ${isSelected
                         gap-2
                       ">
 
-                        <div className="
-                          inline-flex
+                        <div className={`
+  inline-flex
 
-                          items-center
-                          gap-2
+  items-center
+  gap-2
 
-                          px-3
-                          py-1.5
+  px-3
+  py-1.5
 
-                          rounded-full
+  rounded-full
 
-                          
-bg-sky-50
+  border
 
-text-sky-800
+  text-xs
+  font-semibold
 
+  ${frecuenciaBadge.className}
+`}>
 
-                          text-xs
-                          font-semibold
-                        ">
+                          {frecuenciaBadge.icon}
 
-                          <Activity size={12} />
-
-                          Paciente frecuente
+                          {frecuenciaBadge.label}
 
                         </div>
 
-                        <div className="
-                          inline-flex
+                        <div className={`
+  inline-flex
 
-                          items-center
-                          gap-2
+  items-center
+  gap-2
 
-                          px-3
-                          py-1.5
+  px-3
+  py-1.5
 
-                          rounded-full
+  rounded-full
 
-                          bg-slate-100
+  border
 
-                          text-slate-600
+  text-xs
+  font-semibold
 
-                          text-xs
-                          font-semibold
-                        ">
+  ${ultimaVisitaBadge.className}
+`}>
 
-                          <Clock3 size={12} />
+                          {ultimaVisitaBadge.icon}
 
-                          Última visita reciente
+                          {ultimaVisitaBadge.label}
 
                         </div>
 
@@ -595,25 +801,25 @@ text-sky-800
                         <>
 
                           <p className="
-        mt-3
+  mt-3
 
-        text-sm
+  text-sm
 
-        font-black
+  font-black
 
-        text-slate-700
-      ">
-                            Pendiente programación
+  text-slate-700
+">
+                            Sin próxima cita
                           </p>
 
                           <p className="
-        mt-2
+  mt-2
 
-        text-xs
+  text-xs
 
-        text-slate-500
-      ">
-                            Sin citas registradas
+  text-slate-500
+">
+                            Agenda pendiente
                           </p>
 
                         </>

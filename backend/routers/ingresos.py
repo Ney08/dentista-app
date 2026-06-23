@@ -98,27 +98,42 @@ def crear_ingreso(
             "servicios",
             []
         )
-
         if servicios_data:
 
             for s in servicios_data:
 
+                detalle_servicio = getattr(
+                        s,
+                        "detalle",
+                        None
+                    )
+
                 servicio = models.Servicios(
 
-                    descripcion=s.descripcion,
+                descripcion=s.descripcion,
 
-                    monto=s.monto,
+                detalle=
+                detalle_servicio.strip()
+                if detalle_servicio
+                else None,
 
-                    costo_servicio=
-                        s.costo_servicio,
+                monto=s.monto,
 
-                    ingreso_id=ingreso.id
+                costo_servicio=
+                s.costo_servicio,
 
-                )
+                ingreso_id=ingreso.id
 
-                db.add(servicio)
+        )
+
+        db.add(servicio)
 
         db.commit()
+        
+        print(
+        "DATA RECIBIDA:",
+        data.model_dump()
+        )
 
         return {
 
@@ -139,6 +154,8 @@ def crear_ingreso(
         return {
             "error": str(e)
         }
+
+
 
 
 
@@ -279,6 +296,9 @@ def listar_ingresos(
 
                         "descripcion":
                             s.descripcion,
+                        
+                        "detalle":
+                            s.detalle,
 
                         "monto":
                             s.monto,
@@ -403,6 +423,13 @@ def actualizar_ingreso(
             ingreso_id=id,
 
             descripcion=s.descripcion,
+            
+            detalle=
+                getattr(
+                    s,
+                    "detalle",
+                    None
+                ),
 
             monto=s.monto,
 
@@ -451,6 +478,10 @@ def actualizar_ingreso(
 
                 "descripcion":
                     s.descripcion,
+                    
+                "detalle":
+                    s.detalle,
+
 
                 "monto":
                     s.monto,

@@ -22,6 +22,11 @@ function FacturaModal({
   const servicios =
     ingreso.servicios || [];
 
+  console.log(
+    "SERVICIOS EN FACTURA MODAL:",
+    servicios
+  );
+
   const subtotal =
     servicios.reduce(
       (acc, s) =>
@@ -74,6 +79,18 @@ function FacturaModal({
   const format = (n) =>
     `RD$ ${formatMoney(n)}`;
 
+  const getDetalleServicio = (s) => {
+
+    return (
+      s.detalle ||
+      s.descripcion_servicio ||
+      s.descripcion_catalogo ||
+      s.observacion ||
+      s.descripcion_larga ||
+      ""
+    );
+
+  };
   /*
   ==========================================
   STATUS
@@ -604,34 +621,37 @@ function FacturaModal({
                   <div>
 
                     <p className="
-                      text-sm
-                      md:text-base
+    text-sm
+    md:text-base
 
-                      font-black
+    font-black
 
-                      text-slate-800
-                    ">
+    text-slate-800
+  ">
 
                       🦷 {s.descripcion}
 
                     </p>
 
-                    <p className="
-                      mt-1
+                    {getDetalleServicio(s) && (
 
-                      text-xs
+                      <p className="
+      mt-1
 
-                      text-slate-500
-                    ">
+      text-xs
 
-                      Tratamiento clínico
+      text-slate-500
+    ">
 
-                    </p>
-                    {
+                        {getDetalleServicio(s)}
 
-                      ingreso?.tratamiento && (
+                      </p>
 
-                        <p className="
+                    )}
+
+                    {ingreso?.tratamiento && (
+
+                      <p className="
       mt-1
 
       text-xs
@@ -641,25 +661,26 @@ function FacturaModal({
       text-sky-700
     ">
 
-                          Sesión {
+                        Sesión {
 
-                            ingreso.tratamiento
-                              .sesiones_completadas
+                          ingreso.tratamiento
+                            .sesiones_completadas
 
-                          }
+                        }
 
-                          de {
+                        {" "}de{" "}
 
-                            ingreso.tratamiento
-                              .sesiones_totales
+                        {
 
-                          }
+                          ingreso.tratamiento
+                            .sesiones_totales
 
-                        </p>
+                        }
 
-                      )
+                      </p>
 
-                    }
+                    )}
+
                   </div>
 
                   {/* RIGHT */}
@@ -803,33 +824,37 @@ function FacturaModal({
 
               {/* ABONADO */}
 
-              <div className="
-                flex
-                items-center
-                justify-between
+              {Number(abonado) > 0 && (
 
-                text-sm
-              ">
+                <div className="
+    flex
+    items-center
+    justify-between
 
-                <span className="
-                  text-slate-500
-                ">
+    text-sm
+  ">
 
-                  Abonado
+                  <span className="
+      text-slate-500
+    ">
 
-                </span>
+                    Abonado
 
-                <span className="
-                  font-bold
+                  </span>
 
-                  text-emerald-600
-                ">
+                  <span className="
+      font-bold
 
-                  {format(abonado)}
+      text-emerald-600
+    ">
 
-                </span>
+                    {format(abonado)}
 
-              </div>
+                  </span>
+
+                </div>
+
+              )}
               {
 
                 ingreso?.tratamiento && (

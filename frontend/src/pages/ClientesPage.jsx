@@ -96,7 +96,7 @@ function ClientesPage() {
     useState("az");
 
   const [limite, setLimite] =
-    useState(3);
+    useState(10);
 
   const [pagina, setPagina] =
     useState(1);
@@ -1257,16 +1257,16 @@ focus:border-sky-300
                 "
                 >
 
-                  <option value={6}>
-                    6
+                  <option value={10}>
+                    10
                   </option>
 
-                  <option value={12}>
-                    12
+                  <option value={20}>
+                    20
                   </option>
 
-                  <option value={24}>
-                    24
+                  <option value={30}>
+                    30
                   </option>
 
                   <option value="all">

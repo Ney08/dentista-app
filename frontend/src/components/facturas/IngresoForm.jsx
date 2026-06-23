@@ -92,6 +92,7 @@ function IngresoForm({
     useState([
       {
         descripcion: "",
+        detalle: "",
         monto: "",
         costo_servicio: 0
       }
@@ -114,6 +115,17 @@ function IngresoForm({
 
   };
 
+  const getDetalleCita = (cita) => {
+
+    return (
+      cita?.detalle ||
+      cita?.observacion ||
+      cita?.descripcion ||
+      cita?.nota ||
+      ""
+    );
+
+  };
   /*
   ==========================================
   CLIENTE PRESET
@@ -184,6 +196,7 @@ function IngresoForm({
       setServicios([
         {
           descripcion: "",
+          detalle: "",
           monto: "",
           costo_servicio: 0
         }
@@ -234,6 +247,7 @@ function IngresoForm({
       setServicios([
         {
           descripcion: "",
+          detalle: "",
           monto: "",
           costo_servicio: 0
         }
@@ -287,6 +301,7 @@ function IngresoForm({
       setServicios([
         {
           descripcion: "",
+          detalle: "",
           monto: "",
           costo_servicio: 0
         }
@@ -305,6 +320,11 @@ function IngresoForm({
 
         descripcion:
           servicioEncontrado.nombre ||
+          servicioEncontrado.descripcion ||
+          "",
+
+        detalle:
+          getDetalleCita(citaElegida) ||
           servicioEncontrado.descripcion ||
           "",
 
@@ -375,6 +395,10 @@ function IngresoForm({
             descripcion:
               encontrado.nombre,
 
+            detalle:
+              getDetalleCita(citaPreset) ||
+              encontrado.descripcion ||
+              "",
 
             monto:
 
@@ -384,9 +408,26 @@ function IngresoForm({
 
               encontrado.precio,
 
-
             costo_servicio:
               encontrado.costo_servicio || 0
+          }
+        ]);
+
+      } else {
+
+        setServicios([
+          {
+            descripcion:
+              citaPreset.motivo || "",
+
+            detalle:
+              getDetalleCita(citaPreset) || "",
+
+            monto:
+              citaPreset?.tratamiento?.costo || "",
+
+            costo_servicio:
+              0
           }
         ]);
 
@@ -411,8 +452,16 @@ function IngresoForm({
     if (initialData) {
 
       setServicios(
-        initialData.servicios || []
+        (initialData.servicios || []).map(s => ({
+
+          ...s,
+
+          detalle:
+            s.detalle || ""
+
+        }))
       );
+
 
       setDescuento(
         initialData.descuento || 0
@@ -450,6 +499,7 @@ function IngresoForm({
       ...servicios,
       {
         descripcion: "",
+        detalle: "",
         monto: "",
         costo_servicio: 0
       }
@@ -621,6 +671,10 @@ VALIDAR BALANCE
           descripcion:
             s.descripcion,
 
+          detalle:
+            s.detalle || "",
+
+
           monto:
             parseFloat(
               s.monto
@@ -634,6 +688,12 @@ VALIDAR BALANCE
         }))
 
     };
+
+
+    console.log(
+      "PAYLOAD FACTURA:",
+      payload
+    );
 
     setLoading(true);
 
@@ -674,6 +734,7 @@ VALIDAR BALANCE
       setServicios([
         {
           descripcion: "",
+          detalle: "",
           monto: "",
           costo_servicio: 0
         }
@@ -1459,10 +1520,20 @@ to-sky-900
                           e.target.value
                       );
 
+                    if (!seleccionado) {
+                      return;
+                    }
+
                     actualizarServicio(
                       index,
                       "descripcion",
                       seleccionado.nombre
+                    );
+
+                    actualizarServicio(
+                      index,
+                      "detalle",
+                      seleccionado.descripcion || ""
                     );
 
                     actualizarServicio(
@@ -1545,7 +1616,48 @@ focus:border-sky-300
                   })}
 
                 </select>
+                {/* DETALLE */}
 
+                <input
+                  type="text"
+                  value={s.detalle || ""}
+                  onChange={(e) =>
+                    actualizarServicio(
+                      index,
+                      "detalle",
+                      e.target.value
+                    )
+                  }
+                  placeholder="Detalle del servicio, ej: Limpieza profunda"
+                  className="
+    w-full
+
+    h-14
+
+    px-5
+
+    rounded-[22px]
+
+    bg-white
+
+    border
+    border-slate-200
+
+    text-slate-700
+
+    shadow-sm
+
+    focus:outline-none
+
+    focus:ring-4
+    focus:ring-sky-500/10
+
+    focus:border-sky-300
+
+    transition-all
+    duration-300
+  "
+                />
                 {/* PRECIO */}
 
                 <input

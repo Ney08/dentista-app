@@ -119,61 +119,61 @@ function GraficoIngresos({
 
   });
 
- egresos.forEach(e => {
+  egresos.forEach(e => {
 
-  const fechaRaw =
-    e.fecha ||
-    e.created_at;
+    const fechaRaw =
+      e.fecha ||
+      e.created_at;
 
-  if (!fechaRaw) return;
+    if (!fechaRaw) return;
 
-  const fecha =
-    new Date(
-      fechaRaw.replace("Z", "")
-    );
+    const fecha =
+      new Date(
+        fechaRaw.replace("Z", "")
+      );
 
-  if (isNaN(fecha)) return;
+    if (isNaN(fecha)) return;
 
-  let clave;
+    let clave;
 
-  if (tipo === "mes") {
-    clave = fecha.getMonth();
-  }
+    if (tipo === "mes") {
+      clave = fecha.getMonth();
+    }
 
-  if (tipo === "anio") {
-    clave = fecha.getFullYear();
-  }
+    if (tipo === "anio") {
+      clave = fecha.getFullYear();
+    }
 
-  if (tipo === "semana") {
+    if (tipo === "semana") {
 
-    const inicio =
-      new Date(fecha);
+      const inicio =
+        new Date(fecha);
 
-    inicio.setDate(
-      fecha.getDate() -
-      inicio.getDay()
-    );
+      inicio.setDate(
+        fecha.getDate() -
+        inicio.getDay()
+      );
 
-    clave = inicio
-      .toISOString()
-      .slice(0, 10);
+      clave = inicio
+        .toISOString()
+        .slice(0, 10);
 
-  }
+    }
 
-  if (!grupos[clave]) {
+    if (!grupos[clave]) {
 
-    grupos[clave] = {
-      ingresos: 0,
-      neta: 0,
-      egresos: 0
-    };
+      grupos[clave] = {
+        ingresos: 0,
+        neta: 0,
+        egresos: 0
+      };
 
-  }
+    }
 
-  grupos[clave].egresos +=
-    Number(e.monto || 0);
+    grupos[clave].egresos +=
+      Number(e.monto || 0);
 
-});
+  });
 
   let labels = [];
 
@@ -278,9 +278,11 @@ function GraficoIngresos({
             chartArea
           } = chart;
 
+
           if (!chartArea) {
-            return "#6366F1";
+            return "#0369A1";
           }
+
 
           const gradient =
             ctx.createLinearGradient(
@@ -292,12 +294,12 @@ function GraficoIngresos({
 
           gradient.addColorStop(
             0,
-            "#6366F1"
+            "#0284C7"
           );
 
           gradient.addColorStop(
             1,
-            "#8B5CF6"
+            "#075985"
           );
 
           return gradient;
@@ -319,10 +321,12 @@ function GraficoIngresos({
 
         data: netaData,
 
-        borderColor: "#10B981",
+
+        borderColor: "#059669",
 
         backgroundColor:
           "rgba(16,185,129,0.15)",
+
 
         tension: 0.4,
 
@@ -332,8 +336,10 @@ function GraficoIngresos({
 
         pointHoverRadius: 6,
 
+
         pointBackgroundColor:
           "#10B981",
+
 
         borderWidth: 3
 
@@ -419,7 +425,7 @@ function GraficoIngresos({
 
       tooltip: {
 
-        backgroundColor: "#111827",
+        backgroundColor: "#082F49",
 
         padding: 12,
 
@@ -504,8 +510,8 @@ function GraficoIngresos({
             px-4 h-9 rounded-xl text-sm font-medium
             transition-all duration-200
             ${tipo === "semana"
-              ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-200/50"
-              : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
+              ? "bg-gradient-to-r from-sky-700 via-sky-800 to-sky-900 text-white shadow-lg shadow-sky-900/20"
+              : "bg-slate-100 hover:bg-sky-50 hover:text-sky-800 text-slate-700"}
           `}
         >
           Semana
@@ -517,8 +523,8 @@ function GraficoIngresos({
             px-4 h-9 rounded-xl text-sm font-medium
             transition-all duration-200
             ${tipo === "mes"
-              ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-200/50"
-              : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
+              ? "bg-gradient-to-r from-sky-700 via-sky-800 to-sky-900 text-white shadow-lg shadow-sky-900/20"
+              : "bg-slate-100 hover:bg-sky-50 hover:text-sky-800 text-slate-700"}
           `}
         >
           Mes
@@ -530,8 +536,8 @@ function GraficoIngresos({
             px-4 h-9 rounded-xl text-sm font-medium
             transition-all duration-200
             ${tipo === "anio"
-              ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-200/50"
-              : "bg-gray-100 hover:bg-gray-200 text-gray-700"}
+              ? "bg-gradient-to-r from-sky-700 via-sky-800 to-sky-900 text-white shadow-lg shadow-sky-900/20"
+              : "bg-slate-100 hover:bg-sky-50 hover:text-sky-800 text-slate-700"}
           `}
         >
           Año

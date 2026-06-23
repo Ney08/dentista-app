@@ -13,21 +13,24 @@ class ClienteOut(BaseModel):
         from_attributes = True
 
 
-class Servicio(BaseModel):
-    descripcion: str
-    monto: float
-    costo_servicio: float = 0
+# class Servicio(BaseModel):
+#     descripcion: str
+#     monto: float
+#     costo_servicio: float = 0
+#     detalle: str | None = None
     
 class ServicioSchema(BaseModel):
     descripcion: str
+    detalle: str | None = None
     monto: float
     costo_servicio: float = 0
+    
     
 class IngresoCreate(BaseModel):
     cliente_id: int
     descuento: float = 0
     cita_id: Optional[int] = None
-    servicios: List[Servicio]
+    servicios: List[ServicioSchema]
     tratamiento_id: Optional[int] = None
 
 class Ingreso(BaseModel):
@@ -50,7 +53,7 @@ class Ingreso(BaseModel):
 
     monto_abonado: Optional[float] = 0
 
-    servicios: List[Servicio]
+    servicios: List[ServicioSchema]
 
     class Config:
         from_attributes = True

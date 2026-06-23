@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import {
   Settings2,
   ShieldCheck,
@@ -32,6 +32,15 @@ import ServiciosTab from "../components/settings/ServiciosTab";
 
 function SettingsPage() {
 
+  const isTauriApp = () => {
+
+    return (
+      typeof window !== "undefined" &&
+      Boolean(window.__TAURI_INTERNALS__)
+    );
+
+  };
+
   const { updateUser } =
     useUser();
 
@@ -51,6 +60,12 @@ function SettingsPage() {
     mostrarConfirmacion,
     setMostrarConfirmacion
   ] = useState(false);
+
+  const [backupLoading, setBackupLoading] =
+    useState(false);
+
+  const [ultimoBackup, setUltimoBackup] =
+    useState(null);
 
   const [tab, setTab] =
     useState("cuenta");
@@ -92,6 +107,62 @@ function SettingsPage() {
   ==========================================
   */
 
+  const crearBackup = async () => {
+
+    try {
+
+      if (!isTauriApp()) {
+
+        showWarning(
+          "El backup solo funciona dentro de la app de escritorio ⚠️"
+        );
+
+        return;
+
+      }
+
+      setBackupLoading(true);
+
+      showInfo(
+        "Creando copia de seguridad..."
+      );
+
+      const ruta =
+        await invoke(
+          "crear_backup_postgres"
+        );
+
+      const info =
+        await invoke(
+          "obtener_ultimo_backup_postgres"
+        );
+
+      setUltimoBackup(
+        info
+      );
+
+      showSuccess(
+        `Backup creado ✅ ${ruta}`
+      );
+
+    } catch (error) {
+
+      console.error(
+        "ERROR BACKUP:",
+        error
+      );
+
+      showError(
+        String(error || "Error creando backup ❌")
+      );
+
+    } finally {
+
+      setBackupLoading(false);
+
+    }
+
+  };
   const guardarUsuario = async () => {
 
     if (!username.trim()) {
@@ -296,6 +367,40 @@ function SettingsPage() {
 
     };
 
+  useEffect(() => {
+
+    const cargarUltimoBackup = async () => {
+
+      try {
+
+        if (!isTauriApp()) {
+          return;
+        }
+
+        const info =
+          await invoke(
+            "obtener_ultimo_backup_postgres"
+          );
+
+        setUltimoBackup(
+          info
+        );
+
+      } catch (error) {
+
+        console.error(
+          "ERROR CARGANDO BACKUP:",
+          error
+        );
+
+      }
+
+    };
+
+    cargarUltimoBackup();
+
+  }, []);
+
   /*
   ==========================================
   LOADING
@@ -401,7 +506,7 @@ function SettingsPage() {
           duration: 0.25
         }}
       >
-      <div className="
+        <div className="
         max-w-[1600px]
 
         mx-auto
@@ -414,9 +519,9 @@ function SettingsPage() {
         space-y-7
       ">
 
-        {/* HEADER */}
+          {/* HEADER */}
 
-        <div className="
+          <div className="
           flex
           flex-col
           xl:flex-row
@@ -427,11 +532,11 @@ function SettingsPage() {
           gap-5
         ">
 
-          {/* LEFT */}
+            {/* LEFT */}
 
-          <div>
+            <div>
 
-            <div className="
+              <div className="
               inline-flex
 
               items-center
@@ -457,13 +562,13 @@ text-sky-800
               mb-4
             ">
 
-              <Settings2 size={14} />
+                <Settings2 size={14} />
 
-              Administración del sistema
+                Administración del sistema
 
-            </div>
+              </div>
 
-            <h1 className="
+              <h1 className="
               text-3xl
               md:text-4xl
 
@@ -474,11 +579,11 @@ text-sky-800
               text-slate-800
             ">
 
-              Configuración
+                Configuración
 
-            </h1>
+              </h1>
 
-            <p className="
+              <p className="
               mt-2
 
               text-sm
@@ -487,15 +592,15 @@ text-sky-800
               text-slate-500
             ">
 
-              Gestiona usuarios, seguridad y servicios clínicos
+                Gestiona usuarios, seguridad y servicios clínicos
 
-            </p>
+              </p>
 
-          </div>
+            </div>
 
-          {/* STATUS */}
+            {/* STATUS */}
 
-          <div className="
+            <div className="
             bg-white/95
             backdrop-blur-md
 
@@ -512,7 +617,7 @@ text-sky-800
             min-w-[260px]
           ">
 
-            <p className="
+              <p className="
               text-xs
 
               uppercase
@@ -523,10 +628,10 @@ text-sky-800
 
               text-slate-400
             ">
-              Estado sistema
-            </p>
+                Estado sistema
+              </p>
 
-            <div className="
+              <div className="
               mt-3
 
               flex
@@ -534,9 +639,9 @@ text-sky-800
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <h3 className="
+                  <h3 className="
                   text-3xl
 
                   font-black
@@ -544,11 +649,11 @@ text-sky-800
                   text-emerald-600
                 ">
 
-                  Activo
+                    Activo
 
-                </h3>
+                  </h3>
 
-                <p className="
+                  <p className="
                   mt-1
 
                   text-xs
@@ -558,13 +663,13 @@ text-sky-800
                   text-emerald-500
                 ">
 
-                  Seguridad operativa
+                    Seguridad operativa
 
-                </p>
+                  </p>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
                 w-14
                 h-14
 
@@ -586,7 +691,9 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
                 justify-center
               ">
 
-                <ShieldCheck size={22} />
+                  <ShieldCheck size={22} />
+
+                </div>
 
               </div>
 
@@ -594,11 +701,9 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
 
           </div>
 
-        </div>
+          {/* KPIS */}
 
-        {/* KPIS */}
-
-        <div className="
+          <div className="
           grid
           grid-cols-1
           sm:grid-cols-2
@@ -607,9 +712,9 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
           gap-5
         ">
 
-          {/* SERVICIOS */}
+            {/* SERVICIOS */}
 
-          <div className="
+            <div className="
             relative
             overflow-hidden
 
@@ -626,7 +731,7 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
             shadow-[0_10px_30px_rgba(0,0,0,0.05)]
           ">
 
-            <div className="
+              <div className="
               absolute
               -top-10
               -right-10
@@ -641,7 +746,7 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
               blur-3xl
             " />
 
-            <div className="
+              <div className="
               relative
               z-10
 
@@ -650,9 +755,9 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                   text-sm
 
                   text-slate-500
@@ -662,13 +767,13 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
                   gap-2
                 ">
 
-                  <FolderCog size={14} />
+                    <FolderCog size={14} />
 
-                  Servicios clínicos
+                    Servicios clínicos
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                   mt-2
 
                   text-4xl
@@ -678,13 +783,13 @@ shadow-[0_15px_35px_rgba(16,185,129,0.25)]
                   text-sky-800
                 ">
 
-                  {servicios.length}
+                    {servicios.length}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
                 w-12
                 h-12
 
@@ -701,17 +806,17 @@ text-sky-700
                 justify-center
               ">
 
-                <FolderCog size={20} />
+                  <FolderCog size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+            {/* CLIENTES */}
 
-          {/* CLIENTES */}
-
-          <div className="
+            <div className="
             relative
             overflow-hidden
 
@@ -728,7 +833,7 @@ text-sky-700
             shadow-[0_10px_30px_rgba(0,0,0,0.05)]
           ">
 
-            <div className="
+              <div className="
               absolute
               -top-10
               -right-10
@@ -743,7 +848,7 @@ text-sky-700
               blur-3xl
             " />
 
-            <div className="
+              <div className="
               relative
               z-10
 
@@ -752,9 +857,9 @@ text-sky-700
               justify-between
             ">
 
-              <div>
+                <div>
 
-                <p className="
+                  <p className="
                   text-sm
 
                   text-slate-500
@@ -764,13 +869,13 @@ text-sky-700
                   gap-2
                 ">
 
-                  <Users size={14} />
+                    <Users size={14} />
 
-                  Clientes inactivos
+                    Clientes inactivos
 
-                </p>
+                  </p>
 
-                <h2 className="
+                  <h2 className="
                   mt-2
 
                   text-4xl
@@ -780,13 +885,13 @@ text-sky-700
                   text-rose-500
                 ">
 
-                  {clientesInactivos.length}
+                    {clientesInactivos.length}
 
-                </h2>
+                  </h2>
 
-              </div>
+                </div>
 
-              <div className="
+                <div className="
                 w-12
                 h-12
 
@@ -801,106 +906,124 @@ text-sky-700
                 justify-center
               ">
 
-                <Users size={20} />
+                  <Users size={20} />
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
-
-          {/* SEGURIDAD */}
-
-          <div className="
-            relative
-            overflow-hidden
-
-            
-bg-gradient-to-br
-from-sky-700
-via-sky-800
-to-sky-900
-
-
-            rounded-[30px]
-
-            p-6
-
-            text-white
-
-            shadow-[0_20px_50px_rgba(7,89,133,0.28)]
-          ">
+            {/* BACKUP STATUS */}
 
             <div className="
-              absolute
-              -top-10
-              -right-10
+  relative
+  overflow-hidden
 
-              w-48
-              h-48
+  bg-gradient-to-br
+  from-sky-700
+  via-sky-800
+  to-sky-900
 
-              rounded-full
+  rounded-[30px]
 
-              bg-white/10
+  p-6
 
-              blur-3xl
-            " />
+  text-white
 
-            <div className="
-              relative
-              z-10
-
-              flex
-              items-start
-              justify-between
-            ">
-
-              <div>
-
-                <p className="
-                  text-sm
-
-                  text-white/70
-
-                  flex
-                  items-center
-                  gap-2
-                ">
-
-                  <ShieldCheck size={14} />
-
-                  Seguridad
-
-                </p>
-
-                <h2 className="
-                  mt-2
-
-                  text-4xl
-
-                  font-black
-                ">
-
-                  Activa
-
-                </h2>
-
-              </div>
+  shadow-[0_20px_50px_rgba(7,89,133,0.28)]
+">
 
               <div className="
-                w-12
-                h-12
+    absolute
+    -top-10
+    -right-10
 
-                rounded-2xl
+    w-48
+    h-48
 
-                bg-white/15
+    rounded-full
 
-                flex
-                items-center
-                justify-center
-              ">
+    bg-white/10
 
-                <ShieldCheck size={20} />
+    blur-3xl
+  " />
+
+              <div className="
+    relative
+    z-10
+
+    flex
+    items-start
+    justify-between
+  ">
+
+                <div>
+
+                  <p className="
+        text-sm
+
+        text-white/70
+
+        flex
+        items-center
+        gap-2
+      ">
+
+                    <ShieldCheck size={14} />
+
+                    Backup
+
+                  </p>
+
+                  <h2 className="
+        mt-2
+
+        text-3xl
+
+        font-black
+      ">
+
+                    {ultimoBackup?.existe
+                      ? "Actualizado"
+                      : "Pendiente"}
+
+                  </h2>
+
+                  <p className="
+        mt-2
+
+        text-xs
+
+        font-semibold
+
+        text-white/70
+      ">
+
+                    {ultimoBackup?.existe
+                      ? `Última copia: ${ultimoBackup.fecha}`
+                      : "Sin copia registrada"}
+
+                  </p>
+
+                </div>
+
+                <div className="
+      w-12
+      h-12
+
+      rounded-2xl
+
+      bg-white/15
+
+      flex
+      items-center
+      justify-center
+    ">
+
+                  <ShieldCheck size={20} />
+
+                </div>
 
               </div>
 
@@ -908,11 +1031,9 @@ to-sky-900
 
           </div>
 
-        </div>
+          {/* TABS */}
 
-        {/* TABS */}
-
-        <div className="
+          <div className="
           flex
           overflow-x-auto
 
@@ -925,14 +1046,14 @@ to-sky-900
           no-scrollbar
         ">
 
-          {["cuenta", "servicios", "clientes"].map((t) => (
+            {["cuenta", "servicios", "clientes"].map((t) => (
 
-            <button
-              key={t}
-              onClick={() =>
-                setTab(t)
-              }
-              className={`
+              <button
+                key={t}
+                onClick={() =>
+                  setTab(t)
+                }
+                className={`
                 h-12
 
                 px-5
@@ -956,7 +1077,7 @@ to-sky-900
                 gap-2
 
                 ${tab === t
-                  ? `
+                    ? `
                     
 bg-gradient-to-r
 from-sky-700
@@ -972,7 +1093,7 @@ border-transparent
 
                     scale-[1.02]
                   `
-                  : `
+                    : `
                     bg-white/90
                     backdrop-blur-xl
 
@@ -986,42 +1107,42 @@ hover:bg-sky-50/60
 
                     hover:bg-white
                   `
-                }
+                  }
               `}
-            >
+              >
 
-              {t === "cuenta" && (
-                <>
-                  <User2 size={14} />
-                  Cuenta
-                </>
-              )}
+                {t === "cuenta" && (
+                  <>
+                    <User2 size={14} />
+                    Cuenta
+                  </>
+                )}
 
-              {t === "servicios" && (
-                <>
-                  <FolderCog size={14} />
-                  Servicios
-                </>
-              )}
+                {t === "servicios" && (
+                  <>
+                    <FolderCog size={14} />
+                    Servicios
+                  </>
+                )}
 
-              {t === "clientes" && (
-                <>
-                  <Users size={14} />
-                  Clientes inactivos
-                </>
-              )}
+                {t === "clientes" && (
+                  <>
+                    <Users size={14} />
+                    Clientes inactivos
+                  </>
+                )}
 
-            </button>
+              </button>
 
-          ))}
+            ))}
 
-        </div>
+          </div>
 
-        {/* CUENTA */}
+          {/* CUENTA */}
 
-        {tab === "cuenta" && (
+          {tab === "cuenta" && (
 
-          <div className="
+            <div className="
             grid
             grid-cols-1
             xl:grid-cols-2
@@ -1029,9 +1150,9 @@ hover:bg-sky-50/60
             gap-6
           ">
 
-            {/* PERFIL */}
+              {/* PERFIL */}
 
-            <div className="
+              <div className="
               bg-white/95
               backdrop-blur-md
 
@@ -1047,13 +1168,13 @@ hover:bg-sky-50/60
               space-y-6
             ">
 
-              <div className="
+                <div className="
                 flex
                 items-center
                 gap-4
               ">
 
-                <div className="
+                  <div className="
                   w-14
                   h-14
 
@@ -1072,13 +1193,13 @@ to-sky-800
                   justify-center
                 ">
 
-                  <User2 size={26} />
+                    <User2 size={26} />
 
-                </div>
+                  </div>
 
-                <div>
+                  <div>
 
-                  <h3 className="
+                    <h3 className="
                     text-2xl
 
                     font-black
@@ -1086,34 +1207,34 @@ to-sky-800
                     text-slate-800
                   ">
 
-                    Perfil
+                      Perfil
 
-                  </h3>
+                    </h3>
 
-                  <p className="
+                    <p className="
                     text-sm
 
                     text-slate-500
                   ">
 
-                    Configuración de usuario
+                      Configuración de usuario
 
-                  </p>
+                    </p>
+
+                  </div>
 
                 </div>
 
-              </div>
-
-              <input
-                type="text"
-                placeholder="Nombre de usuario"
-                value={username}
-                onChange={(e) =>
-                  setUsername(
-                    e.target.value
-                  )
-                }
-                className="
+                <input
+                  type="text"
+                  placeholder="Nombre de usuario"
+                  value={username}
+                  onChange={(e) =>
+                    setUsername(
+                      e.target.value
+                    )
+                  }
+                  className="
                   w-full
 
                   h-14
@@ -1142,12 +1263,12 @@ focus:border-sky-300
                   transition-all
                   duration-300
                 "
-              />
+                />
 
-              <button
-                onClick={guardarUsuario}
-                disabled={loading}
-                className={`
+                <button
+                  onClick={guardarUsuario}
+                  disabled={loading}
+                  className={`
                   w-full
 
                   h-14
@@ -1167,8 +1288,8 @@ focus:border-sky-300
                   duration-300
 
                   ${loading
-                    ? "bg-gray-400"
-                    : `
+                      ? "bg-gray-400"
+                      : `
                       
 bg-gradient-to-r
 from-sky-700
@@ -1180,23 +1301,23 @@ hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
 hover:scale-[1.01]
 
                     `
-                  }
+                    }
                 `}
-              >
+                >
 
-                <Save size={18} />
+                  <Save size={18} />
 
-                {loading
-                  ? "Guardando..."
-                  : "Guardar usuario"}
+                  {loading
+                    ? "Guardando..."
+                    : "Guardar usuario"}
 
-              </button>
+                </button>
 
-            </div>
+              </div>
 
-            {/* PASSWORD */}
+              {/* PASSWORD */}
 
-            <div className="
+              <div className="
               bg-white/95
               backdrop-blur-md
 
@@ -1212,13 +1333,13 @@ hover:scale-[1.01]
               space-y-6
             ">
 
-              <div className="
+                <div className="
                 flex
                 items-center
                 gap-4
               ">
 
-                <div className="
+                  <div className="
                   w-14
                   h-14
 
@@ -1235,13 +1356,13 @@ hover:scale-[1.01]
                   justify-center
                 ">
 
-                  <LockKeyhole size={26} />
+                    <LockKeyhole size={26} />
 
-                </div>
+                  </div>
 
-                <div>
+                  <div>
 
-                  <h3 className="
+                    <h3 className="
                     text-2xl
 
                     font-black
@@ -1249,38 +1370,38 @@ hover:scale-[1.01]
                     text-slate-800
                   ">
 
-                    Seguridad
+                      Seguridad
 
-                  </h3>
+                    </h3>
 
-                  <p className="
+                    <p className="
                     text-sm
 
                     text-slate-500
                   ">
 
-                    Cambiar contraseña
+                      Cambiar contraseña
 
-                  </p>
+                    </p>
+
+                  </div>
 
                 </div>
 
-              </div>
-
-              <div className="
+                <div className="
                 space-y-4
               ">
 
-                <input
-                  type="password"
-                  placeholder="Contraseña actual"
-                  value={password}
-                  onChange={(e) =>
-                    setPassword(
-                      e.target.value
-                    )
-                  }
-                  className="
+                  <input
+                    type="password"
+                    placeholder="Contraseña actual"
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(
+                        e.target.value
+                      )
+                    }
+                    className="
                     w-full
 
                     h-14
@@ -1308,18 +1429,18 @@ hover:scale-[1.01]
                     transition-all
                     duration-300
                   "
-                />
+                  />
 
-                <input
-                  type="password"
-                  placeholder="Nueva contraseña"
-                  value={nuevoPassword}
-                  onChange={(e) =>
-                    setNuevoPassword(
-                      e.target.value
-                    )
-                  }
-                  className="
+                  <input
+                    type="password"
+                    placeholder="Nueva contraseña"
+                    value={nuevoPassword}
+                    onChange={(e) =>
+                      setNuevoPassword(
+                        e.target.value
+                      )
+                    }
+                    className="
                     w-full
 
                     h-14
@@ -1347,14 +1468,14 @@ hover:scale-[1.01]
                     transition-all
                     duration-300
                   "
-                />
+                  />
 
-              </div>
+                </div>
 
-              <button
-                onClick={cambiarPassword}
-                disabled={loading}
-                className={`
+                <button
+                  onClick={cambiarPassword}
+                  disabled={loading}
+                  className={`
                   w-full
 
                   h-14
@@ -1374,8 +1495,8 @@ hover:scale-[1.01]
                   duration-300
 
                   ${loading
-  ? "bg-gray-400 cursor-not-allowed"
-  : `
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : `
     bg-gradient-to-r
     from-emerald-500
     via-green-500
@@ -1387,99 +1508,239 @@ hover:scale-[1.01]
 
     hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
   `
-}
+                    }
                 `}
-              >
+                >
 
-                <ShieldCheck size={18} />
+                  <ShieldCheck size={18} />
 
-                {loading
-                  ? "Aplicando..."
-                  : "Cambiar contraseña"}
+                  {loading
+                    ? "Aplicando..."
+                    : "Cambiar contraseña"}
 
-              </button>
+                </button>
 
+              </div>
+              <div className="
+  bg-white/95
+  backdrop-blur-md
+
+  border
+  border-slate-200/80
+
+  rounded-[34px]
+
+  p-6
+
+  shadow-[0_10px_30px_rgba(0,0,0,0.05)]
+
+  space-y-6
+">
+
+                <div className="
+    flex
+    items-center
+    gap-4
+  ">
+
+                  <div className="
+      w-14
+      h-14
+
+      rounded-[22px]
+
+      bg-gradient-to-br
+      from-sky-700
+      via-sky-800
+      to-sky-900
+
+      text-white
+
+      flex
+      items-center
+      justify-center
+
+      shadow-[0_15px_35px_rgba(7,89,133,0.25)]
+    ">
+
+                    <FolderCog size={26} />
+
+                  </div>
+
+                  <div>
+
+                    <h3 className="
+        text-2xl
+
+        font-black
+
+        text-slate-800
+      ">
+                      Copia de seguridad
+                    </h3>
+
+                    {ultimoBackup?.existe ? (
+
+                      <p className="
+    mt-2
+
+    text-xs
+
+    font-semibold
+
+    text-sky-700
+  ">
+                        Última copia:
+                        {" "}
+                        {ultimoBackup.fecha}
+                      </p>
+
+                    ) : (
+
+                      <p className="
+    mt-2
+
+    text-xs
+
+    font-semibold
+
+    text-amber-600
+  ">
+                        No hay copias registradas todavía
+                      </p>
+
+                    )}
+                  </div>
+
+                </div>
+
+                <button
+                  type="button"
+                  onClick={crearBackup}
+                  disabled={backupLoading}
+                  className={`
+      w-full
+
+      h-14
+
+      rounded-[24px]
+
+      text-white
+
+      font-black
+
+      flex
+      items-center
+      justify-center
+      gap-2
+
+      transition-all
+      duration-300
+
+      active:scale-[0.98]
+
+      ${backupLoading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : `
+          bg-gradient-to-r
+          from-sky-700
+          via-sky-800
+          to-sky-900
+
+          shadow-[0_15px_35px_rgba(7,89,133,0.28)]
+
+          hover:scale-[1.01]
+
+          hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+        `
+                    }
+    `}
+                >
+                  {backupLoading
+                    ? "Creando backup..."
+                    : "Crear copia de seguridad"}
+                </button>
+
+              </div>
             </div>
 
-          </div>
+          )}
 
-        )}
+          {/* SERVICIOS */}
 
-        {/* SERVICIOS */}
+          {tab === "servicios" && (
 
-        {tab === "servicios" && (
+            <ServiciosTab
+              servicios={servicios}
+              setModalServicio={setModalServicio}
+              setServicioEditar={setServicioEditar}
+              setServicioAEliminar={setServicioAEliminar}
+            />
 
-          <ServiciosTab
-            servicios={servicios}
-            setModalServicio={setModalServicio}
-            setServicioEditar={setServicioEditar}
-            setServicioAEliminar={setServicioAEliminar}
+          )}
+
+          {/* CLIENTES */}
+
+          {tab === "clientes" && (
+
+            <ClientesInactivosTab
+              clientesInactivos={clientesInactivos}
+              toggleCliente={toggleCliente}
+            />
+
+          )}
+
+        </div>
+
+        {/* MODALS */}
+
+        {mostrarConfirmacion && (
+
+          <ConfirmModal
+            mensaje="¿Seguro que quieres cambiar la contraseña?"
+            onConfirm={confirmarCambioPassword}
+            onCancel={() =>
+              setMostrarConfirmacion(false)
+            }
           />
 
         )}
 
-        {/* CLIENTES */}
+        {servicioAEliminar && (
 
-        {tab === "clientes" && (
+          <ConfirmModal
+            mensaje="¿Eliminar servicio?"
+            onConfirm={() => {
 
-          <ClientesInactivosTab
-            clientesInactivos={clientesInactivos}
-            toggleCliente={toggleCliente}
+              eliminarServicio(
+                servicioAEliminar.id
+              );
+
+              showSuccess(
+                "Eliminado 🗑️"
+              );
+
+              setServicioAEliminar(null);
+
+            }}
+            onCancel={() =>
+              setServicioAEliminar(null)
+            }
           />
 
         )}
 
-      </div>
+        {modalServicio && (
 
-      {/* MODALS */}
+          <ServicioModal
+            servicio={servicioEditar}
+            onGuardar={guardarServicio}
+            onClose={() =>
+              setModalServicio(false)
+            }
+          />
 
-      {mostrarConfirmacion && (
-
-        <ConfirmModal
-          mensaje="¿Seguro que quieres cambiar la contraseña?"
-          onConfirm={confirmarCambioPassword}
-          onCancel={() =>
-            setMostrarConfirmacion(false)
-          }
-        />
-
-      )}
-
-      {servicioAEliminar && (
-
-        <ConfirmModal
-          mensaje="¿Eliminar servicio?"
-          onConfirm={() => {
-
-            eliminarServicio(
-              servicioAEliminar.id
-            );
-
-            showSuccess(
-              "Eliminado 🗑️"
-            );
-
-            setServicioAEliminar(null);
-
-          }}
-          onCancel={() =>
-            setServicioAEliminar(null)
-          }
-        />
-
-      )}
-
-      {modalServicio && (
-
-        <ServicioModal
-          servicio={servicioEditar}
-          onGuardar={guardarServicio}
-          onClose={() =>
-            setModalServicio(false)
-          }
-        />
-
-      )}
+        )}
       </motion.div>
     </PageWrapper>
 

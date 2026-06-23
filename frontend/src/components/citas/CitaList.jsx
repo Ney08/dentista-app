@@ -36,15 +36,159 @@ function CitaList({
     useState(null);
 
 
-const coloresAvatar = [
-  "from-sky-700 to-sky-900",
-  "from-cyan-500 to-sky-700",
-  "from-teal-500 to-cyan-600",
-  "from-emerald-500 to-teal-600",
-  "from-blue-600 to-sky-800"
-];
+  const coloresAvatar = [
+    "from-sky-700 to-sky-900",
+    "from-cyan-500 to-sky-700",
+    "from-teal-500 to-cyan-600",
+    "from-emerald-500 to-teal-600",
+    "from-blue-600 to-sky-800"
+  ];
+  const getEstadoCitaBadge = (
+    cita,
+    estado
+  ) => {
 
+    const fechaCita =
+      cita.fecha
+        ? parseFechaLocal(cita.fecha)
+        : null;
 
+    const hoy =
+      new Date();
+
+    const esHoy =
+      fechaCita &&
+      fechaCita.toDateString() ===
+      hoy.toDateString();
+
+    if (estado === "cancelada") {
+
+      return {
+        label: "Cancelada",
+        icon: <XCircle size={12} />,
+        className: `
+        bg-rose-50
+        text-rose-600
+        border-rose-100
+      `
+      };
+
+    }
+
+    if (estado === "completada") {
+
+      return {
+        label: "Completada",
+        icon: <CheckCircle2 size={12} />,
+        className: `
+        bg-emerald-50
+        text-emerald-600
+        border-emerald-100
+      `
+      };
+
+    }
+
+    if (estado === "atrasada") {
+
+      return {
+        label: "Atrasada",
+        icon: <AlertTriangle size={12} />,
+        className: `
+        bg-rose-50
+        text-rose-600
+        border-rose-100
+      `
+      };
+
+    }
+
+    if (
+      cita.tratamiento &&
+      estado === "pendiente"
+    ) {
+
+      return {
+        label: `Seguimiento activo · ${cita.tratamiento.sesiones_completadas || 0}/${cita.tratamiento.sesiones_totales || 0}`,
+        icon: <Clock3 size={12} />,
+        className: `
+        bg-sky-50
+        text-sky-700
+        border-sky-100
+      `
+      };
+
+    }
+
+    if (
+      esHoy &&
+      estado === "pendiente"
+    ) {
+
+      return {
+        label: "Cita de hoy",
+        icon: <Clock3 size={12} />,
+        className: `
+        bg-amber-50
+        text-amber-600
+        border-amber-100
+      `
+      };
+
+    }
+
+    if (estado === "pendiente") {
+
+      return {
+        label: "Programada",
+        icon: <Clock3 size={12} />,
+        className: `
+        bg-sky-50
+        text-sky-700
+        border-sky-100
+      `
+      };
+
+    }
+
+    return {
+      label: "Consulta general",
+      icon: <Clock3 size={12} />,
+      className: `
+      bg-slate-50
+      text-slate-600
+      border-slate-100
+    `
+    };
+
+  };
+  const getTipoCitaBadge = (cita) => {
+
+    if (cita.tratamiento) {
+
+      return {
+        label: "Tratamiento clínico",
+        icon: <CheckCircle2 size={12} />,
+        className: `
+        bg-sky-50
+        text-sky-700
+        border-sky-100
+      `
+      };
+
+    }
+
+    return {
+      label: "Agenda clínica",
+      icon: <CalendarDays size={12} />,
+      className: `
+      bg-sky-50
+      text-sky-800
+      border-sky-100
+    `
+    };
+
+  };
   return (
 
     <div className="
@@ -74,6 +218,18 @@ const coloresAvatar = [
             ? "cancelada"
             : estadoReal;
 
+
+        const tipoBadge =
+          getTipoCitaBadge(c);
+
+        const estadoBadge =
+          getEstadoCitaBadge(
+            c,
+            estado
+          );
+
+        const mostrarEstadoMini =
+          estado === "pendiente";
 
         const fecha =
           parseFechaLocal(c.fecha);
@@ -416,7 +572,7 @@ hover:border-sky-200
                         gap-2
                       ">
 
-                        <div className="
+                        {/* <div className="
                           inline-flex
 
                           items-center
@@ -441,32 +597,61 @@ text-sky-800
 
                           Agenda clínica
 
+                        </div> */}
+
+                        <div className={`
+  inline-flex
+
+  items-center
+  gap-2
+
+  px-3
+  py-1.5
+
+  rounded-full
+
+  border
+
+  text-xs
+  font-semibold
+
+  ${tipoBadge.className}
+`}>
+
+                          {tipoBadge.icon}
+
+                          {tipoBadge.label}
+
                         </div>
 
-                        <div className="
-                          inline-flex
+                        {mostrarEstadoMini && (
 
-                          items-center
-                          gap-2
+  <div className={`
+    inline-flex
 
-                          px-3
-                          py-1.5
+    items-center
+    gap-2
 
-                          rounded-full
+    px-3
+    py-1.5
 
-                          bg-slate-100
+    rounded-full
 
-                          text-slate-600
+    border
 
-                          text-xs
-                          font-semibold
-                        ">
+    text-xs
+    font-semibold
 
-                          <Clock3 size={12} />
+    ${estadoBadge.className}
+  `}>
 
-                          Seguimiento activo
+    {estadoBadge.icon}
 
-                        </div>
+    {estadoBadge.label}
+
+  </div>
+
+)}
 
                       </div>
 

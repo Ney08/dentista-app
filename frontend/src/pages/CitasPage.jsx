@@ -103,7 +103,7 @@ function CitasPage() {
     useState(1);
 
   const [porPagina, setPorPagina] =
-    useState(7);
+    useState(10);
 
   /*
   ==========================================
@@ -1306,16 +1306,16 @@ focus:border-sky-300
               "
                 >
 
-                  <option value={7}>
-                    7
+                  <option value={10}>
+                    10
                   </option>
 
-                  <option value={14}>
-                    14
+                  <option value={20}>
+                    20
                   </option>
 
-                  <option value={28}>
-                    28
+                  <option value={30}>
+                    30
                   </option>
 
                   <option value="all">

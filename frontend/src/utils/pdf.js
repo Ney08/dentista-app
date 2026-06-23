@@ -193,12 +193,52 @@ export const generarFactura = async (
   const servicios =
     ingreso.servicios || [];
 
-  const subtotal =
-    servicios.reduce(
-      (acc, s) =>
-        acc + Number(s.monto || 0),
-      0
+  const maxServiciosPrimeraPagina =
+    4;
+
+  const serviciosPrimeraPagina =
+    servicios.slice(
+      0,
+      maxServiciosPrimeraPagina
     );
+
+  const serviciosRestantes =
+    servicios.slice(
+      maxServiciosPrimeraPagina
+    );
+
+  const subtotal =
+    servicios.reduce((acc, s) => {
+
+      const cantidad =
+        Number(
+          s.cantidad ||
+          s.qty ||
+          1
+        );
+
+      const montoServicio =
+        Number(
+          s.monto || 0
+        );
+
+      const precioUnitario =
+        Number(
+          s.precio_unitario ||
+          s.precio ||
+          (
+            cantidad > 0
+              ? montoServicio / cantidad
+              : montoServicio
+          )
+        );
+
+      return acc + (
+        precioUnitario * cantidad
+      );
+
+    }, 0);
+
 
   const descuento =
     ingreso.descuento || 0;
@@ -253,6 +293,19 @@ export const generarFactura = async (
     `FAC-2026-${String(
       ingreso.id
     ).padStart(6, "0")}`;
+
+  const fechaPartes =
+    String(fecha || "")
+      .split(",");
+
+  const fechaDia =
+    fechaPartes[0]?.trim() || fecha;
+
+  const fechaHora =
+    fechaPartes
+      .slice(1)
+      .join(",")
+      .trim();
 
   const money = (n) =>
     `RD$ ${formatMoney(n)}`;
@@ -469,7 +522,7 @@ Total: ${money(total)}
   doc.text(
     "FACTURA",
     pageWidth / 2,
-    75,
+    70,
     {
       align: "center"
     }
@@ -546,12 +599,37 @@ Total: ${money(total)}
   ==========================================
   */
 
+  const metaY1 =
+    82;
+
+  const metaY2 =
+    92;
+
+  const metaY3 =
+    104;
+
+  const leftLabelX =
+    48;
+
+  const leftValueX =
+    75;
+
+  const rightLabelX =
+    118;
+
+  const rightValueX =
+    142;
+
+  /*
+  Labels
+  */
+
   doc.setFont(
     "helvetica",
     "bold"
   );
 
-  doc.setFontSize(8);
+  doc.setFontSize(7.8);
 
   doc.setTextColor(
     azul[0],
@@ -560,33 +638,39 @@ Total: ${money(total)}
   );
 
   doc.text(
-    "To:",
-    58,
-    82
+    "Paciente:",
+    leftLabelX,
+    metaY1
   );
 
   doc.text(
-    "Invoice N°:",
-    48,
-    90
+    "Factura N.º:",
+    leftLabelX,
+    metaY2
   );
 
   doc.text(
-    "Date:",
-    122,
-    82
+    "Fecha:",
+    rightLabelX,
+    metaY1
   );
 
   doc.text(
-    "Account:",
-    116,
-    90
+    "Método:",
+    rightLabelX,
+    metaY2
   );
+
+  /*
+  Values
+  */
 
   doc.setFont(
     "helvetica",
     "normal"
   );
+
+  doc.setFontSize(7.4);
 
   doc.setTextColor(
     slate[0],
@@ -596,26 +680,59 @@ Total: ${money(total)}
 
   doc.text(
     clienteNombre,
-    75,
-    82
+    leftValueX,
+    metaY1,
+    {
+      maxWidth: 42
+    }
   );
 
   doc.text(
     facturaCodigo,
-    75,
-    90
+    leftValueX,
+    metaY2,
+    {
+      maxWidth: 42
+    }
   );
 
+  /*
+  Fecha en 2 líneas para que no choque con el QR.
+  */
+
   doc.text(
-    fecha,
-    141,
-    82
+    fechaDia,
+    rightValueX,
+    metaY1,
+    {
+      maxWidth: 25
+    }
   );
+
+  if (fechaHora) {
+
+    doc.setFontSize(6.6);
+
+    doc.text(
+      fechaHora,
+      rightValueX,
+      metaY1 + 5,
+      {
+        maxWidth: 25
+      }
+    );
+
+  }
+
+  doc.setFontSize(7.4);
 
   doc.text(
     metodoPago,
-    141,
-    90
+    rightValueX,
+    metaY2,
+    {
+      maxWidth: 25
+    }
   );
 
   /*
@@ -624,7 +741,7 @@ Total: ${money(total)}
   ==========================================
   */
 
-  doc.setFontSize(7);
+  doc.setFontSize(6.7);
 
   doc.setFont(
     "helvetica",
@@ -639,14 +756,17 @@ Total: ${money(total)}
 
   doc.text(
     `NCF: ${ncf}`,
-    48,
-    101
+    leftLabelX,
+    metaY3
   );
 
   doc.text(
-    `Doctor: ${doctor}`,
-    116,
-    101
+    `Odontólogo: ${doctor}`,
+    rightLabelX,
+    metaY3,
+    {
+      maxWidth: 48
+    }
   );
 
   /*
@@ -658,13 +778,13 @@ Total: ${money(total)}
   doc.addImage(
     qrImage,
     "PNG",
-    164,
+    168,
     78,
-    24,
-    24
+    22,
+    22
   );
 
-  doc.setFontSize(6);
+  doc.setFontSize(5.8);
 
   doc.setFont(
     "helvetica",
@@ -679,8 +799,8 @@ Total: ${money(total)}
 
   doc.text(
     "Escanear",
-    176,
-    105,
+    179,
+    104,
     {
       align: "center"
     }
@@ -692,53 +812,53 @@ Total: ${money(total)}
   ==========================================
   */
 
-  if (pagada) {
+  // if (pagada) {
 
-    doc.setFillColor(
-      16,
-      185,
-      129
-    );
+  //   doc.setFillColor(
+  //     16,
+  //     185,
+  //     129
+  //   );
 
-  } else {
+  // } else {
 
-    doc.setFillColor(
-      245,
-      158,
-      11
-    );
+  //   doc.setFillColor(
+  //     245,
+  //     158,
+  //     11
+  //   );
 
-  }
+  // }
 
-  doc.roundedRect(
-    160,
-    111,
-    30,
-    9,
-    4.5,
-    4.5,
-    "F"
-  );
+  // doc.roundedRect(
+  //   160,
+  //   111,
+  //   30,
+  //   9,
+  //   4.5,
+  //   4.5,
+  //   "F"
+  // );
 
-  doc.setTextColor(255);
+  // doc.setTextColor(255);
 
-  doc.setFontSize(6.8);
+  // doc.setFontSize(6.8);
 
-  doc.setFont(
-    "helvetica",
-    "bold"
-  );
+  // doc.setFont(
+  //   "helvetica",
+  //   "bold"
+  // );
 
-  doc.text(
-    pagada
-      ? "PAGADA"
-      : "PEND.",
-    175,
-    117.2,
-    {
-      align: "center"
-    }
-  );
+  // doc.text(
+  //   pagada
+  //     ? "PAGADA"
+  //     : "PEND.",
+  //   175,
+  //   117.2,
+  //   {
+  //     align: "center"
+  //   }
+  // );
 
   /*
   ==========================================
@@ -746,10 +866,33 @@ Total: ${money(total)}
   ==========================================
   */
 
-  const tableX = 24;
-  const tableW = 162;
+  const tableX =
+    24;
 
-  let tableY = 128;
+  const tableW =
+    162;
+
+  const tableY =
+    124;
+
+  const tableHeaderH =
+    10;
+
+  const colDescripcion =
+    30;
+
+  const colCantidad =
+    112;
+
+  const colPrecio =
+    145;
+
+  const colTotal =
+    180;
+
+  /*
+  Header
+  */
 
   doc.setFillColor(
     azul[0],
@@ -761,53 +904,37 @@ Total: ${money(total)}
     tableX,
     tableY,
     tableW,
-    10,
+    tableHeaderH,
     "F"
   );
 
-  doc.setFontSize(8);
+  doc.setFontSize(7.8);
 
   doc.setFont(
     "helvetica",
     "bold"
   );
 
-  doc.setTextColor(255);
-
-  doc.text(
-    "Description",
-    30,
-    tableY + 7
+  doc.setTextColor(
+    255,
+    255,
+    255
   );
 
   doc.text(
-    "Qty",
-    112,
-    tableY + 7,
-    {
-      align: "center"
-    }
+    "Descripción",
+    colDescripcion,
+    tableY + 6.7
   );
 
   doc.text(
-    "Price",
-    145,
-    tableY + 7,
+    "Monto",
+    colTotal,
+    tableY + 6.7,
     {
       align: "right"
     }
   );
-
-  doc.text(
-    "Total",
-    180,
-    tableY + 7,
-    {
-      align: "right"
-    }
-  );
-
-  tableY += 15;
 
   /*
   ==========================================
@@ -815,23 +942,23 @@ Total: ${money(total)}
   ==========================================
   */
 
-  servicios.forEach(
+  let rowY =
+    tableY + tableHeaderH;
+
+  const rowHeight =
+    tratamiento
+      ? 15
+      : 13;
+
+
+  serviciosPrimeraPagina.forEach(
     (s, index) => {
 
-      const rowHeight =
-        tratamiento
-          ? 15
-          : 11;
 
-      if (index % 2 === 0) {
+      const isAlt =
+        index % 2 !== 0;
 
-        doc.setFillColor(
-          255,
-          255,
-          255
-        );
-
-      } else {
+      if (isAlt) {
 
         doc.setFillColor(
           226,
@@ -839,22 +966,50 @@ Total: ${money(total)}
           240
         );
 
+      } else {
+
+        doc.setFillColor(
+          255,
+          255,
+          255
+        );
+
       }
 
       doc.rect(
         tableX,
-        tableY - 6,
+        rowY,
         tableW,
         rowHeight,
         "F"
       );
 
+
       const nombreServicio =
-        s.descripcion ||
         s.nombre_servicio ||
         s.nombre ||
         s.servicio ||
+        s.descripcion ||
         "Servicio";
+
+      const detalleServicio =
+        s.detalle ||
+        s.descripcion_servicio ||
+        s.descripcion_catalogo ||
+        s.observacion ||
+        s.descripcion_larga ||
+        (
+          tratamiento
+            ? "Tratamiento clínico"
+            : "Servicio clínico"
+        );
+
+
+      const precio =
+        Number(
+          s.monto || 0
+        );
+
 
       const cantidad =
         Number(
@@ -863,13 +1018,33 @@ Total: ${money(total)}
           1
         );
 
-      const precio =
+      const montoServicio =
         Number(
           s.monto || 0
         );
 
+      /*
+      Si tienes precio_unitario o precio, úsalo.
+      Si no, asumimos que monto es el total de la línea
+      y calculamos el precio unitario dividiendo entre cantidad.
+      */
+
+      const precioUnitario =
+        Number(
+          s.precio_unitario ||
+          s.precio ||
+          (
+            cantidad > 0
+              ? montoServicio / cantidad
+              : montoServicio
+          )
+        );
+
       const totalLinea =
-        precio * cantidad;
+        precioUnitario * cantidad;
+      /*
+      Servicio
+      */
 
       doc.setFontSize(8);
 
@@ -886,11 +1061,18 @@ Total: ${money(total)}
 
       doc.text(
         nombreServicio,
-        30,
-        tableY
+        colDescripcion,
+        rowY + 5.5,
+        {
+          maxWidth: 72
+        }
       );
 
-      doc.setFontSize(6.3);
+      /*
+      Subtexto
+      */
+
+      doc.setFontSize(6.2);
 
       doc.setFont(
         "helvetica",
@@ -903,11 +1085,20 @@ Total: ${money(total)}
         muted[2]
       );
 
-      doc.text(
-        "Tratamiento clínico",
-        30,
-        tableY + 5
-      );
+
+      if (detalleServicio) {
+
+        doc.text(
+          detalleServicio,
+          colDescripcion,
+          rowY + 10,
+          {
+            maxWidth: 72
+          }
+        );
+
+      }
+
 
       if (tratamiento) {
 
@@ -917,18 +1108,25 @@ Total: ${money(total)}
         );
 
         doc.setTextColor(
-          99,
-          102,
-          241
+          2,
+          132,
+          199
         );
 
         doc.text(
           `Sesión ${tratamiento.sesiones_completadas} de ${tratamiento.sesiones_totales}`,
-          30,
-          tableY + 10
+          colDescripcion,
+          rowY + 13.5,
+          {
+            maxWidth: 72
+          }
         );
 
       }
+
+      /*
+      Valores
+      */
 
       doc.setFontSize(8);
 
@@ -943,41 +1141,48 @@ Total: ${money(total)}
         azul[2]
       );
 
-      doc.text(
-        String(cantidad),
-        112,
-        tableY,
-        {
-          align: "center"
-        }
-      );
-
-      doc.text(
-        money(precio),
-        145,
-        tableY,
-        {
-          align: "right"
-        }
-      );
 
       doc.text(
         money(totalLinea),
-        180,
-        tableY,
+        colTotal,
+        rowY + 7,
         {
           align: "right"
         }
       );
 
-      tableY += rowHeight;
+
+      rowY +=
+        rowHeight;
 
     }
   );
 
+  if (serviciosRestantes.length > 0) {
+
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    doc.setFontSize(6.5);
+
+    doc.setTextColor(
+      2,
+      132,
+      199
+    );
+
+    doc.text(
+      `+ ${serviciosRestantes.length} servicio(s) adicional(es) en la página siguiente`,
+      tableX,
+      rowY + 6
+    );
+
+  }
   /*
   ==========================================
-  NOTES
+  NOTAS
   ==========================================
   */
 
@@ -994,13 +1199,11 @@ Total: ${money(total)}
     azul[2]
   );
 
-
   doc.text(
     "Notas:",
     24,
-    207
+    198
   );
-
 
   doc.setFontSize(6.3);
 
@@ -1018,18 +1221,24 @@ Total: ${money(total)}
   doc.text(
     "Documento generado automáticamente por el sistema clínico.",
     24,
-    207
+    208,
+    {
+      maxWidth: 78
+    }
   );
 
   doc.text(
     "Gracias por confiar en Clínica Dental Sonrisa.",
     24,
-    212
+    213,
+    {
+      maxWidth: 78
+    }
   );
 
   /*
   ==========================================
-  PAYMENT INFO
+  INFORMACIÓN DE PAGO
   ==========================================
   */
 
@@ -1046,13 +1255,11 @@ Total: ${money(total)}
     azul[2]
   );
 
-
   doc.text(
-    "Pago info:",
+    "Información de pago:",
     24,
-    230
+    222
   );
-
 
   doc.setFontSize(6.3);
 
@@ -1070,21 +1277,20 @@ Total: ${money(total)}
   doc.text(
     `Método: ${metodoPago}`,
     24,
-    230
+    228
   );
 
   doc.text(
     `Teléfono: ${telefono || "N/A"}`,
     24,
-    235
+    233
   );
 
   doc.text(
     `Estado: ${pagada ? "Pagada" : "Pendiente"}`,
     24,
-    240
+    238
   );
-
   /*
   ==========================================
   TOTALS
@@ -1092,42 +1298,50 @@ Total: ${money(total)}
   */
 
   const totalsX = 118;
-  const totalsY = 198;
+  const totalsY = 190;
   const totalsW = 68;
+
 
   const totalsRows = [
     {
-      label: "Sub total",
+      label: "Subtotal",
       value: money(subtotal),
       color: [255, 255, 255]
     },
     {
-      label: "Taxes 18%",
+      label: "ITBIS 18%",
       value: money(itbis),
       color: [255, 255, 255]
     }
   ];
 
+
   if (descuento > 0) {
 
     totalsRows.push({
-      label: `Discount ${descuento}%`,
+      label: `Descuento ${descuento}%`,
       value: `- ${money(descuentoValor)}`,
       color: [244, 63, 94]
     });
 
   }
 
-  totalsRows.push({
-    label: "Paid",
-    value: money(abonado),
-    color: [16, 185, 129]
-  });
+
+  if (abonado > 0) {
+
+    totalsRows.push({
+      label: "Abonado",
+      value: money(abonado),
+      color: [16, 185, 129]
+    });
+
+  }
+
 
   if (tratamiento) {
 
     totalsRows.push({
-      label: "Balance",
+      label: "Balance pendiente",
       value: money(balanceTratamiento),
       color: [245, 158, 11]
     });
@@ -1244,52 +1458,659 @@ Total: ${money(total)}
   ==========================================
   */
 
+  // const firmasY =
+  //   252;
+
+  // const firmasCardX =
+  //   22;
+
+  // const firmasCardY =
+  //   244;
+
+  // const firmasCardW =
+  //   124;
+
+  // const firmasCardH =
+  //   25;
+
+  // /*
+  // Fondo blanco para evitar que las firmas choquen visualmente
+  // con las decoraciones inferiores del template.
+  // */
+
+  // doc.setFillColor(
+  //   255,
+  //   255,
+  //   255
+  // );
+
+  // doc.roundedRect(
+  //   firmasCardX,
+  //   firmasCardY,
+  //   firmasCardW,
+  //   firmasCardH,
+  //   4,
+  //   4,
+  //   "F"
+  // );
+
+  // doc.setDrawColor(
+  //   226,
+  //   232,
+  //   240
+  // );
+
+  // doc.setLineWidth(
+  //   0.25
+  // );
+
+  // doc.roundedRect(
+  //   firmasCardX,
+  //   firmasCardY,
+  //   firmasCardW,
+  //   firmasCardH,
+  //   4,
+  //   4,
+  //   "S"
+  // );
+
+  // /*
+  // Líneas de firma.
+  // */
+
+  // doc.setDrawColor(
+  //   120,
+  //   120,
+  //   120
+  // );
+
+  // doc.setLineWidth(
+  //   0.45
+  // );
+
+  // doc.line(
+  //   28,
+  //   firmasY,
+  //   75,
+  //   firmasY
+  // );
+
+  // doc.line(
+  //   93,
+  //   firmasY,
+  //   140,
+  //   firmasY
+  // );
+
+  // /*
+  // Etiquetas.
+  // */
+
+  // doc.setFontSize(7);
+
+  // doc.setFont(
+  //   "helvetica",
+  //   "normal"
+  // );
+
+  // doc.setTextColor(
+  //   100,
+  //   116,
+  //   139
+  // );
+
+  // doc.text(
+  //   "Firma del paciente",
+  //   51.5,
+  //   firmasY + 6,
+  //   {
+  //     align: "center"
+  //   }
+  // );
+
+  // doc.text(
+  //   "Firma autorizada",
+  //   116.5,
+  //   firmasY + 6,
+  //   {
+  //     align: "center"
+  //   }
+  // );
+
+
+
+  /*
+  ==========================================
+  FIRMA AUTORIZADA SIMPLE
+  ==========================================
+  */
+
+  const firmaY =
+    248;
+
   doc.setDrawColor(
-    180
+    100,
+    116,
+    139
   );
 
   doc.setLineWidth(
-    0.5
+    0.45
   );
 
   doc.line(
-    24,
-    262,
-    79,
-    262
+    75,
+    firmaY,
+    135,
+    firmaY
   );
 
-  doc.line(
-    86,
-    262,
-    141,
-    262
-  );
+  doc.setFontSize(7);
 
-  doc.setFontSize(7.5);
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
 
   doc.setTextColor(
-    120
+    15,
+    23,
+    42
   );
 
   doc.text(
-    "Firma del paciente",
-    51.5,
-    267,
+    "Firma y sello autorizado",
+    105,
+    firmaY + 6,
     {
       align: "center"
     }
   );
 
+  doc.setFontSize(6.2);
+
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+
+  doc.setTextColor(
+    100,
+    116,
+    139
+  );
+
   doc.text(
-    "Firma autorizada",
-    113.5,
-    267,
+    "Clínica Dental Sonrisa",
+    105,
+    firmaY + 11,
     {
       align: "center"
     }
   );
 
+
+
+
+  /*
+==========================================
+PÁGINA 2 - SERVICIOS ADICIONALES
+==========================================
+*/
+
+  if (serviciosRestantes.length > 0) {
+
+    doc.addPage();
+
+    /*
+    ==========================================
+    HEADER PÁGINA 2
+    ==========================================
+    */
+
+    doc.setFillColor(
+      azul[0],
+      azul[1],
+      azul[2]
+    );
+
+    doc.rect(
+      0,
+      0,
+      pageWidth,
+      30,
+      "F"
+    );
+
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    doc.setFontSize(15);
+
+    doc.setTextColor(
+      255,
+      255,
+      255
+    );
+
+    doc.text(
+      "Servicios adicionales",
+      14,
+      18
+    );
+
+    doc.setFontSize(8);
+
+    doc.text(
+      facturaCodigo,
+      pageWidth - 14,
+      18,
+      {
+        align: "right"
+      }
+    );
+
+    doc.setFont(
+      "helvetica",
+      "normal"
+    );
+
+    doc.setFontSize(7);
+
+    doc.setTextColor(
+      203,
+      213,
+      225
+    );
+
+    doc.text(
+      `Paciente: ${clienteNombre}`,
+      14,
+      25
+    );
+
+    /*
+    ==========================================
+    TABLA PÁGINA 2
+    ==========================================
+    */
+
+    const table2X =
+      14;
+
+    const table2W =
+      182;
+
+    let table2Y =
+      45;
+
+    const table2HeaderH =
+      10;
+
+    const table2ColDescripcion =
+      table2X + 6;
+
+    const table2ColCantidad =
+      table2X + 108;
+
+    const table2ColPrecio =
+      table2X + 145;
+
+    const table2ColTotal =
+      table2X + 176;
+
+    /*
+    Header
+    */
+
+    doc.setFillColor(
+      azul[0],
+      azul[1],
+      azul[2]
+    );
+
+    doc.rect(
+      table2X,
+      table2Y,
+      table2W,
+      table2HeaderH,
+      "F"
+    );
+
+    doc.setFontSize(8);
+
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    doc.setTextColor(
+      255,
+      255,
+      255
+    );
+
+    doc.text(
+      "Descripción",
+      table2ColDescripcion,
+      table2Y + 6.7
+    );
+
+    doc.text(
+      "Cant.",
+      table2ColCantidad,
+      table2Y + 6.7,
+      {
+        align: "center"
+      }
+    );
+
+    doc.text(
+      "Precio unit.",
+      table2ColPrecio,
+      table2Y + 6.7,
+      {
+        align: "right"
+      }
+    );
+
+    doc.text(
+      "Importe",
+      table2ColTotal,
+      table2Y + 6.7,
+      {
+        align: "right"
+      }
+    );
+
+    table2Y +=
+      table2HeaderH;
+
+    /*
+    Filas
+    */
+
+    serviciosRestantes.forEach((s, index) => {
+
+      const rowH =
+        tratamiento
+          ? 15
+          : 13;
+
+      const isAlt =
+        index % 2 !== 0;
+
+      if (isAlt) {
+
+        doc.setFillColor(
+          226,
+          232,
+          240
+        );
+
+      } else {
+
+        doc.setFillColor(
+          255,
+          255,
+          255
+        );
+
+      }
+
+      doc.rect(
+        table2X,
+        table2Y,
+        table2W,
+        rowH,
+        "F"
+      );
+
+      const nombreServicio =
+        s.descripcion ||
+        s.nombre_servicio ||
+        s.nombre ||
+        s.servicio ||
+        "Servicio";
+
+      const detalleServicio =
+        s.detalle ||
+        s.descripcion_servicio ||
+        s.descripcion_catalogo ||
+        s.observacion ||
+        s.descripcion_larga ||
+        (
+          tratamiento
+            ? "Tratamiento clínico"
+            : "Servicio clínico"
+        );
+      const cantidad =
+        Number(
+          s.cantidad ||
+          s.qty ||
+          1
+        );
+
+      const montoServicio =
+        Number(
+          s.monto || 0
+        );
+
+      const precioUnitario =
+        Number(
+          s.precio_unitario ||
+          s.precio ||
+          (
+            cantidad > 0
+              ? montoServicio / cantidad
+              : montoServicio
+          )
+        );
+
+      const totalLinea =
+        precioUnitario * cantidad;
+
+      /*
+      Servicio
+      */
+
+      doc.setFontSize(8);
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setTextColor(
+        azul[0],
+        azul[1],
+        azul[2]
+      );
+
+      doc.text(
+        nombreServicio,
+        table2ColDescripcion,
+        table2Y + 5.5,
+        {
+          maxWidth: 85
+        }
+      );
+
+      /*
+      Subtexto
+      */
+
+      doc.setFontSize(5.8);
+
+      doc.setFont(
+        "helvetica",
+        "normal"
+      );
+
+      doc.setTextColor(
+        muted[0],
+        muted[1],
+        muted[2]
+      );
+
+
+      doc.text(
+        detalleServicio,
+        table2ColDescripcion,
+        table2Y + 10,
+        {
+          maxWidth: 85
+        }
+      );
+
+
+      if (tratamiento) {
+
+        doc.setFont(
+          "helvetica",
+          "bold"
+        );
+
+        doc.setTextColor(
+          2,
+          132,
+          199
+        );
+
+        doc.text(
+          `Sesión ${tratamiento.sesiones_completadas} de ${tratamiento.sesiones_totales}`,
+          table2ColDescripcion,
+          table2Y + 13.5,
+          {
+            maxWidth: 85
+          }
+        );
+
+      }
+
+      /*
+      Valores
+      */
+
+      doc.setFontSize(8);
+
+      doc.setFont(
+        "helvetica",
+        "bold"
+      );
+
+      doc.setTextColor(
+        azul[0],
+        azul[1],
+        azul[2]
+      );
+
+      doc.text(
+        String(cantidad),
+        table2ColCantidad,
+        table2Y + 7,
+        {
+          align: "center"
+        }
+      );
+
+      doc.text(
+        money(precioUnitario),
+        table2ColPrecio,
+        table2Y + 7,
+        {
+          align: "right"
+        }
+      );
+
+      doc.text(
+        money(totalLinea),
+        table2ColTotal,
+        table2Y + 7,
+        {
+          align: "right"
+        }
+      );
+
+      table2Y +=
+        rowH;
+
+      /*
+      Si se llena la página 2, crear otra página.
+      Esto evita que las filas se salgan.
+      */
+
+      if (table2Y > 265) {
+
+        doc.addPage();
+
+        table2Y =
+          25;
+
+      }
+
+    });
+
+    /*
+    ==========================================
+    RESUMEN PÁGINA 2
+    ==========================================
+    */
+
+    doc.setDrawColor(
+      azul[0],
+      azul[1],
+      azul[2]
+    );
+
+    doc.setLineWidth(
+      0.4
+    );
+
+    doc.line(
+      table2X,
+      table2Y + 4,
+      table2X + table2W,
+      table2Y + 4
+    );
+
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    doc.setFontSize(8);
+
+    doc.setTextColor(
+      azul[0],
+      azul[1],
+      azul[2]
+    );
+
+    doc.text(
+      "Total general de la factura:",
+      table2X,
+      table2Y + 14
+    );
+
+    doc.setTextColor(
+      slate[0],
+      slate[1],
+      slate[2]
+    );
+
+    doc.text(
+      money(total),
+      table2X + table2W,
+      table2Y + 14,
+      {
+        align: "right"
+      }
+    );
+
+  }
   /*
   ==========================================
   AUTO PRINT
