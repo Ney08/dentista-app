@@ -31,3 +31,4 @@ chrono = "0.4"
 
 # SQLite backup support
 rusqlite = { version = "0.32", features = ["bundled"] }
+tauri-plugin-shell = "2"
