@@ -6,7 +6,7 @@ import {
 } from "../../services/tratamientoService";
 import ToothIcon from "../../icons/ToothIcon";
 import {
-
+  ClipboardList,
   FileText,
 
   Pencil,
@@ -450,12 +450,31 @@ to-sky-900
               ">
 
                 <div className="
-                  text-6xl
-                ">
+              w-20
+              h-20
 
-                  🦷
+              mx-auto
 
-                </div>
+              rounded-[26px]
+
+              
+bg-gradient-to-br
+from-sky-700
+to-sky-900
+
+
+              text-white
+
+              flex
+              items-center
+              justify-center
+
+              shadow-[0_20px_50px_rgba(7,89,133,0.25)]
+            ">
+
+              <ToothIcon size={36} />
+
+            </div>
 
                 <h4 className="
                   mt-5
