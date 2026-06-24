@@ -599,7 +599,16 @@ function FacturaModal({
 
             {/* ITEMS */}
 
-            <div className="divide-y">
+
+            <div className="
+  divide-y
+
+  max-h-[360px]
+  overflow-y-auto
+
+  overscroll-contain
+">
+
 
               {servicios.map((s, i) => (
 
