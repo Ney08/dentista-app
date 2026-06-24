@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
 import models
-from security import get_current_user
+
 from database import get_db
 
 from models.odontograma import Odontograma

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
 from utils.actividad import registrar_actividad
 from database import get_db
-from security import get_current_user
+
 import models
 
 from schemas import ClienteCreate, Cliente

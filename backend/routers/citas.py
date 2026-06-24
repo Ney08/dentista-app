@@ -8,7 +8,7 @@ from schemas import CitaCreate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from utils.actividad import registrar_actividad
-from security import get_current_user
+
 from models.tratamiento import (
     Tratamiento
 )

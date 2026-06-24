@@ -55,3 +55,8 @@ from .tratamiento import (
     Tratamiento,
     TratamientoCreate
 )
+
+from .actividad import (
+    ActividadCreate,
+    ActividadOut
+)
