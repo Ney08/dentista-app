@@ -12,7 +12,7 @@ import {
 } from "../ui/ToastStyles";
 import {
   TrendingUp,
-
+  CalendarRange 
 } from "lucide-react";
 import {
   Calendar,
@@ -1141,7 +1141,7 @@ DUPLICAR CITA
                 font-bold
               ">
 
-            <TrendingUp size={18} />
+            <CalendarRange size={18} />
 
             Agenda clínica
 

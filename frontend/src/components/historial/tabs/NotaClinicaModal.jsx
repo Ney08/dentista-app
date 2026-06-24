@@ -3,7 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import {
   Save,
-
+  ClipboardPlus,
   Loader2
 
 } from "lucide-react";
@@ -189,32 +189,88 @@ hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
 
               {/* HEADER */}
 
-              <div>
+              <div className="
+  flex
+  flex-col
+  items-center
 
-                <h3 className="
-                  text-3xl
+  text-center
+">
 
-                  font-black
+  <div className="
+    flex
+    items-center
+    justify-center
 
-                  text-slate-800
-                ">
+    w-20
+    h-20
 
-                  Nueva nota clínica
+    rounded-[28px]
 
-                </h3>
+    bg-gradient-to-br
+    from-sky-500
+    via-sky-600
+    to-sky-700
 
-                <p className="
-                  mt-2
+    text-white
 
-                  text-slate-500
-                ">
+    shadow-[0_20px_50px_rgba(14,116,144,0.25)]
+  ">
 
-                  Registra observaciones
-                  y evolución del paciente.
+    <ClipboardPlus
+      size={34}
+      strokeWidth={2.8}
+    />
 
-                </p>
+  </div>
 
-              </div>
+  <h3 className="
+    mt-5
+
+    text-3xl
+
+    font-black
+
+    tracking-tight
+
+    text-slate-800
+  ">
+
+    Nueva nota clínica
+
+  </h3>
+
+  <div className="
+    mt-3
+
+    w-20
+    h-1.5
+
+    rounded-full
+
+    bg-gradient-to-r
+    from-sky-500
+    to-sky-700
+  " />
+
+  <p className="
+    mt-4
+
+    max-w-sm
+
+    text-sm
+    md:text-base
+
+    leading-relaxed
+
+    text-slate-500
+  ">
+
+    Registra observaciones, diagnósticos y evolución clínica del paciente.
+
+  </p>
+
+</div>
 
               {/* TEXTAREA */}
 

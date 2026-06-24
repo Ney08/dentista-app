@@ -1,6 +1,7 @@
 import { useState } from "react";
-
+import ToothIcon from "../components/icons/ToothIcon";
 import {
+  Smile,
   BarChart3,
   Wallet,
   BadgeDollarSign,
@@ -507,6 +508,9 @@ function ReportesPage() {
 
       ingresos:
         ingresosFiltrados,
+
+      egresos:
+        egresosFiltrados,
 
       tipo,
 
@@ -2127,7 +2131,7 @@ to-sky-900
       ">
 
                   <div>
-                  
+
                     <p className="
             text-lg
 
@@ -2189,7 +2193,7 @@ to-sky-900
               </div>
               {/* GRAFICA FINANCIERA */}
 
-<div className="
+              <div className="
   mt-8
 
   pt-6
@@ -2198,7 +2202,7 @@ to-sky-900
   border-slate-100
 ">
 
-  <div className="
+                <div className="
     rounded-[30px]
 
     bg-gradient-to-br
@@ -2214,15 +2218,15 @@ to-sky-900
     shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]
   ">
 
-    <GraficoIngresos
-      ingresos={ingresosFiltrados}
-      egresos={egresosFiltrados}
-      utilidadNeta={utilidadNeta}
-    />
+                  <GraficoIngresos
+                    ingresos={ingresosFiltrados}
+                    egresos={egresosFiltrados}
+                    utilidadNeta={utilidadNeta}
+                  />
 
-  </div>
+                </div>
 
-</div>        
+              </div>
             </div>
 
             {/* SIDE ANALYTICS */}
@@ -2444,7 +2448,7 @@ text-sky-700
           justify-center
         ">
 
-                    <Stethoscope size={20} />
+                    <ToothIcon size={20} />
 
                   </div>
 

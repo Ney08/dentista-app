@@ -7,7 +7,8 @@ import {
 } from "recharts";
 
 import {
-  TrendingUp
+  TrendingUp,
+  ChartSpline
 } from "lucide-react";
 
 function RevenueChart({ data = [] }) {
@@ -52,7 +53,7 @@ function RevenueChart({ data = [] }) {
             font-bold
           ">
 
-            <TrendingUp size={18} />
+            <ChartSpline size={18} />
 
             Ingresos mensuales
 

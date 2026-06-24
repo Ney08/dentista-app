@@ -4,7 +4,7 @@ import { useEffect, useState }
 import {
   getTratamientos
 } from "../../services/tratamientoService";
-
+import ToothIcon from "../../icons/ToothIcon";
 import {
 
   FileText,
@@ -894,8 +894,8 @@ text-sky-800
 
               mb-4
             ">
-
-                    🦷 Tratamiento dental
+                    <ToothIcon size={18} />
+                     Tratamiento dental
 
                   </div>
 

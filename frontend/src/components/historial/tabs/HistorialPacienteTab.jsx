@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { API_URL } from "../../../config";
 
 import {
+  ClipboardClock,
   CalendarDays,
+  ClockPlus,
   Clock3,
   Receipt,
   ClipboardList,
@@ -163,6 +165,11 @@ function HistorialPacienteTab({
           Array.isArray(citasData)
             ? citasData
             : []
+        );
+
+        console.log(
+          "ODONTOGRAMA DATA:",
+          odontogramaData
         );
 
         setIngresos(
@@ -371,6 +378,20 @@ function HistorialPacienteTab({
       t.estado === "Completado"
     );
 
+  const piezasCompletadasReales =
+    new Set(
+      tratamientosCompletados
+        .map(t => t.pieza)
+        .filter(Boolean)
+    );
+
+  const cantidadCompletadas =
+    piezasCompletadasReales.size;
+
+  const piezasCompletadasTexto =
+    [...piezasCompletadasReales]
+      .join(", ");
+
   const totalPagado =
     ingresosCliente.reduce((acc, ingreso) => {
 
@@ -414,6 +435,39 @@ function HistorialPacienteTab({
   const tieneOdontograma =
     odontograma &&
     Object.keys(odontograma || {}).length > 0;
+
+
+
+  const piezasOdontograma =
+    odontograma
+      ? Object.entries(
+        odontograma
+      )
+      : [];
+
+  const cantidadPiezas =
+    piezasOdontograma.length;
+
+  const piezasTexto =
+    piezasOdontograma
+      .slice(0, 10)
+      .map(([pieza]) => pieza)
+      .join(", ");
+
+  const piezasCompletadas =
+    piezasOdontograma.filter(
+      ([, datos]) => {
+
+        return Object.values(
+          datos || {}
+        ).some(
+          valor =>
+            valor !== null &&
+            valor !== ""
+        );
+
+      }
+    ).length;
 
   /*
   ==========================================
@@ -497,19 +551,27 @@ function HistorialPacienteTab({
 
     {
       label: "Odontograma",
+
       value: tieneOdontograma
-        ? "Realizado"
+        ? `${cantidadPiezas} piezas`
         : "Pendiente",
+
       icon: SmilePlus,
+
       color: tieneOdontograma
         ? "text-sky-800"
         : "text-slate-500",
+
       bg: tieneOdontograma
         ? "bg-sky-50"
         : "bg-slate-100"
     }
 
   ];
+
+
+
+
 
   /*
   ==========================================
@@ -629,10 +691,9 @@ function HistorialPacienteTab({
           : "Tratamiento registrado",
 
       descripcion:
-        `${t.servicio_nombre || t.servicio || "Tratamiento"}${
-          t.pieza
-            ? ` · Pieza ${t.pieza}`
-            : ""
+        `${t.servicio_nombre || t.servicio || "Tratamiento"}${t.pieza
+          ? ` · Pieza ${t.pieza}`
+          : ""
         } · ${t.sesiones_completadas || 0}/${t.sesiones_totales || 0} sesiones`,
 
       fecha:
@@ -719,34 +780,51 @@ function HistorialPacienteTab({
 
     ...(tieneOdontograma
       ? [
-          {
-            tipo:
-              "odontograma",
+        {
+          tipo:
+            "odontograma",
 
-            titulo:
-              "Odontograma registrado",
+          titulo:
+            "Odontograma clínico",
 
-            descripcion:
-              "El paciente tiene odontograma clínico registrado.",
+          descripcion:
+            [
+              cantidadPiezas > 0
+                ? `Piezas afectadas: ${piezasTexto}`
+                : null,
 
-            fecha:
-              getFechaEvento(
-                new Date().toISOString()
-              ),
+              cantidadCompletadas > 0
+                ? `Piezas completadas: ${piezasCompletadasTexto}`
+                : null
 
-            icon:
-              SmilePlus,
+            ]
+              .filter(Boolean)
+              .join(" · "),
 
-            color:
-              "text-sky-800",
 
-            bg:
-              "bg-sky-50",
+          fecha:
+            getFechaEvento(
+              new Date().toISOString()
+            ),
 
-            badge:
-              "Odontograma"
-          }
-        ]
+
+          icon:
+            SmilePlus,
+
+          color:
+            "text-sky-800",
+
+          bg:
+            "bg-sky-50",
+
+
+          badge:
+            cantidadCompletadas > 0
+              ? `${cantidadCompletadas} completadas`
+              : `${cantidadPiezas} afectadas`
+
+        }
+      ]
       : [])
 
   ]
@@ -843,7 +921,7 @@ function HistorialPacienteTab({
             mb-3
           ">
 
-            <Sparkles size={13} />
+            <ClipboardClock size={16} />
 
             Historial general
 
@@ -1066,10 +1144,10 @@ function HistorialPacienteTab({
 
               {ultimaVisita
                 ? formatFecha(
-                    parseFechaLocal(
-                      ultimaVisita.fecha
-                    )
+                  parseFechaLocal(
+                    ultimaVisita.fecha
                   )
+                )
                 : "Sin visitas completadas"}
 
             </p>
@@ -1294,8 +1372,8 @@ function HistorialPacienteTab({
 
                       mb-4
                     ">
-
-                      ✨ Evento reciente
+                      <ClockPlus size={13} />
+                      Evento reciente
 
                     </div>
 
@@ -1482,8 +1560,12 @@ function HistorialPacienteTab({
 
                   mb-4
                 ">
-
-                  📋 Historial
+                  <ClipboardClock
+                    size={16}
+                    strokeWidth={2.8}
+                    className=" shrink-0"
+                  />
+                  Historial
 
                 </div>
 

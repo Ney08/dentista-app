@@ -8,6 +8,8 @@ import {
   formatMoney
 } from "./format";
 
+import dentalLogo from "../assets/dentalapp_logo_invoice_transparent_shadow.png";
+
 import {
   showSuccess,
   showError
@@ -25,6 +27,1248 @@ import {
   openPath
 } from "@tauri-apps/plugin-opener";
 
+/*
+==========================================
+CONFIG
+==========================================
+*/
+
+const CLINICA_NOMBRE =
+  "CLÍNICA DENTAL SONRISA";
+
+const CLINICA_SUBTITULO =
+  "Odontología premium y estética dental";
+
+
+const LOGO_PATHS = [
+  dentalLogo
+];
+
+
+const COLORS = {
+  headerBlue: [7, 83, 131],
+  headerBlueDark: [3, 44, 75],
+  blue: [0, 91, 150],
+  navy: [15, 23, 42],
+  text: [15, 23, 42],
+  muted: [100, 116, 139],
+  border: [203, 213, 225],
+  softBorder: [226, 232, 240],
+  rowAlt: [248, 250, 252],
+  rowWhite: [255, 255, 255],
+  summaryBlue: [37, 70, 180],
+  summaryLight: [219, 234, 254],
+  green: [0, 150, 95],
+  red: [244, 63, 94],
+  orange: [234, 88, 12],
+  pink: [236, 72, 153],
+  indigo: [67, 56, 202],
+  black: [0, 0, 0]
+};
+
+/*
+==========================================
+HELPERS
+==========================================
+*/
+
+const money = (value) => {
+
+  return `RD$${formatMoney(
+    Number(value) || 0
+  )}`;
+
+};
+
+const percent = (value) => {
+
+  return `${(
+    Number(value) || 0
+  ).toFixed(1)}%`;
+
+};
+
+const safeText = (
+  value,
+  fallback = "N/A"
+) => {
+
+  if (
+    value === null ||
+    value === undefined ||
+    String(value).trim() === ""
+  ) {
+
+    return fallback;
+
+  }
+
+  return String(value).trim();
+
+};
+
+const truncateText = (
+  text,
+  max = 30
+) => {
+
+  const clean =
+    safeText(text, "");
+
+  if (clean.length <= max) {
+    return clean;
+  }
+
+  return `${clean.substring(
+    0,
+    max - 3
+  )}...`;
+
+};
+
+const getFechaIngreso = (ingreso) => {
+
+  const raw =
+    ingreso.created_at ||
+    ingreso.fecha ||
+    ingreso.fecha_pago;
+
+  if (!raw) {
+    return "N/A";
+  }
+
+  const fecha =
+    parseFechaLocal(
+      raw
+    );
+
+  if (isNaN(fecha)) {
+    return "N/A";
+  }
+
+  return fecha.toLocaleDateString(
+    "es-DO"
+  );
+
+};
+
+const getPaciente = (ingreso) => {
+
+  if (!ingreso?.cliente) {
+    return "N/A";
+  }
+
+  return `${ingreso.cliente.nombre || ""} ${ingreso.cliente.apellido || ""}`.trim();
+
+};
+
+const getProcedimientos = (servicios = []) => {
+
+  const nombres =
+    servicios
+      .map((s) =>
+        s.descripcion ||
+        s.nombre ||
+        s.servicio?.nombre
+      )
+      .filter(Boolean);
+
+  if (!nombres.length) {
+    return "Sin procedimientos";
+  }
+
+  return nombres.join(", ");
+
+};
+
+const getEgresoMonto = (egreso) => {
+
+  return (
+    Number(egreso?.monto) ||
+    Number(egreso?.total) ||
+    Number(egreso?.valor) ||
+    Number(egreso?.importe) ||
+    0
+  );
+
+};
+
+const calcularIngreso = (ingreso) => {
+
+  const servicios =
+    ingreso.servicios || [];
+
+  const subtotal =
+    servicios.reduce(
+      (acc, s) =>
+        acc + (
+          Number(s.monto) || 0
+        ),
+      0
+    );
+
+  const costos =
+    servicios.reduce(
+      (acc, s) =>
+        acc + (
+          Number(s.costo_servicio) || 0
+        ),
+      0
+    );
+
+  const itbis =
+    subtotal * 0.18;
+
+  const descuentoPorcentaje =
+    Number(ingreso.descuento) || 0;
+
+  const descuento =
+    subtotal *
+    (
+      descuentoPorcentaje / 100
+    );
+
+  const total =
+    subtotal +
+    itbis -
+    descuento;
+
+  const produccion =
+    total -
+    costos;
+
+  return {
+    subtotal,
+    itbis,
+    descuento,
+    costos,
+    produccion,
+    total
+  };
+
+};
+
+const loadImageAsBase64 = async (
+  paths = []
+) => {
+
+  for (const path of paths) {
+
+    try {
+
+      const response =
+        await fetch(path);
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const blob =
+        await response.blob();
+
+      const type =
+        blob.type.includes("jpeg") ||
+          blob.type.includes("jpg")
+          ? "JPEG"
+          : "PNG";
+
+      const base64 =
+        await new Promise(
+          (resolve, reject) => {
+
+            const reader =
+              new FileReader();
+
+            reader.onloadend =
+              () => resolve(reader.result);
+
+            reader.onerror =
+              reject;
+
+            reader.readAsDataURL(
+              blob
+            );
+
+          }
+        );
+
+      return {
+        base64,
+        type
+      };
+
+    } catch {
+
+      continue;
+
+    }
+
+  }
+
+  return null;
+
+};
+
+/*
+==========================================
+DRAW LOGO
+==========================================
+*/
+
+const drawLogo = (
+  doc,
+  logo,
+  x,
+  y,
+  size = 24
+) => {
+
+  if (logo?.base64) {
+
+    try {
+
+      doc.addImage(
+        logo.base64,
+        logo.type,
+        x,
+        y,
+        size,
+        size
+      );
+
+      return;
+
+    } catch {
+
+      // fallback
+
+    }
+
+  }
+
+  /*
+  Fallback simple tipo diente
+  */
+
+  doc.setFillColor(255, 255, 255);
+
+  doc.circle(
+    x + size / 2,
+    y + size / 2,
+    size / 2,
+    "F"
+  );
+
+  doc.setTextColor(
+    ...COLORS.headerBlue
+  );
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+
+  doc.text(
+    "🦷",
+    x + size / 2,
+    y + size / 2 + 4,
+    {
+      align: "center"
+    }
+  );
+
+};
+
+/*
+==========================================
+HEADER FORMAL
+==========================================
+*/
+
+const drawHeader = (
+  doc,
+  {
+    logo,
+    title,
+    subtitle
+  }
+) => {
+
+  const pageWidth =
+    doc.internal.pageSize.getWidth();
+
+  /*
+  Fondo header
+  */
+
+  doc.setFillColor(
+    ...COLORS.headerBlue
+  );
+
+  doc.rect(
+    0,
+    0,
+    pageWidth,
+    34,
+    "F"
+  );
+
+  /*
+  Logo
+  */
+
+  drawLogo(
+    doc,
+    logo,
+    18,
+    5,
+    24
+  );
+
+  /*
+  Nombre clínica
+  */
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+
+  doc.text(
+    CLINICA_NOMBRE,
+    50,
+    15
+  );
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(219, 234, 254);
+
+  doc.text(
+    CLINICA_SUBTITULO,
+    50,
+    24
+  );
+
+  /*
+  Bloque derecho
+  */
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+
+  doc.text(
+    title,
+    pageWidth - 14,
+    13,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(219, 234, 254);
+
+  doc.text(
+    subtitle,
+    pageWidth - 14,
+    21,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setFontSize(7);
+  doc.setTextColor(255);
+
+  doc.text(
+    new Date().toLocaleDateString(
+      "es-DO"
+    ),
+    pageWidth - 14,
+    28,
+    {
+      align: "right"
+    }
+  );
+
+};
+
+/*
+==========================================
+FOOTER
+==========================================
+*/
+
+const drawFooter = (
+  doc,
+  pageNumber
+) => {
+
+  const pageWidth =
+    doc.internal.pageSize.getWidth();
+
+  const pageHeight =
+    doc.internal.pageSize.getHeight();
+
+  doc.setDrawColor(
+    ...COLORS.softBorder
+  );
+
+  doc.line(
+    12,
+    pageHeight - 12,
+    pageWidth - 12,
+    pageHeight - 12
+  );
+
+  doc.setTextColor(
+    ...COLORS.muted
+  );
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+
+  doc.text(
+    "Documento generado automáticamente por el sistema clínico",
+    12,
+    pageHeight - 6
+  );
+
+  doc.text(
+    `Página ${pageNumber}`,
+    pageWidth - 12,
+    pageHeight - 6,
+    {
+      align: "right"
+    }
+  );
+
+};
+
+/*
+==========================================
+SECTION TITLE
+==========================================
+*/
+
+const drawSectionTitle = (
+  doc,
+  title,
+  subtitle,
+  y
+) => {
+
+  doc.setTextColor(
+    ...COLORS.text
+  );
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(15);
+
+  doc.text(
+    title,
+    12,
+    y
+  );
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(
+    ...COLORS.muted
+  );
+
+  doc.text(
+    subtitle,
+    12,
+    y + 6
+  );
+
+};
+
+/*
+==========================================
+DETAIL TABLE CONFIG
+==========================================
+*/
+
+const TABLE = {
+  x: 8,
+  width: 281,
+  headerHeight: 11,
+  rowMinHeight: 10,
+  bottomLimit: 190,
+
+  cols: {
+    fecha: {
+      x: 10,
+      w: 21,
+      label: "Fecha",
+      align: "left"
+    },
+    paciente: {
+      x: 33,
+      w: 39,
+      label: "Paciente",
+      align: "left"
+    },
+    procedimientos: {
+      x: 74,
+      w: 58,
+      label: "Procedimientos",
+      align: "left"
+    },
+    subtotal: {
+      x: 136,
+      w: 25,
+      label: "Subtotal",
+      align: "right"
+    },
+    itbis: {
+      x: 164,
+      w: 22,
+      label: "ITBIS",
+      align: "right"
+    },
+    descuento: {
+      x: 189,
+      w: 24,
+      label: "Descuento",
+      align: "right"
+    },
+    costos: {
+      x: 216,
+      w: 23,
+      label: "Costos",
+      align: "right"
+    },
+    produccion: {
+      x: 242,
+      w: 25,
+      label: "Producción",
+      align: "right"
+    },
+    total: {
+      x: 270,
+      w: 17,
+      label: "Total",
+      align: "right"
+    }
+  }
+};
+
+const textX = (col) => {
+
+  return col.align === "right"
+    ? col.x + col.w - 1
+    : col.x + 1;
+
+};
+
+const drawTableHeader = (
+  doc,
+  y
+) => {
+
+  doc.setFillColor(
+    ...COLORS.navy
+  );
+
+  doc.rect(
+    TABLE.x,
+    y,
+    TABLE.width,
+    TABLE.headerHeight,
+    "F"
+  );
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(6.3);
+
+  Object.values(TABLE.cols).forEach((col) => {
+
+    doc.text(
+      col.label,
+      textX(col),
+      y + 7,
+      {
+        align: col.align
+      }
+    );
+
+  });
+
+  /*
+  Separadores sutiles
+  */
+
+  doc.setDrawColor(
+    30,
+    64,
+    100
+  );
+
+  Object.values(TABLE.cols).forEach((col) => {
+
+    if (col.x > TABLE.x + 3) {
+
+      doc.line(
+        col.x - 1.5,
+        y + 2,
+        col.x - 1.5,
+        y + TABLE.headerHeight - 2
+      );
+
+    }
+
+  });
+
+  return y + TABLE.headerHeight;
+
+};
+
+const drawTableRow = (
+  doc,
+  ingreso,
+  index,
+  y
+) => {
+
+  const {
+    subtotal,
+    itbis,
+    descuento,
+    costos,
+    produccion,
+    total
+  } = calcularIngreso(
+    ingreso
+  );
+
+  const servicios =
+    ingreso.servicios || [];
+
+  const fecha =
+    getFechaIngreso(
+      ingreso
+    );
+
+  const paciente =
+    getPaciente(
+      ingreso
+    );
+
+  const procedimientos =
+    getProcedimientos(
+      servicios
+    );
+
+  const procedimientoLines =
+    doc.splitTextToSize(
+      procedimientos,
+      TABLE.cols.procedimientos.w - 3
+    );
+
+  const visibleLines =
+    procedimientoLines.slice(
+      0,
+      2
+    );
+
+  const rowHeight =
+    visibleLines.length > 1
+      ? 13
+      : TABLE.rowMinHeight;
+
+  doc.setFillColor(
+    ...(index % 2 === 0
+      ? COLORS.rowWhite
+      : COLORS.rowAlt)
+  );
+
+  doc.rect(
+    TABLE.x,
+    y,
+    TABLE.width,
+    rowHeight,
+    "F"
+  );
+
+  doc.setDrawColor(
+    ...COLORS.softBorder
+  );
+
+  doc.line(
+    TABLE.x,
+    y + rowHeight,
+    TABLE.x + TABLE.width,
+    y + rowHeight
+  );
+
+  /*
+  Separadores verticales suaves
+  */
+
+  doc.setDrawColor(
+    235,
+    240,
+    246
+  );
+
+  Object.values(TABLE.cols).forEach((col) => {
+
+    if (col.x > TABLE.x + 3) {
+
+      doc.line(
+        col.x - 1.5,
+        y,
+        col.x - 1.5,
+        y + rowHeight
+      );
+
+    }
+
+  });
+
+  const amountY =
+    y + 6.3;
+
+  doc.setFontSize(5.8);
+
+  /*
+  Fecha
+  */
+
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(
+    ...COLORS.muted
+  );
+
+  doc.text(
+    fecha,
+    TABLE.cols.fecha.x + 1,
+    amountY
+  );
+
+  /*
+  Paciente
+  */
+
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(
+    ...COLORS.text
+  );
+
+  doc.text(
+    truncateText(
+      paciente,
+      21
+    ),
+    TABLE.cols.paciente.x + 1,
+    amountY
+  );
+
+  /*
+  Procedimientos
+  */
+
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(
+    51,
+    65,
+    85
+  );
+
+  doc.text(
+    visibleLines,
+    TABLE.cols.procedimientos.x + 1,
+    y + 5.4
+  );
+
+  /*
+  Montos
+  */
+
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(
+    ...COLORS.text
+  );
+
+  doc.text(
+    money(subtotal),
+    textX(TABLE.cols.subtotal),
+    amountY,
+    {
+      align: "right"
+    }
+  );
+
+  doc.text(
+    money(itbis),
+    textX(TABLE.cols.itbis),
+    amountY,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setTextColor(
+    ...COLORS.pink
+  );
+
+  doc.text(
+    money(descuento),
+    textX(TABLE.cols.descuento),
+    amountY,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setTextColor(
+    ...COLORS.orange
+  );
+
+  doc.text(
+    money(costos),
+    textX(TABLE.cols.costos),
+    amountY,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setTextColor(
+    ...COLORS.indigo
+  );
+
+  doc.setFont("helvetica", "bold");
+
+  doc.text(
+    money(produccion),
+    textX(TABLE.cols.produccion),
+    amountY,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setTextColor(
+    ...COLORS.green
+  );
+
+  doc.text(
+    money(total),
+    textX(TABLE.cols.total),
+    amountY,
+    {
+      align: "right"
+    }
+  );
+
+  return y + rowHeight;
+
+};
+
+/*
+==========================================
+SUMMARY PAGE
+==========================================
+*/
+
+const drawSummaryPage = (
+  doc,
+  {
+    logo,
+    tipo,
+    totals,
+    egresosTotales,
+    clientesCount,
+    facturasCount,
+    egresosCount,
+    pageNumber
+  }
+) => {
+
+  const pageWidth =
+    doc.internal.pageSize.getWidth();
+
+  drawHeader(
+    doc,
+    {
+      logo,
+      title: "Resumen financiero clínico",
+      subtitle: "Estado financiero general"
+    }
+  );
+
+  drawSectionTitle(
+    doc,
+    "Resumen financiero clínico",
+    "Estado financiero general de ingresos, costos, egresos, descuentos y rentabilidad",
+    50
+  );
+
+  doc.setFontSize(8);
+  doc.setTextColor(
+    ...COLORS.muted
+  );
+
+  const tipoLabelMap = {
+    semanal: "Semanal",
+    mensual: "Mensual",
+    anual: "Anual"
+  };
+
+  doc.text(
+    `Tipo de reporte: ${tipoLabelMap[tipo] || "General"}`,
+    12,
+    65
+  );
+
+  doc.text(
+    `Facturas incluidas: ${facturasCount}`,
+    12,
+    71
+  );
+
+  doc.text(
+    `Pacientes únicos: ${clientesCount}`,
+    12,
+    77
+  );
+
+  doc.text(
+    `Egresos registrados: ${egresosCount}`,
+    12,
+    83
+  );
+
+  const tableX =
+    52;
+
+  const tableY =
+    96;
+
+  const tableW =
+    194;
+
+  const col1W =
+    118;
+
+  const col2W =
+    tableW - col1W;
+
+  const utilidadNeta =
+    totals.produccion -
+    egresosTotales;
+
+  const rentabilidad =
+    totals.total > 0
+      ? (
+        utilidadNeta /
+        totals.total
+      ) * 100
+      : 0;
+
+  const rows = [
+    {
+      concept: "Ingresos clínicos",
+      value: money(totals.total),
+      color: COLORS.green
+    },
+    {
+      concept: "Costos clínicos",
+      value: money(totals.costos),
+      color: COLORS.orange
+    },
+    {
+      concept: "Egresos operativos",
+      value: money(egresosTotales),
+      color: COLORS.red
+    },
+    {
+      concept: "Descuentos aplicados",
+      value: money(totals.descuento),
+      color: COLORS.pink
+    },
+    {
+      concept: "Producción operativa",
+      value: money(totals.produccion),
+      color: COLORS.indigo
+    },
+    {
+      concept: "Utilidad neta final",
+      value: money(utilidadNeta),
+      color: COLORS.blue,
+      highlight: true
+    },
+    {
+      concept: "Rentabilidad %",
+      value: percent(rentabilidad),
+      color: COLORS.green
+    }
+  ];
+
+  doc.setFillColor(
+    ...COLORS.summaryBlue
+  );
+
+  doc.rect(
+    tableX,
+    tableY,
+    tableW,
+    12,
+    "F"
+  );
+
+  doc.setDrawColor(
+    ...COLORS.black
+  );
+
+  doc.rect(
+    tableX,
+    tableY,
+    tableW,
+    12
+  );
+
+  doc.line(
+    tableX + col1W,
+    tableY,
+    tableX + col1W,
+    tableY + 12
+  );
+
+  doc.setTextColor(255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+
+  doc.text(
+    "Concepto",
+    tableX + col1W / 2,
+    tableY + 8,
+    {
+      align: "center"
+    }
+  );
+
+  doc.text(
+    "Valor",
+    tableX + col1W + col2W / 2,
+    tableY + 8,
+    {
+      align: "center"
+    }
+  );
+
+  let y =
+    tableY + 12;
+
+  rows.forEach((row) => {
+
+    doc.setFillColor(
+      ...(row.highlight
+        ? COLORS.summaryLight
+        : [255, 255, 255])
+    );
+
+    doc.rect(
+      tableX,
+      y,
+      tableW,
+      12,
+      "F"
+    );
+
+    doc.setDrawColor(
+      ...COLORS.black
+    );
+
+    doc.rect(
+      tableX,
+      y,
+      tableW,
+      12
+    );
+
+    doc.line(
+      tableX + col1W,
+      y,
+      tableX + col1W,
+      y + 12
+    );
+
+    doc.setTextColor(
+      ...COLORS.text
+    );
+
+    doc.setFont(
+      "helvetica",
+      row.highlight
+        ? "bold"
+        : "normal"
+    );
+
+    doc.setFontSize(8.5);
+
+    doc.text(
+      row.concept,
+      tableX + 3,
+      y + 8
+    );
+
+    doc.setTextColor(
+      ...row.color
+    );
+
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+
+    doc.text(
+      row.value,
+      tableX + tableW - 3,
+      y + 8,
+      {
+        align: "right"
+      }
+    );
+
+    y += 12;
+
+  });
+
+  doc.setTextColor(
+    ...COLORS.muted
+  );
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+
+  doc.text(
+    "Producción operativa = ingresos clínicos - costos clínicos. Utilidad neta = producción operativa - egresos operativos.",
+    pageWidth / 2,
+    y + 14,
+    {
+      align: "center"
+    }
+  );
+
+  drawFooter(
+    doc,
+    pageNumber
+  );
+
+};
+
+/*
+==========================================
+GENERAR REPORTE
+==========================================
+*/
+
 export const generarReporte = async ({
   ingresos = [],
   egresos = [],
@@ -40,11 +1284,20 @@ export const generarReporte = async ({
     egresos = [];
   }
 
-  /*
-  ==========================================
-  PDF
-  ==========================================
-  */
+  console.log(
+    "PDF REPORTE - INGRESOS:",
+    ingresos
+  );
+
+  console.log(
+    "PDF REPORTE - EGRESOS:",
+    egresos
+  );
+
+  const logo =
+    await loadImageAsBase64(
+      LOGO_PATHS
+    );
 
   const doc = new jsPDF({
     orientation: "landscape",
@@ -52,1371 +1305,323 @@ export const generarReporte = async ({
     format: "a4"
   });
 
-  const pageWidth =
-    doc.internal.pageSize.getWidth();
+  const totals =
+    ingresos.reduce(
+      (acc, ingreso) => {
 
-  let y = 20;
+        const calc =
+          calcularIngreso(
+            ingreso
+          );
 
-  /*
-  ==========================================
-  TITULOS
-  ==========================================
-  */
+        acc.subtotal += calc.subtotal;
+        acc.itbis += calc.itbis;
+        acc.descuento += calc.descuento;
+        acc.costos += calc.costos;
+        acc.produccion += calc.produccion;
+        acc.total += calc.total;
 
-  const tituloMap = {
+        return acc;
 
-    semanal:
-      "Reporte Semanal",
+      },
+      {
+        subtotal: 0,
+        itbis: 0,
+        descuento: 0,
+        costos: 0,
+        produccion: 0,
+        total: 0
+      }
+    );
 
-    mensual:
-      "Reporte Mensual",
-
-    anual:
-      "Reporte Anual"
-
-  };
-
-  /*
-  ==========================================
-  CALCULOS
-  ==========================================
-  */
-
-  let ingresosTotales = 0;
-
-  let costosClinicos = 0;
-
-  let descuentosTotales = 0;
+  const egresosTotales =
+    egresos.reduce(
+      (acc, egreso) =>
+        acc + getEgresoMonto(
+          egreso
+        ),
+      0
+    );
 
   const clientesUnicos =
     new Set();
 
-  ingresos.forEach((i) => {
+  ingresos.forEach((ingreso) => {
 
-    const servicios =
-      i.servicios || [];
-
-    const subtotal =
-      servicios.reduce(
-        (acc, s) =>
-          acc + (
-            Number(s.monto) || 0
-          ),
-        0
-      );
-
-    const costos =
-      servicios.reduce(
-        (acc, s) =>
-          acc + (
-            Number(
-              s.costo_servicio
-            ) || 0
-          ),
-        0
-      );
-
-    const itbis =
-      subtotal * 0.18;
-
-    const descuentoValor =
-      subtotal * (
-        (i.descuento || 0) / 100
-      );
-
-    const total =
-      subtotal +
-      itbis -
-      descuentoValor;
-
-    ingresosTotales += total;
-
-    costosClinicos += costos;
-
-    descuentosTotales +=
-      descuentoValor;
-
-    if (i.cliente_id) {
+    if (ingreso.cliente_id) {
 
       clientesUnicos.add(
-        i.cliente_id
+        ingreso.cliente_id
+      );
+
+    } else if (ingreso.cliente?.id) {
+
+      clientesUnicos.add(
+        ingreso.cliente.id
       );
 
     }
 
   });
 
-  const egresosTotales =
-    egresos.reduce(
-      (acc, e) =>
-        acc + (
-          Number(e.monto) || 0
-        ),
-      0
-    );
-
-  const utilidadNeta =
-    ingresosTotales -
-    costosClinicos -
-    egresosTotales -
-    descuentosTotales;
-
-  const rentabilidad =
-    ingresosTotales > 0
-      ? (
-          utilidadNeta /
-          ingresosTotales
-        ) * 100
-      : 0;
-
   /*
   ==========================================
-  WATERMARK
+  PÁGINA 1: DETALLE
   ==========================================
   */
 
-  doc.setTextColor(245);
+  let pageNumber = 1;
 
-  doc.setFontSize(80);
-
-  doc.setFont(
-    "helvetica",
-    "bold"
+  drawHeader(
+    doc,
+    {
+      logo,
+      title: "Detalle financiero clínico",
+      subtitle: "Facturación y producción odontológica"
+    }
   );
 
-  doc.text(
-    "SONRISA",
-    90,
-    140,
-    {
-      angle: 45
+  drawSectionTitle(
+    doc,
+    "Detalle financiero clínico",
+    "Tabla completa de facturación, costos, producción y totales",
+    50
+  );
+
+  let y = 66;
+
+  y =
+    drawTableHeader(
+      doc,
+      y
+    );
+
+  ingresos.forEach(
+    (ingreso, index) => {
+
+      const procedimientos =
+        getProcedimientos(
+          ingreso.servicios || []
+        );
+
+      const lines =
+        doc.splitTextToSize(
+          procedimientos,
+          TABLE.cols.procedimientos.w - 3
+        );
+
+      const rowHeight =
+        Math.min(
+          lines.length,
+          2
+        ) > 1
+          ? 13
+          : TABLE.rowMinHeight;
+
+      if (y + rowHeight > TABLE.bottomLimit) {
+
+        drawFooter(
+          doc,
+          pageNumber
+        );
+
+        doc.addPage();
+
+        pageNumber += 1;
+
+        drawHeader(
+          doc,
+          {
+            logo,
+            title: "Detalle financiero clínico",
+            subtitle: "Continuación"
+          }
+        );
+
+        y = 44;
+
+        y =
+          drawTableHeader(
+            doc,
+            y
+          );
+
+      }
+
+      y =
+        drawTableRow(
+          doc,
+          ingreso,
+          index,
+          y
+        );
+
     }
   );
 
   /*
   ==========================================
-  HEADER
+  TOTAL GENERAL
   ==========================================
   */
 
+  if (y + 16 > TABLE.bottomLimit) {
+
+    drawFooter(
+      doc,
+      pageNumber
+    );
+
+    doc.addPage();
+
+    pageNumber += 1;
+
+    drawHeader(
+      doc,
+      {
+        logo,
+        title: "Detalle financiero clínico",
+        subtitle: "Totales"
+      }
+    );
+
+    y = 48;
+
+  }
+
   doc.setFillColor(
-    10,
-    18,
-    40
+    220,
+    252,
+    231
   );
 
   doc.rect(
-    0,
-    0,
-    297,
-    35,
+    TABLE.x,
+    y + 4,
+    TABLE.width,
+    13,
     "F"
   );
 
-  /*
-  ==========================================
-  LOGO
-  ==========================================
-  */
-
-  doc.setFillColor(
-    99,
-    102,
-    241
+  doc.setDrawColor(
+    ...COLORS.border
   );
 
-  doc.circle(
-    22,
-    17,
-    10,
-    "F"
+  doc.rect(
+    TABLE.x,
+    y + 4,
+    TABLE.width,
+    13
   );
 
-  doc.setTextColor(255);
-
-  doc.setFontSize(17);
-
-  doc.setFont(
-    "helvetica",
-    "bold"
-  );
-
-  doc.text(
-    "DS",
-    22,
-    20,
-    {
-      align: "center"
-    }
-  );
-
-  /*
-  ==========================================
-  TITULO
-  ==========================================
-  */
-
-  doc.setFontSize(22);
-
-  doc.text(
-    "CLINICA DENTAL SONRISA",
-    148,
-    15,
-    {
-      align: "center"
-    }
-  );
-
-  doc.setFontSize(10);
-
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(6.8);
   doc.setTextColor(
-    203,
-    213,
-    225
-  );
-
-  doc.setFont(
-    "helvetica",
-    "normal"
+    ...COLORS.text
   );
 
   doc.text(
-    "Sistema financiero clínico",
-    148,
-    22,
-    {
-      align: "center"
-    }
+    "TOTAL GENERAL",
+    TABLE.cols.paciente.x + 1,
+    y + 12
   );
 
-  /*
-  ==========================================
-  FECHA
-  ==========================================
-  */
-
-  doc.setTextColor(255);
-
-  doc.setFontSize(9);
-
   doc.text(
-    new Date().toLocaleDateString(
-      "es-DO"
-    ),
-    280,
-    18,
+    money(totals.subtotal),
+    textX(TABLE.cols.subtotal),
+    y + 12,
     {
       align: "right"
     }
   );
 
-  /*
-  ==========================================
-  RESET
-  ==========================================
-  */
+  doc.text(
+    money(totals.itbis),
+    textX(TABLE.cols.itbis),
+    y + 12,
+    {
+      align: "right"
+    }
+  );
 
   doc.setTextColor(
-    15,
-    23,
-    42
+    ...COLORS.pink
+  );
+
+  doc.text(
+    money(totals.descuento),
+    textX(TABLE.cols.descuento),
+    y + 12,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setTextColor(
+    ...COLORS.orange
+  );
+
+  doc.text(
+    money(totals.costos),
+    textX(TABLE.cols.costos),
+    y + 12,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setTextColor(
+    ...COLORS.indigo
+  );
+
+  doc.text(
+    money(totals.produccion),
+    textX(TABLE.cols.produccion),
+    y + 12,
+    {
+      align: "right"
+    }
+  );
+
+  doc.setTextColor(
+    ...COLORS.green
+  );
+
+  doc.text(
+    money(totals.total),
+    textX(TABLE.cols.total),
+    y + 12,
+    {
+      align: "right"
+    }
+  );
+
+  drawFooter(
+    doc,
+    pageNumber
   );
 
   /*
   ==========================================
-  TITULO REPORTE
+  PÁGINA RESUMEN
   ==========================================
   */
 
-  y = 52;
+  doc.addPage();
 
-  doc.setFontSize(22);
+  pageNumber += 1;
 
-  doc.setFont(
-    "helvetica",
-    "bold"
-  );
-
-  doc.text(
-    tituloMap[tipo] ||
-    "Reporte",
-    20,
-    y
-  );
-
-  doc.setFontSize(10);
-
-  doc.setTextColor(120);
-
-  doc.setFont(
-    "helvetica",
-    "normal"
-  );
-
-  doc.text(
-    "Estado financiero general de la clínica",
-    20,
-    y + 8
-  );
-
-  /*
-  ==========================================
-  RESUMEN FINANCIERO
-  ==========================================
-  */
-
-  y += 20;
-
-  const resumen = [
-
+  drawSummaryPage(
+    doc,
     {
-      title:
-        "Ingresos clínicos",
-
-      subtitle:
-        "Facturación total registrada",
-
-      amount:
-        `RD$ ${formatMoney(
-          ingresosTotales
-        )}`,
-
-      color:
-        [16, 185, 129]
-    },
-
-    {
-      title:
-        "Costos clínicos",
-
-      subtitle:
-        "Materiales y procedimientos",
-
-      amount:
-        `- RD$ ${formatMoney(
-          costosClinicos
-        )}`,
-
-      color:
-        [249, 115, 22]
-    },
-
-    {
-      title:
-        "Egresos operativos",
-
-      subtitle:
-        "Gastos administrativos",
-
-      amount:
-        `- RD$ ${formatMoney(
-          egresosTotales
-        )}`,
-
-      color:
-        [244, 63, 94]
-    },
-
-    {
-      title:
-        "Descuentos aplicados",
-
-      subtitle:
-        "Promociones y ajustes",
-
-      amount:
-        `- RD$ ${formatMoney(
-          descuentosTotales
-        )}`,
-
-      color:
-        [236, 72, 153]
-    }
-
-  ];
-
-  resumen.forEach((r) => {
-
-    doc.setFillColor(
-      248,
-      250,
-      252
-    );
-
-    doc.roundedRect(
-      15,
-      y,
-      267,
-      22,
-      6,
-      6,
-      "F"
-    );
-
-    doc.setDrawColor(
-      226,
-      232,
-      240
-    );
-
-    doc.roundedRect(
-      15,
-      y,
-      267,
-      22,
-      6,
-      6
-    );
-
-    doc.setFillColor(
-      ...r.color
-    );
-
-    doc.circle(
-      28,
-      y + 11,
-      5,
-      "F"
-    );
-
-    doc.setTextColor(
-      30,
-      41,
-      59
-    );
-
-    doc.setFontSize(11);
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
-    doc.text(
-      r.title,
-      38,
-      y + 9
-    );
-
-    doc.setTextColor(120);
-
-    doc.setFontSize(9);
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.text(
-      r.subtitle,
-      38,
-      y + 15
-    );
-
-    doc.setTextColor(
-      ...r.color
-    );
-
-    doc.setFontSize(15);
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
-    doc.text(
-      r.amount,
-      275,
-      y + 13,
-      {
-        align: "right"
-      }
-    );
-
-    y += 28;
-
-  });
-
-/*
-==========================================
-UTILIDAD NETA FINAL
-==========================================
-*/
-
-y += 4;
-
-doc.setFillColor(
-  8,
-  15,
-  35
-);
-
-doc.roundedRect(
-  15,
-  y,
-  267,
-  28,
-  8,
-  8,
-  "F"
-);
-
-/*
-==========================================
-TITLE
-==========================================
-*/
-
-doc.setTextColor(255);
-
-doc.setFontSize(10);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.text(
-  "Utilidad neta final",
-  28,
-  y + 10
-);
-
-/*
-==========================================
-SUBTITLE
-==========================================
-*/
-
-doc.setFontSize(7);
-
-doc.setFont(
-  "helvetica",
-  "normal"
-);
-
-doc.setTextColor(
-  180,
-  190,
-  210
-);
-
-doc.text(
-  "Resultado operativo actual",
-  28,
-  y + 17
-);
-
-/*
-==========================================
-UTILIDAD
-==========================================
-*/
-
-doc.setTextColor(
-  99,
-  102,
-  241
-);
-
-doc.setFontSize(18);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.text(
-  `RD$ ${formatMoney(
-    utilidadNeta
-  )}`,
-  270,
-  y + 12,
-  {
-    align: "right"
-  }
-);
-
-/*
-==========================================
-RENTABILIDAD
-==========================================
-*/
-
-doc.setTextColor(
-  16,
-  185,
-  129
-);
-
-doc.setFontSize(8);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.text(
-  `Rentabilidad ${rentabilidad.toFixed(1)}%`,
-  270,
-  y + 19,
-  {
-    align: "right"
-  }
-);
-
- /*
-==========================================
-UTILIDAD NETA FINAL
-FIX VISIBILIDAD
-==========================================
-*/
-
-y += 6;
-
-doc.setFillColor(
-  15,
-  23,
-  42
-);
-
-doc.roundedRect(
-  15,
-  y,
-  267,
-  32,
-  8,
-  8,
-  "F"
-);
-
-doc.setTextColor(255);
-
-doc.setFontSize(11);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.text(
-  "Utilidad neta final",
-  25,
-  y + 11
-);
-
-doc.setFontSize(8);
-
-doc.setFont(
-  "helvetica",
-  "normal"
-);
-
-doc.text(
-  "Resultado operativo actual",
-  25,
-  y + 18
-);
-
-doc.setFontSize(20);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.setTextColor(
-  99,
-  102,
-  241
-);
-
-doc.text(
-  `RD$ ${formatMoney(
-    utilidadNeta
-  )}`,
-  272,
-  y + 14,
-  {
-    align: "right"
-  }
-);
-
-doc.setFontSize(9);
-
-doc.setTextColor(
-  16,
-  185,
-  129
-);
-
-doc.text(
-  `Rentabilidad ${rentabilidad.toFixed(1)}%`,
-  272,
-  y + 24,
-  {
-    align: "right"
-  }
-);
-
-/*
-==========================================
-NUEVA PAGINA
-==========================================
-*/
-
-doc.addPage();
-
-y = 20;
-
-/*
-==========================================
-TITLE
-==========================================
-*/
-
-doc.setTextColor(
-  15,
-  23,
-  42
-);
-
-doc.setFontSize(18);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.text(
-  "Detalle financiero clínico",
-  20,
-  y
-);
-
-doc.setFontSize(9);
-
-doc.setTextColor(120);
-
-doc.setFont(
-  "helvetica",
-  "normal"
-);
-
-doc.text(
-  "Facturación y producción odontológica",
-  20,
-  y + 7
-);
-
-/*
-==========================================
-CARD BG
-==========================================
-*/
-
-y += 18;
-
-doc.setFillColor(
-  248,
-  250,
-  252
-);
-
-doc.roundedRect(
-  10,
-  y - 8,
-  277,
-  160,
-  8,
-  8,
-  "F"
-);
-
-/*
-==========================================
-COLUMNAS
-==========================================
-*/
-
-const colFecha = 14;
-
-const colPaciente = 32;
-
-const colProcedimientos = 58;
-
-const colSubtotal = 160;
-
-const colItbis = 182;
-
-const colDesc = 198;
-
-const colCostos = 214;
-
-const colProduccion = 248;
-
-const colTotal = 282;
-
-/*
-==========================================
-HEADER BG
-==========================================
-*/
-
-doc.setFillColor(
-  255,
-  255,
-  255
-);
-
-doc.roundedRect(
-  12,
-  y,
-  273,
-  10,
-  4,
-  4,
-  "F"
-);
-
-/*
-==========================================
-HEADERS
-==========================================
-*/
-
-doc.setTextColor(120);
-
-doc.setFontSize(6);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.text(
-  "FECHA",
-  colFecha,
-  y + 6.5
-);
-
-doc.text(
-  "PACIENTE",
-  colPaciente,
-  y + 6.5
-);
-
-doc.text(
-  "PROCEDIMIENTOS",
-  colProcedimientos,
-  y + 6.5
-);
-
-doc.text(
-  "SUBTOTAL",
-  colSubtotal,
-  y + 6.5
-);
-
-doc.text(
-  "ITBIS",
-  colItbis,
-  y + 6.5
-);
-
-doc.text(
-  "DESC.",
-  colDesc,
-  y + 6.5
-);
-
-doc.text(
-  "COSTOS",
-  colCostos,
-  y + 6.5
-);
-
-doc.text(
-  "PRODUCCIÓN",
-  colProduccion,
-  y + 6.5,
-  {
-    align: "right"
-  }
-);
-
-doc.text(
-  "TOTAL",
-  colTotal,
-  y + 6.5,
-  {
-    align: "right"
-  }
-);
-
-y += 13;
-
-/*
-==========================================
-ROWS
-==========================================
-*/
-
-ingresos.forEach(
-  (i, index) => {
-
-    /*
-    ==========================================
-    PAGINA NUEVA
-    ==========================================
-    */
-
-    if (y > 185) {
-
-      doc.addPage();
-
-      y = 20;
-
-    }
-
-    /*
-    ==========================================
-    CALCULOS
-    ==========================================
-    */
-
-    const servicios =
-      i.servicios || [];
-
-    const subtotal =
-      servicios.reduce(
-        (acc, s) =>
-          acc + (
-            Number(s.monto) || 0
-          ),
-        0
-      );
-
-    const costos =
-      servicios.reduce(
-        (acc, s) =>
-          acc + (
-            Number(
-              s.costo_servicio
-            ) || 0
-          ),
-        0
-      );
-
-    const itbis =
-      subtotal * 0.18;
-
-    const descuentoValor =
-      subtotal * (
-        (i.descuento || 0) / 100
-      );
-
-    const total =
-      subtotal +
-      itbis -
-      descuentoValor;
-
-    const produccion =
-      total - costos;
-
-    /*
-    ==========================================
-    FECHA
-    ==========================================
-    */
-
-    let fecha = "N/A";
-
-    if (i.created_at) {
-
-      const f =
-        parseFechaLocal(
-          i.created_at
-        );
-
-      if (!isNaN(f)) {
-
-        fecha =
-          f.toLocaleDateString(
-            "es-DO"
-          );
-
-      }
-
-    }
-
-    /*
-    ==========================================
-    CLIENTE
-    ==========================================
-    */
-
-    const cliente =
-      i.cliente
-        ? `${i.cliente.nombre || ""} ${i.cliente.apellido || ""}`
-        : "N/A";
-
-    /*
-    ==========================================
-    PROCEDIMIENTOS
-    ==========================================
-    */
-
-    const procedimientos =
-      servicios
-        .map(
-          s => s.descripcion
-        )
-        .join(", ");
-
-    /*
-    ==========================================
-    ROW BG
-    ==========================================
-    */
-
-    if (index % 2 === 0) {
-
-      doc.setFillColor(
-        255,
-        255,
-        255
-      );
-
-      doc.roundedRect(
-        12,
-        y - 4,
-        273,
-        8,
-        2,
-        2,
-        "F"
-      );
-
-    }
-
-    /*
-    ==========================================
-    FONT
-    ==========================================
-    */
-
-    doc.setFontSize(6);
-
-    /*
-    ==========================================
-    FECHA
-    ==========================================
-    */
-
-    doc.setTextColor(100);
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.text(
-      fecha,
-      colFecha,
-      y
-    );
-
-    /*
-    ==========================================
-    CLIENTE
-    ==========================================
-    */
-
-    doc.setTextColor(
-      30,
-      41,
-      59
-    );
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
-    doc.text(
-      cliente.substring(
-        0,
-        15
-      ),
-      colPaciente,
-      y
-    );
-
-    /*
-    ==========================================
-    PROCEDIMIENTOS
-    ==========================================
-    */
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.setTextColor(90);
-
-    doc.text(
-      procedimientos.substring(
-        0,
-        30
-      ),
-      colProcedimientos,
-      y
-    );
-
-    /*
-    ==========================================
-    SUBTOTAL
-    ==========================================
-    */
-
-    doc.setTextColor(
-      71,
-      85,
-      105
-    );
-
-    doc.text(
-      formatMoney(
-        subtotal
-      ),
-      colSubtotal,
-      y
-    );
-
-    /*
-    ==========================================
-    ITBIS
-    ==========================================
-    */
-
-    doc.text(
-      formatMoney(
-        itbis
-      ),
-      colItbis,
-      y
-    );
-
-    /*
-    ==========================================
-    DESCUENTO
-    ==========================================
-    */
-
-    doc.setTextColor(
-      236,
-      72,
-      153
-    );
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
-    doc.text(
-      formatMoney(
-        descuentoValor
-      ),
-      colDesc,
-      y
-    );
-
-    /*
-    ==========================================
-    COSTOS
-    ==========================================
-    */
-
-    doc.setTextColor(
-      249,
-      115,
-      22
-    );
-
-    doc.text(
-      formatMoney(
-        costos
-      ),
-      colCostos,
-      y
-    );
-
-    /*
-    ==========================================
-    PRODUCCION
-    ==========================================
-    */
-
-    doc.setTextColor(
-      99,
-      102,
-      241
-    );
-
-    doc.text(
-      formatMoney(
-        produccion
-      ),
-      colProduccion,
-      y,
-      {
-        align: "right"
-      }
-    );
-
-    /*
-    ==========================================
-    TOTAL
-    ==========================================
-    */
-
-    doc.setTextColor(
-      16,
-      185,
-      129
-    );
-
-    doc.text(
-      formatMoney(
-        total
-      ),
-      colTotal,
-      y,
-      {
-        align: "right"
-      }
-    );
-
-    /*
-    ==========================================
-    NEXT ROW
-    ==========================================
-    */
-
-    y += 8;
-
-  }
-);
-
-/*
-==========================================
-TOTAL GENERAL
-==========================================
-*/
-
-y += 8;
-
-doc.setDrawColor(
-  226,
-  232,
-  240
-);
-
-doc.line(
-  205,
-  y,
-  282,
-  y
-);
-
-y += 8;
-
-doc.setTextColor(
-  30,
-  41,
-  59
-);
-
-doc.setFontSize(9);
-
-doc.setFont(
-  "helvetica",
-  "bold"
-);
-
-doc.text(
-  "Total General",
-  232,
-  y
-);
-
-doc.setTextColor(
-  16,
-  185,
-  129
-);
-
-doc.setFontSize(11);
-
-doc.text(
-  `RD$ ${formatMoney(
-    ingresosTotales
-  )}`,
-  282,
-  y,
-  {
-    align: "right"
-  }
-);
-
-  /*
-  ==========================================
-  FOOTER
-  ==========================================
-  */
-
-  doc.setDrawColor(
-    99,
-    102,
-    241
-  );
-
-  doc.setLineWidth(0.8);
-
-  doc.line(
-    20,
-    200,
-    277,
-    200
-  );
-
-  doc.setFontSize(8);
-
-  doc.setTextColor(120);
-
-  doc.setFont(
-    "helvetica",
-    "normal"
-  );
-
-  doc.text(
-    "Clínica Dental Sonrisa • Reporte financiero premium",
-    pageWidth / 2,
-    207,
-    {
-      align: "center"
-    }
-  );
-
-  doc.text(
-    "Documento generado automáticamente",
-    pageWidth / 2,
-    212,
-    {
-      align: "center"
+      logo,
+      tipo,
+      totals,
+      egresosTotales,
+      clientesCount: clientesUnicos.size,
+      facturasCount: ingresos.length,
+      egresosCount: egresos.length,
+      pageNumber
     }
   );
 

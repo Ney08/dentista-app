@@ -2,12 +2,13 @@
 import { useState, useEffect } from "react";
 import ConfirmModal from "../ConfirmModal";
 import {
-
+  Paperclip, 
   MoreHorizontal,
   Pencil,
   Trash2,
   X,
   CalendarDays,
+  ClockPlus,
   Sparkles,
   ClipboardList,
   AlertCircle,
@@ -257,7 +258,7 @@ text-sky-800
             mb-3
           ">
 
-            <Sparkles size={13} />
+            <Paperclip size={20} />
 
             Nota clínica
 
@@ -711,7 +712,7 @@ group
 
           mb-4
         ">
-                    <Sparkles size={13} />
+                    <ClockPlus size={13} />
                     Nota reciente
 
                   </div>
@@ -883,8 +884,8 @@ text-sky-800
 
                   mb-4
                 ">
-
-                  📋 Nota clínica
+                  <ClipboardList size={16} />
+                   Nota clínica
 
                 </div>
 
@@ -1002,32 +1003,88 @@ text-sky-800
 
             {/* HEADER */}
 
-            <div>
+              <div className="
+  flex
+  flex-col
+  items-center
 
-
-              <h3 className="
-  flex items-center gap-3
-  text-2xl
-  font-black
-  tracking-tight
-  text-slate-800
+  text-center
 ">
-                <Pencil size={22} />
-                Editar nota clínica
-              </h3>
 
+  <div className="
+    flex
+    items-center
+    justify-center
 
-              <p className="
-                mt-1
+    w-20
+    h-20
 
-                text-sm
+    rounded-[28px]
 
-                text-slate-500
-              ">
-                Actualiza la observación clínica del paciente
-              </p>
+    bg-gradient-to-br
+    from-sky-500
+    via-sky-600
+    to-sky-700
 
-            </div>
+    text-white
+
+    shadow-[0_20px_50px_rgba(14,116,144,0.25)]
+  ">
+
+    <Pencil
+      size={34}
+      strokeWidth={2.8}
+    />
+
+  </div>
+
+  <h3 className="
+    mt-5
+
+    text-3xl
+
+    font-black
+
+    tracking-tight
+
+    text-slate-800
+  ">
+
+    Editar nota clínica
+
+  </h3>
+
+  <div className="
+    mt-3
+
+    w-20
+    h-1.5
+
+    rounded-full
+
+    bg-gradient-to-r
+    from-sky-500
+    to-sky-700
+  " />
+
+  <p className="
+    mt-4
+
+    max-w-sm
+
+    text-sm
+    md:text-base
+
+    leading-relaxed
+
+    text-slate-500
+  ">
+
+    Actualiza la observación clínica del paciente
+
+  </p>
+
+</div>
 
             {/* TEXTAREA */}
 

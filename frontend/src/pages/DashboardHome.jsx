@@ -19,6 +19,9 @@ import {
 } from "../utils/format";
 
 import {
+  TrendingUpDown,
+  FileChartColumnIncreasing, 
+  LayoutDashboard,
   Wallet,
   TrendingUp,
   Receipt,
@@ -953,7 +956,7 @@ text-sky-800
               mb-4
             ">
 
-                <BarChart3 size={18} />
+                <LayoutDashboard size={18} />
 
                 Panel principal
 
@@ -1657,7 +1660,7 @@ mt-1
                 font-bold
               ">
 
-                  <TrendingUp size={18} />
+                  <FileChartColumnIncreasing size={18} />
 
                   Resumen financiero
 
@@ -2031,7 +2034,7 @@ to-sky-900
                       font-bold
                     ">
 
-                        <TrendingUp size={18} />
+                        <TrendingUpDown size={18} />
 
                         Ingresos y egresos
 

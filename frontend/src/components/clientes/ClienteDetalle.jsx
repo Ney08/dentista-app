@@ -588,8 +588,8 @@ text-sky-800
 
                   mb-4
                 ">
-
-                  📋 Nota clínica
+                  <ClipboardList size={20} />
+                   Nota clínica
 
                 </div>
 

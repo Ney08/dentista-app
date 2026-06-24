@@ -9,7 +9,8 @@ import {
 } from "recharts";
 
 import {
-  TrendingUp
+  TrendingUp,
+  ChartNoAxesCombined
 } from "lucide-react";
 
 function FinanceChart({
@@ -56,7 +57,7 @@ function FinanceChart({
             font-bold
           ">
 
-            <TrendingUp size={18} />
+            <ChartNoAxesCombined size={18} />
 
             Finanzas generales
 

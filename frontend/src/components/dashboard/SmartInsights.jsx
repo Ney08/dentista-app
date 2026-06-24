@@ -3,7 +3,8 @@ import {
   TrendingDown,
   AlertTriangle,
   CalendarDays,
-  Sparkles
+  Sparkles,
+  LayoutGrid
 } from "lucide-react";
 
 function SmartInsights({
@@ -114,7 +115,7 @@ function SmartInsights({
             font-bold
           ">
 
-            <TrendingUp size={18} />
+            <LayoutGrid size={18} />
 
             Insights inteligentes
 

@@ -2,7 +2,7 @@ import {
   useState,
   useEffect
 } from "react";
-
+import ToothIcon from "../icons/ToothIcon";
 import ConfirmModal
   from "../ConfirmModal";
 
@@ -673,8 +673,8 @@ text-sky-800
 
             mb-3
           ">
-
-            🦷 Odontograma clínico
+            <ToothIcon size={18} />
+            Odontograma clínico
 
           </div>
 

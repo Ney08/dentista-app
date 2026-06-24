@@ -1,5 +1,13 @@
 import BaseModal from "./BaseModal";
 
+import {
+  TriangleAlert,
+  X,
+  Check,
+  Clock,
+  CircleCheck
+} from "lucide-react";
+
 function ConfirmModal({
   mensaje,
   onConfirm,
@@ -32,7 +40,7 @@ function ConfirmModal({
         space-y-6
       ">
 
-        {/* ✅ GLOW */}
+        {/*  GLOW */}
 
         <div className="
           absolute
@@ -49,7 +57,7 @@ function ConfirmModal({
           blur-3xl
         " />
 
-        {/* ✅ CONTENT */}
+        {/*  CONTENT */}
 
         <div className="
           relative
@@ -60,7 +68,7 @@ function ConfirmModal({
           space-y-5
         ">
 
-          {/* ✅ ICON */}
+          {/*  ICON */}
 
           <div className="
             w-24
@@ -85,10 +93,16 @@ function ConfirmModal({
 
             shadow-[0_20px_50px_rgba(244,63,94,0.35)]
           ">
-            ⚠️
+            
+<TriangleAlert
+  size={50}
+  strokeWidth={3}
+  className="shrink-0 text-amber-300"
+/>
+
           </div>
 
-          {/* ✅ MENSAJE */}
+          {/*  MENSAJE */}
 
           <div className="
             space-y-3
@@ -139,7 +153,7 @@ function ConfirmModal({
 
         </div>
 
-        {/* ✅ ACTIONS */}
+        {/*  ACTIONS */}
 
         <div className="
           relative
@@ -151,7 +165,7 @@ function ConfirmModal({
 
           gap-3
         ">
-          {/* ✅ CANCEL */}
+          {/*  CANCEL */}
 
           <button
             onClick={onCancel}
@@ -175,12 +189,21 @@ function ConfirmModal({
               duration-300
 
               active:scale-[0.98]
+              flex
+    items-center
+    justify-center
+    gap-2
             "
           >
-            ❌ Cancelar
+            <X
+                size={22}
+                strokeWidth={5}
+                className="shrink-0 text-rose-400"
+              />
+             Cancelar
           </button>
 
-          {/* ✅ CONFIRM */}
+          {/* CONFIRM */}
 
           <button
             onClick={onConfirm}
@@ -210,12 +233,24 @@ function ConfirmModal({
               hover:shadow-[0_20px_45px_rgba(244,63,94,0.35)]
 
               active:scale-[0.98]
+              
+flex
+    items-center
+    justify-center
 
               transition-all
               duration-300
+              gap-2
             "
           >
-            ✅ Sí, continuar
+            
+          <Check
+                size={22}
+                strokeWidth={5}
+                className="shrink-0"
+              />
+
+             Sí, continuar
           </button>
 
 

@@ -2,7 +2,7 @@ import {
   useEffect,
   useState
 } from "react";
-
+import ToothIcon from "../icons/ToothIcon";
 import {
   X,
   Save,
@@ -597,8 +597,8 @@ function TratamientoModal({
 
               mb-4
             ">
-
-              🦷 Nuevo tratamiento
+              <ToothIcon size={16} />
+               Nuevo tratamiento
 
             </div>
 

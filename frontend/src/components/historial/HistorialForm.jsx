@@ -1,11 +1,12 @@
 import { useState } from "react";
 
 import {
+    ShieldPlus,
     Gem,
     BarChart3,
     ClipboardList
 } from "lucide-react";
-
+import ToothIcon from "../icons/ToothIcon";
 import HistorialTab
     from "./tabs/HistorialTab";
 
@@ -45,7 +46,7 @@ function HistorialForm({
         {
             id: "odontograma",
             label: "Odontograma",
-            icon: "🦷"
+            icon: <ToothIcon size={18} />
         },
 
         {

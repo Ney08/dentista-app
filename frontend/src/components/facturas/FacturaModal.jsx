@@ -1,6 +1,14 @@
 import { generarFactura } from "../../utils/pdf";
 
 import { formatMoney } from "../../utils/format";
+import ToothIcon from "../icons/ToothIcon";
+
+import {
+  CircleCheck,
+  Clock,
+  ClockCheck,
+  Check
+} from "lucide-react";
 
 import {
   formatUTCFechaHora
@@ -221,8 +229,8 @@ function FacturaModal({
 
                text-sky-800
               ">
-
-                🦷 Clínica Dental
+                <ToothIcon size={20} />
+                Clínica Dental
 
               </div>
 
@@ -309,9 +317,33 @@ function FacturaModal({
                   }
                 `}>
 
-                  {pagada
-                    ? "✅ PAGADA"
-                    : "🕒 PENDIENTE"}
+                  {pagada ? (
+
+  <>
+
+    <CircleCheck
+      size={15}
+      className="shrink-0"
+    />
+
+    PAGADA
+
+  </>
+
+) : (
+
+  <>
+
+    <Clock
+      size={15}
+      className="shrink-0"
+    />
+
+    PENDIENTE
+
+  </>
+
+)}
 
                 </span>
 
@@ -630,15 +662,26 @@ function FacturaModal({
                   <div>
 
                     <p className="
-    text-sm
-    md:text-base
+  text-sm
+  md:text-base
 
-    font-black
+  font-black
 
-    text-slate-800
-  ">
+  text-slate-800
 
-                      🦷 {s.descripcion}
+  flex
+  items-center
+  gap-2
+">
+
+                      <ToothIcon
+                        size={20}
+                        className="text-sky-700 shrink-0"
+                      />
+
+                      <span>
+                        {s.descripcion}
+                      </span>
 
                     </p>
 
@@ -994,16 +1037,27 @@ to-sky-900
           ">
 
             <p className="
-              text-sm
+  text-sm
 
-              font-semibold
+  font-semibold
 
-              text-slate-500
-            ">
+  text-slate-500
 
-              Gracias por confiar en nosotros 🦷
+  flex
+  items-center
+  justify-center
+  gap-2
+">
+
+              Gracias por confiar en nosotros
+
+              <ToothIcon
+                size={20}
+                className="text-sky-700"
+              />
 
             </p>
+
 
             <p className="
               text-xs

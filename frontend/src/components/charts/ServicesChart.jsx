@@ -7,7 +7,8 @@ import {
 } from "recharts";
 
 import {
-  TrendingUp
+  TrendingUp,
+  ChartPie
 } from "lucide-react";
 
 const COLORS = [
@@ -57,7 +58,7 @@ function ServicesChart({
             font-bold
           ">
 
-            <TrendingUp size={18} />
+            <ChartPie size={18} />
 
             Servicios top
 
