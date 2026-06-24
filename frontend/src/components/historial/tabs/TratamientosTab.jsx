@@ -2,10 +2,16 @@ import { useEffect, useState }
   from "react";
 
 import {
+  getTratamientos
+} from "../../services/tratamientoService";
+
+import {
 
   FileText,
 
   Pencil,
+
+  Gem,
 
   Trash2,
 
@@ -94,14 +100,12 @@ function TratamientosTab({
 
         setLoading(true);
 
-        const res = await fetch(
-
-          `${API_URL}/tratamientos/${clienteId}`
-
-        );
 
         const data =
-          await res.json();
+          await getTratamientos(
+            clienteId
+          );
+
 
         setTratamientos(data);
 
@@ -168,8 +172,16 @@ function TratamientosTab({
   return (
 
     <div className="
-      space-y-8
-    ">
+    w-full
+
+    h-[calc(100vh-210px)]
+    min-h-[720px]
+
+    flex
+    flex-col
+
+    space-y-6
+  ">
 
       {/* HEADER */}
 
@@ -184,6 +196,8 @@ function TratamientosTab({
         justify-between
 
         gap-5
+
+        shrink-0
       ">
 
         <div>
@@ -211,8 +225,8 @@ text-sky-800
             text-xs
             font-black
           ">
-
-            💎 Tratamientos
+            <Gem size={16} />
+            Tratamientos
 
           </div>
 
@@ -352,6 +366,7 @@ text-sky-800
       <div className="
         flex
         justify-end
+        shrink-0
       ">
 
         <button
@@ -473,27 +488,56 @@ to-sky-900
             : (
 
               <div className="
-                grid
-                grid-cols-1
-                xl:grid-cols-2
-                2xl:grid-cols-3
+  flex-1
+  min-h-0
 
-                gap-6
-              ">
+  rounded-[34px]
 
-                {
+  bg-slate-50/40
 
-                  tratamientos.map((t) => (
+  border
+  border-slate-200/70
+
+  p-4
+
+  overflow-hidden
+">
+
+                <div className="
+    h-full
+
+    overflow-y-auto
+    overflow-x-hidden
+
+    pr-2
+
+    scrollbar-thin
+    scrollbar-thumb-sky-200/80
+    scrollbar-track-transparent
+  ">
+
+                  <div className="
+      grid
+      grid-cols-1
+      xl:grid-cols-2
+      2xl:grid-cols-3
+
+      gap-6
+    ">
+
+                    {
+
+                      tratamientos.map((t) => (
 
 
-                    <div
-                      key={t.id}
+                        <div
+                          key={t.id}
 
-                      onClick={() =>
-                        setTratamientoSeleccionado(t)
-                      }
+                          onClick={() =>
+                            setTratamientoSeleccionado(t)
+                          }
 
-                      className="
+                          className="
     group
 
     relative
@@ -526,17 +570,17 @@ hover:shadow-[0_25px_60px_rgba(7,89,133,0.12)]
                         transition-all
                         duration-300
                       "
-                    >
+                        >
 
-                      {/* STATUS */}
+                          {/* STATUS */}
 
-                      <div className="
+                          <div className="
                         flex
                         items-center
                         justify-between
                       ">
 
-                        <span className={`
+                            <span className={`
                           px-4
                           py-2
 
@@ -547,37 +591,37 @@ hover:shadow-[0_25px_60px_rgba(7,89,133,0.12)]
 
                           ${t.estado === "Completado"
 
-                            ? `
+                                ? `
                               bg-emerald-100
                               text-emerald-700
                             `
 
-                            : `
+                                : `
                               bg-amber-100
                               text-amber-700
                             `
-                          }
+                              }
                         `}>
 
-                          {t.estado}
+                              {t.estado}
 
-                        </span>
+                            </span>
 
-                        <span className="
+                            <span className="
                           text-xs
 
                           text-slate-400
                         ">
 
-                          #{t.id}
+                              #{t.id}
 
-                        </span>
+                            </span>
 
-                      </div>
+                          </div>
 
-                      {/* TITLE */}
+                          {/* TITLE */}
 
-                      <h4 className="
+                          <h4 className="
                         mt-6
 
                         text-2xl
@@ -587,127 +631,127 @@ hover:shadow-[0_25px_60px_rgba(7,89,133,0.12)]
                         text-slate-800
                       ">
 
-                        {t.servicio_nombre}
+                            {t.servicio_nombre}
 
-                      </h4>
+                          </h4>
 
-                      {/* INFO */}
+                          {/* INFO */}
 
-                      <div className="
+                          <div className="
                         mt-5
 
                         space-y-3
                       ">
 
-                        <div className="
+                            <div className="
                           flex
                           items-center
                           justify-between
                         ">
 
-                          <span className="
+                              <span className="
                             text-slate-400
                           ">
 
-                            Pieza
+                                Pieza
 
-                          </span>
+                              </span>
 
-                          <span className="
+                              <span className="
                             font-bold
 
                             text-slate-700
                           ">
 
-                            {t.pieza || "--"}
+                                {t.pieza || "--"}
 
-                          </span>
+                              </span>
 
-                        </div>
+                            </div>
 
-                        <div className="
+                            <div className="
                           flex
                           items-center
                           justify-between
                         ">
 
-                          <span className="
+                              <span className="
                             text-slate-400
                           ">
 
-                            Sesiones
+                                Sesiones
 
-                          </span>
+                              </span>
 
-                          <span className="
+                              <span className="
                             font-bold
 
                             text-slate-700
                           ">
 
-                            {
+                                {
 
-                              t.sesiones_completadas
+                                  t.sesiones_completadas
 
-                            }
+                                }
 
-                            /
+                                /
 
-                            {
+                                {
 
-                              t.sesiones_totales
+                                  t.sesiones_totales
 
-                            }
+                                }
 
-                          </span>
+                              </span>
 
-                        </div>
+                            </div>
 
-                        <div className="
+                            <div className="
                           flex
                           items-center
                           justify-between
                         ">
 
-                          <span className="
+                              <span className="
                             text-slate-400
                           ">
 
-                            Balance
+                                Balance
 
-                          </span>
+                              </span>
 
-                          <span className="
+                              <span className="
                             font-black
 
                             text-sky-800
                           ">
 
-                            RD$
+                                RD$
 
-                            {
+                                {
 
-                              Number(t.costo || 0)
+                                  Number(t.costo || 0)
 
-                              -
+                                  -
 
-                              Number(t.pagado || 0)
+                                  Number(t.pagado || 0)
 
-                            }
+                                }
 
-                          </span>
+                              </span>
 
-                        </div>
+                            </div>
 
-                      </div>
+                          </div>
 
-                      {/* PROGRESS */}
+                          {/* PROGRESS */}
 
-                      <div className="
+                          <div className="
                         mt-6
                       ">
 
-                        <div className="
+                            <div className="
                           h-3
 
                           rounded-full
@@ -717,24 +761,24 @@ hover:shadow-[0_25px_60px_rgba(7,89,133,0.12)]
                           overflow-hidden
                         ">
 
-                          <div
+                              <div
 
-                            style={{
-                              width: `${(
+                                style={{
+                                  width: `${(
 
-                                (
-                                  t.sesiones_completadas
+                                    (
+                                      t.sesiones_completadas
 
-                                  /
+                                      /
 
-                                  t.sesiones_totales
+                                      t.sesiones_totales
 
-                                ) * 100
+                                    ) * 100
 
-                              )}%`
-                            }}
+                                  )}%`
+                                }}
 
-                            className="
+                                className="
                               h-full
 
                               rounded-full
@@ -748,19 +792,26 @@ to-sky-800
 
 
                             "
-                          />
+                              />
+
+                            </div>
+
+                          </div>
 
                         </div>
 
-                      </div>
+                      ))
 
-                    </div>
+                    }
 
-                  ))
+                  </div>
 
-                }
+                </div>
 
               </div>
+
+
+
 
             )
 
@@ -1170,29 +1221,48 @@ border-sky-100
       }
       {/* TIMELINE */}
 
-      <div className="
-        relative
-        z-10
 
-        mt-8
-      ">
+      <div className="
+  relative
+  z-10
+
+  shrink-0
+
+  rounded-[34px]
+
+  bg-white
+
+  border
+  border-slate-200/70
+
+  p-5
+
+  max-h-[360px]
+
+  overflow-hidden
+">
+
+
 
         <div className="
-          flex
-          items-center
-          gap-2
+    flex
+    items-center
+    gap-2
 
-          mb-5
+    mb-5
 
-          text-slate-500
+    text-slate-500
 
-          text-xs
-          font-black
+    text-xs
+    font-black
 
-          uppercase
+    uppercase
 
-          tracking-[0.12em]
-        ">
+    tracking-[0.12em]
+
+    shrink-0
+  ">
+
 
           <MoreVertical
             size={14}
@@ -1202,14 +1272,27 @@ border-sky-100
 
         </div>
 
-        <TratamientoTimeline
+        <div className="
+    max-h-[270px]
 
-          events={
-            timelineEvents
-          }
+    overflow-y-auto
+    overflow-x-hidden
 
-        />
+    pr-2
 
+    scrollbar-thin
+    scrollbar-thumb-sky-200/80
+    scrollbar-track-transparent
+  ">
+
+          <TratamientoTimeline
+
+            events={
+              timelineEvents
+            }
+
+          />
+        </div>
       </div>
     </div>
 

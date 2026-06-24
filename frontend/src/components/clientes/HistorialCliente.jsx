@@ -199,22 +199,38 @@ SORT HISTORIAL
 
 
 
-  return (
 
-    <div className="
-      space-y-6
-    ">
+return (
+
+  <div className="
+    w-full
+
+    h-[calc(100vh-260px)]
+    min-h-[560px]
+    max-h-[950px]
+
+    flex
+    flex-col
+
+    space-y-6
+  ">
+
+
 
 
       {/* HEADER */}
 
-      <div className="
-        flex
-        items-center
-        justify-between
+     
+<div className="
+  flex
+  items-center
+  justify-between
 
-        gap-4
-      ">
+  gap-4
+
+  shrink-0
+">
+
 
         <div>
 
@@ -243,7 +259,7 @@ text-sky-800
 
             <Sparkles size={13} />
 
-            Historial clínico
+            Nota clínica
 
           </div>
 
@@ -295,24 +311,26 @@ text-sky-800
 
       {/* LIST */}
 
+
       <div className="
-        flex-1
+  w-full
 
-        min-h-0
+  flex-1
+  min-h-0
 
-        max-h-[500px]
+  h-full
 
-        overflow-y-auto
-        overflow-x-hidden
+  overflow-y-auto
+  overflow-x-hidden
 
-        pr-2
+  pr-2
 
-        space-y-4
+  space-y-4
 
-        scrollbar-thin
-        scrollbar-thumb-sky-200/70
-        scrollbar-track-transparent
-      ">
+  scrollbar-thin
+  scrollbar-thumb-sky-200/70
+  scrollbar-track-transparent
+">
 
         {(!historial || historial.length === 0) ? (
 
@@ -388,57 +406,64 @@ to-sky-900
             <div
               key={h.id}
               className="
-                group
+     
+group
 
-                relative
+  relative
 
-                flex
-                gap-4
-              "
+  grid
+  grid-cols-[28px_minmax(0,1fr)]
+
+  gap-4
+
+  w-full
+  max-w-full
+
+    "
             >
 
               {/* TIMELINE */}
 
               <div className="
-                relative
+      relative
 
-                flex
-                flex-col
+      flex
+      flex-col
 
-                items-center
-              ">
+      items-center
+
+      pt-2
+    ">
 
                 <div className={`
-                  w-4
-                  h-4
+        w-4
+        h-4
 
-                  rounded-full
+        rounded-full
 
-                  border-4
-                  border-white
+        border-4
+        border-white
 
-                  shadow-md
+        shadow-md
 
-                  z-10
+        z-10
 
-                  
-${index === 0
+        ${index === 0
                     ? "bg-sky-700"
                     : "bg-slate-300"}
+      `} />
 
-                `} />
-
-                {index !== historial.length - 1 && (
+                {index !== historialOrdenado.length - 1 && (
 
                   <div className="
-                    w-[3px]
+          w-[3px]
 
-                    flex-1
+          flex-1
 
-                    bg-slate-200
+          bg-slate-200
 
-                    min-h-[80px]
-                  " />
+          min-h-[96px]
+        " />
 
                 )}
 
@@ -447,48 +472,62 @@ ${index === 0
               {/* CARD */}
 
               <div
-                onClick={() => setNotaSeleccionada(h)}
+                onClick={() =>
+                  setNotaSeleccionada(h)
+                }
+
                 className={`
-    relative
-    flex-1
-    cursor-pointer
-    bg-white
-    border
-    rounded-[30px]
-    p-5
-    transition-all
-    duration-300
+  relative
 
-    ${index === 0
+  w-full
+  max-w-full
+  min-w-0
+
+  cursor-pointer
+
+        border
+
+        rounded-[30px]
+
+        p-5
+        sm:p-6
+
+        transition-all
+        duration-300
+
+        ${index === 0
                     ? `
-        
-border-sky-200
-shadow-[0_18px_40px_rgba(7,89,133,0.12)]
-bg-sky-50/50
+            bg-sky-50/50
 
-        scale-[1.01]
-      `
+            border-sky-200
+
+            shadow-[0_18px_40px_rgba(7,89,133,0.12)]
+          `
                     : `
-        border-slate-200/80
-        shadow-[0_10px_30px_rgba(0,0,0,0.04)]
-        hover:-translate-y-[2px]
-       
-hover:border-sky-200
-hover:shadow-[0_18px_40px_rgba(7,89,133,0.08)]
+            bg-white
 
-      `
+            border-slate-200/80
+
+            shadow-[0_10px_30px_rgba(0,0,0,0.04)]
+
+            hover:-translate-y-[2px]
+
+            hover:border-sky-200
+
+            hover:shadow-[0_18px_40px_rgba(7,89,133,0.08)]
+          `
                   }
-  `}
+      `}
               >
-
 
                 {/* ACTIONS */}
 
                 <div className="
-                  absolute
-                  top-4
-                  right-4
-                ">
+        absolute
+        top-4
+        right-4
+        z-20
+      ">
 
                   <button
                     onClick={(e) => {
@@ -503,35 +542,32 @@ hover:shadow-[0_18px_40px_rgba(7,89,133,0.08)]
 
                     }}
                     className="
-                      opacity-0
+            opacity-0
 
-                      group-hover:opacity-100
+            group-hover:opacity-100
 
-                      w-9
-                      h-9
+            w-9
+            h-9
 
-                      rounded-[14px]
+            rounded-[14px]
 
-                      bg-white
+            bg-white
 
-                      border
-                      border-slate-200
+            border
+            border-slate-200
 
-                      text-slate-500
+            text-slate-500
 
-                      
-hover:text-sky-800
+            hover:text-sky-800
+            hover:border-sky-200
 
-hover:border-sky-200
+            transition-all
+            duration-300
 
-
-                      transition-all
-                      duration-300
-
-                      flex
-                      items-center
-                      justify-center
-                    "
+            flex
+            items-center
+            justify-center
+          "
                   >
 
                     <MoreHorizontal size={16} />
@@ -543,25 +579,25 @@ hover:border-sky-200
                   {menuAbierto === h.id && (
 
                     <div className="
-                      absolute
-                      top-11
-                      right-0
+            absolute
+            top-11
+            right-0
 
-                      z-20
+            z-30
 
-                      w-44
+            w-44
 
-                      bg-white
+            bg-white
 
-                      border
-                      border-slate-200
+            border
+            border-slate-200
 
-                      rounded-[22px]
+            rounded-[22px]
 
-                      overflow-hidden
+            overflow-hidden
 
-                      shadow-[0_20px_50px_rgba(0,0,0,0.12)]
-                    ">
+            shadow-[0_20px_50px_rgba(0,0,0,0.12)]
+          ">
 
                       <button
                         onClick={(e) => {
@@ -578,25 +614,25 @@ hover:border-sky-200
 
                         }}
                         className="
-                          w-full
+                w-full
 
-                          px-4
-                          py-3
+                px-4
+                py-3
 
-                          flex
-                          items-center
-                          gap-3
+                flex
+                items-center
+                gap-3
 
-                          text-sm
-                          font-medium
+                text-sm
+                font-medium
 
-                          text-slate-700
+                text-slate-700
 
-                          hover:bg-sky-50
+                hover:bg-sky-50
 
-                          transition-all
-                          duration-200
-                        "
+                transition-all
+                duration-200
+              "
                       >
 
                         <Pencil size={16} />
@@ -616,25 +652,25 @@ hover:border-sky-200
 
                         }}
                         className="
-                          w-full
+                w-full
 
-                          px-4
-                          py-3
+                px-4
+                py-3
 
-                          flex
-                          items-center
-                          gap-3
+                flex
+                items-center
+                gap-3
 
-                          text-sm
-                          font-medium
+                text-sm
+                font-medium
 
-                          text-rose-500
+                text-rose-500
 
-                          hover:bg-rose-50
+                hover:bg-rose-50
 
-                          transition-all
-                          duration-200
-                        "
+                transition-all
+                duration-200
+              "
                       >
 
                         <Trash2 size={16} />
@@ -654,31 +690,29 @@ hover:border-sky-200
                 {index === 0 && (
 
                   <div className="
-                    inline-flex
+          inline-flex
 
-                    items-center
-                    gap-2
+          items-center
+          gap-2
 
-                    px-3
-                    py-1.5
+          px-3
+          py-1.5
 
-                    rounded-full
+          rounded-full
 
-                    
-bg-gradient-to-r
-from-sky-500/10
-to-cyan-500/10
+          bg-gradient-to-r
+          from-sky-500/10
+          to-cyan-500/10
 
-text-sky-800
+          text-sky-800
 
+          text-[11px]
+          font-black
 
-                    text-[11px]
-                    font-black
-
-                    mb-4
-                  ">
-
-                    ✨ Nota reciente
+          mb-4
+        ">
+                    <Sparkles size={13} />
+                    Nota reciente
 
                   </div>
 
@@ -687,30 +721,30 @@ text-sky-800
                 {/* CONTENT */}
 
                 <p className="
-                  text-sm
-                  sm:text-base
+        text-sm
+        sm:text-base
 
-                  leading-relaxed
+        leading-relaxed
 
-                  text-slate-700
+        text-slate-700
 
-                  break-words
+        break-words
 
-                  pr-10
-                ">
+        pr-12
+      ">
 
                   {cortarTexto(h.descripcion)}
 
                   {h.descripcion?.length > 120 && (
 
                     <span className="
-                      ml-2
+            ml-2
 
-                      text-sky-700
+            text-sky-700
 
-                      text-sm
-                      font-semibold
-                    ">
+            text-sm
+            font-semibold
+          ">
 
                       ver más
 
@@ -723,27 +757,30 @@ text-sky-800
                 {/* FOOTER */}
 
                 <div className="
-                  mt-5
+        mt-5
 
-                  flex
-                  items-center
-                  justify-between
+        flex
+        flex-col
+        sm:flex-row
 
-                  gap-3
-                ">
+        sm:items-center
+        sm:justify-between
+
+        gap-3
+      ">
 
                   <div className="
-                    inline-flex
+          inline-flex
 
-                    items-center
-                    gap-2
+          items-center
+          gap-2
 
-                    text-sm
+          text-sm
 
-                    text-slate-400
+          text-slate-400
 
-                    font-medium
-                  ">
+          font-medium
+        ">
 
                     <CalendarDays size={14} />
 
@@ -752,23 +789,25 @@ text-sky-800
                   </div>
 
                   <div className="
-                    inline-flex
+          inline-flex
 
-                    items-center
-                    gap-2
+          items-center
+          gap-2
 
-                    px-3
-                    py-1.5
+          w-fit
 
-                    rounded-full
+          px-3
+          py-1.5
 
-                    bg-emerald-50
+          rounded-full
 
-                    text-emerald-600
+          bg-emerald-50
 
-                    text-[11px]
-                    font-bold
-                  ">
+          text-emerald-600
+
+          text-[11px]
+          font-bold
+        ">
 
                     <AlertCircle size={12} />
 
@@ -808,13 +847,17 @@ text-sky-800
 
             {/* HEADER */}
 
-            <div className="
-              flex
-              items-start
-              justify-between
+            
+<div className="
+  flex
+  items-center
+  justify-between
 
-              gap-4
-            ">
+  gap-4
+
+  shrink-0
+">
+
 
               <div>
 

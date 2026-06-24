@@ -3,7 +3,7 @@ from fastapi import (
     Depends,
     HTTPException
 )
-
+from utils.actividad import registrar_actividad
 from sqlalchemy.orm import Session
 
 import models
@@ -34,6 +34,21 @@ def crear_egreso(
     )
 
     db.add(egreso)
+
+    db.flush()
+
+    registrar_actividad(
+        db=db,
+        tipo="egreso",
+        accion="crear",
+        titulo="Egreso registrado",
+        descripcion=(
+            f"{egreso.descripcion} · "
+            f"RD$ {egreso.monto}"
+        ),
+        referencia_id=egreso.id,
+        usuario="Sistema"
+    )
 
     db.commit()
 
@@ -76,6 +91,25 @@ def eliminar_egreso(
             "Egreso no encontrado ❌"
         )
 
+    descripcion_egreso = egreso.descripcion
+
+    monto_egreso = egreso.monto
+
+    egreso_id = egreso.id
+
+    registrar_actividad(
+        db=db,
+        tipo="egreso",
+        accion="eliminar",
+        titulo="Egreso eliminado",
+        descripcion=(
+            f"{descripcion_egreso} · "
+            f"RD$ {monto_egreso}"
+        ),
+        referencia_id=egreso_id,
+        usuario="Sistema"
+    )
+
     db.delete(egreso)
 
     db.commit()
@@ -83,6 +117,7 @@ def eliminar_egreso(
     return {
         "message": "Egreso eliminado ✅"
     }
+
 
     
 @router.put("/{id}", response_model=Egreso)
@@ -110,6 +145,19 @@ def actualizar_egreso(
     egreso.monto = data.monto
     egreso.metodo_pago = data.metodo_pago
     egreso.observacion = data.observacion
+
+    registrar_actividad(
+        db=db,
+        tipo="egreso",
+        accion="actualizar",
+        titulo="Egreso actualizado",
+        descripcion=(
+            f"{egreso.descripcion} · "
+            f"RD$ {egreso.monto}"
+        ),
+        referencia_id=egreso.id,
+        usuario="Sistema"
+    )
 
     db.commit()
 

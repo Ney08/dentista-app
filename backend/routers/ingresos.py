@@ -36,7 +36,7 @@ router = APIRouter(
 
 )
 
-
+from utils.actividad import registrar_actividad
 
 @router.post("/")
 
@@ -125,7 +125,15 @@ def crear_ingreso(
                 ingreso_id=ingreso.id
 
         )
-
+        registrar_actividad(
+            db=db,
+            tipo="factura",
+            accion="crear",
+            titulo="Factura creada",
+            descripcion=f"Factura #{ingreso.id}",
+            referencia_id=ingreso.id
+        )
+        
         db.add(servicio)
 
         db.commit()
@@ -439,7 +447,14 @@ def actualizar_ingreso(
         )
 
         db.add(nuevo)
-
+    registrar_actividad(
+        db=db,
+        tipo="factura",
+        accion="editar",
+        titulo="Factura actualizada",
+        descripcion=f"Factura #{ingreso.id}",
+        referencia_id=ingreso.id
+    )
     db.commit()
 
     db.refresh(ingreso)
@@ -682,6 +697,16 @@ def marcar_pagado(
                 tratamiento.estado = (
                     "En progreso"
                 )
+
+    
+    registrar_actividad(
+        db=db,
+        tipo="factura",
+        accion="pagar",
+        titulo="Factura pagada",
+        descripcion=f"Factura #{ingreso.id}",
+        referencia_id=ingreso.id
+    )
 
     db.commit()
 

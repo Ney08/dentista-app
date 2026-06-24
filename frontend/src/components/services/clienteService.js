@@ -1,71 +1,162 @@
 import { API_URL } from "../../config";
 
-// ✅ helper para manejar errores
+import {
+  authHeaders
+} from "../../utils/authHeaders";
+
+/*
+==========================================
+HELPER PARA MANEJAR RESPUESTAS
+==========================================
+*/
+
 const handleResponse = async (res) => {
+
   let data = {};
 
   try {
+
     data = await res.json();
+
   } catch {}
 
   if (!res.ok) {
-    throw new Error(data?.detail || "Error en la petición ❌");
+
+    if (res.status === 401) {
+
+      throw new Error(
+        "Sesión expirada o no autorizada 🔐"
+      );
+
+    }
+
+    throw new Error(
+      data?.detail ||
+      "Error en la petición ❌"
+    );
+
   }
 
   return data;
+
 };
 
-// ✅ GET (🔥 ahora dinámico)
-export const getClientes = async (activos = true) => {
+/*
+==========================================
+GET CLIENTES
+==========================================
+*/
+
+export const getClientes = async (
+  activos = true
+) => {
+
   const res = await fetch(
-    `${API_URL}/clientes?activos=${activos}`
+    `${API_URL}/clientes/?activos=${activos}`,
+    {
+      method: "GET",
+
+      headers:
+        authHeaders()
+    }
   );
-  return handleResponse(res);
+
+  return handleResponse(
+    res
+  );
+
 };
 
-// ✅ CREATE
-export const crearCliente = async (data) => {
-  const res = await fetch(`${API_URL}/clientes/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  });
+/*
+==========================================
+CREAR CLIENTE
+==========================================
+*/
 
-  return handleResponse(res);
+export const crearCliente = async (
+  data
+) => {
+
+  const res = await fetch(
+    `${API_URL}/clientes/`,
+    {
+      method: "POST",
+
+      headers:
+        authHeaders(),
+
+      body:
+        JSON.stringify(
+          data
+        )
+    }
+  );
+
+  return handleResponse(
+    res
+  );
+
 };
 
-// ✅ UPDATE
-export const actualizarCliente = async (id, data) => {
-  const res = await fetch(`${API_URL}/clientes/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  });
+/*
+==========================================
+ACTUALIZAR CLIENTE
+==========================================
+*/
 
-  return handleResponse(res);
+export const actualizarCliente = async (
+  id,
+  data
+) => {
+
+  const res = await fetch(
+    `${API_URL}/clientes/${id}`,
+    {
+      method: "PUT",
+
+      headers:
+        authHeaders(),
+
+      body:
+        JSON.stringify(
+          data
+        )
+    }
+  );
+
+  return handleResponse(
+    res
+  );
+
 };
 
-// ✅ TOGGLE ACTIVO 🔥 (NUEVO)
-export const toggleCliente = async (cliente) => {
+/*
+==========================================
+ACTIVAR / DESACTIVAR CLIENTE
+==========================================
+*/
 
-  const endpoint = cliente.activo
-    ? "desactivar"
-    : "activar";
+export const toggleCliente = async (
+  cliente
+) => {
+
+  const endpoint =
+    cliente.activo
+      ? "desactivar"
+      : "activar";
 
   const res = await fetch(
     `${API_URL}/clientes/${cliente.id}/${endpoint}`,
     {
-      method: "PUT"
+      method: "PUT",
+
+      headers:
+        authHeaders()
     }
   );
 
-  if (!res.ok) {
-    throw new Error("Error al cambiar estado del cliente");
-  }
+  return handleResponse(
+    res
+  );
 
-  return res.json();
 };

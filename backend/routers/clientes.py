@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
-
+from utils.actividad import registrar_actividad
 from database import get_db
-
+from security import get_current_user
 import models
 
 from schemas import ClienteCreate, Cliente
@@ -60,7 +60,23 @@ def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
     )
 
     db.add(direccion)
+
+    registrar_actividad(
+        db=db,
+        tipo="cliente",
+        accion="crear",
+        titulo="Paciente registrado",
+        descripcion=(
+            f"{nuevo_cliente.nombre} "
+            f"{nuevo_cliente.apellido}"
+        ),
+        referencia_id=nuevo_cliente.id,
+        usuario="Sistema"
+    )
+
     db.commit()
+
+    db.refresh(nuevo_cliente)
 
     return nuevo_cliente
 
@@ -102,12 +118,12 @@ def actualizar_cliente(cliente_id: int, data: ClienteCreate, db: Session = Depen
     if not cliente:
         raise HTTPException(404, "Cliente no encontrado ❌")
 
-    # ✅ actualizar cliente
+    # actualizar cliente
     cliente.nombre = data.nombre
     cliente.apellido = data.apellido
     cliente.telefono = data.telefono
     cliente.activo = True
-    # ✅ actualizar dirección
+    # actualizar dirección
     direccion = db.query(models.Direccion).filter(
         models.Direccion.cliente_id == cliente_id
     ).first()
@@ -138,6 +154,19 @@ def actualizar_cliente(cliente_id: int, data: ClienteCreate, db: Session = Depen
             cliente_id=cliente_id
         )
         db.add(direccion)
+    
+    registrar_actividad(
+        db=db,
+        tipo="cliente",
+        accion="actualizar",
+        titulo="Paciente actualizado",
+        descripcion=(
+            f"{cliente.nombre} "
+            f"{cliente.apellido}"
+        ),
+        referencia_id=cliente.id,
+        usuario="Sistema"
+    )
 
     db.commit()
     db.refresh(cliente)
@@ -156,6 +185,19 @@ def desactivar_cliente(cliente_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "Cliente no encontrado")
 
     cliente.activo = False
+    
+    registrar_actividad(
+        db=db,
+        tipo="cliente",
+        accion="desactivar",
+        titulo="Paciente desactivado",
+        descripcion=(
+            f"{cliente.nombre} "
+            f"{cliente.apellido}"
+        ),
+        referencia_id=cliente.id,
+        usuario="Sistema"
+    )
 
     db.commit()
     db.refresh(cliente)
@@ -175,6 +217,19 @@ def activar_cliente(cliente_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "Cliente no encontrado")
     
     cliente.activo = True
+    
+    registrar_actividad(
+        db=db,
+        tipo="cliente",
+        accion="activar",
+        titulo="Paciente reactivado",
+        descripcion=(
+            f"{cliente.nombre} "
+            f"{cliente.apellido}"
+        ),
+        referencia_id=cliente.id,
+        usuario="Sistema"
+    )
 
     db.commit()
     db.refresh(cliente)

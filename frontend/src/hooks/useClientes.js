@@ -1,69 +1,160 @@
-import { API_URL } from "../config";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient
+} from "@tanstack/react-query";
+
 import {
   getClientes,
   crearCliente,
-  actualizarCliente
+  actualizarCliente,
+  toggleCliente
 } from "../components/services/clienteService";
 
-export const useClientes = (activos = true) => {
+export const useClientes = (
+  activos = true
+) => {
 
-  const queryClient = useQueryClient();
+  /*
+  ==========================================
+  QUERY CLIENT
+  ==========================================
+  */
+
+  const queryClient =
+    useQueryClient();
+
+  /*
+  ==========================================
+  GET CLIENTES
+  ==========================================
+  */
 
   const {
     data: clientes = [],
-    isLoading
+    isLoading,
+    isError,
+    error
   } = useQuery({
-    queryKey: ["clientes", activos], 
-    queryFn: () => getClientes(activos),
-    staleTime: 1000 * 60
+
+    queryKey:
+      [
+        "clientes",
+        activos
+      ],
+
+    queryFn:
+      () =>
+        getClientes(
+          activos
+        ),
+
+    staleTime:
+      1000 * 60
+
   });
 
-  const crearClienteMutation = useMutation({
-    mutationFn: crearCliente,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clientes"] });
-    }
-  });
+  /*
+  ==========================================
+  CREAR CLIENTE
+  ==========================================
+  */
 
-  const toggleClienteMutation = useMutation({
-    mutationFn: async (cliente) => {
+  const crearClienteMutation =
+    useMutation({
 
-      const endpoint = cliente.activo
-        ? "desactivar"
-        : "activar";
+      mutationFn:
+        crearCliente,
 
-      const res = await fetch(
-        `${API_URL}/clientes/${cliente.id}/${endpoint}`,
-        { method: "PUT" }
-      );
+      onSuccess:
+        () => {
 
-      if (!res.ok) {
-        throw new Error("Error al cambiar estado");
-      }
+          queryClient.invalidateQueries({
+            queryKey: ["clientes"]
+          });
 
-      return res.json();
-    },
+        }
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clientes"] });
-    }
-  });
+    });
 
-  const editarClienteMutation = useMutation({
-    mutationFn: async ({ id, data }) => {
-      return await actualizarCliente(id, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clientes"] });
-    }
-  });
+  /*
+  ==========================================
+  EDITAR CLIENTE
+  ==========================================
+  */
+
+  const editarClienteMutation =
+    useMutation({
+
+      mutationFn:
+        ({
+          id,
+          data
+        }) =>
+          actualizarCliente(
+            id,
+            data
+          ),
+
+      onSuccess:
+        () => {
+
+          queryClient.invalidateQueries({
+            queryKey: ["clientes"]
+          });
+
+        }
+
+    });
+
+  /*
+  ==========================================
+  ACTIVAR / DESACTIVAR CLIENTE
+  ==========================================
+  */
+
+  const toggleClienteMutation =
+    useMutation({
+
+      mutationFn:
+        toggleCliente,
+
+      onSuccess:
+        () => {
+
+          queryClient.invalidateQueries({
+            queryKey: ["clientes"]
+          });
+
+        }
+
+    });
+
+  /*
+  ==========================================
+  RETURN
+  ==========================================
+  */
 
   return {
+
     clientes,
+
     isLoading,
-    crearCliente: crearClienteMutation,
-    editarCliente: editarClienteMutation,
-    toggleCliente: toggleClienteMutation
+
+    isError,
+
+    error,
+
+    crearCliente:
+      crearClienteMutation,
+
+    editarCliente:
+      editarClienteMutation,
+
+    toggleCliente:
+      toggleClienteMutation
+
   };
+
 };

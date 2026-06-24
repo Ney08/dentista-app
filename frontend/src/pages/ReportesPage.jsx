@@ -30,6 +30,8 @@ import SkeletonLoader from "../components/SkeletonLoader";
 import { generarReporte } from "../utils/pdfReporte";
 import { exportToExcel } from "../utils/exportExcel";
 
+import GraficoIngresos from "../components/graficos/GraficoIngresos";
+
 import {
   parseFechaLocal
 } from "../utils/fecha";
@@ -2125,7 +2127,7 @@ to-sky-900
       ">
 
                   <div>
-
+                  
                     <p className="
             text-lg
 
@@ -2185,7 +2187,42 @@ to-sky-900
                 </div>
 
               </div>
+              {/* GRAFICA FINANCIERA */}
 
+<div className="
+  mt-8
+
+  pt-6
+
+  border-t
+  border-slate-100
+">
+
+  <div className="
+    rounded-[30px]
+
+    bg-gradient-to-br
+    from-white
+    via-slate-50/70
+    to-sky-50/50
+
+    border
+    border-slate-200/70
+
+    p-5
+
+    shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]
+  ">
+
+    <GraficoIngresos
+      ingresos={ingresosFiltrados}
+      egresos={egresosFiltrados}
+      utilidadNeta={utilidadNeta}
+    />
+
+  </div>
+
+</div>        
             </div>
 
             {/* SIDE ANALYTICS */}

@@ -321,8 +321,8 @@ inflamación y sensibilidad...
               items-center
               gap-2
 
-              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
-               shadow-[0_15px_35px_rgba(7,89,133,0.25)]     
+              
+              shadow-[0_15px_35px_rgba(7,89,133,0.25)]     
               transition-all
               duration-300
 

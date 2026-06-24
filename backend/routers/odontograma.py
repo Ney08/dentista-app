@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from sqlalchemy.orm.attributes import flag_modified
+import models
+from security import get_current_user
 from database import get_db
 
 from models.odontograma import Odontograma
@@ -9,10 +11,37 @@ from schemas.odontograma import (
     OdontogramaPayload
 )
 
+from utils.actividad import registrar_actividad
+
+
 router = APIRouter(
     prefix="/odontograma",
-    tags=["Odontograma"]
+    tags=["Odontograma"],
+    # dependencies=[
+    #         Depends(get_current_user)
+    #     ]
 )
+
+
+def nombre_cliente_por_id(
+    db: Session,
+    cliente_id: int
+):
+
+    cliente = (
+        db.query(models.Cliente)
+        .filter(models.Cliente.id == cliente_id)
+        .first()
+    )
+
+    if cliente:
+
+        return (
+            f"{cliente.nombre} "
+            f"{cliente.apellido}"
+        )
+
+    return f"Cliente #{cliente_id}"
 
 
 @router.get("/{cliente_id}")
@@ -63,39 +92,67 @@ def save_odontograma(
 
         )
 
- 
+        odontograma_anterior = (
+            odontograma.odontograma
+            if odontograma and odontograma.odontograma
+            else {}
+        )
 
-        data = {
+        data = {}
 
-            tooth: {
+        for tooth, face in payload.odontograma.items():
 
-                "top": face.top,
+            pieza_anterior = (
+                odontograma_anterior.get(
+                    tooth,
+                    {}
+                )
+            )
 
-                "left": face.left,
+            meta_anterior = (
+                pieza_anterior.get(
+                    "meta",
+                    {}
+                )
+            )
 
-                "center": face.center,
+            data[tooth] = {
 
-                "right": face.right,
+                "top":
+                    face.top,
 
-                "bottom": face.bottom
+                "left":
+                    face.left,
+
+                "center":
+                    face.center,
+
+                "right":
+                    face.right,
+
+                "bottom":
+                    face.bottom,
+
+                "meta":
+                    meta_anterior
 
             }
 
-            for tooth, face
-
-            in payload.odontograma.items()
-
-        }
-
-   
+        es_nuevo = False
 
         if odontograma:
 
             odontograma.odontograma = data
+            
+            flag_modified(
+                    odontograma,
+                    "odontograma"
+                )
 
-  
 
         else:
+
+            es_nuevo = True
 
             odontograma = Odontograma(
 
@@ -106,6 +163,28 @@ def save_odontograma(
             )
 
             db.add(odontograma)
+
+            db.flush()
+
+        registrar_actividad(
+            db=db,
+            tipo="odontograma",
+            accion=(
+                "crear"
+                if es_nuevo
+                else "actualizar"
+            ),
+            titulo=(
+                "Odontograma creado"
+                if es_nuevo
+                else "Odontograma actualizado"
+            ),
+            descripcion=(
+                f"{nombre_cliente_por_id(db, cliente_id)}"
+            ),
+            referencia_id=cliente_id,
+            usuario="Sistema"
+        )
 
         db.commit()
 
@@ -125,19 +204,7 @@ def save_odontograma(
         print(e)
 
         raise e
-    
-    
-    
-    
-    
-    
 
-
-"""
-==========================================
-DELETE
-==========================================
-"""
 
 @router.delete("/{cliente_id}")
 def delete_odontograma(
@@ -170,6 +237,18 @@ def delete_odontograma(
             detail="Odontograma no encontrado"
 
         )
+
+    registrar_actividad(
+        db=db,
+        tipo="odontograma",
+        accion="eliminar",
+        titulo="Odontograma eliminado",
+        descripcion=(
+            f"{nombre_cliente_por_id(db, cliente_id)}"
+        ),
+        referencia_id=cliente_id,
+        usuario="Sistema"
+    )
 
     db.delete(odontograma)
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -502,21 +502,21 @@ text-3xl
 
         text-slate-500
       ">
-        Gestión clínica inteligente
-      </p>
+                  Gestión clínica inteligente
+                </p>
 
-    </div>
+              </div>
 
-  </div>
+            </div>
 
-  <div className="
+            <div className="
     
 space-y-4
   mt-2
 
   ">
 
-    <h1 className="
+              <h1 className="
       text-3xl
       sm:text-4xl
 
@@ -526,10 +526,10 @@ space-y-4
 
       text-slate-800
     ">
-      Acceso seguro
-    </h1>
+                Acceso seguro
+              </h1>
 
-    <div className="
+              <div className="
       w-20
       h-1
 
@@ -542,18 +542,18 @@ space-y-4
       to-sky-800
     " />
 
-    <p className="
+              <p className="
       text-sm
       sm:text-base
 
       text-slate-500
     ">
-      Ingresa a tu sistema clínico
-    </p>
+                Ingresa a tu sistema clínico
+              </p>
 
-  </div>
+            </div>
 
-</div>
+          </div>
 
           {/* FORM */}
 
@@ -1106,53 +1106,41 @@ space-y-4
                   )
                 }
 
-                className={`
-                  w-full
+                className="
+    w-full
 
-                  h-14
+    h-14
 
-                  px-5
+    px-5
 
-                  rounded-[22px]
+    rounded-[22px]
 
-                  bg-white
+    bg-white
 
-                  border
+    border
+    border-slate-200
 
-                  text-slate-700
+    hover:border-sky-300
 
-                  shadow-sm
+    text-slate-700
 
-                  focus:outline-none
+    shadow-sm
 
-                  transition-all
-                  duration-300
+    focus:outline-none
 
-                  ${claveSeguridad &&
-                    !claveValida
-                    ? `
-                      border-red-400
+    focus:ring-4
+    focus:ring-sky-500/10
 
-                      focus:ring-4
-                      focus:ring-red-500/10
-                    `
-                    : `
-                      border-slate-200
+    focus:border-sky-300
 
-                      hover:border-sky-300
-
-                      focus:ring-4
-                      focus:ring-sky-500/10
-
-                      focus:border-sky-300
-                    `
-                  }
-                `}
+    transition-all
+    duration-300
+  "
               />
 
               {/* ERROR */}
 
-              {claveSeguridad &&
+              {/* {claveSeguridad &&
                 !claveValida && (
 
                   <p className="
@@ -1262,49 +1250,50 @@ space-y-4
                   }
 
                   disabled={
-                    !claveValida ||
-                    nuevaPassword.length < 4 ||
+                    !claveSeguridad.trim() ||
+                    nuevaPassword.trim().length < 8 ||
                     loading
                   }
 
                   className={`
-                    flex-1
+    flex-1
 
-                    h-14
+    h-14
 
-                    rounded-[24px]
+    rounded-[24px]
 
-                    text-white
+    text-white
 
-                    font-black
+    font-black
 
-                    transition-all
-                    duration-300
+    transition-all
+    duration-300
 
-                    active:scale-[0.98]
+    active:scale-[0.98]
 
-                    ${claveValida &&
-                      nuevaPassword.length >= 4 &&
+    ${claveSeguridad.trim() &&
+                      nuevaPassword.trim().length >= 8 &&
                       !loading
+
                       ? `
-                        bg-gradient-to-r
-                        from-emerald-500
-                        via-green-500
-                        to-emerald-600
+        bg-gradient-to-r
+        from-emerald-500
+        via-green-500
+        to-emerald-600
 
-                        shadow-[0_15px_35px_rgba(16,185,129,0.28)]
+        shadow-[0_15px_35px_rgba(16,185,129,0.28)]
 
-                        hover:scale-[1.01]
+        hover:scale-[1.01]
 
-                        hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
-                      `
+        hover:shadow-[0_20px_45px_rgba(16,185,129,0.35)]
+      `
                       : `
-                        bg-gray-400
+        bg-gray-400
 
-                        cursor-not-allowed
-                      `
+        cursor-not-allowed
+      `
                     }
-                  `}
+  `}
                 >
 
                   {loading

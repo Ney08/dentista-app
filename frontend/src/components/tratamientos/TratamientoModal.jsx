@@ -4,13 +4,9 @@ import {
 } from "react";
 
 import {
-
   X,
-
   Save,
-
   Loader2
-
 } from "lucide-react";
 
 import BaseModal
@@ -20,11 +16,8 @@ import { API_URL }
   from "../../config";
 
 import {
-
   showSuccess,
-
   showError
-
 } from "../ui/ToastStyles";
 
 function TratamientoModal({
@@ -43,28 +36,33 @@ function TratamientoModal({
   ==========================================
   */
 
+
+
   const [
-
     servicios,
-
     setServicios
-
   ] = useState([]);
 
   const [
+    odontograma,
+    setOdontograma
+  ] = useState({});
 
+
+  const [
+    tratamientos,
+    setTratamientos
+  ] = useState([]);
+
+
+  const [
     loading,
-
     setLoading
-
   ] = useState(false);
 
   const [
-
     form,
-
     setForm
-
   ] = useState({
 
     servicio_id: "",
@@ -84,34 +82,192 @@ function TratamientoModal({
     notas: ""
 
   });
+  const piezasBase = [
+    "18", "17", "16", "15", "14", "13", "12", "11",
+    "21", "22", "23", "24", "25", "26", "27", "28",
+    "48", "47", "46", "45", "44", "43", "42", "41",
+    "31", "32", "33", "34", "35", "36", "37", "38"
+  ];
 
+  const piezaTieneRegistro = (numero) => {
+
+    const pieza =
+      odontograma?.[numero];
+
+    if (!pieza) {
+      return false;
+    }
+
+    return Boolean(
+      pieza.top ||
+      pieza.left ||
+      pieza.center ||
+      pieza.right ||
+      pieza.bottom ||
+      pieza?.meta?.tratamiento_completado
+    );
+
+  };
+
+  const servicioSeleccionado =
+    servicios.find(
+      (s) =>
+        String(s.id) ===
+        String(form.servicio_id)
+    );
+
+  const getTratamientoCompletadoPorPieza = (numero) => {
+
+    if (!form.servicio_id) {
+      return null;
+    }
+
+    return tratamientos.find(t => {
+
+      const mismaPieza =
+        String(t.pieza) ===
+        String(numero);
+
+      const mismoServicio =
+        String(t.servicio_id) ===
+        String(form.servicio_id);
+
+      const completado =
+        String(t.estado || "")
+          .trim()
+          .toLowerCase() === "completado";
+
+      return (
+        mismaPieza &&
+        mismoServicio &&
+        completado
+      );
+
+    }) || null;
+
+  };
+
+  // const getOtroTratamientoCompletadoPorPieza = (numero) => {
+
+  //   return tratamientos.find(t => {
+
+  //     const mismaPieza =
+  //       String(t.pieza) ===
+  //       String(numero);
+
+  //     const distintoServicio =
+  //       form.servicio_id
+  //         ? String(t.servicio_id) !==
+  //         String(form.servicio_id)
+  //         : true;
+
+  //     const completado =
+  //       String(t.estado || "")
+  //         .trim()
+  //         .toLowerCase() === "completado";
+
+  //     return (
+  //       mismaPieza &&
+  //       distintoServicio &&
+  //       completado
+  //     );
+
+  //   }) || null;
+
+  // };
+  const piezasDentales =
+    piezasBase.map(numero => {
+
+      const tratamientoMismoServicio =
+        getTratamientoCompletadoPorPieza(
+          numero
+        );
+
+      return {
+
+        numero,
+
+        tieneRegistro:
+          piezaTieneRegistro(numero),
+
+        completadoMismoServicio:
+          Boolean(
+            tratamientoMismoServicio
+          ),
+
+        servicioCompletado:
+          tratamientoMismoServicio
+            ?.servicio_nombre ||
+          servicioSeleccionado
+            ?.nombre
+
+      };
+
+    });
   /*
   ==========================================
   LOAD SERVICIOS
   ==========================================
   */
 
+
+
   useEffect(() => {
 
     loadServicios();
 
+    loadOdontograma();
+
+    loadTratamientos();
+
   }, []);
+
+
+  const loadOdontograma =
+    async () => {
+
+      try {
+
+        if (!clienteId) {
+          return;
+        }
+
+        const res =
+          await fetch(
+            `${API_URL}/odontograma/${clienteId}`
+          );
+
+        if (!res.ok) {
+          throw new Error();
+        }
+
+        const data =
+          await res.json();
+
+        setOdontograma(
+          data || {}
+        );
+
+      } catch {
+
+        setOdontograma({});
+
+      }
+
+    };
 
   const loadServicios =
     async () => {
 
       try {
 
-        const res = await fetch(
-
-          `${API_URL}/servicios/`
-
-        );
+        const res =
+          await fetch(
+            `${API_URL}/servicios/`
+          );
 
         if (!res.ok) {
-
           throw new Error();
-
         }
 
         const data =
@@ -129,6 +285,42 @@ function TratamientoModal({
 
     };
 
+
+  const loadTratamientos =
+    async () => {
+
+      try {
+
+        if (!clienteId) {
+          return;
+        }
+
+        const res =
+          await fetch(
+            `${API_URL}/tratamientos/${clienteId}`
+          );
+
+        if (!res.ok) {
+          throw new Error();
+        }
+
+        const data =
+          await res.json();
+
+        setTratamientos(
+          Array.isArray(data)
+            ? data
+            : []
+        );
+
+      } catch {
+
+        setTratamientos([]);
+
+      }
+
+    };
+
   /*
   ==========================================
   HANDLE CHANGE
@@ -136,18 +328,16 @@ function TratamientoModal({
   */
 
   const handleChange = (
-
     key,
-
     value
-
   ) => {
 
     setForm((prev) => ({
 
       ...prev,
 
-      [key]: value
+      [key]:
+        value
 
     }));
 
@@ -172,93 +362,96 @@ function TratamientoModal({
 
       }
 
+      if (!form.pieza) {
+
+        showError(
+          "Selecciona una pieza dental ⚠️"
+        );
+
+        return;
+
+      }
+
+      const tratamientoDuplicado =
+        getTratamientoCompletadoPorPieza(
+          form.pieza
+        );
+
+      if (tratamientoDuplicado) {
+
+        showError(
+          `${tratamientoDuplicado.servicio_nombre || "Este servicio"} ya está completado en la pieza ${form.pieza} ⚠️`
+        );
+
+        return;
+
+      }
+
       try {
 
         setLoading(true);
 
-        const servicioSeleccionado =
+        const res =
+          await fetch(
+            `${API_URL}/tratamientos/`,
+            {
+              method: "POST",
 
-          servicios.find(
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
 
-            (s) =>
+              body:
+                JSON.stringify({
 
-              String(s.id)
+                  cliente_id:
+                    clienteId,
 
-              ===
+                  servicio_id:
+                    Number(
+                      form.servicio_id
+                    ),
 
-              String(
-                form.servicio_id
-              )
+                  servicio_nombre:
+                    servicioSeleccionado?.nombre,
 
+                  pieza:
+                    form.pieza,
+
+                  estado:
+                    form.estado,
+
+                  costo:
+                    Number(
+                      form.costo || 0
+                    ),
+
+                  pagado:
+                    Number(
+                      form.pagado || 0
+                    ),
+
+                  sesiones_totales:
+                    Number(
+                      form.sesiones_totales
+                    ),
+
+                  sesiones_completadas:
+                    Number(
+                      form.sesiones_completadas
+                    ),
+
+                  notas:
+                    form.notas
+
+                })
+
+            }
           );
 
-        const res = await fetch(
-
-          `${API_URL}/tratamientos/`,
-
-          {
-
-            method: "POST",
-
-            headers: {
-
-              "Content-Type":
-                "application/json"
-
-            },
-
-            body: JSON.stringify({
-
-              cliente_id:
-                clienteId,
-
-              servicio_id:
-                Number(
-                  form.servicio_id
-                ),
-
-              servicio_nombre:
-                servicioSeleccionado?.nombre,
-
-              pieza:
-                form.pieza,
-
-              estado:
-                form.estado,
-
-              costo:
-                Number(
-                  form.costo || 0
-                ),
-
-              pagado:
-                Number(
-                  form.pagado || 0
-                ),
-
-              sesiones_totales:
-                Number(
-                  form.sesiones_totales
-                ),
-
-              sesiones_completadas:
-                Number(
-                  form.sesiones_completadas
-                ),
-
-              notas:
-                form.notas
-
-            })
-
-          }
-
-        );
-
         if (!res.ok) {
-
           throw new Error();
-
         }
 
         showSuccess(
@@ -281,12 +474,53 @@ function TratamientoModal({
 
     };
 
+  /*
+  ==========================================
+  REUSABLE INPUT CLASS
+  ==========================================
+  */
+
+  const inputClass = `
+    w-full
+
+    h-14
+
+    rounded-2xl
+
+    bg-white
+
+    border
+    border-slate-200
+
+    px-4
+
+    text-sm
+
+    text-slate-700
+
+    placeholder:text-slate-400
+
+    focus:outline-none
+
+    focus:ring-4
+    focus:ring-sky-500/10
+
+    focus:border-sky-300
+
+    transition-all
+    duration-300
+  `;
+
+  /*
+  ==========================================
+  RETURN
+  ==========================================
+  */
+
   return (
 
     <BaseModal
-
       onClose={onClose}
-
       maxWidth="max-w-3xl"
     >
 
@@ -300,7 +534,7 @@ function TratamientoModal({
         bg-gradient-to-br
         from-slate-50
         via-white
-        to-indigo-50/50
+        to-sky-50/50
 
         p-6
         sm:p-8
@@ -320,7 +554,7 @@ function TratamientoModal({
 
           rounded-full
 
-          bg-indigo-500/10
+          bg-sky-500/10
 
           blur-3xl
         " />
@@ -351,9 +585,12 @@ function TratamientoModal({
 
               rounded-full
 
-              bg-indigo-500/10
+              bg-sky-500/10
 
-              text-indigo-600
+              border
+              border-sky-100
+
+              text-sky-800
 
               text-xs
               font-black
@@ -387,9 +624,7 @@ function TratamientoModal({
               text-slate-400
             ">
 
-              Registra un nuevo
-              procedimiento clínico
-              para el paciente
+              Registra un nuevo procedimiento clínico para el paciente
 
             </p>
 
@@ -398,9 +633,7 @@ function TratamientoModal({
           {/* CLOSE */}
 
           <button
-
             onClick={onClose}
-
             className="
               w-12
               h-12
@@ -421,6 +654,8 @@ function TratamientoModal({
               hover:text-rose-500
 
               hover:border-rose-200
+
+              hover:bg-rose-50
 
               transition-all
               duration-300
@@ -469,81 +704,32 @@ function TratamientoModal({
             </label>
 
             <select
-
-              value={
-                form.servicio_id
-              }
-
+              value={form.servicio_id}
               onChange={(e) =>
-
                 handleChange(
-
                   "servicio_id",
-
                   e.target.value
-
                 )
-
               }
-
-              className="
-                w-full
-
-                h-14
-
-                rounded-2xl
-
-                bg-white
-
-                border
-                border-slate-200
-
-                px-4
-
-                text-sm
-
-                text-slate-700
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-
-                focus:border-indigo-300
-
-                transition-all
-                duration-300
-              "
+              className={inputClass}
             >
 
               <option value="">
                 Seleccionar servicio
               </option>
 
-              {
-                servicios.map(
-                  (servicio) => (
+              {servicios.map((servicio) => (
 
-                    <option
+                <option
+                  key={servicio.id}
+                  value={servicio.id}
+                >
 
-                      key={
-                        servicio.id
-                      }
+                  {servicio.nombre}
 
-                      value={
-                        servicio.id
-                      }
-                    >
+                </option>
 
-                      {
-                        servicio.nombre
-                      }
-
-                    </option>
-
-                  )
-                )
-              }
+              ))}
 
             </select>
 
@@ -571,55 +757,41 @@ function TratamientoModal({
 
             </label>
 
-            <input
-
+            <select
               value={form.pieza}
-
               onChange={(e) =>
-
                 handleChange(
-
                   "pieza",
-
                   e.target.value
-
                 )
-
               }
+              className={inputClass}
+            >
+              <option value="">
+                Seleccionar pieza dental
+              </option>
 
-              placeholder="16"
+              {piezasDentales.map((pieza) => (
 
-              className="
-                w-full
 
-                h-14
+                <option
+                  key={pieza.numero}
+                  value={pieza.numero}
+                  disabled={pieza.completadoMismoServicio}
+                >
+                  Pieza {pieza.numero}
+                  {pieza.completadoMismoServicio
+                    ? ` · ${pieza.servicioCompletado} completada`
+                    : pieza.tieneRegistro
+                      ? " · con registro odontograma"
+                      : ""}
+                </option>
 
-                rounded-2xl
 
-                bg-white
+              ))}
 
-                border
-                border-slate-200
 
-                px-4
-
-                text-sm
-
-                text-slate-700
-
-                placeholder:text-slate-400
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-
-                focus:border-indigo-300
-
-                transition-all
-                duration-300
-              "
-            />
+            </select>
 
           </div>
 
@@ -646,49 +818,14 @@ function TratamientoModal({
             </label>
 
             <select
-
               value={form.estado}
-
               onChange={(e) =>
-
                 handleChange(
-
                   "estado",
-
                   e.target.value
-
                 )
-
               }
-
-              className="
-                w-full
-
-                h-14
-
-                rounded-2xl
-
-                bg-white
-
-                border
-                border-slate-200
-
-                px-4
-
-                text-sm
-
-                text-slate-700
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-
-                focus:border-indigo-300
-
-                transition-all
-                duration-300
-              "
+              className={inputClass}
             >
 
               <option>
@@ -734,53 +871,16 @@ function TratamientoModal({
             </label>
 
             <input
-
               type="number"
-
               value={form.costo}
-
               onChange={(e) =>
-
                 handleChange(
-
                   "costo",
-
                   e.target.value
-
                 )
-
               }
-
               placeholder="0"
-
-              className="
-                w-full
-
-                h-14
-
-                rounded-2xl
-
-                bg-white
-
-                border
-                border-slate-200
-
-                px-4
-
-                text-sm
-
-                text-slate-700
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-
-                focus:border-indigo-300
-
-                transition-all
-                duration-300
-              "
+              className={inputClass}
             />
 
           </div>
@@ -808,53 +908,16 @@ function TratamientoModal({
             </label>
 
             <input
-
               type="number"
-
               value={form.pagado}
-
               onChange={(e) =>
-
                 handleChange(
-
                   "pagado",
-
                   e.target.value
-
                 )
-
               }
-
               placeholder="0"
-
-              className="
-                w-full
-
-                h-14
-
-                rounded-2xl
-
-                bg-white
-
-                border
-                border-slate-200
-
-                px-4
-
-                text-sm
-
-                text-slate-700
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-
-                focus:border-indigo-300
-
-                transition-all
-                duration-300
-              "
+              className={inputClass}
             />
 
           </div>
@@ -882,53 +945,15 @@ function TratamientoModal({
             </label>
 
             <input
-
               type="number"
-
-              value={
-                form.sesiones_totales
-              }
-
+              value={form.sesiones_totales}
               onChange={(e) =>
-
                 handleChange(
-
                   "sesiones_totales",
-
                   e.target.value
-
                 )
-
               }
-
-              className="
-                w-full
-
-                h-14
-
-                rounded-2xl
-
-                bg-white
-
-                border
-                border-slate-200
-
-                px-4
-
-                text-sm
-
-                text-slate-700
-
-                focus:outline-none
-
-                focus:ring-4
-                focus:ring-indigo-500/10
-
-                focus:border-indigo-300
-
-                transition-all
-                duration-300
-              "
+              className={inputClass}
             />
 
           </div>
@@ -961,26 +986,15 @@ function TratamientoModal({
           </label>
 
           <textarea
-
             value={form.notas}
-
             onChange={(e) =>
-
               handleChange(
-
                 "notas",
-
                 e.target.value
-
               )
-
             }
-
             rows={5}
-
-            placeholder="
-Paciente presenta sensibilidad en pieza 16..."
-
+            placeholder="Paciente presenta sensibilidad en pieza 16..."
             className="
               w-full
 
@@ -1004,9 +1018,9 @@ Paciente presenta sensibilidad en pieza 16..."
               focus:outline-none
 
               focus:ring-4
-              focus:ring-indigo-500/10
+              focus:ring-sky-500/10
 
-              focus:border-indigo-300
+              focus:border-sky-300
 
               transition-all
               duration-300
@@ -1030,9 +1044,7 @@ Paciente presenta sensibilidad en pieza 16..."
           {/* CANCEL */}
 
           <button
-
             onClick={onClose}
-
             className="
               h-12
 
@@ -1050,6 +1062,8 @@ Paciente presenta sensibilidad en pieza 16..."
               text-sm
               font-bold
 
+              hover:bg-slate-50
+
               hover:border-slate-300
 
               transition-all
@@ -1064,13 +1078,8 @@ Paciente presenta sensibilidad en pieza 16..."
           {/* SAVE */}
 
           <button
-
-            onClick={
-              guardarTratamiento
-            }
-
+            onClick={guardarTratamiento}
             disabled={loading}
-
             className={`
               h-12
 
@@ -1087,61 +1096,48 @@ Paciente presenta sensibilidad en pieza 16..."
               items-center
               gap-2
 
-              shadow-[0_15px_35px_rgba(99,102,241,0.25)]
+              shadow-[0_15px_35px_rgba(7,89,133,0.25)]
 
               transition-all
               duration-300
 
-              ${
-                loading
+              ${loading
+                ? `
+                  bg-slate-400
+                  cursor-not-allowed
+                `
+                : `
+                  bg-gradient-to-r
+                  from-sky-700
+                  via-sky-800
+                  to-sky-900
 
-                  ? `
-                    bg-slate-400
-                    cursor-not-allowed
-                  `
+                  hover:scale-[1.02]
 
-                  : `
-                    bg-gradient-to-r
-                    from-indigo-500
-                    via-purple-500
-                    to-violet-500
-
-                    hover:scale-[1.02]
-
-                    hover:shadow-[0_20px_45px_rgba(99,102,241,0.35)]
-                  `
+                  hover:shadow-[0_20px_45px_rgba(7,89,133,0.35)]
+                `
               }
             `}
           >
 
-            {
-              loading
+            {loading ? (
 
-                ? (
+              <Loader2
+                size={16}
+                className="
+                  animate-spin
+                "
+              />
 
-                  <Loader2
-                    size={16}
-                    className="
-                      animate-spin
-                    "
-                  />
+            ) : (
 
-                )
+              <Save size={16} />
 
-                : (
+            )}
 
-                  <Save size={16} />
-
-                )
-            }
-
-            {
-              loading
-
-                ? "Guardando..."
-
-                : "Guardar tratamiento"
-            }
+            {loading
+              ? "Guardando..."
+              : "Guardar tratamiento"}
 
           </button>
 

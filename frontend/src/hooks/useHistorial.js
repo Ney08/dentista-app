@@ -1,113 +1,247 @@
+import {
+  useQuery,
+  useMutation,
+  useQueryClient
+} from "@tanstack/react-query";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_URL } from "../config";
+import {
+  API_URL
+} from "../config";
 
-export const useHistorial = (clienteId) => {
+import {
+  apiFetch
+} from "../utils/apiFetch";
 
-  const queryClient = useQueryClient();
+export const useHistorial = (
+  clienteId
+) => {
+
+  const queryClient =
+    useQueryClient();
+
+  /*
+  ==========================================
+  GET HISTORIAL
+  ==========================================
+  */
 
   const {
     data: historial = [],
-    isLoading
+    isLoading,
+    isError,
+    error
   } = useQuery({
-    queryKey: ["historial", clienteId],
-    enabled: !!clienteId,
-    queryFn: async () => {
 
-      const res = await fetch(
-        `${API_URL}/historiales/clientes/${clienteId}/historial`
-      );
+    queryKey:
+      [
+        "historial",
+        clienteId
+      ],
 
-      if (!res.ok) {
-        throw new Error("Error al cargar historial ❌");
+    enabled:
+      !!clienteId,
+
+    queryFn:
+      async () => {
+
+        return await apiFetch(
+          `${API_URL}/historiales/clientes/${clienteId}/historial`
+        );
+
       }
 
-      return await res.json();
-    }
   });
 
-  // ✅ CREAR
-  const crearHistorial = useMutation({
-    mutationFn: async (data) => {
-      const res = await fetch(`${API_URL}/historiales/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+  /*
+  ==========================================
+  CREAR HISTORIAL
+  ==========================================
+  */
+
+  const crearHistorial =
+    useMutation({
+
+      mutationFn:
+        async (data) => {
+
+          return await apiFetch(
+            `${API_URL}/historiales/`,
+            {
+              method: "POST",
+
+              body:
+                JSON.stringify(
+                  data
+                )
+            }
+          );
+
         },
-        body: JSON.stringify(data)
-      });
 
-      if (!res.ok) throw new Error();
+      onSuccess:
+        (data) => {
 
-      return await res.json();
-    },
+          queryClient.setQueryData(
+            [
+              "historial",
+              clienteId
+            ],
+            (old = []) => [
+              ...old,
+              data
+            ]
+          );
 
-    onSuccess: (data) => {
-      queryClient.setQueryData(
-        ["historial", clienteId],
-        (old = []) => [...old, data]
-      );
-    }
-  });
+          queryClient.invalidateQueries({
+            queryKey: [
+              "historial",
+              clienteId
+            ]
+          });
 
-  // ✅ EDITAR
-  const actualizarHistorial = useMutation({
-    mutationFn: async ({ id, cliente_id, descripcion }) => {
+        }
 
-      const res = await fetch(`${API_URL}/historiales/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
+    });
+
+  /*
+  ==========================================
+  EDITAR HISTORIAL
+  ==========================================
+  */
+
+  const actualizarHistorial =
+    useMutation({
+
+      mutationFn:
+        async ({
+          id,
+          cliente_id,
+          descripcion
+        }) => {
+
+          await apiFetch(
+            `${API_URL}/historiales/${id}`,
+            {
+              method: "PUT",
+
+              body:
+                JSON.stringify({
+                  cliente_id,
+                  descripcion
+                })
+            }
+          );
+
+          return {
+            id,
+            descripcion
+          };
+
         },
-        body: JSON.stringify({ cliente_id, descripcion })
-      });
 
-      if (!res.ok) throw new Error();
+      onSuccess:
+        ({
+          id,
+          descripcion
+        }) => {
 
-      return { id, descripcion };
-    },
+          queryClient.setQueryData(
+            [
+              "historial",
+              clienteId
+            ],
+            (old = []) =>
+              old.map((h) =>
+                h.id === id
+                  ? {
+                    ...h,
+                    descripcion
+                  }
+                  : h
+              )
+          );
 
-    onSuccess: ({ id, descripcion }) => {
-      queryClient.setQueryData(
-        ["historial", clienteId],
-        (old = []) =>
-          old.map((h) =>
-            h.id === id
-              ? { ...h, descripcion }
-              : h
-          )
-      );
-    }
-  });
+          queryClient.invalidateQueries({
+            queryKey: [
+              "historial",
+              clienteId
+            ]
+          });
 
-  // ✅ ELIMINAR
-  const eliminarHistorial = useMutation({
-    mutationFn: async (id) => {
+        }
 
-      const res = await fetch(
-        `${API_URL}/historiales/${id}`,
-        { method: "DELETE" }
-      );
+    });
 
-      if (!res.ok) throw new Error();
+  /*
+  ==========================================
+  ELIMINAR HISTORIAL
+  ==========================================
+  */
 
-      return id;
-    },
+  const eliminarHistorial =
+    useMutation({
 
-    onSuccess: (id) => {
-      queryClient.setQueryData(
-        ["historial", clienteId],
-        (old = []) =>
-          old.filter((h) => h.id !== id)
-      );
-    }
-  });
+      mutationFn:
+        async (id) => {
+
+          await apiFetch(
+            `${API_URL}/historiales/${id}`,
+            {
+              method: "DELETE"
+            }
+          );
+
+          return id;
+
+        },
+
+      onSuccess:
+        (id) => {
+
+          queryClient.setQueryData(
+            [
+              "historial",
+              clienteId
+            ],
+            (old = []) =>
+              old.filter(
+                (h) => h.id !== id
+              )
+          );
+
+          queryClient.invalidateQueries({
+            queryKey: [
+              "historial",
+              clienteId
+            ]
+          });
+
+        }
+
+    });
+
+  /*
+  ==========================================
+  RETURN
+  ==========================================
+  */
 
   return {
+
     historial,
+
     isLoading,
+
+    isError,
+
+    error,
+
     crearHistorial,
+
     actualizarHistorial,
-    eliminarHistorial 
+
+    eliminarHistorial
+
   };
+
 };

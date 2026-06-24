@@ -7,6 +7,7 @@ import RevenueChart from "../components/charts/RevenueChart";
 import toast from "react-hot-toast";
 import AgendaCalendar from "../components/calendar/AgendaCalendar";
 import { motion } from "framer-motion";
+import { useActividades } from "../hooks/useActividades";
 import {
   formatFecha,
   formatHora,
@@ -27,7 +28,8 @@ import {
   ClipboardList,
   Banknote,
   CalendarDays,
-  BarChart3
+  BarChart3,
+  UserCheck
 } from "lucide-react";
 
 
@@ -74,6 +76,11 @@ function DashboardHome() {
 
   const [showCitas, setShowCitas] =
     useState(true);
+
+  const {
+    actividades: actividadesSistema,
+    isLoading: actividadesLoading
+  } = useActividades(20);
 
   const [showKpis, setShowKpis] =
     useState(true);
@@ -122,6 +129,58 @@ function DashboardHome() {
     }
 
     return "pendiente";
+
+  };
+
+  const getDetalleCita = (cita) => {
+
+    return (
+      cita?.detalle ||
+      cita?.observacion ||
+      cita?.descripcion ||
+      cita?.nota ||
+      ""
+    );
+
+  };
+
+  const getTratamientoTexto = (cita) => {
+
+    if (!cita?.tratamiento) {
+      return "";
+    }
+
+    const servicio =
+      cita.tratamiento.servicio ||
+      cita.tratamiento.servicio_nombre ||
+      "Tratamiento";
+
+    const pieza =
+      cita.tratamiento.pieza
+        ? ` · Pieza ${cita.tratamiento.pieza}`
+        : "";
+
+    return `${servicio}${pieza}`;
+
+  };
+
+  const getSesionesTexto = (cita) => {
+
+    if (!cita?.tratamiento) {
+      return "";
+    }
+
+    const completadas =
+      cita.tratamiento.sesiones_completadas ?? 0;
+
+    const totales =
+      cita.tratamiento.sesiones_totales ?? 0;
+
+    if (!totales) {
+      return "";
+    }
+
+    return `${completadas}/${totales} sesiones`;
 
   };
 
@@ -525,216 +584,135 @@ function DashboardHome() {
     }
   ];
 
+  const getActividadIcon = (tipo) => {
+
+    const icons = {
+      factura: Receipt,
+      cliente: Users,
+      cita: CalendarDays,
+      egreso: Banknote,
+      backup: ClipboardList,
+      servicio: ClipboardList,
+      historial: ClipboardList,
+      odontograma: ClipboardList,
+      tratamiento: Activity,
+      usuario: UserCheck,
+      reporte: BarChart3
+    };
+
+    return icons[tipo] || Activity;
+
+  };
+
+  const getActividadColor = (tipo) => {
+
+    const colors = {
+      factura: "text-emerald-500",
+      cliente: "text-cyan-500",
+      cita: "text-amber-500",
+      egreso: "text-rose-500",
+      backup: "text-sky-700",
+      servicio: "text-sky-600",
+      historial: "text-violet-500",
+      odontograma: "text-blue-600",
+      tratamiento: "text-emerald-600",
+      usuario: "text-slate-600",
+      reporte: "text-indigo-500"
+    };
+
+    return colors[tipo] || "text-slate-500";
+
+  };
+
+  const getActividadBg = (tipo) => {
+
+    const colors = {
+      factura: "bg-emerald-50",
+      cliente: "bg-cyan-50",
+      cita: "bg-amber-50",
+      egreso: "bg-rose-50",
+      backup: "bg-sky-50",
+      servicio: "bg-sky-50",
+      historial: "bg-violet-50",
+      odontograma: "bg-blue-50",
+      tratamiento: "bg-emerald-50",
+      usuario: "bg-slate-100",
+      reporte: "bg-indigo-50"
+    };
+
+    return colors[tipo] || "bg-slate-100";
+
+  };
+
+
   /*
   ==========================================
   ACTIVIDAD
   ==========================================
   */
-  const actividades = [
+  const actividades = Array.isArray(actividadesSistema)
+    ? actividadesSistema
+      .map((a) => {
 
-    /*
-    ==========================================
-    CITAS
-    ==========================================
-    */
-
-    ...(citas || []).map(c => ({
-
-      tipo: "cita",
-
-      fecha:
-        parseFechaLocal(
-          c.created_at || c.fecha
-        ),
-
-      icon:
-        CalendarDays,
-
-      title:
-        c.estado === "completada"
-          ? "Cita completada"
-          : c.estado === "cancelada"
-            ? "Cita cancelada"
-            : "Cita programada",
-
-      desc:
-        `${c.cliente?.nombre || ""} ${c.cliente?.apellido || ""}`,
-
-      time:
-        formatFecha(
+        const fecha =
           parseFechaLocal(
-            c.created_at || c.fecha
-          )
-        )
+            a.created_at
+          );
 
-    })),
+        return {
 
-    /*
-    ==========================================
-    FACTURAS
-    ==========================================
-    */
+          id:
+            a.id,
 
-    ...(ingresos || []).map(i => {
+          tipo:
+            a.tipo || "sistema",
 
-      const servicios =
-        i.servicios || [];
+          accion:
+            a.accion || "",
 
-      const subtotal =
-        servicios.reduce(
-          (acc, s) =>
-            acc + Number(s.monto || 0),
-          0
+          fecha,
+
+          icon:
+            getActividadIcon(
+              a.tipo
+            ),
+
+          title:
+            a.titulo ||
+            "Actividad registrada",
+
+          desc:
+            a.descripcion || "",
+
+          usuario:
+            a.usuario || "Sistema",
+
+          time:
+            fecha
+              ? formatFecha(fecha)
+              : ""
+
+        };
+
+      })
+      .filter((a) => {
+
+        if (!a.fecha) {
+          return false;
+        }
+
+        return !Number.isNaN(
+          a.fecha.getTime()
         );
 
-      const itbis =
-        subtotal * 0.18;
-
-      const descuento =
-        subtotal *
-        (
-          (i.descuento || 0) / 100
-        );
-
-      const total =
-        subtotal +
-        itbis -
-        descuento;
-
-      return {
-
-        tipo: "factura",
-
-        fecha:
-          parseFechaLocal(
-            i.created_at
-          ),
-
-        icon:
-          Receipt,
-
-        title:
-          i.pagado
-            ? "Factura pagada"
-            : "Factura pendiente",
-
-        desc:
-          `RD$ ${formatMoney(total)}`,
-
-        time:
-          formatFecha(
-            parseFechaLocal(
-              i.created_at
-            )
-          )
-
-      };
-
-    }),
-
-    /*
-    ==========================================
-    CLIENTES
-    ==========================================
-    */
-
-    ...(clientes || []).map(c => ({
-
-      tipo: "cliente",
-
-      fecha:
-        parseFechaLocal(
-          c.created_at
-        ),
-
-      icon:
-        Users,
-
-      title:
-        "Paciente registrado",
-
-      desc:
-        `${c.nombre || ""} ${c.apellido || ""}`,
-
-      time:
-        formatFecha(
-          parseFechaLocal(
-            c.created_at
-          )
-        )
-
-    })),
-
-    /*
-    ==========================================
-    EGRESOS
-    ==========================================
-    */
-
-    ...(egresos || []).map(e => ({
-
-      tipo: "egreso",
-
-      fecha:
-        parseFechaLocal(
-          e.created_at || e.fecha
-        ),
-
-      icon:
-        Banknote,
-
-      title:
-        "Egreso registrado",
-
-      desc:
-        e.descripcion ||
-        e.concepto ||
-        `RD$ ${formatMoney(
-          e.monto || 0
-        )}`,
-
-      time:
-        formatFecha(
-          parseFechaLocal(
-            e.created_at || e.fecha
-          )
-        )
-
-    }))
-
-  ]
-
-    /*
-    ==========================================
-    FILTRAR INVALIDOS
-    ==========================================
-    */
-
-    .filter(
-      a =>
-        a.fecha &&
-        !isNaN(a.fecha)
-    )
-
-    /*
-    ==========================================
-    ORDEN REAL
-    ==========================================
-    */
-
-    .sort(
-      (a, b) =>
-        b.fecha.getTime() -
-        a.fecha.getTime()
-    )
-
-    /*
-    ==========================================
-    LIMITE
-    ==========================================
-    */
-
-    .slice(0, 10);
+      })
+      .sort(
+        (a, b) =>
+          b.fecha.getTime() -
+          a.fecha.getTime()
+      )
+      .slice(0, 10)
+    : [];
 
   /*
   ==========================================
@@ -845,12 +823,15 @@ to-sky-900
   ==========================================
   */
 
+
   if (
     clientesLoading ||
     ingresosLoading ||
     citasLoading ||
-    egresosLoading
+    egresosLoading ||
+    actividadesLoading
   ) {
+
 
     return (
 
@@ -881,6 +862,10 @@ to-sky-900
     );
 
   }
+
+
+
+
 
   /*
   ==========================================
@@ -1106,11 +1091,23 @@ dark:border-slate-800
   inline-flex
   items-center
   gap-2
+
+  px-4
+  py-2
+
+  rounded-full
+
+  bg-amber-50
+
+  border
+  border-amber-100
+
   text-amber-600
+
   text-sm
-  font-bold
+  font-black
 ">
-                    <CalendarDays size={18} />
+                    <CalendarDays size={16} />
                     Citas de hoy
                   </div>
 
@@ -1177,44 +1174,73 @@ dark:border-slate-800
                 ) : (
 
                   <div className="
-                  grid
-                  sm:grid-cols-2
-                  2xl:grid-cols-3
+  grid
+  sm:grid-cols-2
+  2xl:grid-cols-3
 
-                  gap-4
-                ">
+  gap-4
+
+  max-h-[430px]
+  overflow-y-auto
+
+  pr-1
+
+  scrollbar-thin
+  scrollbar-thumb-sky-200/70
+  scrollbar-track-transparent
+">
 
                     {citasHoy.map(c => {
 
                       const estado =
                         getEstado(c);
 
+                      const detalleCita =
+                        getDetalleCita(c);
+
+                      const tratamientoTexto =
+                        getTratamientoTexto(c);
+
+                      const sesionesTexto =
+                        getSesionesTexto(c);
+
+                      const colorEstadoHora = {
+                        completada: "text-emerald-600",
+                        atrasada: "text-rose-600",
+                        cancelada: "text-slate-500",
+                        pendiente: "text-amber-600"
+                      };
+
                       return (
 
                         <div
                           key={c.id}
                           className="
-                          relative
-                          overflow-hidden
+  relative
+  overflow-hidden
 
-                          bg-white
+  bg-slate-50/70
 
-                          border
-                          border-slate-200/70
+  border
+  border-slate-200/80
 
-                          rounded-[28px]
+  rounded-[28px]
 
-                          p-5
+  p-5
 
-                          shadow-[0_10px_30px_rgba(0,0,0,0.04)]
+  shadow-[0_10px_30px_rgba(15,23,42,0.04)]
 
-                          hover:-translate-y-[2px]
+  hover:bg-white
 
-                          hover:shadow-[0_18px_40px_rgba(0,0,0,0.06)]
+  hover:border-sky-200
 
-                          transition-all
-                          duration-300
-                        "
+  hover:-translate-y-[2px]
+
+  hover:shadow-[0_18px_40px_rgba(7,89,133,0.08)]
+
+  transition-all
+  duration-300
+"
                         >
 
                           <div className="
@@ -1230,15 +1256,17 @@ dark:border-slate-800
                             justify-between
                           ">
 
-                              <div className="
-                              flex
-                              items-center
-                              gap-2
 
-                              text-slate-700
+                              <div className={`
+  flex
+  items-center
+  gap-2
 
-                              font-bold
-                            ">
+  font-bold
+
+  ${colorEstadoHora[estado] || "text-slate-700"}
+`}>
+
 
                                 <Clock3 size={16} />
 
@@ -1279,25 +1307,135 @@ dark:border-slate-800
                             <div>
 
                               <h4 className="
-                              text-base
+    
+ text-base
 
-                              font-bold
+  font-black
 
-                              text-slate-800
-                            ">
+  text-slate-800
+
+  ">
                                 {c.cliente?.nombre}{" "}
                                 {c.cliente?.apellido}
                               </h4>
 
+                              {/* MOTIVO */}
+
                               <p className="
-                              mt-1
+    
+mt-1
 
-                              text-sm
+  text-sm
 
-                              text-slate-500
-                            ">
-                                {c.motivo}
+  font-semibold
+
+  text-slate-600
+
+  ">
+                                {c.motivo || "Sin motivo"}
                               </p>
+
+                              {/* DETALLE */}
+
+                              {detalleCita && (
+
+                                <p className="
+     
+  mt-1
+
+  text-xs
+
+  leading-relaxed
+
+  text-slate-400
+
+    ">
+                                  {detalleCita}
+                                </p>
+
+                              )}
+
+                              {/* TRATAMIENTO */}
+
+                              {c.tratamiento && (
+
+                                <div className="
+      mt-3
+
+      flex
+      flex-wrap
+
+      items-center
+      gap-2
+    ">
+
+                                  {tratamientoTexto && (
+
+                                    <span className="
+          inline-flex
+
+          items-center
+          gap-1.5
+
+          px-3
+          py-1.5
+
+          rounded-full
+
+          bg-sky-50
+
+          border
+          border-sky-100
+
+          text-[11px]
+          font-bold
+
+          text-sky-800
+        ">
+
+                                      <ClipboardList size={12} />
+
+                                      {tratamientoTexto}
+
+                                    </span>
+
+                                  )}
+
+                                  {sesionesTexto && (
+
+                                    <span className="
+          inline-flex
+
+          items-center
+          gap-1.5
+
+          px-3
+          py-1.5
+
+          rounded-full
+
+          bg-emerald-50
+
+          border
+          border-emerald-100
+
+          text-[11px]
+          font-bold
+
+          text-emerald-600
+        ">
+
+                                      <Activity size={12} />
+
+                                      {sesionesTexto}
+
+                                    </span>
+
+                                  )}
+
+                                </div>
+
+                              )}
 
                             </div>
 
@@ -1404,30 +1542,28 @@ dark:border-slate-800
                   >
 
 
-                    <div className="
+                    <div className={`
   w-11
   h-11
+
   rounded-[18px]
-  bg-slate-100
+
+  ${getActividadBg(item.tipo)}
+
   flex
   items-center
   justify-center
   shrink-0
-">
+`}>
 
 
 
-                      <item.icon
-                        size={18}
-                        className={`
-    
-${item.tipo === "factura" && "text-emerald-500"}
-${item.tipo === "cliente" && "text-cyan-500"}
-${item.tipo === "cita" && "text-amber-500"}
-${item.tipo === "egreso" && "text-rose-500"}
+                      
+<item.icon
+  size={18}
+  className={getActividadColor(item.tipo)}
+/>
 
-  `}
-                      />
 
 
                     </div>

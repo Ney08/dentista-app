@@ -1,22 +1,16 @@
 import { useState } from "react";
 
-
 import {
-    FileText,
-    Activity,
-    Tooth,
     Gem,
     BarChart3,
-    Plus,
-    ClipboardList,
-    Clock
+    ClipboardList
 } from "lucide-react";
-
 
 import HistorialTab
     from "./tabs/HistorialTab";
 
-
+import HistorialPacienteTab
+    from "./tabs/HistorialPacienteTab";
 
 import OdontogramaTab
     from "./tabs/OdontogramaTab";
@@ -24,25 +18,27 @@ import OdontogramaTab
 import TratamientosTab
     from "./tabs/TratamientosTab";
 
-import SeguimientoTab
-    from "./tabs/SeguimientoTab";
-
 function HistorialForm({
     clienteId,
     onAdd,
-    historial,
+    historial = [],
     cliente,
-    tratamiento
+    tratamiento,
+
+    citas = [],
+    ingresos = [],
+    tratamientos = [],
+    odontograma = null
 }) {
 
     const [activeTab, setActiveTab] =
-        useState("historial");
+        useState("notas");
 
     const tabs = [
 
         {
-            id: "historial",
-            label: "historial clínica",
+            id: "notas",
+            label: "Notas clínicas",
             icon: <ClipboardList size={16} />
         },
 
@@ -59,7 +55,7 @@ function HistorialForm({
         },
 
         {
-            id: "seguimiento",
+            id: "historial",
             label: "Historial",
             icon: <BarChart3 size={16} />
         }
@@ -69,55 +65,55 @@ function HistorialForm({
     return (
 
         <div className="
-      relative
-      overflow-hidden
+            relative
+            overflow-hidden
 
-      w-full
+            w-full
 
-      min-h-[90vh]
+            min-h-[90vh]
 
-      bg-white/80
-      backdrop-blur-3xl
+            bg-white/80
+            backdrop-blur-3xl
 
-      border
-      border-white/50
+            border
+            border-white/50
 
-      rounded-[40px]
+            rounded-[40px]
 
-      p-8
-      xl:p-10
+            p-8
+            xl:p-10
 
-      shadow-[0_30px_90px_rgba(0,0,0,0.12)]
+            shadow-[0_30px_90px_rgba(0,0,0,0.12)]
 
-      space-y-8
-    ">
+            space-y-8
+        ">
 
             {/* HEADER */}
 
             <div className="
-        flex
-        items-center
-        justify-between
-      ">
+                flex
+                items-center
+                justify-between
+            ">
 
                 <div>
 
                     <h2 className="
-            text-4xl
-            font-black
+                        text-4xl
+                        font-black
 
-            text-slate-800
-          ">
+                        text-slate-800
+                    ">
 
                         Gestión clínica avanzada
 
                     </h2>
 
                     <p className="
-            mt-2
+                        mt-2
 
-            text-slate-500
-          ">
+                        text-slate-500
+                    ">
 
                         Workspace clínico del paciente
 
@@ -130,143 +126,135 @@ function HistorialForm({
             {/* TABS */}
 
             <div className="
-        flex
-        flex-wrap
+                flex
+                flex-wrap
 
-        gap-4
-      ">
+                gap-4
+            ">
 
-                {
+                {tabs.map((tab) => (
 
-                    tabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() =>
+                            setActiveTab(tab.id)
+                        }
+                        className={`
+                            h-14
+                            px-6
 
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`
-    h-14
-    px-6
+                            flex
+                            items-center
+                            gap-2
 
-    flex items-center gap-2   ✅ CLAVE
+                            rounded-[22px]
 
-    rounded-[22px]
+                            text-sm
+                            font-black
 
-    text-sm font-black
+                            transition-all
+                            duration-300
 
-    transition-all duration-300
+                            ${activeTab === tab.id
+                                ? `
+                                    bg-gradient-to-r
+                                    from-sky-700
+                                    via-sky-800
+                                    to-sky-900
 
-    ${activeTab === tab.id
-                                    ? `
-        
-bg-gradient-to-r
-from-sky-700
-via-sky-800
-to-sky-900
-text-white
-shadow-[0_12px_30px_rgba(7,89,133,0.22)]
+                                    text-white
 
-      `
-                                    : `
+                                    shadow-[0_12px_30px_rgba(7,89,133,0.22)]
+                                `
+                                : `
+                                    bg-white
 
-bg-white
-border border-slate-200
-text-slate-600
-hover:border-sky-200
-hover:text-sky-800
-hover:bg-sky-50/60
+                                    border
+                                    border-slate-200
 
-      `
-                                }
-  `}
-                        >
-                            <span className="flex items-center justify-center w-5 h-5">
-                                {tab.icon}
-                            </span>
+                                    text-slate-600
 
-                            <span>{tab.label}</span>
-                        </button>
+                                    hover:border-sky-200
+                                    hover:text-sky-800
+                                    hover:bg-sky-50/60
+                                `
+                            }
+                        `}
+                    >
 
+                        <span className="
+                            flex
+                            items-center
+                            justify-center
 
-                    ))
+                            w-5
+                            h-5
+                        ">
 
-                }
+                            {tab.icon}
+
+                        </span>
+
+                        <span>
+                            {tab.label}
+                        </span>
+
+                    </button>
+
+                ))}
 
             </div>
 
             {/* CONTENT */}
 
             <div className="
-        min-h-[650px]
-      ">
+                min-h-[650px]
+            ">
+
+                {activeTab === "notas" && (
+
+                    <HistorialTab
+
+                        cliente={cliente}
+
+                        historial={historial}
+
+                        clienteId={clienteId}
+
+                        onAdd={onAdd}
+
+                    />
+
+                )}
+
+                {activeTab === "odontograma" && (
+
+                    <OdontogramaTab
+                        clienteId={clienteId}
+                    />
+
+                )}
+
+                {activeTab === "tratamientos" && (
+
+                    <TratamientosTab
+                        clienteId={clienteId}
+                        tratamiento={tratamiento}
+                    />
+
+                )}
+
+                {activeTab === "historial" && (
 
 
-                {
-                    activeTab === "historial" && (
-
-                        < HistorialTab
-
-                            cliente={cliente}
-
-                            historial={historial}
-
-                            clienteId={clienteId}
-
-                            onAdd={onAdd}
-
-                        />
-
-                    )
-                }
+                    <HistorialPacienteTab
+                        clienteId={clienteId}
+                        cliente={cliente}
+                        historial={historial}
+                    />
 
 
-                {
-
-                    activeTab === "odontograma"
-
-                    &&
-
-                    (
-                        <OdontogramaTab
-                            clienteId={clienteId}
-                        />
-                    )
-
-                }
-
-                {
-
-                    activeTab === "tratamientos"
-
-                    &&
-
-                    (
-                        <TratamientosTab
-                            clienteId={clienteId}
-                            tratamiento={tratamiento}
-                        />
-                    )
-
-                }
-
-                {
-
-                    activeTab === "seguimiento"
-
-                    &&
-
-                    (
-
-                        <SeguimientoTab
-
-                            historial={historial}
-
-                            cliente={cliente}
-
-                        />
-
-                    )
-
-                }
+                )}
 
             </div>
 

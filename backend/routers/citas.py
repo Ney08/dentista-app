@@ -7,8 +7,8 @@ import models
 from schemas import CitaCreate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
-
-
+from utils.actividad import registrar_actividad
+from security import get_current_user
 from models.tratamiento import (
     Tratamiento
 )
@@ -17,9 +17,24 @@ from database import get_db
 
 router = APIRouter(
     prefix="/citas",
-    tags=["Citas"]
+    tags=["Citas"],
+    
+    # dependencies=[
+    #             Depends(get_current_user)
+    #         ]
+
 )
 
+def nombre_cliente_cita(cita):
+
+    if cita.cliente:
+
+        return (
+            f"{cita.cliente.nombre} "
+            f"{cita.cliente.apellido}"
+        )
+
+    return f"Cliente #{cita.cliente_id}"
 
 
 @router.post("/")
@@ -243,7 +258,18 @@ def completar_cita(
                 tratamiento.estado = (
                     "En progreso"
                 )
-
+    registrar_actividad(
+        db=db,
+        tipo="cita",
+        accion="completar",
+        titulo="Cita completada",
+        descripcion=(
+            f"{nombre_cliente_cita(cita)} · "
+            f"{cita.motivo}"
+        ),
+        referencia_id=cita.id,
+        usuario="Sistema"
+    )
     db.commit()
 
     db.refresh(cita)
@@ -268,6 +294,19 @@ def cancelar_cita(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Cita no encontrada")
 
     cita.estado = "cancelada"
+    
+    registrar_actividad(
+        db=db,
+        tipo="cita",
+        accion="cancelar",
+        titulo="Cita cancelada",
+        descripcion=(
+            f"{nombre_cliente_cita(cita)} · "
+            f"{cita.motivo}"
+        ),
+        referencia_id=cita.id,
+        usuario="Sistema"
+    )
 
     db.commit()
     db.refresh(cita)
@@ -286,6 +325,8 @@ def actualizar_cita(id: int, data: CitaCreate, db: Session = Depends(get_db)):
     if not cita:
         raise HTTPException(status_code=404, detail="Cita no encontrada")
 
+    
+    fecha_anterior = cita.fecha
     cita.cliente_id = data.cliente_id
     cita.fecha = data.fecha
     cita.motivo = data.motivo
@@ -293,6 +334,32 @@ def actualizar_cita(id: int, data: CitaCreate, db: Session = Depends(get_db)):
     cita.duracion = data.duracion
     
     cita.tratamiento_id = data.tratamiento_id
+    
+    
+    accion = (
+        "reagendar"
+        if fecha_anterior != data.fecha
+        else "actualizar"
+    )
+
+    titulo = (
+        "Cita reagendada"
+        if accion == "reagendar"
+        else "Cita actualizada"
+    )
+
+    registrar_actividad(
+        db=db,
+        tipo="cita",
+        accion=accion,
+        titulo=titulo,
+        descripcion=(
+            f"{nombre_cliente_cita(cita)} · "
+            f"{cita.motivo}"
+        ),
+        referencia_id=cita.id,
+        usuario="Sistema"
+    )
 
 
     db.commit()

@@ -38,12 +38,35 @@ function Tooth({
   ==========================================
   */
 
+  const tieneTratamientoCompletado =
+    Boolean(
+      data?.meta
+        ?.tratamiento_completado
+    );
+
+  const servicioCompletado =
+    data?.meta?.servicio_nombre ||
+    data?.meta?.nombre_servicio ||
+    data?.meta?.tratamiento_nombre ||
+    "Tratamiento";
+
+  const textoBadgeCompletado =
+    servicioCompletado.length > 12
+      ? `${servicioCompletado.slice(0, 12)}...`
+      : servicioCompletado;
+
+  const tieneRegistroClinico =
+    Boolean(
+      data?.top ||
+      data?.left ||
+      data?.center ||
+      data?.right ||
+      data?.bottom
+    );
+
   const hasTreatment =
-
-    data &&
-
-    Object.values(data)
-      .some(Boolean);
+    tieneRegistroClinico ||
+    tieneTratamientoCompletado;
 
   return (
 
@@ -61,44 +84,52 @@ function Tooth({
 
       {hasTreatment && (
 
-        <div className="
+        <div className={`
           absolute
 
           inset-0
 
           rounded-[32px]
 
-          bg-sky-500/10
-
           blur-xl
 
           opacity-70
-        " />
+
+          ${tieneTratamientoCompletado
+            ? "bg-emerald-500/15"
+            : "bg-sky-500/10"}
+        `} />
 
       )}
 
       {/* TOOTH */}
 
-      <div className={`
-        relative
+      <div
+        title={
+          tieneTratamientoCompletado
+            ? `${servicioCompletado} completado en pieza ${numero}`
+            : tieneRegistroClinico
+              ? `Pieza ${numero} con registro odontograma`
+              : `Pieza ${numero}`
+        }
+        className={`
+          relative
 
-        w-24
-        h-28
+          w-24
+          h-28
 
-        rounded-[30px]
+          rounded-[30px]
 
-        border
+          border
 
-        p-2
+          p-2
 
-        transition-all
-        duration-300
+          transition-all
+          duration-300
 
-        overflow-hidden
+          overflow-visible
 
-        ${
-          hasTreatment
-
+          ${hasTreatment
             ? `
               bg-gradient-to-br
               from-sky-50
@@ -108,7 +139,6 @@ function Tooth({
 
               shadow-[0_18px_40px_rgba(7,89,133,0.15)]
             `
-
             : `
               bg-white
 
@@ -116,20 +146,71 @@ function Tooth({
 
               shadow-sm
             `
-        }
+          }
 
-        hover:-translate-y-1
+          ${tieneTratamientoCompletado
+            ? `
+              ring-4
+              ring-emerald-200/80
 
-        hover:border-sky-300
+              border-emerald-300
 
-        hover:shadow-[0_20px_45px_rgba(7,89,133,0.18)]
-      `}>
+              shadow-[0_20px_45px_rgba(16,185,129,0.22)]
+            `
+            : ""}
+          
+          hover:-translate-y-1
+
+          hover:border-sky-300
+
+          hover:shadow-[0_20px_45px_rgba(7,89,133,0.18)]
+        `}
+      >
+
+        {/* CHECK COMPLETADO */}
+
+        {tieneTratamientoCompletado && (
+
+          <div className="
+            absolute
+            -top-3
+            -right-3
+
+            z-50
+
+            w-7
+            h-7
+
+            rounded-full
+
+            bg-emerald-500
+
+            border-[4px]
+            border-white
+
+            text-white
+
+            flex
+            items-center
+            justify-center
+
+            text-[11px]
+            font-black
+
+            shadow-[0_10px_25px_rgba(16,185,129,0.45)]
+          ">
+            ✓
+          </div>
+
+        )}
 
         {/* SHINE */}
 
         <div className="
           absolute
           inset-0
+
+          rounded-[30px]
 
           bg-gradient-to-br
           from-white/50
@@ -153,113 +234,54 @@ function Tooth({
           h-full
         ">
 
-          {/* EMPTY */}
-
           <div />
 
-          {/* TOP */}
-
           <ToothFace
-
             face="top"
-
             value={data?.top}
-
-            selectedTool={
-              selectedTool
-            }
-
-            onApply={
-              handleApply
-            }
-
+            selectedTool={selectedTool}
+            onApply={handleApply}
           />
 
           <div />
 
-          {/* LEFT */}
-
           <ToothFace
-
             face="left"
-
             value={data?.left}
-
-            selectedTool={
-              selectedTool
-            }
-
-            onApply={
-              handleApply
-            }
-
+            selectedTool={selectedTool}
+            onApply={handleApply}
           />
 
-          {/* CENTER */}
-
           <ToothFace
-
             face="center"
-
             value={data?.center}
-
-            selectedTool={
-              selectedTool
-            }
-
-            onApply={
-              handleApply
-            }
-
+            selectedTool={selectedTool}
+            onApply={handleApply}
           />
-
-          {/* RIGHT */}
 
           <ToothFace
-
             face="right"
-
             value={data?.right}
-
-            selectedTool={
-              selectedTool
-            }
-
-            onApply={
-              handleApply
-            }
-
+            selectedTool={selectedTool}
+            onApply={handleApply}
           />
-
-          {/* EMPTY */}
 
           <div />
 
-          {/* BOTTOM */}
-
           <ToothFace
-
             face="bottom"
-
             value={data?.bottom}
-
-            selectedTool={
-              selectedTool
-            }
-
-            onApply={
-              handleApply
-            }
-
+            selectedTool={selectedTool}
+            onApply={handleApply}
           />
 
           <div />
 
         </div>
 
-        {/* STATUS DOT */}
+        {/* STATUS DOT CLÍNICO */}
 
-        {hasTreatment && (
+        {tieneRegistroClinico && (
 
           <div className="
             absolute
@@ -278,49 +300,125 @@ function Tooth({
 
         )}
 
+        {/* BADGE TRATAMIENTO COMPLETADO */}
+
+        {tieneTratamientoCompletado && (
+
+          <div className="
+            absolute
+            left-1/2
+            -bottom-3
+
+            z-40
+
+            -translate-x-1/2
+
+            max-w-[88px]
+
+            px-2
+            py-0.5
+
+            rounded-full
+
+            bg-emerald-50
+
+            border
+            border-emerald-100
+
+            text-[8.5px]
+            font-black
+
+            text-emerald-600
+
+            whitespace-nowrap
+            overflow-hidden
+            text-ellipsis
+
+            shadow-sm
+          ">
+
+            {textoBadgeCompletado}
+
+          </div>
+
+        )}
+
       </div>
 
       {/* NUMBER */}
 
       <div className="
-        mt-3
+        mt-4
 
         flex
+        flex-col
         items-center
-        gap-2
+        gap-1
       ">
 
-        <span className={`
-          text-xs
+        <div className="
+          flex
+          items-center
+          gap-2
+        ">
 
-          font-black
+          <span className={`
+            text-xs
 
-          transition-all
-          duration-300
+            font-black
 
-          ${
-            hasTreatment
+            transition-all
+            duration-300
 
-              ? "text-sky-800"
+            ${tieneTratamientoCompletado
+              ? "text-emerald-600"
+              : hasTreatment
+                ? "text-sky-800"
+                : "text-slate-500"}
+          `}>
 
-              : "text-slate-500"
-          }
-        `}>
+            {numero}
 
-          {numero}
+          </span>
 
-        </span>
+          {hasTreatment && (
 
-        {hasTreatment && (
+            <div className={`
+              w-1.5
+              h-1.5
 
-          <div className="
-            w-1.5
-            h-1.5
+              rounded-full
 
-            rounded-full
+              ${tieneTratamientoCompletado
+                ? "bg-emerald-500"
+                : "bg-sky-800"}
+            `} />
 
-            bg-sky-800
-          " />
+          )}
+
+        </div>
+
+        {/* TEXTO COMPLETADO DEBAJO DEL NÚMERO, OPCIONAL */}
+
+        {tieneTratamientoCompletado && (
+
+          <span className="
+            text-[9px]
+
+            font-black
+
+            text-emerald-600
+
+            leading-none
+
+            max-w-[90px]
+
+            truncate
+          ">
+
+            completado
+
+          </span>
 
         )}
 
