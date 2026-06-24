@@ -23,6 +23,8 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
 
 
-class ResetPassword(BaseModel):
+
+class UserReset(BaseModel):
     username: str
     password: str
+    reset_key: str

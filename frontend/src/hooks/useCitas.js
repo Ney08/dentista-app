@@ -1,170 +1,263 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_URL } from "../config";
-import { parseFechaLocal } from "../utils/fecha";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient
+} from "@tanstack/react-query";
+
+import {
+  parseFechaLocal
+} from "../utils/fecha";
+
+import {
+  getCitas,
+  crearCita as crearCitaService,
+  actualizarCita as actualizarCitaService,
+  completarCita as completarCitaService,
+  cancelarCita as cancelarCitaService
+} from "../components/services/citaService";
+
 export const useCitas = () => {
-  const queryClient = useQueryClient();
 
-  // ✅ GET CITAS
-  const { data: citas = [], isLoading } = useQuery({
-    queryKey: ["citas"],
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/citas/`);
+  const queryClient =
+    useQueryClient();
 
-      if (!res.ok) throw new Error("Error al cargar citas");
+  /*
+  ==========================================
+  GET CITAS
+  ==========================================
+  */
 
-      const data = await res.json();
+  const {
+    data: citas = [],
+    isLoading,
+    isError,
+    error
+  } = useQuery({
 
+    queryKey:
+      ["citas"],
 
-      return [...data].sort((a, b) => {
-        const fechaA = parseFechaLocal(a.fecha);
-        const fechaB = parseFechaLocal(b.fecha);
+    queryFn:
+      async () => {
 
-        return fechaA - fechaB;
-      });
+        const data =
+          await getCitas();
 
-    }
-  });
+        return [...data].sort(
+          (a, b) => {
 
-  // ✅ CREAR CITA
-  const crearCita = useMutation({
-    mutationFn: async (nuevaCita) => {
-      const res = await fetch(`${API_URL}/citas/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(nuevaCita)
-      });
+            const fechaA =
+              parseFechaLocal(
+                a.fecha
+              );
 
-      if (!res.ok) {
-        const error = await res.json().catch(() => null);
-        throw new Error(error?.detail || "Error al crear");
-      }
+            const fechaB =
+              parseFechaLocal(
+                b.fecha
+              );
 
-      return await res.json();
-    },
+            return fechaA - fechaB;
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["citas"] });
-    }
-  });
-
-  // ✅ ACTUALIZAR CITA (🔥 NUEVO)
-  const actualizarCita = useMutation({
-    mutationFn: async ({ id, data }) => {
-      const res = await fetch(`${API_URL}/citas/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => null);
-        throw new Error(error?.detail || "Error al actualizar");
-      }
-
-      return await res.json();
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["citas"] });
-    }
-  });
-
-  // ✅ COMPLETAR CITA
-  const completarCita = useMutation({
-    mutationFn: async (id) => {
-      const res = await fetch(
-        `${API_URL}/citas/${id}/completar`,
-        {
-          method: "PUT",
-        }
-      );
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => null);
-        throw new Error(error?.detail || "Error al completar");
-      }
-
-      return await res.json();
-    },
-
-    // ✅ OPTIMISTIC UPDATE
-    onMutate: async (id) => {
-
-      await queryClient.cancelQueries({ queryKey: ["citas"] });
-
-      const prev = queryClient.getQueryData(["citas"]);
-
-      queryClient.setQueryData(["citas"], (old = []) =>
-        old.map(c =>
-          c.id === id
-            ? { ...c, estado: "completada" }
-            : c
-        )
-      );
-
-      return { prev };
-    },
-
-    onError: (_err, _id, context) => {
-      if (context?.prev) {
-        queryClient.setQueryData(["citas"], context.prev);
-      }
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["citas"] });
-    }
-  });
-
-  const cancelarCita = useMutation({
-    mutationFn: async (id) => {
-      const res = await fetch(`${API_URL}/citas/${id}/cancelar`, {
-        method: "PUT"
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => null);
-
-        console.error("ERROR BACKEND CANCELAR:", error);
-
-        throw new Error(
-          error?.detail || "Error al cancelar cita"
+          }
         );
-      }
 
-      const data = await res.json().catch(() => ({}));
+      },
 
-      return data;
-    },
+    staleTime:
+      1000 * 60
 
-    onSuccess: (_data, id) => {
-      queryClient.setQueryData(["citas"], (old = []) =>
-        old.map((c) =>
-          c.id === id
-            ? {
-              ...c,
-              estado: "cancelada"
-            }
-            : c
-        )
-      );
-
-      queryClient.invalidateQueries({
-        queryKey: ["citas"]
-      });
-    }
   });
+
+  /*
+  ==========================================
+  CREAR CITA
+  ==========================================
+  */
+
+  const crearCita =
+    useMutation({
+
+      mutationFn:
+        crearCitaService,
+
+      onSuccess:
+        () => {
+
+          queryClient.invalidateQueries({
+            queryKey: ["citas"]
+          });
+
+        }
+
+    });
+
+  /*
+  ==========================================
+  ACTUALIZAR CITA
+  ==========================================
+  */
+
+  const actualizarCita =
+    useMutation({
+
+      mutationFn:
+        ({
+          id,
+          data
+        }) => {
+
+          return actualizarCitaService(
+            id,
+            data
+          );
+
+        },
+
+      onSuccess:
+        () => {
+
+          queryClient.invalidateQueries({
+            queryKey: ["citas"]
+          });
+
+        }
+
+    });
+
+  /*
+  ==========================================
+  COMPLETAR CITA
+  ==========================================
+  */
+
+  const completarCita =
+    useMutation({
+
+      mutationFn:
+        completarCitaService,
+
+      /*
+      ==========================================
+      OPTIMISTIC UPDATE
+      ==========================================
+      */
+
+      onMutate:
+        async (id) => {
+
+          await queryClient.cancelQueries({
+            queryKey: ["citas"]
+          });
+
+          const prev =
+            queryClient.getQueryData(
+              ["citas"]
+            );
+
+          queryClient.setQueryData(
+            ["citas"],
+            (old = []) =>
+              old.map((c) =>
+                c.id === id
+                  ? {
+                    ...c,
+                    estado: "completada"
+                  }
+                  : c
+              )
+          );
+
+          return {
+            prev
+          };
+
+        },
+
+      onError:
+        (_err, _id, context) => {
+
+          if (context?.prev) {
+
+            queryClient.setQueryData(
+              ["citas"],
+              context.prev
+            );
+
+          }
+
+        },
+
+      onSettled:
+        () => {
+
+          queryClient.invalidateQueries({
+            queryKey: ["citas"]
+          });
+
+        }
+
+    });
+
+  /*
+  ==========================================
+  CANCELAR CITA
+  ==========================================
+  */
+
+  const cancelarCita =
+    useMutation({
+
+      mutationFn:
+        cancelarCitaService,
+
+      onSuccess:
+        (_data, id) => {
+
+          queryClient.setQueryData(
+            ["citas"],
+            (old = []) =>
+              old.map((c) =>
+                c.id === id
+                  ? {
+                    ...c,
+                    estado: "cancelada"
+                  }
+                  : c
+              )
+          );
+
+          queryClient.invalidateQueries({
+            queryKey: ["citas"]
+          });
+
+        }
+
+    });
+
+  /*
+  ==========================================
+  RETURN
+  ==========================================
+  */
 
   return {
+
     citas,
+
     isLoading,
+
+    isError,
+
+    error,
+
     crearCita,
+
     actualizarCita,
+
     completarCita,
+
     cancelarCita
+
   };
+
 };

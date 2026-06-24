@@ -67,11 +67,11 @@ function Login() {
   const [nuevaPassword, setNuevaPassword] =
     useState("");
 
-  const [claveValida, setClaveValida] =
-    useState(false);
+  // const [claveValida, setClaveValida] =
+  //   useState(false);
 
-  const CLAVE_SEGURIDAD =
-    "1234";
+  // const CLAVE_SEGURIDAD =
+  //   "1234";
 
   /*
   ==========================================
@@ -79,22 +79,22 @@ function Login() {
   ==========================================
   */
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (!claveSeguridad) {
+  //   if (!claveSeguridad) {
 
-      setClaveValida(false);
+  //     setClaveValida(false);
 
-      return;
+  //     return;
 
-    }
+  //   }
 
-    setClaveValida(
-      claveSeguridad ===
-      CLAVE_SEGURIDAD
-    );
+  //   setClaveValida(
+  //     claveSeguridad ===
+  //     CLAVE_SEGURIDAD
+  //   );
 
-  }, [claveSeguridad]);
+  // }, [claveSeguridad]);
 
   useEffect(() => {
 
@@ -232,10 +232,10 @@ function Login() {
 
       }
 
-      if (!claveValida) {
+      if (!claveSeguridad.trim()) {
 
         showError(
-          "Clave inválida ❌"
+          "Ingresa la clave de seguridad 🔐"
         );
 
         return;
@@ -243,11 +243,11 @@ function Login() {
       }
 
       if (
-        nuevaPassword.length < 4
+        nuevaPassword.trim().length < 8
       ) {
 
         showError(
-          "Mínimo 4 caracteres ⚠️"
+          "Mínimo 8 caracteres ⚠️"
         );
 
         return;
@@ -260,7 +260,8 @@ function Login() {
 
         await resetPassword(
           username,
-          nuevaPassword
+          nuevaPassword,
+          claveSeguridad
         );
 
         showSuccess(
@@ -303,7 +304,7 @@ function Login() {
 
     setNuevaPassword("");
 
-    setClaveValida(false);
+    // setClaveValida(false);
 
   };
 
@@ -435,7 +436,7 @@ sm:p-10
           " />
 
           {/* HEADER */}
-<div className="
+          <div className="
   relative
   z-10
 
@@ -444,9 +445,9 @@ sm:p-10
   space-y-5
 ">
 
-  {/* LOGO */}
+            {/* LOGO */}
 
-  <div className="
+            <div className="
     mx-auto
 
     inline-flex
@@ -458,11 +459,11 @@ sm:p-10
     mb-1
   ">
 
-    
-<img
-  src={logoIcon}
-  alt="DentalApp"
-  className="
+
+              <img
+                src={logoIcon}
+                alt="DentalApp"
+                className="
     w-24
     h-24
 
@@ -470,14 +471,14 @@ sm:p-10
 
     shadow-[0_18px_45px_rgba(7,89,133,0.25)]
   "
-/>
+              />
 
 
-    <div className="
+              <div className="
       text-left
     ">
 
-      <h2 className="
+                <h2 className="
         
 text-3xl
   sm:text-4xl
@@ -489,10 +490,10 @@ text-3xl
 
         text-slate-800
       ">
-        DentalApp
-      </h2>
+                  DentalApp
+                </h2>
 
-      <p className="
+                <p className="
         mt-1
 
         text-xs
@@ -1153,7 +1154,7 @@ space-y-4
                     Clave inválida ❌
                   </p>
 
-                )}
+                )} */}
 
               {/* PASSWORD */}
 

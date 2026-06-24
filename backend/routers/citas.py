@@ -8,7 +8,7 @@ from schemas import CitaCreate
 from fastapi import APIRouter
 from fastapi import HTTPException, Depends
 from utils.actividad import registrar_actividad
-
+from security import get_current_user
 from models.tratamiento import (
     Tratamiento
 )
@@ -69,10 +69,28 @@ def crear_cita(data: CitaCreate, db: Session = Depends(get_db)):
     )
 
     db.add(cita)
+
+    db.flush()
+
+    registrar_actividad(
+        db=db,
+        tipo="cita",
+        accion="crear",
+        titulo="Cita creada",
+        descripcion=(
+            f"{nombre_cliente_cita(cita)} · "
+            f"{cita.motivo}"
+        ),
+        referencia_id=cita.id,
+        usuario="Sistema"
+    )
+
     db.commit()
+
     db.refresh(cita)
 
     return cita
+
 
 
 

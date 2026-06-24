@@ -6,7 +6,7 @@ from sqlalchemy.orm import (
     Session,
     joinedload
 )
-
+from security import get_current_user
 from sqlalchemy.orm.attributes import flag_modified
 from models.odontograma import Odontograma
 

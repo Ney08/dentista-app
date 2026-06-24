@@ -16,82 +16,82 @@ export const useAuth = () => {
   ==========================================
   */
 
-const login = async (
-  username,
-  password
-) => {
+  const login = async (
+    username,
+    password
+  ) => {
 
-  if (
-    !username.trim() ||
-    !password.trim()
-  ) {
+    if (
+      !username.trim() ||
+      !password.trim()
+    ) {
 
-    throw new Error(
-      "Completa los datos ❌"
-    );
-
-  }
-
-  const res = await fetch(
-    `${API_URL}/auth/login`,
-    {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type":
-          "application/json"
-      },
-
-      body: JSON.stringify({
-
-        username:
-          username.trim(),
-
-        password:
-          password.trim()
-
-      })
+      throw new Error(
+        "Completa los datos ❌"
+      );
 
     }
-  );
 
-  let data = {};
+    const res = await fetch(
+      `${API_URL}/auth/login`,
+      {
 
-  try {
+        method: "POST",
 
-    data = await res.json();
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
 
-  } catch {}
+        body: JSON.stringify({
 
-  if (!res.ok) {
+          username:
+            username.trim(),
 
-    console.warn(
-      "Error login:",
-      res.status,
-      data
+          password:
+            password.trim()
+
+        })
+
+      }
     );
 
-    throw new Error(
-      data?.detail ||
-      "Error al iniciar sesión ❌"
-    );
+    let data = {};
 
-  }
+    try {
 
-  if (!data.token) {
+      data = await res.json();
 
-    throw new Error(
-      "Respuesta inválida ❌"
-    );
+    } catch { }
 
-  }
+    if (!res.ok) {
 
-  loginGlobal(data.token);
+      console.warn(
+        "Error login:",
+        res.status,
+        data
+      );
 
-  return data.token;
+      throw new Error(
+        data?.detail ||
+        "Error al iniciar sesión ❌"
+      );
 
-};
+    }
+
+    if (!data.token) {
+
+      throw new Error(
+        "Respuesta inválida ❌"
+      );
+
+    }
+
+    loginGlobal(data.token);
+
+    return data.token;
+
+  };
 
   /*
   ==========================================
@@ -102,7 +102,8 @@ const login = async (
   const resetPassword =
     async (
       username,
-      nuevaPassword
+      nuevaPassword,
+      resetKey
     ) => {
 
       if (!username.trim()) {
@@ -115,11 +116,19 @@ const login = async (
 
       if (
         !nuevaPassword ||
-        nuevaPassword.trim().length < 6
+        nuevaPassword.trim().length < 8
       ) {
 
         throw new Error(
-          "Mínimo 6 caracteres ⚠️"
+          "Mínimo 8 caracteres ⚠️"
+        );
+
+      }
+
+      if (!resetKey.trim()) {
+
+        throw new Error(
+          "Clave de seguridad requerida 🔐"
         );
 
       }
@@ -127,7 +136,6 @@ const login = async (
       const res = await fetch(
         `${API_URL}/auth/users/reset`,
         {
-
           method: "PUT",
 
           headers: {
@@ -141,7 +149,10 @@ const login = async (
               username.trim(),
 
             password:
-              nuevaPassword.trim()
+              nuevaPassword.trim(),
+
+            reset_key:
+              resetKey.trim()
 
           })
 
@@ -154,29 +165,14 @@ const login = async (
 
         data = await res.json();
 
-      } catch {}
+      } catch { }
 
       if (!res.ok) {
 
-        console.error(
-          "Error reset:",
-          res.status,
-          data
-        );
-
         throw new Error(
-
-          typeof data?.detail
-            === "string"
-
+          typeof data?.detail === "string"
             ? data.detail
-
-            : JSON.stringify(
-                data?.detail
-              ) ||
-
-              "Error al cambiar ❌"
-
+            : "Error al cambiar ❌"
         );
 
       }
@@ -184,7 +180,6 @@ const login = async (
       return true;
 
     };
-
   /*
   ==========================================
   LOGOUT

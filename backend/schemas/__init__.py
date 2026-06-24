@@ -3,7 +3,7 @@ from .user import (
     UserCreate,
     UserLogin,
     UserUpdate,
-    ResetPassword
+    UserReset
 )
 
 from .cliente import (

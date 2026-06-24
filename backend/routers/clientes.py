@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
 from utils.actividad import registrar_actividad
 from database import get_db
-
+from security import get_current_user
 import models
 
 from schemas import ClienteCreate, Cliente
@@ -13,7 +13,12 @@ import re
 
 router = APIRouter(
     prefix="/clientes",
-    tags=["Clientes"]
+    tags=["Clientes"],
+    
+    # dependencies=[
+    #         Depends(get_current_user)
+    #     ]
+
 )
 
 
@@ -45,8 +50,8 @@ def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
     )
 
     db.add(nuevo_cliente)
-    db.commit()
-    db.refresh(nuevo_cliente)
+
+    db.flush()
 
     # ✅ crear dirección
     direccion = models.Direccion(
@@ -93,14 +98,15 @@ def crear_cliente(data: ClienteCreate, db: Session = Depends(get_db)):
 @router.get("/", response_model=list[Cliente])
 def listar_clientes(
     activos: Optional[bool] = Query(None),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    # current_user = Depends(get_current_user)
 ):
     
     query = db.query(models.Cliente).options(
         joinedload(models.Cliente.direccion)
     )
 
-    # ✅ FILTRO NUEVO
+    
     if activos is not None:
         query = query.filter(models.Cliente.activo == activos)
 
