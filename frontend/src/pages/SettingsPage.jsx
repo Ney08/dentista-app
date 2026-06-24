@@ -14,7 +14,6 @@ import PageWrapper from "../components/PageWrapper";
 import ConfirmModal from "../components/ConfirmModal";
 import ServicioModal from "../components/ServicioModal";
 
-import toast from "react-hot-toast";
 
 import {
   showSuccess,
@@ -128,14 +127,18 @@ function SettingsPage() {
       );
 
       const ruta =
+
         await invoke(
-          "crear_backup_postgres"
+          "crear_backup_sqlite"
         );
 
+
       const info =
+
         await invoke(
-          "obtener_ultimo_backup_postgres"
+          "obtener_ultimo_backup_sqlite"
         );
+
 
       setUltimoBackup(
         info
@@ -379,7 +382,7 @@ function SettingsPage() {
 
         const info =
           await invoke(
-            "obtener_ultimo_backup_postgres"
+            "obtener_ultimo_backup_sqlite"
           );
 
         setUltimoBackup(

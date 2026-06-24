@@ -1,11 +1,15 @@
 use std::fs;
-use std::path::Path;
-use std::process::Command;
+use std::path::{
+  Path,
+  PathBuf
+};
 
 use chrono::{
   DateTime,
   Local
 };
+
+use rusqlite::Connection;
 
 use serde::Serialize;
 
@@ -38,104 +42,6 @@ fn open_pdf(path: String) -> Result<(), String> {
   Ok(())
 }
 
-#[tauri::command]
-fn crear_backup_postgres() -> Result<String, String> {
-  /*
-  ==========================================
-  CONFIGURACIÓN
-  ==========================================
-  */
-
-  let db_name =
-    "dentista_db";
-
-  let db_user =
-    "postgres";
-
-  let db_password =
-    "1212";
-
-  let pg_dump_path =
-    "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_dump.exe";
-
-  let backup_dir =
-    "C:\\Backups\\DentalApp";
-
-  fs::create_dir_all(
-    backup_dir
-  )
-  .map_err(|e| {
-    format!(
-      "No se pudo crear la carpeta de backup: {}",
-      e
-    )
-  })?;
-
-  /*
-  ==========================================
-  NOMBRE DEL ARCHIVO
-  ==========================================
-  */
-
-  let fecha =
-    Local::now()
-      .format("%Y-%m-%d_%H-%M-%S")
-      .to_string();
-
-  let backup_path =
-    format!(
-      "{}\\dentalapp_{}.backup",
-      backup_dir,
-      fecha
-    );
-
-  /*
-  ==========================================
-  EJECUTAR PG_DUMP
-  ==========================================
-  */
-
-  let output =
-    Command::new(pg_dump_path)
-      .env(
-        "PGPASSWORD",
-        db_password
-      )
-      .args([
-        "-U",
-        db_user,
-        "-d",
-        db_name,
-        "-F",
-        "c",
-        "-f",
-        &backup_path
-      ])
-      .output()
-      .map_err(|e| {
-        format!(
-          "Error ejecutando pg_dump: {}",
-          e
-        )
-      })?;
-
-  if !output.status.success() {
-    let error =
-      String::from_utf8_lossy(
-        &output.stderr
-      );
-
-    return Err(
-      format!(
-        "No se pudo crear el backup: {}",
-        error
-      )
-    );
-  }
-
-  Ok(backup_path)
-}
-
 #[derive(Serialize)]
 struct BackupInfo {
   existe: bool,
@@ -144,13 +50,229 @@ struct BackupInfo {
   fecha: Option<String>,
 }
 
+/*
+==========================================
+LOCALIZAR BASE SQLITE
+==========================================
+*/
+
+fn buscar_base_sqlite() -> Result<PathBuf, String> {
+  let mut bases_inicio: Vec<PathBuf> =
+    Vec::new();
+
+  /*
+  ==========================================
+  DIRECTORIO ACTUAL
+  ==========================================
+  */
+
+  if let Ok(current_dir) = std::env::current_dir() {
+    bases_inicio.push(current_dir);
+  }
+
+  /*
+  ==========================================
+  DIRECTORIO DEL EJECUTABLE
+  ==========================================
+  */
+
+  if let Ok(exe_path) = std::env::current_exe() {
+    if let Some(exe_dir) = exe_path.parent() {
+      bases_inicio.push(
+        exe_dir.to_path_buf()
+      );
+    }
+  }
+
+  /*
+  ==========================================
+  DIRECTORIO DEL MANIFEST DE TAURI EN DEV
+  ==========================================
+  */
+
+  let manifest_dir =
+    PathBuf::from(
+      env!("CARGO_MANIFEST_DIR")
+    );
+
+  bases_inicio.push(
+    manifest_dir
+  );
+
+  /*
+  ==========================================
+  CANDIDATOS
+  ==========================================
+  */
+
+  let nombres_db = [
+    "dentista.db",
+    "database.db"
+  ];
+
+  let mut rutas_probadas: Vec<String> =
+    Vec::new();
+
+  for base in bases_inicio {
+
+    /*
+    ==========================================
+    BUSCAR EN BASE Y PADRES
+    ==========================================
+    */
+
+    let mut actual =
+      Some(
+        base.as_path()
+      );
+
+    while let Some(dir) = actual {
+
+      for nombre_db in nombres_db {
+
+        let candidato =
+          dir
+            .join("backend")
+            .join(nombre_db);
+
+        rutas_probadas.push(
+          candidato
+            .to_string_lossy()
+            .to_string()
+        );
+
+        if candidato.exists() {
+          return Ok(candidato);
+        }
+
+        /*
+        ==========================================
+        TAMBIÉN BUSCAR DIRECTO EN EL DIRECTORIO
+        ==========================================
+        */
+
+        let candidato_directo =
+          dir.join(nombre_db);
+
+        rutas_probadas.push(
+          candidato_directo
+            .to_string_lossy()
+            .to_string()
+        );
+
+        if candidato_directo.exists() {
+          return Ok(candidato_directo);
+        }
+
+      }
+
+      actual =
+        dir.parent();
+
+    }
+
+  }
+
+  Err(
+    format!(
+      "No se encontró la base SQLite. Rutas probadas:\n{}",
+      rutas_probadas.join("\n")
+    )
+  )
+}
+
+/*
+==========================================
+CREAR BACKUP SQLITE
+==========================================
+*/
+
 #[tauri::command]
-fn obtener_ultimo_backup_postgres() -> Result<BackupInfo, String> {
+fn crear_backup_sqlite() -> Result<String, String> {
+  let db_path =
+    buscar_base_sqlite()?;
+
+  let backup_dir =
+    PathBuf::from("C:\\Backups\\DentalApp");
+
+  fs::create_dir_all(
+    &backup_dir
+  )
+  .map_err(|e| {
+    format!(
+      "No se pudo crear la carpeta de backup: {}",
+      e
+    )
+  })?;
+
+  let fecha =
+    Local::now()
+      .format("%Y-%m-%d_%H-%M-%S")
+      .to_string();
+
+  let backup_path =
+    backup_dir.join(
+      format!(
+        "dentista_backup_{}.db",
+        fecha
+      )
+    );
+
+  let backup_path_str =
+    backup_path
+      .to_string_lossy()
+      .replace("'", "''");
+
+  let conn =
+    Connection::open(
+      &db_path
+    )
+    .map_err(|e| {
+      format!(
+        "No se pudo abrir la base SQLite: {}",
+        e
+      )
+    })?;
+
+  let sql =
+    format!(
+      "VACUUM INTO '{}'",
+      backup_path_str
+    );
+
+  conn.execute(
+    &sql,
+    []
+  )
+  .map_err(|e| {
+    format!(
+      "No se pudo crear el backup SQLite: {}",
+      e
+    )
+  })?;
+
+  Ok(
+    backup_path
+      .to_string_lossy()
+      .to_string()
+  )
+}
+
+/*
+==========================================
+OBTENER ÚLTIMO BACKUP SQLITE
+==========================================
+*/
+
+#[tauri::command]
+fn obtener_ultimo_backup_sqlite() -> Result<BackupInfo, String> {
   let backup_dir =
     "C:\\Backups\\DentalApp";
 
   let path =
-    Path::new(backup_dir);
+    Path::new(
+      backup_dir
+    );
 
   if !path.exists() {
     return Ok(BackupInfo {
@@ -190,7 +312,18 @@ fn obtener_ultimo_backup_postgres() -> Result<BackupInfo, String> {
         .and_then(|e| e.to_str())
         .unwrap_or("");
 
-    if extension != "backup" {
+    if extension != "db" {
+      continue;
+    }
+
+    let nombre =
+      entry_path
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("")
+        .to_string();
+
+    if !nombre.starts_with("dentista_backup_") {
       continue;
     }
 
@@ -207,13 +340,6 @@ fn obtener_ultimo_backup_postgres() -> Result<BackupInfo, String> {
     let ruta =
       entry_path
         .to_string_lossy()
-        .to_string();
-
-    let nombre =
-      entry_path
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("")
         .to_string();
 
     match &ultimo {
@@ -256,6 +382,34 @@ fn obtener_ultimo_backup_postgres() -> Result<BackupInfo, String> {
   })
 }
 
+/*
+==========================================
+ALIAS TEMPORALES
+==========================================
+Estos alias evitan romper el frontend si todavía llama:
+crear_backup_postgres
+obtener_ultimo_backup_postgres
+
+Más adelante puedes quitar estos dos.
+==========================================
+*/
+
+#[tauri::command]
+fn crear_backup_postgres() -> Result<String, String> {
+  crear_backup_sqlite()
+}
+
+#[tauri::command]
+fn obtener_ultimo_backup_postgres() -> Result<BackupInfo, String> {
+  obtener_ultimo_backup_sqlite()
+}
+
+/*
+==========================================
+TAURI RUN
+==========================================
+*/
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
@@ -272,6 +426,10 @@ pub fn run() {
 
     .invoke_handler(tauri::generate_handler![
       open_pdf,
+
+      crear_backup_sqlite,
+      obtener_ultimo_backup_sqlite,
+
       crear_backup_postgres,
       obtener_ultimo_backup_postgres
     ])
