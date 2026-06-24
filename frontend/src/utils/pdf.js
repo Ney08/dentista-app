@@ -1202,7 +1202,7 @@ Total: ${money(total)}
   doc.text(
     "Notas:",
     24,
-    198
+    202
   );
 
   doc.setFontSize(6.3);
@@ -1586,7 +1586,7 @@ Total: ${money(total)}
   */
 
   const firmaY =
-    248;
+    258;
 
   doc.setDrawColor(
     100,
