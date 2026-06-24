@@ -35,3 +35,8 @@ from routers.egresos import (
 from routers.dashboard import (
     router as dashboard_router
 )
+
+
+from routers.actividad import (
+    router as actividad_router
+)
